@@ -656,9 +656,22 @@ Android artifact:
 
     dist-android/chesscom-vinf.user.js
 
-The project directory is not currently an independent Git repository. Do not
-assume Git status, tags, or release history exist; verify before using Git and
-never initialize or publish a repository without the user's request.
+The project is an independent public Git repository:
+
+    https://github.com/matejbolta/chesscom-vinf
+
+The complete signed-in Chess.com capture and the original account-specific
+reference image remain local under `fixtures/raw/` and are intentionally ignored.
+Only `fixtures/raw/README.md` may be committed from that directory.
+
+Public-safe Chrome Web Store copy and synthetic graphic assets live under
+`store-listing/`. The public privacy-policy URL is:
+
+    https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md
+
+Before every push, run the full test suite. `tests/privacy.test.ts` rejects
+absolute home paths, literal private LAN addresses, email addresses,
+secret-shaped credentials, and weakened raw-capture ignore rules.
 
 ## Manual Live Checklist Still Outstanding
 
