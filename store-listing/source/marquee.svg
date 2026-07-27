@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="560" viewBox="0 0 1400 560">
+  <defs>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(82 62) rotate(48) scale(520)">
+      <stop stop-color="#81b64c" stop-opacity=".42"/>
+      <stop offset=".72" stop-color="#81b64c" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#81b64c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#34312e"/>
+      <stop offset="1" stop-color="#292724"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="150%" height="170%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000" flood-opacity=".42"/>
+    </filter>
+    <filter id="icon-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#263717" flood-opacity=".34"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="560" fill="#242321"/>
+  <rect width="1400" height="560" fill="url(#glow)"/>
+
+  <g transform="translate(100 72)">
+    <rect width="58" height="58" rx="12" fill="#81b64c"/>
+    <path d="M9 29c0-9 11-13 18-5l7 9c8 8 18 4 18-5S42 16 34 24l-7 9C20 41 9 38 9 29Z"
+      fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"
+      filter="url(#icon-shadow)"/>
+    <text x="78" y="40" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" letter-spacing="3">VINF</text>
+  </g>
+
+  <text x="100" y="226" fill="#f5f4f2" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" letter-spacing="-2.5">A calmer home.</text>
+  <text x="100" y="294" fill="#f5f4f2" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" letter-spacing="-2.5">More chess.</text>
+  <text x="100" y="350" fill="#c9c7c3" font-family="Arial, Helvetica, sans-serif" font-size="18">Quick Play, Game History, and Stats—exactly</text>
+  <text x="100" y="378" fill="#c9c7c3" font-family="Arial, Helvetica, sans-serif" font-size="18">where you want them.</text>
+
+  <g transform="translate(662 55) rotate(-1.25 334 222)" filter="url(#shadow)">
+    <rect x="0" y="0" width="678" height="450" rx="12" fill="url(#page)" stroke="#4b4844" stroke-width="2"/>
+
+    <g font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="800" text-anchor="middle" fill="#fff">
+      <g>
+        <rect x="22" y="23" width="198" height="55" rx="5" fill="#42652b" stroke="#5f8c37"/>
+        <text x="121" y="57">10</text>
+      </g>
+      <g>
+        <rect x="231" y="23" width="198" height="55" rx="5" fill="#42652b" stroke="#5f8c37"/>
+        <text x="330" y="57">15 + 10</text>
+      </g>
+      <g>
+        <rect x="440" y="23" width="216" height="55" rx="5" fill="#7d711c" stroke="#b29d18"/>
+        <text x="548" y="57">3 + 2</text>
+      </g>
+      <g>
+        <rect x="22" y="88" width="198" height="55" rx="5" fill="#42652b" stroke="#5f8c37"/>
+        <text x="121" y="122">10 + 5</text>
+      </g>
+      <g>
+        <rect x="231" y="88" width="198" height="55" rx="5" fill="#42652b" stroke="#5f8c37"/>
+        <text x="330" y="122">30</text>
+      </g>
+      <g>
+        <rect x="440" y="88" width="216" height="55" rx="5" fill="#7d711c" stroke="#b29d18"/>
+        <text x="548" y="122">5 + 3</text>
+      </g>
+    </g>
+
+    <g transform="translate(22 163)">
+      <rect width="424" height="261" rx="6" fill="#242320"/>
+      <text x="16" y="30" fill="#f5f4f2" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="800">Game History</text>
+      <line x1="16" y1="43" x2="408" y2="43" stroke="#45423e"/>
+      <text x="78" y="64" fill="#aaa8a4" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700">PLAYERS</text>
+      <text x="298" y="64" fill="#aaa8a4" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700">RESULT</text>
+      <text x="354" y="64" fill="#aaa8a4" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700">DATE</text>
+
+      <g font-family="Arial, Helvetica, sans-serif" font-size="11">
+        <g transform="translate(0 74)">
+          <rect width="424" height="57" fill="#2b2926"/>
+          <circle cx="26" cy="28" r="9" fill="none" stroke="#81b64c" stroke-width="3"/>
+          <rect x="55" y="13" width="22" height="22" rx="3" fill="#dfdcd7"/>
+          <text x="86" y="28" fill="#f5f4f2" font-weight="700">ExamplePlayer</text>
+          <text x="178" y="28" fill="#aaa8a4">1324</text>
+          <text x="309" y="29" fill="#f5f4f2" font-weight="700">1</text>
+          <text x="351" y="29" fill="#c9c7c3">Jul 27</text>
+        </g>
+        <g transform="translate(0 131)">
+          <circle cx="26" cy="28" r="9" fill="none" stroke="#81b64c" stroke-width="3"/>
+          <rect x="55" y="13" width="22" height="22" rx="3" fill="#477f93"/>
+          <text x="86" y="28" fill="#f5f4f2">QuietBishop</text>
+          <text x="166" y="28" fill="#aaa8a4">1347</text>
+          <text x="309" y="29" fill="#f5f4f2" font-weight="700">0</text>
+          <text x="351" y="29" fill="#c9c7c3">Jul 27</text>
+        </g>
+        <g transform="translate(0 188)">
+          <rect width="424" height="57" fill="#2b2926"/>
+          <circle cx="26" cy="28" r="9" fill="none" stroke="#81b64c" stroke-width="3"/>
+          <rect x="55" y="13" width="22" height="22" rx="3" fill="#8b7734"/>
+          <text x="86" y="28" fill="#f5f4f2">RookRoute</text>
+          <text x="147" y="28" fill="#aaa8a4">1336</text>
+          <text x="309" y="29" fill="#f5f4f2" font-weight="700">½</text>
+          <text x="351" y="29" fill="#c9c7c3">Jul 26</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(458 163)">
+      <rect width="198" height="261" rx="6" fill="#242320"/>
+      <text x="14" y="30" fill="#f5f4f2" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="800">Stats</text>
+      <line x1="14" y1="43" x2="184" y2="43" stroke="#45423e"/>
+      <g transform="translate(14 66)" font-family="Arial, Helvetica, sans-serif" font-size="13">
+        <text y="15" fill="#81b64c" font-size="20">◷</text>
+        <text x="31" y="14" fill="#f5f4f2" font-weight="700">Rapid</text>
+        <text x="167" y="14" fill="#f5f4f2" font-weight="700" text-anchor="end">1324</text>
+        <line y1="35" x2="170" y2="35" stroke="#45423e"/>
+      </g>
+      <g transform="translate(14 122)" font-family="Arial, Helvetica, sans-serif" font-size="13">
+        <text y="16" fill="#f4c430" font-size="22" font-weight="800">ϟ</text>
+        <text x="31" y="14" fill="#f5f4f2" font-weight="700">Blitz</text>
+        <text x="167" y="14" fill="#f5f4f2" font-weight="700" text-anchor="end">1016</text>
+        <line y1="35" x2="170" y2="35" stroke="#45423e"/>
+      </g>
+      <g transform="translate(14 192)" font-family="Arial, Helvetica, sans-serif" font-size="13">
+        <text y="16" fill="#f4c430" font-size="18">☀</text>
+        <text x="31" y="14" fill="#f5f4f2" font-weight="700">Insights</text>
+        <text x="168" y="14" fill="#aaa8a4" text-anchor="end">›</text>
+      </g>
+    </g>
+  </g>
+</svg>

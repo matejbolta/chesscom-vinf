@@ -1,0 +1,27 @@
+{
+  "name": "chesscom-vinf",
+  "version": "0.13.4",
+  "private": true,
+  "description": "A focused, infinitely improving Chess.com homepage.",
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:android": "node scripts/build-android.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "visual": "node tests/visual/server.mjs",
+    "package": "node scripts/package.mjs",
+    "package:android": "pnpm build:android"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.14.10",
+    "esbuild": "^0.23.0",
+    "jsdom": "^24.1.1",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.4"
+  }
+}

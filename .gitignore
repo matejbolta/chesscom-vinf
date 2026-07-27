@@ -1,0 +1,26 @@
+.DS_Store
+node_modules/
+dist/
+dist-android/
+release/
+
+# Local secrets, signing material, and browser/debug exports must never be public.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.crx
+*.har
+
+# Local recordings and clipboard captures can expose accounts or desktop data.
+*.mov
+*.mp4
+*.webm
+codex-clipboard-*
+
+# Raw signed-in page captures can contain account-specific data, cookies,
+# usernames, ratings, avatars, and third-party resources.
+fixtures/raw/**
+!fixtures/raw/README.md

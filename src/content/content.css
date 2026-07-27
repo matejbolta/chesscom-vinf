@@ -1,0 +1,264 @@
+[data-chesscom-vinf-hidden] {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-active="true"] #homepage-toolbar,
+html[data-chesscom-vinf-active="true"] #main-banner,
+html[data-chesscom-vinf-active="true"] .promo-toolbar-user-info,
+html[data-chesscom-vinf-active="true"] .promo-component {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-daily-placement]
+  #vue-instance.layout-column-one
+  > :has(a[href*="/play/online/daily"]),
+html[data-chesscom-vinf-daily-placement]
+  #vue-instance.layout-column-one
+  > :has(.current-games-header-list) {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-daily-placement]
+  #vue-instance.layout-column-one
+  > :has(.home-current-games-loading-view-toggle-container) {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-chess-tv="hidden"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(.tv-player-component),
+html[data-chesscom-vinf-chess-tv="hidden"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(.tv-player-iframe),
+html[data-chesscom-vinf-chess-tv="hidden"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(.tv-player-sidebar-close-button),
+html[data-chesscom-vinf-chess-tv="hidden"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(a[href="/tv"]) {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-legend-league="hidden"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(#league-badge-sidebar) {
+  display: none !important;
+}
+
+.promo-component[data-chesscom-vinf-layout="quick-play-in-main"] {
+  display: none !important;
+}
+
+#vue-sidebar-instance > [data-chesscom-vinf-module] + [data-chesscom-vinf-module] {
+  margin-top: 2.4rem !important;
+}
+
+[data-chesscom-vinf-module="daily-games"] {
+  margin-bottom: 0 !important;
+  min-width: 0;
+  width: 100%;
+}
+
+[data-chesscom-vinf-module="daily-games"] > .cc-section,
+[data-chesscom-vinf-module="daily-games"] .current-games-header-list {
+  min-width: 0;
+  width: 100%;
+}
+
+[data-chesscom-vinf-module="daily-games"]
+  .current-games-header-toggle-container {
+  flex-shrink: 0;
+}
+
+.chesscom-vinf-quick-play {
+  --chesscom-vinf-quick-play-columns: 3;
+
+  align-self: stretch;
+  color: var(--color-text-boldest, #f1f1f1);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  user-select: none;
+}
+
+.chesscom-vinf-quick-play[data-preset-count="8"] {
+  --chesscom-vinf-quick-play-columns: 4;
+}
+
+[data-chesscom-vinf-owned="quick-play"] {
+  margin-bottom: 2.4rem;
+  width: 100%;
+}
+
+[data-chesscom-vinf-layout="single-column"] > [data-chesscom-vinf-module] {
+  min-width: 0;
+  width: 100%;
+}
+
+[data-chesscom-vinf-layout="single-column"]
+  > [data-chesscom-vinf-module]
+  + [data-chesscom-vinf-module] {
+  margin-top: 2.4rem !important;
+}
+
+.chesscom-vinf-quick-play-status {
+  margin: 0;
+}
+
+.chesscom-vinf-quick-play-grid {
+  align-self: stretch;
+  display: grid;
+  flex: 1;
+  gap: 1.4rem;
+  grid-auto-flow: column;
+  grid-template-columns:
+    repeat(var(--chesscom-vinf-quick-play-columns), minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(7rem, 1fr));
+  width: 100%;
+}
+
+.chesscom-vinf-quick-play-button {
+  --chesscom-vinf-time-color: var(--color-icon-rapid, #81b64c);
+  --chesscom-vinf-time-edge: hsl(91deg 41% 36%);
+  --chesscom-vinf-time-surface: hsl(91deg 36% 28%);
+  --chesscom-vinf-time-surface-hovered: hsl(91deg 39% 32%);
+
+  align-items: center;
+  appearance: none;
+  background: var(--chesscom-vinf-time-surface);
+  border: 0;
+  border-radius: var(--radius-5, 0.5rem);
+  box-shadow:
+    inset 0 0 0 0.1rem var(--chesscom-vinf-time-edge),
+    0 0.2rem 0 0 rgb(0 0 0 / 24%);
+  color: var(--color-text-boldest, #f1f1f1);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  justify-content: center;
+  min-width: 0;
+  padding: 1rem 1.4rem;
+  position: relative;
+  text-align: center;
+  transition: background-color 100ms ease, box-shadow 100ms ease, transform 100ms ease;
+}
+
+.chesscom-vinf-quick-play-button[data-time-class="blitz"] {
+  --chesscom-vinf-time-color: #ead762;
+  --chesscom-vinf-time-edge: oklch(70% 0.11 100);
+  --chesscom-vinf-time-surface: oklch(54% 0.085 100);
+  --chesscom-vinf-time-surface-hovered: oklch(58% 0.09 100);
+}
+
+.chesscom-vinf-quick-play-button[data-time-class="bullet"] {
+  --chesscom-vinf-time-color: var(--color-icon-bullet, #f39c12);
+  --chesscom-vinf-time-edge: hsl(38deg 70% 39%);
+  --chesscom-vinf-time-surface: hsl(38deg 52% 27%);
+  --chesscom-vinf-time-surface-hovered: hsl(38deg 58% 31%);
+}
+
+.chesscom-vinf-quick-play-button:hover:not(:disabled) {
+  background: var(--chesscom-vinf-time-surface-hovered);
+  box-shadow:
+    inset 0 0 0 0.1rem var(--chesscom-vinf-time-color),
+    0 0.35rem 0 0 rgb(0 0 0 / 28%);
+  transform: translateY(-0.1rem);
+}
+
+.chesscom-vinf-quick-play-button:active:not(:disabled) {
+  box-shadow: none;
+  transform: translateY(0.15rem);
+}
+
+.chesscom-vinf-quick-play-button:focus-visible {
+  outline: 0.3rem solid var(--chesscom-vinf-time-color);
+  outline-offset: 0.2rem;
+}
+
+.chesscom-vinf-quick-play-button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.chesscom-vinf-quick-play-button[data-state="unavailable"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.chesscom-vinf-quick-play-button[data-state="failed"] {
+  box-shadow: inset 0 0 0 0.2rem var(--color-text-danger, #e57373);
+}
+
+.chesscom-vinf-quick-play-label {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chesscom-vinf-quick-play-status {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 0.1rem;
+  margin: -0.1rem;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 0.1rem;
+}
+
+.chesscom-vinf-quick-play-status:empty {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .chesscom-vinf-quick-play {
+    --chesscom-vinf-quick-play-columns: 2;
+  }
+
+  .chesscom-vinf-quick-play-grid {
+    grid-auto-flow: row;
+    grid-auto-rows: minmax(7rem, 1fr);
+    grid-template-columns:
+      repeat(var(--chesscom-vinf-quick-play-columns), minmax(0, 1fr));
+    grid-template-rows: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 680px) {
+  [data-chesscom-vinf-owned="quick-play"] {
+    margin-bottom: 2rem;
+  }
+
+  [data-chesscom-vinf-layout="single-column"]
+    > [data-chesscom-vinf-module]
+    + [data-chesscom-vinf-module] {
+    margin-top: 2rem !important;
+  }
+}
+
+@media (max-width: 450px) {
+  .chesscom-vinf-quick-play {
+    --chesscom-vinf-quick-play-columns: 1;
+  }
+
+  .chesscom-vinf-quick-play-grid {
+    grid-template-columns:
+      repeat(var(--chesscom-vinf-quick-play-columns), minmax(0, 1fr));
+  }
+
+  .chesscom-vinf-quick-play-button {
+    min-height: 7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chesscom-vinf-quick-play-button {
+    transition: none;
+  }
+}

@@ -1,0 +1,168 @@
+<!doctype html>
+<html class="user-logged-in dark-mode">
+  <head>
+    <meta property="og:url" content="https://www.chess.com/home">
+    <title>Home - Chess.com</title>
+  </head>
+  <body>
+    <nav id="navigation-sidebar">Main navigation</nav>
+    <div class="base-container">
+      <header id="homepage-toolbar" data-fixture-module="homepage-toolbar">
+        <div class="toolbar-user-info" data-cy="profile-section">
+          <a
+            data-cy="user-avatar"
+            data-page="home"
+            data-button="profile"
+            href="https://www.chess.com/member/example-player"
+          >Example Player</a>
+        </div>
+      </header>
+
+      <div
+        id="main-banner"
+        data-fixture-module="main-banner"
+        data-name="STREAKS REVIVAL"
+      >
+        <span>Revive My Streak</span>
+        <button type="button" aria-label="Close"></button>
+      </div>
+
+      <div
+        class="promo-toolbar-user-info"
+        data-fixture-module="promo-user-info"
+      ></div>
+
+      <div class="promo-component">
+        <div class="promo-column" data-fixture-module="native-actions">
+          <a class="promo-item" href="https://www.chess.com/leagues/legend/example">
+            <span class="promo-title">Play</span>
+            <span class="promo-rank">100</span>
+          </a>
+          <div class="play-quick-links-component">
+            <a href="https://www.chess.com/play/online/new?action=createLiveChallenge&amp;base=900&amp;timeIncrement=10&amp;rated=rated&amp;source=home">
+              <span class="play-quick-links-title">Play 15 + 10</span>
+            </a>
+            <a href="https://www.chess.com/play/online/new">New Game</a>
+            <a href="https://www.chess.com/play/computer">Play Bots</a>
+            <a href="https://www.chess.com/play/online/friend">Play a Friend</a>
+          </div>
+        </div>
+
+        <div class="promo-column" role="button" data-fixture-module="puzzles">
+          <div class="promo-item">
+            <span class="promo-icon promo-puzzles"></span>
+            <span class="promo-title">Puzzles</span>
+          </div>
+          <div>Solve Puzzle</div>
+        </div>
+
+        <a
+          class="promo-column"
+          data-fixture-module="next-lesson"
+          href="https://www.chess.com/lessons/example-lesson"
+        >
+          <span class="promo-title">Next Lesson</span>
+          <span>Start Lesson</span>
+        </a>
+
+        <a
+          class="promo-column"
+          data-fixture-module="game-review"
+          href="https://www.chess.com/analysis/game/live/example"
+        >
+          <span class="promo-title">Game Review</span>
+          <span>Review latest game</span>
+        </a>
+      </div>
+
+      <main class="layout-component">
+        <div id="vue-instance" class="layout-column-one">
+          <div id="settings-modal"></div>
+          <div class="home-container-component" data-fixture-module="daily-games">
+            <div class="cc-section current-games-header-list">
+              <a class="cc-header-name" href="https://www.chess.com/play/online/daily">
+                Daily Games <span>(0)</span>
+              </a>
+            </div>
+          </div>
+          <div class="home-container-component" data-fixture-module="game-history">
+            <div class="game-history-games-component cc-section">
+              <span>Game History</span>
+            </div>
+          </div>
+          <div id="view-awards"></div>
+        </div>
+
+        <div id="vue-sidebar-instance" class="layout-column-two">
+          <div class="home-actions" data-fixture-module="legend-league">
+            <div id="league-badge-sidebar">
+              <a href="https://www.chess.com/leagues/legend/example">Legend League</a>
+            </div>
+          </div>
+          <div class="cc-section" data-fixture-module="chess-tv">
+            <a class="cc-header-name" href="https://www.chess.com/tv">Live on ChessTV</a>
+            <div class="tv-player-component"></div>
+          </div>
+          <div class="cc-section" data-fixture-module="stats">
+            <a href="https://www.chess.com/stats/overview/example-player">Stats</a>
+            <ul class="sidebar-ratings-general">
+              <li class="sidebar-ratings-item" data-stats-summary="lessons">
+                <span>Lessons</span><span class="sidebar-ratings-rating">12</span>
+              </li>
+              <li class="sidebar-ratings-item" data-stats-summary="games">
+                <span>Games</span><span class="sidebar-ratings-rating">123</span>
+              </li>
+              <li class="sidebar-ratings-item" data-stats-summary="puzzles">
+                <span>Puzzles</span><span class="sidebar-ratings-rating">45</span>
+              </li>
+            </ul>
+            <div class="stat-section-stats-section" data-stats-rating="bullet">
+              <button class="stat-section-section">
+                <span class="stat-section-section-link-name">Bullet</span>
+              </button>
+            </div>
+            <div class="stat-section-stats-section" data-stats-rating="daily">
+              <button class="stat-section-section">
+                <span class="stat-section-section-link-name">Daily</span>
+              </button>
+            </div>
+            <div class="stat-section-stats-section" data-stats-rating="rapid">
+              <button class="stat-section-button stat-section-section">
+                <span class="stat-section-section-link-name">Rapid</span>
+                <span class="stat-section-chevron">
+                  <svg data-glyph="arrow-chevron-bottom"></svg>
+                </span>
+              </button>
+            </div>
+            <div class="stat-section-stats-section" data-stats-rating="puzzles">
+              <button class="stat-section-section">
+                <span class="stat-section-section-link-name">Puzzles</span>
+              </button>
+            </div>
+            <div class="stat-section-stats-section" data-stats-rating="blitz">
+              <button class="stat-section-button stat-section-section">
+                <span class="stat-section-section-link-name">Blitz</span>
+                <span class="stat-section-chevron">
+                  <svg data-glyph="arrow-chevron-bottom"></svg>
+                </span>
+              </button>
+            </div>
+            <div class="stat-section-stats-section" data-stats-rating="live-960">
+              <div class="stat-section-section">
+                <span class="stat-section-section-link-name">Live 960</span>
+              </div>
+            </div>
+            <div class="stat-section-stats-section" data-stats-rating="insights">
+              <a
+                class="stat-section-section"
+                href="https://www.chess.com/insights/example-player"
+              >
+                <span class="stat-section-section-link-name">Insights</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

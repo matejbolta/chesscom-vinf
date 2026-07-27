@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ChessComVINF Settings</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <img src="icons/icon-48.png" width="48" height="48" alt="">
+      <div>
+        <h1>ChessComVINF</h1>
+        <p>Version Infinity</p>
+      </div>
+      <span class="version">v0.13.4</span>
+    </header>
+
+    <form id="settings-form">
+      <section class="settings-card settings-card--master" aria-label="VINF">
+        <label class="setting-row">
+          <span>
+            <strong>Enable VINF</strong>
+            <small>Apply all homepage enhancements</small>
+          </span>
+          <input id="enabled" type="checkbox" role="switch">
+        </label>
+      </section>
+
+      <section class="settings-card" aria-labelledby="homepage-heading">
+        <h2 id="homepage-heading">Homepage</h2>
+        <label class="setting-row setting-row--select">
+          <span>
+            <strong>Daily Games</strong>
+            <small>Choose where the native card appears</small>
+          </span>
+          <select id="daily-games-placement" aria-label="Daily Games placement">
+            <option value="main">Main column</option>
+            <option value="sidebar">Right column</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span>
+            <strong>Show ChessTV</strong>
+            <small>Keep the native live broadcast card</small>
+          </span>
+          <input id="show-chess-tv" type="checkbox" role="switch">
+        </label>
+        <label class="setting-row">
+          <span>
+            <strong>Show Legend League</strong>
+            <small>Keep the native league card</small>
+          </span>
+          <input id="show-legend-league" type="checkbox" role="switch">
+        </label>
+      </section>
+
+      <section class="settings-card" aria-labelledby="quick-play-heading">
+        <div class="section-heading">
+          <div>
+            <h2 id="quick-play-heading">Quick Play presets</h2>
+            <p>Choose unique time controls for the homepage.</p>
+          </div>
+          <button id="reset-presets" class="text-button" type="button">Reset</button>
+        </div>
+        <label class="setting-row setting-row--select">
+          <span>
+            <strong>Shortcuts</strong>
+            <small>Choose the homepage grid size</small>
+          </span>
+          <select id="quick-play-preset-count" aria-label="Quick Play shortcut count">
+            <option value="6">6 buttons</option>
+            <option value="8">8 buttons</option>
+          </select>
+        </label>
+        <div id="preset-list" class="preset-list"></div>
+      </section>
+
+      <section class="settings-card" aria-labelledby="stats-heading">
+        <div class="section-heading">
+          <div>
+            <h2 id="stats-heading">Stats card</h2>
+            <p>Choose visible rows and keep them in a fixed order.</p>
+          </div>
+          <button id="reset-stats" class="text-button" type="button">Reset</button>
+        </div>
+        <fieldset class="stats-group">
+          <legend>Summary</legend>
+          <div id="stats-summary-list" class="stats-preference-list"></div>
+        </fieldset>
+        <fieldset class="stats-group">
+          <legend>Ratings</legend>
+          <div id="stats-rating-list" class="stats-preference-list"></div>
+        </fieldset>
+        <p class="stats-note">Insights always stays visible at the bottom.</p>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
