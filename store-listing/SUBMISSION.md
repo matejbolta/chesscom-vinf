@@ -1,5 +1,9 @@
 # Chrome Web Store update — ChessComVINF 0.15.4
 
+For the short list of changes from the already submitted 0.13.4 version, use
+`UPDATE_TLDR.md`. The rest of this file is the complete field-by-field reference
+and copy-ready text.
+
 This file contains copy-ready text for the existing Chrome Web Store item.
 Every copy block is plain text inside a fenced block, so copying it will not add
 Markdown blockquote characters.

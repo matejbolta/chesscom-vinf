@@ -752,7 +752,7 @@ Convenience Chrome Web Store handoff:
 
 SHA-256:
 
-    510fac458099ad90f339d828308e1382b5dcf4ff3789883890b8cf2e52502d82
+    6e8aa0d65cc7254304ff70a66c2abfa6f7154105dcc9d83d153a921a153e62ee
 
 The project is an independent public Git repository:
 
@@ -774,6 +774,12 @@ instead of Markdown blockquotes. Its public-safe synthetic screenshots and
 marquee artwork were refreshed for the redesigned homepage, the new card
 editor, the mirrored eight-button settings grid, and the removal of Insights
 from Chess.com's current Stats card.
+
+`store-listing/UPDATE_TLDR.md` is the preferred dashboard workflow for this
+update. It lists only what changes from the already submitted 0.13.4 version,
+what remains unchanged, and the exact package identity. Keep the longer
+submission document as the full reference rather than making the user repeat
+the original submission process.
 
 The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
 
