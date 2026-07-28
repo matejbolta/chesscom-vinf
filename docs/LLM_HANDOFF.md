@@ -752,7 +752,7 @@ Convenience Chrome Web Store handoff:
 
 SHA-256:
 
-    720f295468f0a61d7ed30d7c5e23b58db48e484e2d809fe5e5c345037c19dbde
+    510fac458099ad90f339d828308e1382b5dcf4ff3789883890b8cf2e52502d82
 
 The project is an independent public Git repository:
 
@@ -775,9 +775,15 @@ marquee artwork were refreshed for the redesigned homepage, the new card
 editor, the mirrored eight-button settings grid, and the removal of Insights
 from Chess.com's current Stats card.
 
-The intended public source tag for this release is `v0.15.4`. The release ZIP is
-ignored by Git and may be attached separately to a GitHub release or uploaded
-directly to the Chrome Web Store.
+The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
+
+    https://github.com/matejbolta/chesscom-vinf/releases/tag/v0.15.4
+
+That GitHub release includes `chesscom-vinf-0.15.4.zip` with the same SHA-256
+recorded above. The local release ZIP remains ignored by Git and is also the
+artifact prepared for direct Chrome Web Store upload. The Chrome Web Store
+update itself still requires the user to upload the package and submit it in
+Google's dashboard.
 
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,

@@ -8,6 +8,10 @@ Markdown blockquote characters.
 
 - Extension ID: `pfdelnfocedcbpomokhdaampckmhomme`
 - Current public repository: `https://github.com/matejbolta/chesscom-vinf`
+- Published source commit: `3f055bd`
+- Published tag: `v0.15.4`
+- GitHub release:
+  `https://github.com/matejbolta/chesscom-vinf/releases/tag/v0.15.4`
 - Category: `Productivity`
 - Language: `English`
 - Mature content: `Off`
@@ -183,8 +187,8 @@ Privacy remains unchanged: no analytics, telemetry, remote code, or collected ac
 
 ## Final update sequence
 
-1. Push the 0.15.4 source commit and tag to GitHub.
-2. Confirm the public privacy-policy URL renders from the pushed commit.
+1. GitHub source, tag, release page, and release ZIP are already published.
+2. Confirm the public privacy-policy URL still renders before submission.
 3. In the Chrome Web Store dashboard, open extension
    `pfdelnfocedcbpomokhdaampckmhomme`.
 4. Upload `release/chesscom-vinf-0.15.4.zip` as the new package.
