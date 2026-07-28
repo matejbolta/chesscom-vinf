@@ -120,15 +120,18 @@ same filename.
 On the Chess.com homepage, open Firefox's Extensions menu, choose Violentmonkey,
 and run **VINF settings**. The command opens a touch-friendly modal with the
 master VINF toggle in its own top card. A separate `Homepage` card contains the
-Daily Games placement choice (`Main column`, `Right column`, or `Hidden`) and
-independent ChessTV and Legend League visibility toggles. Quick Play can use six
-or eight unique presets from the same unified Bullet, Blitz, and Rapid groups as
-desktop; the Blitz group is ordered `3 min`, `3 + 2`, `5 min`, `5 + 2`,
-`5 + 3`, `5 + 5`. The modal also provides Stats visibility/order controls and
-an independent `Expanded` or `Retracted` selector for every rating row. A
-selector remains visible but disabled while its row is unticked, preserving the
-saved choice for the next time that row is enabled. All rating rows default to
-`Retracted`.
+Native play panel switch plus visibility and fixed-order controls for every
+known right-column card. Daily Games uses the same visibility checkbox plus a
+`Main` / `Right` selector that remembers its location while hidden. Quick Play
+can use 1, 2, 3, 4, 6, or 8 unique
+presets from the same unified Bullet, Blitz, and Rapid groups as desktop. Its
+editor mirrors the homepage grid above phone width: one row for 1–4 and
+column-first two-row grids for 6 and 8. The Blitz group is ordered `3 min`,
+`3 + 2`, `5 min`, `5 + 2`, `5 + 3`, `5 + 5`.
+The modal also provides Stats visibility/order controls and an independent
+`Expanded` or `Retracted` selector for every rating row. A selector remains
+visible but disabled while its row is unticked, preserving the saved choice for
+the next time that row is enabled. All rating rows default to `Retracted`.
 
 If the browser does not surface userscript commands, open:
 
@@ -168,19 +171,21 @@ homepage, and changes only `base` and `timeIncrement`.
 
 VINF has two DOM modes:
 
-- **Desktop:** the audited `#vue-instance` and `#vue-sidebar-instance` columns
-  keep their existing behavior and sidebar ordering.
+- **Two-column:** either the legacy `#vue-instance` /
+  `#vue-sidebar-instance` hosts or redesigned `#home-main` /
+  `#home-sidebar` hosts keep their existing behavior and sidebar ordering.
 - **Responsive/single-column:** VINF finds cards using semantic URLs, headings,
   and native component landmarks. Quick Play is inserted before Game History;
-  the default retained flow becomes Game History, Stats, ChessTV, Daily Games,
-  Legend League. Daily Games, ChessTV, and Legend League are omitted from that
-  flow when hidden in settings. Native action, Puzzles, Next Lesson, Game Review,
-  and the optional
+  known retained cards then follow the saved right-column order. Daily Games
+  follows its visibility plus Main/Right placement, and every other known card
+  follows its Show/Hide setting. Legacy native action, Puzzles, Next Lesson,
+  Game Review, and the optional
   `#main-banner` campaign are hidden. Every optional
   `.promo-toolbar-user-info` compatibility variant is also hidden. The exact
   `#homepage-toolbar` containing the avatar/name strip is hidden when the
   responsive page exposes that desktop toolbar; unrelated mobile profile
-  controls are not targeted.
+  controls are not targeted. The redesigned exact `#home-header` hero follows
+  Native play panel while its native launch link remains available in the DOM.
 
 At tablet widths Quick Play uses two columns. At narrow phone widths it becomes
 one column. Controls keep 7rem touch targets, no hover dependency, visible focus,
@@ -204,9 +209,10 @@ the signed-in tablet, verify:
    If Chess.com serves `#main-banner`, confirm it is absent too.
    If it serves `.promo-toolbar-user-info`, confirm that strip is absent too.
    If it serves `#homepage-toolbar`, confirm that header is absent too.
+   If it serves `#home-header`, verify the Native play panel setting.
 4. Game History and Stats remain usable. Verify Daily Games in each placement,
-   and independently show/hide ChessTV and Legend League.
-5. In both grid sizes, each active button starts the exact displayed clock. Do
+   then show/hide and reorder every available right-column card.
+5. In every grid size, each active button starts the exact displayed clock. Do
    this manually; every click can enter real matchmaking.
 6. Change a preset, each homepage-module setting, Stats visibility/order, and
    several per-rating initial states through VINF settings; reload the page and

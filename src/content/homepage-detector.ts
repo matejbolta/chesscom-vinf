@@ -28,8 +28,15 @@ export function isChessComHomepage(
   );
 
   const modules = locateHomepageModules(document);
-  const desktopLandmarks = Boolean(
+  const legacyDesktopLandmarks = Boolean(
     modules.promo && modules.leftColumn && modules.rightColumn
+  );
+  const modernHomepageLandmarks = Boolean(
+    document.querySelector("#home-header") &&
+      document.querySelector("#home-main.layout-column-one") &&
+      modules.leftColumn &&
+      modules.nativeLaunchTemplate &&
+      modules.gameHistory
   );
   const responsiveLandmarks = Boolean(
     modules.layoutMode === "responsive" &&
@@ -38,5 +45,8 @@ export function isChessComHomepage(
       (modules.gameHistory || modules.dailyGames || modules.stats)
   );
 
-  return Boolean(profileLandmark && (desktopLandmarks || responsiveLandmarks));
+  return Boolean(
+    modernHomepageLandmarks ||
+      (profileLandmark && (legacyDesktopLandmarks || responsiveLandmarks))
+  );
 }

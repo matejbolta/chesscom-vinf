@@ -3,7 +3,10 @@ import {
   DEFAULT_SETTINGS,
   normalizeSettings
 } from "../src/shared/settings";
-import { DEFAULT_EIGHT_TIME_CONTROL_IDS } from "../src/shared/time-controls";
+import {
+  DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
+  QUICK_PLAY_PRESET_COUNTS
+} from "../src/shared/time-controls";
 
 describe("settings", () => {
   it("uses the requested defaults", () => {
@@ -26,37 +29,43 @@ describe("settings", () => {
         timeControlIds: ["30s-0", "20s-1", "1-1", "5-2", "5-5", "60-0"]
       })
     ).toEqual({
+      ...DEFAULT_SETTINGS,
       enabled: false,
       dailyGamesPlacement: "main",
-      showChessTv: true,
-      showLegendLeague: true,
-      quickPlayPresetCount: 6,
+      dailyGamesVisiblePlacement: "main",
+      homepageSidebarVisible:
+        DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+          (id) => id !== "daily-games"
+        ),
       timeControlIds: ["30s-0", "20s-1", "1-1", "5-2", "5-5", "60-0"],
-      statsSummaryOrder: DEFAULT_SETTINGS.statsSummaryOrder,
-      statsSummaryVisible: DEFAULT_SETTINGS.statsSummaryVisible,
-      statsRatingOrder: DEFAULT_SETTINGS.statsRatingOrder,
-      statsRatingVisible: DEFAULT_SETTINGS.statsRatingVisible,
-      statsRatingStates: DEFAULT_SETTINGS.statsRatingStates
     });
   });
 
-  it("accepts eight unique presets and infers the eight-button mode", () => {
-    const normalized = normalizeSettings({
-      timeControlIds: DEFAULT_EIGHT_TIME_CONTROL_IDS
-    });
+  it("accepts and infers every supported shortcut count", () => {
+    for (const count of QUICK_PLAY_PRESET_COUNTS) {
+      const normalized = normalizeSettings({
+        timeControlIds: DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
+      });
 
-    expect(normalized.quickPlayPresetCount).toBe(8);
-    expect(normalized.timeControlIds).toEqual(DEFAULT_EIGHT_TIME_CONTROL_IDS);
+      expect(normalized.quickPlayPresetCount).toBe(count);
+      expect(normalized.timeControlIds).toEqual(
+        DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
+      );
+    }
   });
 
-  it("falls back to the requested grid's complete defaults", () => {
-    const normalized = normalizeSettings({
-      quickPlayPresetCount: 8,
-      timeControlIds: ["10-0", "10-0", "invalid"]
-    });
+  it("falls back to each requested grid's complete defaults", () => {
+    for (const count of QUICK_PLAY_PRESET_COUNTS) {
+      const normalized = normalizeSettings({
+        quickPlayPresetCount: count,
+        timeControlIds: ["10-0", "10-0", "invalid"]
+      });
 
-    expect(normalized.quickPlayPresetCount).toBe(8);
-    expect(normalized.timeControlIds).toEqual(DEFAULT_EIGHT_TIME_CONTROL_IDS);
+      expect(normalized.quickPlayPresetCount).toBe(count);
+      expect(normalized.timeControlIds).toEqual(
+        DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
+      );
+    }
   });
 
   it("migrates the retired 15-minute preset to 20 minutes", () => {
@@ -97,24 +106,75 @@ describe("settings", () => {
   });
 
   it("normalizes module placement and visibility settings", () => {
-    expect(
-      normalizeSettings({
-        ...DEFAULT_SETTINGS,
-        dailyGamesPlacement: "hidden",
-        showChessTv: false,
-        showLegendLeague: false
-      })
-    ).toMatchObject({
+    const migrated = normalizeSettings({
       dailyGamesPlacement: "hidden",
       showChessTv: false,
       showLegendLeague: false
     });
+    expect(migrated).toMatchObject({
+      dailyGamesPlacement: "hidden",
+      dailyGamesVisiblePlacement: "sidebar",
+      showNativePlayPanel: false
+    });
+    expect(migrated.homepageSidebarVisible).toEqual(
+      DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+        (id) =>
+          id !== "daily-games" &&
+          id !== "chess-tv" &&
+          id !== "legend-league"
+      )
+    );
     expect(
       normalizeSettings({
         ...DEFAULT_SETTINGS,
         dailyGamesPlacement: "somewhere"
       }).dailyGamesPlacement
     ).toBe("sidebar");
+    expect(
+      normalizeSettings({
+        dailyGamesPlacement: "hidden",
+        dailyGamesVisiblePlacement: "main"
+      }).dailyGamesVisiblePlacement
+    ).toBe("main");
+  });
+
+  it("accepts a complete homepage card order and filters visibility safely", () => {
+    const normalized = normalizeSettings({
+      ...DEFAULT_SETTINGS,
+      showNativePlayPanel: true,
+      homepageSidebarOrder: [
+        "friends",
+        "daily-puzzle",
+        "stats",
+        "streaks",
+        "legend-league",
+        "chess-tv",
+        "daily-games"
+      ],
+      homepageSidebarVisible: [
+        "friends",
+        "stats",
+        "daily-games",
+        "invalid",
+        "friends"
+      ]
+    });
+
+    expect(normalized.showNativePlayPanel).toBe(true);
+    expect(normalized.homepageSidebarOrder).toEqual([
+      "friends",
+      "daily-puzzle",
+      "stats",
+      "streaks",
+      "legend-league",
+      "chess-tv",
+      "daily-games"
+    ]);
+    expect(normalized.homepageSidebarVisible).toEqual([
+      "friends",
+      "stats",
+      "daily-games"
+    ]);
   });
 
   it("accepts complete Stats orders and filters visible IDs", () => {

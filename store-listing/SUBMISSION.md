@@ -1,15 +1,28 @@
-# Chrome Web Store submission
+# Chrome Web Store update — ChessComVINF 0.15.4
 
-This folder contains the public-safe listing copy and graphic assets for
-ChessComVINF 0.13.4. None of the screenshots use the private signed-in Chess.com
-capture in `fixtures/raw/`.
+This file contains copy-ready text for the existing Chrome Web Store item.
+Every copy block is plain text inside a fenced block, so copying it will not add
+Markdown blockquote characters.
+
+## Existing item
+
+- Extension ID: `pfdelnfocedcbpomokhdaampckmhomme`
+- Current public repository: `https://github.com/matejbolta/chesscom-vinf`
+- Category: `Productivity`
+- Language: `English`
+- Mature content: `Off`
+- Official URL: `None`
 
 ## Package
 
-- Upload: `../release/chesscom-vinf-0.13.4.zip`
-- Version: `0.13.4`
+- Upload: `../release/chesscom-vinf-0.15.4.zip`
+- Version: `0.15.4`
 - SHA-256:
-  `27d56a301878157c916b8529e40e9502c260061ef738a8a75edbae72fbb6bb97`
+  `7c7268ff3a0c5f0044251ecd7539bdba364d403d015a072d0e8bc83c110eb7fb`
+
+The package contains only the Manifest V3 extension. The Android userscript,
+private fixtures, source maps, store assets, and release documentation are not
+included.
 
 ## Store listing
 
@@ -23,38 +36,33 @@ capture in `fixtures/raw/`.
 
 ### Description
 
-Paste the following text into the Description field:
+Copy only the text inside this block:
 
-> ChessComVINF creates a calmer, more useful Chess.com homepage focused on
-> playing chess.
->
-> It replaces distracting homepage promotions with configurable Quick Play
-> buttons, keeps Game History prominent, and lets you decide which Stats and
-> sidebar cards remain visible.
->
-> Features:
->
-> • Choose six or eight one-click Bullet, Blitz, and Rapid presets.
-> • Keep Game History directly beneath Quick Play.
-> • Put Daily Games in the main column, right column, or hide it.
-> • Show or hide ChessTV and Legend League.
-> • Choose which Stats rows appear, their order, and whether each rating starts
-> expanded or retracted.
-> • Hide recurring campaign banners and the redundant homepage profile strip.
-> • Disable all VINF changes instantly from the extension popup.
->
-> Privacy:
->
-> VINF has no analytics, advertising, telemetry, remote code, or
-> developer-operated servers. It stores only your presentation preferences in
-> Chrome storage and does not collect or transmit account data or page content.
->
-> VINF runs only on the signed-in Chess.com homepage. Quick Play uses
-> Chess.com’s own native game-start link; the extension does not access
-> credentials or private matchmaking APIs.
->
-> ChessComVINF is an independent, unofficial extension and is not affiliated
-> with, endorsed by, or sponsored by Chess.com.
+```text
+ChessComVINF creates a calmer, more useful Chess.com homepage focused on playing chess.
+
+It replaces distracting homepage promotions with configurable Quick Play buttons, keeps Game History prominent, and lets you decide which native homepage cards remain visible and where they appear.
+
+Features:
+
+• Choose 1, 2, 3, 4, 6, or 8 one-click Bullet, Blitz, and Rapid presets.
+• Keep Game History directly beneath Quick Play.
+• Show or hide Chess.com’s large native play panel.
+• Show, hide, and reorder known cards in the right column.
+• Put Daily Games in the main column or right column, or hide it.
+• Choose which Stats rows appear, their fixed order, and whether each enabled rating starts expanded or retracted when Chess.com supports expansion.
+• Hide recurring campaign banners and the redundant homepage profile strip.
+• Save every setting immediately without a separate Save button.
+• Disable all VINF changes instantly from the extension popup.
+
+Privacy:
+
+VINF has no analytics, advertising, telemetry, remote code, or developer-operated servers. It stores only your presentation preferences in Chrome storage and does not collect or transmit account data or page content.
+
+VINF runs only on the signed-in Chess.com homepage. Quick Play uses Chess.com’s own native game-start link; the extension does not access credentials or private matchmaking APIs.
+
+ChessComVINF is an independent, unofficial extension and is not affiliated with, endorsed by, or sponsored by Chess.com.
+```
 
 ### Graphic assets
 
@@ -67,67 +75,59 @@ Paste the following text into the Description field:
 - Marquee promo tile: `assets/marquee-promo-1400x560.jpg`
 - Global promo video: leave blank.
 
-All screenshots and promo tiles are full-bleed JPEGs without transparency.
-The 128×128 store icon is a PNG with intentional transparent corner padding.
+All screenshots and promo tiles are synthetic and public-safe. They contain no
+live account data. The JPEG assets have no EXIF or XMP metadata.
 
-### Additional fields
+### URLs and support
 
-- Official URL: `None`
 - Homepage URL: `https://github.com/matejbolta/chesscom-vinf`
+- Privacy policy:
+  `https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md`
 - Support URL: `https://github.com/matejbolta/chesscom-vinf/issues`
-- Mature content: `Off`
-- Item support: visible
+- Official URL: `None`
 
-Do not use `chess.com` as the official URL: VINF is independent and does not
+Do not enter `chess.com` as the official URL. VINF is independent and does not
 control that domain.
 
-## Privacy
+## Privacy disclosures
+
+Keep every data-use category unchecked.
 
 ### Single purpose
 
-> Improve the signed-in Chess.com homepage by simplifying its layout and
-> providing configurable one-click time-control shortcuts.
+```text
+Improve the signed-in Chess.com homepage by simplifying its layout and providing configurable one-click time-control shortcuts.
+```
 
 ### Permission justification — storage
 
-> Stores only the user’s local VINF settings—enabled state, selected time
-> controls, module placement and visibility, and Stats display
-> preferences—so they persist across browser sessions. No account or page data
-> is stored.
+```text
+Stores only the user’s local VINF settings—enabled state, selected time controls, native module placement and visibility, right-column order, and Stats display preferences—so they persist across browser sessions. No account or page data is stored.
+```
 
 ### Site access justification
 
-> The content script runs only on https://www.chess.com/home* so it can
-> rearrange native homepage modules, hide user-selected modules, and render the
-> configured Quick Play controls. VINF does not run on games, messages,
-> account settings, or other websites.
+```text
+The content script runs only on https://www.chess.com/home* so it can rearrange native homepage modules, hide user-selected modules, and render the configured Quick Play controls. VINF does not run on games, messages, account settings, or other websites.
+```
 
 ### Remote code
 
 Select `No, I am not using remote code`.
 
-Suggested explanation if the dashboard requests one:
+If an explanation is requested, copy:
 
-> All executable JavaScript and CSS is included in the uploaded package. The
-> extension does not download or execute remote code.
+```text
+All executable JavaScript and CSS is included in the uploaded package. The extension does not download or execute remote code.
+```
 
-### Data usage
+### Data-use answers
 
 - Data collected: `None`
-- Do not select any personal, authentication, financial, location, browsing,
-  website-content, or activity data categories.
 - Selling data: `No`
 - Using data for unrelated purposes: `No`
 - Using data for creditworthiness or lending: `No`
-
-### Privacy policy
-
-Use this public GitHub-rendered policy URL:
-
-`https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md`
-
-The standalone `privacy-policy.html` remains available if a dedicated website
-or GitHub Pages site is added later.
+- Keep all three required data-use certifications checked.
 
 ## Distribution
 
@@ -136,40 +136,60 @@ or GitHub Pages site is added later.
 - Pricing: free
 - In-app purchases: none
 
-Use `Unlisted` instead only if the first release is intentionally limited to
-people with the direct store URL. Public and unlisted packages undergo the same
-review.
+## Reviewer test instructions
 
-## Test instructions
+This field may remain empty, as it was for the original accepted submission. If
+Google requests instructions, copy only the text inside this block:
 
-This field is optional and may be left blank. If Google requests reviewer
-guidance or review stalls because the signed-in route is not obvious, paste the
-following:
+```text
+ChessComVINF applies only to the signed-in Chess.com homepage.
 
-> ChessComVINF applies only to the signed-in Chess.com homepage.
->
-> 1. Sign in to a Chess.com test account and open
->    https://www.chess.com/home.
-> 2. Confirm that configurable Quick Play buttons appear at the top, with Game
->    History directly below and the selected native cards arranged in the right
->    column.
-> 3. Open the ChessComVINF toolbar popup. Change the Quick Play grid between six
->    and eight buttons, select different time controls, change Daily Games
->    placement, and change Stats visibility/order/expanded state.
-> 4. Refresh the homepage and confirm the saved settings persist.
-> 5. Turn off “Enable VINF” and confirm the native homepage layout is restored
->    after the page updates.
->
-> Most functionality can be reviewed without starting a live game. If a Quick
-> Play shortcut is tested, it uses Chess.com’s own native game-start URL.
-> No developer-provided account or credentials are required.
+1. Sign in to a Chess.com test account and open https://www.chess.com/home.
+2. Confirm that configurable Quick Play buttons appear at the top, with Game History directly below and the selected native cards arranged in the right column.
+3. Open the ChessComVINF toolbar popup. Change the Quick Play grid size, select different time controls, change Daily Games placement, change right-column card visibility/order, and change Stats visibility/order/initial state.
+4. Refresh the homepage and confirm that the settings persist.
+5. Turn off “Enable VINF” and confirm that the native homepage layout is restored after the page updates.
 
-## Before submitting
+Most functionality can be reviewed without starting a live game. If a Quick Play shortcut is tested, it uses Chess.com’s own native game-start URL. No developer-provided account or credentials are required.
+```
 
-1. Upload the package and every asset listed above.
-2. Publish the privacy policy and enter its HTTPS URL.
-3. Complete the Privacy and Distribution pages with the answers above.
-4. Save the draft and use “Why can’t I submit?” to identify any field Google
-   has added or made mandatory.
-5. Review the listing preview for accidental cropping.
-6. Submit for review only after the public privacy-policy URL is live.
+## GitHub release notes
+
+Suggested title:
+
+```text
+ChessComVINF 0.15.4
+```
+
+Suggested release notes:
+
+```text
+ChessComVINF 0.15.4 updates VINF for Chess.com’s redesigned homepage and expands homepage customization.
+
+Highlights:
+
+• Supports both the redesigned and preceding signed-in homepage layouts.
+• Adds 1, 2, 3, and 4-button Quick Play grids alongside the existing 6 and 8-button layouts.
+• Makes the shortcut editor mirror the selected homepage grid.
+• Adds visibility and fixed ordering for all known right-column cards.
+• Adds a separate native play-panel visibility setting.
+• Keeps Daily Games visibility separate from its Main/Right placement.
+• Updates Stats handling for Chess.com’s new card structure while preserving legacy expandable rows.
+• Preserves unknown future homepage cards instead of hiding them.
+• Includes updated Android userscript parity and extensive migration coverage.
+
+Privacy remains unchanged: no analytics, telemetry, remote code, or collected account data.
+```
+
+## Final update sequence
+
+1. Push the 0.15.4 source commit and tag to GitHub.
+2. Confirm the public privacy-policy URL renders from the pushed commit.
+3. In the Chrome Web Store dashboard, open extension
+   `pfdelnfocedcbpomokhdaampckmhomme`.
+4. Upload `release/chesscom-vinf-0.15.4.zip` as the new package.
+5. Replace the store description with the copy-ready description above.
+6. Upload the refreshed screenshots if the dashboard does not retain them
+   automatically.
+7. Confirm the Privacy and Distribution answers still match this file.
+8. Save the draft, inspect the listing preview, and submit the update for review.

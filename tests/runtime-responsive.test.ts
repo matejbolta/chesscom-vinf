@@ -7,8 +7,8 @@ import { loadResponsiveHomepageFixture } from "./test-utils";
 afterEach(() => {
   document.documentElement.removeAttribute(MARKERS.active);
   document.documentElement.removeAttribute(MARKERS.dailyPlacement);
-  document.documentElement.removeAttribute(MARKERS.chessTvVisibility);
-  document.documentElement.removeAttribute(MARKERS.legendLeagueVisibility);
+  document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
+  document.documentElement.removeAttribute(MARKERS.sidebarHidden);
   vi.clearAllTimers();
   vi.useRealTimers();
 });
@@ -106,8 +106,12 @@ describe("responsive runtime lifecycle", () => {
       load: async () => ({
         ...DEFAULT_SETTINGS,
         dailyGamesPlacement: "hidden",
-        showChessTv: false,
-        showLegendLeague: false
+        homepageSidebarVisible: DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+          (id) =>
+            id !== "daily-games" &&
+            id !== "chess-tv" &&
+            id !== "legend-league"
+        )
       }),
       subscribe: () => undefined
     });
@@ -117,11 +121,8 @@ describe("responsive runtime lifecycle", () => {
     expect(
       document.documentElement.getAttribute(MARKERS.dailyPlacement)
     ).toBe("hidden");
-    expect(
-      document.documentElement.getAttribute(MARKERS.chessTvVisibility)
-    ).toBe("hidden");
-    expect(
-      document.documentElement.getAttribute(MARKERS.legendLeagueVisibility)
-    ).toBe("hidden");
+    expect(document.documentElement.getAttribute(MARKERS.sidebarHidden)).toBe(
+      "chess-tv daily-games legend-league"
+    );
   });
 });

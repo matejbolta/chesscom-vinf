@@ -3,6 +3,7 @@ import { isChessComHomepage } from "../src/content/homepage-detector";
 import {
   HOME_LOCATION,
   loadHomepageFixture,
+  loadModernHomepageFixture,
   loadResponsiveHomepageFixture
 } from "./test-utils";
 
@@ -13,6 +14,12 @@ describe("isChessComHomepage", () => {
 
   it("accepts a signed-in responsive homepage with semantic landmarks", () => {
     expect(isChessComHomepage(loadResponsiveHomepageFixture(), HOME_LOCATION)).toBe(
+      true
+    );
+  });
+
+  it("accepts the redesigned signed-in homepage without the retired profile landmark", () => {
+    expect(isChessComHomepage(loadModernHomepageFixture(), HOME_LOCATION)).toBe(
       true
     );
   });
@@ -37,6 +44,10 @@ describe("isChessComHomepage", () => {
     const missingLandmark = loadHomepageFixture();
     missingLandmark.querySelector(".promo-component")?.remove();
     expect(isChessComHomepage(missingLandmark, HOME_LOCATION)).toBe(false);
+
+    const uncertainModern = loadModernHomepageFixture();
+    uncertainModern.querySelector("#home-header")?.remove();
+    expect(isChessComHomepage(uncertainModern, HOME_LOCATION)).toBe(false);
   });
 
   it("rejects non-Chess.com and insecure origins", () => {

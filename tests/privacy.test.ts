@@ -43,7 +43,11 @@ function collectPublicTextFiles(directory: string, relative = ""): string[] {
 
 describe("privacy boundaries", () => {
   it("keeps the committed fixture sanitized", () => {
-    const fixture = ["homepage.html", "homepage-responsive.html"]
+    const fixture = [
+      "homepage.html",
+      "homepage-modern.html",
+      "homepage-responsive.html"
+    ]
       .map((name) =>
         readFileSync(resolve(process.cwd(), "tests/fixtures", name), "utf8")
       )

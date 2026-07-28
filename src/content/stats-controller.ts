@@ -34,24 +34,28 @@ function hasExactTextNode(element: HTMLElement, expected: string): boolean {
 function findSummaryRows(
   stats: HTMLElement
 ): {
-  container: HTMLElement | null;
+  parent: HTMLElement | null;
+  hideableContainer: HTMLElement | null;
   known: Map<StatsSummaryId, HTMLElement>;
   unknown: HTMLElement[];
 } {
-  const container = stats.querySelector<HTMLElement>(
+  const legacyContainer = stats.querySelector<HTMLElement>(
     ":scope > ul.sidebar-ratings-general"
   );
   const known = new Map<StatsSummaryId, HTMLElement>();
   const unknown: HTMLElement[] = [];
-  if (!container) {
-    return { container, known, unknown };
-  }
-
-  const rows = Array.from(container.children).filter(
-    (element): element is HTMLElement =>
-      element instanceof HTMLElement &&
-      element.matches("li.sidebar-ratings-item")
-  );
+  const rows = legacyContainer
+    ? Array.from(legacyContainer.children).filter(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement &&
+          element.matches("li.sidebar-ratings-item")
+      )
+    : Array.from(stats.children).filter(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement &&
+          element.matches(".cc-aside-item-component")
+      );
+  const parent = legacyContainer ?? (rows.length > 0 ? stats : null);
   for (const row of rows) {
     const match = STATS_SUMMARY_CATALOG.find((item) =>
       hasExactTextNode(row, item.label)
@@ -62,7 +66,41 @@ function findSummaryRows(
       unknown.push(row);
     }
   }
-  return { container, known, unknown };
+  return {
+    parent,
+    hideableContainer: legacyContainer,
+    known,
+    unknown
+  };
+}
+
+function ratingIdFromPath(row: HTMLElement): StatsRatingId | null {
+  const pathMap: Readonly<Record<string, StatsRatingId>> = {
+    rapid: "rapid",
+    bullet: "bullet",
+    blitz: "blitz",
+    daily: "daily",
+    puzzles: "puzzles",
+    chess960: "live-960",
+    live960: "live-960",
+    "live-960": "live-960"
+  };
+
+  for (const anchor of row.querySelectorAll<HTMLAnchorElement>("a[href]")) {
+    try {
+      const path = new URL(anchor.href).pathname.split("/").filter(Boolean);
+      const statsIndex = path.lastIndexOf("stats");
+      if (statsIndex >= 0 && path[statsIndex + 1]) {
+        const id = pathMap[path[statsIndex + 1].toLowerCase()];
+        if (id) {
+          return id;
+        }
+      }
+    } catch {
+      // Ignore malformed native links and keep looking for a recognized row.
+    }
+  }
+  return null;
 }
 
 function findRatingRows(
@@ -78,7 +116,9 @@ function findRatingRows(
   const rows = Array.from(stats.children).filter(
     (element): element is HTMLElement =>
       element instanceof HTMLElement &&
-      element.matches(".stat-section-stats-section")
+      element.matches(
+        ".stat-section-stats-section, .stat-item-stats-section"
+      )
   );
 
   for (const row of rows) {
@@ -87,7 +127,7 @@ function findRatingRows(
     );
     const label = normalizedText(
       row.querySelector<HTMLElement>(
-        ".stat-section-section-link-name"
+        ".stat-section-section-link-name, .cc-aside-item-label"
       )?.textContent ?? null
     );
     if ((insightsLink || label === "Insights") && !insights) {
@@ -95,9 +135,10 @@ function findRatingRows(
       continue;
     }
 
-    const match = STATS_RATING_CATALOG.find(
-      (item) => item.label === label
-    );
+    const pathId = ratingIdFromPath(row);
+    const match =
+      STATS_RATING_CATALOG.find((item) => item.label === label) ??
+      STATS_RATING_CATALOG.find((item) => item.id === pathId);
     if (match && !known.has(match.id)) {
       known.set(match.id, row);
     } else if (label) {
@@ -129,8 +170,28 @@ function hasExactOrder(
   );
 }
 
+function findRatingToggle(row: HTMLElement): HTMLElement | null {
+  const legacyButton = row.querySelector<HTMLButtonElement>(
+    ":scope > button.stat-section-button"
+  );
+  if (legacyButton) {
+    return legacyButton;
+  }
+
+  return (
+    Array.from(
+      row.querySelectorAll<HTMLElement>(
+        ":scope > a.cc-aside-item-component, :scope > button.cc-aside-item-component"
+      )
+    ).find((control) =>
+      control.querySelector(
+        '.cc-aside-item-chevron svg[data-glyph^="arrow-chevron-"], svg[data-glyph^="arrow-chevron-"]'
+      )
+    ) ?? null
+  );
+}
+
 function applyDefaultRatingState(
-  id: StatsRatingId,
   row: HTMLElement,
   state: StatsDefaultState
 ): void {
@@ -141,21 +202,23 @@ function applyDefaultRatingState(
     return;
   }
 
-  const button = row.querySelector<HTMLButtonElement>(
-    ":scope > button.stat-section-button"
-  );
-  if (!button || button.disabled) {
+  const control = findRatingToggle(row);
+  if (
+    !control ||
+    (control instanceof HTMLButtonElement && control.disabled) ||
+    control.getAttribute("aria-disabled") === "true"
+  ) {
     return;
   }
 
-  const collapsedChevron = button.querySelector(
+  const collapsedChevron = control.querySelector(
     'svg[data-glyph="arrow-chevron-bottom"]'
   );
-  const expandedChevron = button.querySelector(
+  const expandedChevron = control.querySelector(
     'svg[data-glyph="arrow-chevron-top"]'
   );
   const hasExpandedContent = Array.from(row.children).some(
-    (element) => element !== button
+    (element) => element !== control
   );
 
   const isExpanded = Boolean(expandedChevron || hasExpandedContent);
@@ -168,7 +231,7 @@ function applyDefaultRatingState(
     (state === "expanded" && collapsedChevron) ||
     (state === "retracted" && isExpanded)
   ) {
-    button.click();
+    control.click();
   }
 }
 
@@ -183,31 +246,47 @@ export function applyStatsPreferences(
 
   const summary = findSummaryRows(stats);
   const visibleSummary = new Set(settings.statsSummaryVisible);
-  if (summary.container) {
+  if (summary.parent) {
     const orderedSummary = settings.statsSummaryOrder
       .map((id) => summary.known.get(id))
       .filter((row): row is HTMLElement => Boolean(row));
     const desiredSummaryOrder = [...orderedSummary, ...summary.unknown];
-    const currentSummaryOrder = Array.from(summary.container.children).filter(
+    const managedSummary = new Set(desiredSummaryOrder);
+    const currentSummaryOrder = Array.from(summary.parent.children).filter(
       (element): element is HTMLElement =>
-        element instanceof HTMLElement &&
-        element.matches("li.sidebar-ratings-item")
+        element instanceof HTMLElement && managedSummary.has(element)
     );
     if (!hasExactOrder(currentSummaryOrder, desiredSummaryOrder)) {
+      const insertionPoint = summary.hideableContainer
+        ? null
+        : Array.from(summary.parent.children).find(
+            (element): element is HTMLElement =>
+              element instanceof HTMLElement &&
+              (element.matches(".stats-divider") ||
+                element.matches(
+                  ".stat-section-stats-section, .stat-item-stats-section"
+                ))
+          ) ?? null;
       for (const row of desiredSummaryOrder) {
         rememberPosition(row);
-        summary.container.append(row);
+        if (insertionPoint?.parentElement === summary.parent) {
+          summary.parent.insertBefore(row, insertionPoint);
+        } else {
+          summary.parent.append(row);
+        }
       }
     }
     for (const [id, row] of summary.known) {
       setVisible(row, visibleSummary.has(id), `stats-summary-${id}`);
     }
-    setVisible(
-      summary.container,
-      orderedSummary.some((row) => !row.hasAttribute(MARKERS.hidden)) ||
-        summary.unknown.length > 0,
-      "stats-summary"
-    );
+    if (summary.hideableContainer) {
+      setVisible(
+        summary.hideableContainer,
+        orderedSummary.some((row) => !row.hasAttribute(MARKERS.hidden)) ||
+          summary.unknown.length > 0,
+        "stats-summary"
+      );
+    }
   }
 
   const ratings = findRatingRows(stats);
@@ -227,9 +306,29 @@ export function applyStatsPreferences(
       managedRatings.has(element)
   );
   if (!hasExactOrder(currentRatingOrder, finalOrder)) {
+    const currentChildren = Array.from(stats.children);
+    const lastManagedIndex = currentChildren.reduce(
+      (lastIndex, element, index) =>
+        element instanceof HTMLElement && managedRatings.has(element)
+          ? index
+          : lastIndex,
+      -1
+    );
+    const insertionPoint =
+      currentChildren
+        .slice(lastManagedIndex + 1)
+        .find(
+          (element): element is HTMLElement =>
+            element instanceof HTMLElement &&
+            !element.matches(".stats-divider")
+        ) ?? null;
     for (const row of finalOrder) {
       rememberPosition(row);
-      stats.append(row);
+      if (insertionPoint?.parentElement === stats) {
+        stats.insertBefore(row, insertionPoint);
+      } else {
+        stats.append(row);
+      }
     }
   }
   for (const [id, row] of ratings.known) {
@@ -238,7 +337,34 @@ export function applyStatsPreferences(
   if (ratings.insights) {
     ratings.insights.removeAttribute(MARKERS.hidden);
   }
+  const usesModernStats =
+    summary.parent === stats ||
+    Array.from(ratings.known.values()).some((row) =>
+      row.matches(".stat-item-stats-section")
+    );
+  if (usesModernStats) {
+    const visibleSummaryRows = [
+      ...summary.known.values(),
+      ...summary.unknown
+    ].some((row) => !row.hasAttribute(MARKERS.hidden));
+    const visibleRatingRows = [
+      ...ratings.known.values(),
+      ...ratings.unknown,
+      ...(ratings.insights ? [ratings.insights] : [])
+    ].some((row) => !row.hasAttribute(MARKERS.hidden));
+    const dividers = Array.from(stats.children).filter(
+      (element): element is HTMLElement =>
+        element instanceof HTMLElement && element.matches(".stats-divider")
+    );
+    dividers.forEach((divider, index) => {
+      setVisible(
+        divider,
+        index === 0 && visibleSummaryRows && visibleRatingRows,
+        index === 0 ? "stats-summary-divider" : "stats-rating-divider"
+      );
+    });
+  }
   for (const [id, row] of ratings.known) {
-    applyDefaultRatingState(id, row, settings.statsRatingStates[id]);
+    applyDefaultRatingState(row, settings.statsRatingStates[id]);
   }
 }

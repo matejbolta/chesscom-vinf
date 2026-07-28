@@ -1,5 +1,12 @@
-import { MARKERS, QUICK_PLAY_OWNER } from "../shared/constants";
-import type { ExtensionSettings } from "../shared/models";
+import {
+  MARKERS,
+  QUICK_PLAY_OWNER,
+  SIDEBAR_CARD_OWNER
+} from "../shared/constants";
+import type {
+  ExtensionSettings,
+  HomepageSidebarCardId
+} from "../shared/models";
 import { DEFAULT_SETTINGS } from "../shared/settings";
 import { getTimeControls } from "../shared/time-controls";
 import { isChessComHomepage } from "./homepage-detector";
@@ -42,23 +49,21 @@ export class LayoutController {
     } else {
       document.documentElement.removeAttribute(MARKERS.dailyPlacement);
     }
-    if (settings.showChessTv) {
-      document.documentElement.removeAttribute(MARKERS.chessTvVisibility);
+    if (settings.showNativePlayPanel) {
+      document.documentElement.setAttribute(MARKERS.nativePlayPanel, "visible");
     } else {
-      document.documentElement.setAttribute(
-        MARKERS.chessTvVisibility,
-        "hidden"
-      );
+      document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
     }
-    if (settings.showLegendLeague) {
-      document.documentElement.removeAttribute(
-        MARKERS.legendLeagueVisibility
+    const hiddenSidebarCards = settings.homepageSidebarOrder.filter(
+      (id) => !settings.homepageSidebarVisible.includes(id)
+    );
+    if (hiddenSidebarCards.length > 0) {
+      document.documentElement.setAttribute(
+        MARKERS.sidebarHidden,
+        hiddenSidebarCards.join(" ")
       );
     } else {
-      document.documentElement.setAttribute(
-        MARKERS.legendLeagueVisibility,
-        "hidden"
-      );
+      document.documentElement.removeAttribute(MARKERS.sidebarHidden);
     }
 
     this.hide(modules.homepageToolbar, "homepage-toolbar");
@@ -66,7 +71,11 @@ export class LayoutController {
     for (const promoUserInfo of modules.promoUserInfos) {
       this.hide(promoUserInfo, "promo-user-info");
     }
-    this.hide(modules.nativeActionColumn, "native-actions");
+    if (settings.showNativePlayPanel) {
+      this.show(modules.nativeActionColumn);
+    } else {
+      this.hide(modules.nativeActionColumn, "native-actions");
+    }
     this.hide(modules.puzzles, "puzzles");
     this.hide(modules.nextLesson, "next-lesson");
     this.hide(modules.gameReview, "game-review");
@@ -81,55 +90,87 @@ export class LayoutController {
       this.show(modules.dailyGames);
     }
 
-    if (!settings.showChessTv && modules.chessTv) {
-      this.restorePosition(modules.chessTv);
-      modules.chessTv.removeAttribute(MARKERS.module);
-      this.hide(modules.chessTv, "chess-tv");
-    } else {
-      this.show(modules.chessTv);
-    }
-    if (!settings.showLegendLeague && modules.legendLeague) {
-      this.restorePosition(modules.legendLeague);
-      modules.legendLeague.removeAttribute(MARKERS.module);
-      this.hide(modules.legendLeague, "legend-league");
-    } else {
-      this.show(modules.legendLeague);
-    }
-
     modules.promo?.setAttribute(MARKERS.layout, "quick-play-in-main");
     if (modules.layoutMode === "responsive") {
       quickPlayHost.setAttribute(MARKERS.layout, "single-column");
     }
-    modules.stats?.setAttribute(MARKERS.module, "stats");
-    if (settings.showChessTv) {
-      modules.chessTv?.setAttribute(MARKERS.module, "chess-tv");
-    }
-    if (settings.dailyGamesPlacement === "sidebar") {
-      modules.dailyGames?.setAttribute(MARKERS.module, "daily-games");
+    if (modules.layoutMode === "desktop") {
+      quickPlayHost.setAttribute(MARKERS.layout, "desktop-main");
+      modules.rightColumn?.setAttribute(MARKERS.layout, "desktop-sidebar");
     }
     modules.gameHistory?.setAttribute(MARKERS.module, "game-history");
-    if (settings.showLegendLeague) {
-      modules.legendLeague?.setAttribute(MARKERS.module, "legend-league");
+
+    const sidebarCards: Partial<
+      Record<HomepageSidebarCardId, HTMLElement | null>
+    > = {
+      stats: modules.stats,
+      "daily-puzzle": modules.dailyPuzzle,
+      streaks: modules.streaks,
+      "legend-league": modules.legendLeague,
+      friends: modules.friends,
+      "chess-tv": modules.chessTv,
+      "daily-games":
+        settings.dailyGamesPlacement === "sidebar"
+          ? modules.dailyGames
+          : null
+    };
+
+    if (modules.layoutMode === "desktop" && modules.rightColumn) {
+      for (const id of ["streaks", "legend-league"] as const) {
+        sidebarCards[id] = this.ensureBadgeCardHost(
+          document,
+          modules.rightColumn,
+          id,
+          sidebarCards[id] ?? null,
+          modules.badgesContainer
+        );
+      }
+
+      if (modules.badgesContainer) {
+        const hasUnmanagedBadgeContent = Array.from(
+          modules.badgesContainer.children
+        ).some((child) => !child.matches(".badges-divider"));
+        if (hasUnmanagedBadgeContent) {
+          this.show(modules.badgesContainer);
+        } else {
+          this.hide(modules.badgesContainer, "badge-source");
+        }
+      }
+    }
+
+    const visibleSidebarCards = new Set(settings.homepageSidebarVisible);
+    for (const id of settings.homepageSidebarOrder) {
+      const card = sidebarCards[id];
+      if (!card) {
+        continue;
+      }
+      card.setAttribute(MARKERS.module, id);
+      if (id === "daily-games" || visibleSidebarCards.has(id)) {
+        this.show(card);
+      } else {
+        this.hide(card, id);
+      }
     }
 
     if (modules.layoutMode === "responsive") {
       const allResponsiveModules = [
         modules.gameHistory,
-        modules.stats,
-        modules.chessTv,
-        modules.dailyGames,
-        modules.legendLeague
+        ...settings.homepageSidebarOrder.map((id) => sidebarCards[id] ?? null),
+        settings.dailyGamesPlacement === "main" ? modules.dailyGames : null
       ].filter((element): element is HTMLElement => Boolean(element));
 
       if (settings.dailyGamesPlacement !== "main") {
         const visibleResponsiveModules = [
           modules.gameHistory,
-          modules.stats,
-          settings.showChessTv ? modules.chessTv : null,
-          settings.dailyGamesPlacement === "sidebar"
-            ? modules.dailyGames
-            : null,
-          settings.showLegendLeague ? modules.legendLeague : null
+          ...settings.homepageSidebarOrder.map((id) => {
+            if (
+              id !== "daily-games" &&
+              !visibleSidebarCards.has(id)
+            ) {
+              return null;
+            }
+            return sidebarCards[id] ?? null;
+          })
         ].filter((element): element is HTMLElement => Boolean(element));
         const canSafelyReorder = visibleResponsiveModules.every(
           (element) => element.parentElement === quickPlayHost
@@ -154,11 +195,19 @@ export class LayoutController {
         ? (Array.from(quickPlayHost.children).find(
             (element): element is HTMLElement =>
               element instanceof HTMLElement &&
-              element.matches(".home-container-component")
-          ) ?? null)
+              !element.hasAttribute(MARKERS.hidden) &&
+              (element !== modules.dailyGames ||
+                settings.dailyGamesPlacement === "main") &&
+              element.matches(".home-container-component, .main-section")
+          ) ??
+          (modules.gameHistory?.parentElement === quickPlayHost
+            ? modules.gameHistory
+            : null))
         : null;
     const firstMainModule =
-      modules.layoutMode === "responsive" &&
+      modules.layoutMode === "desktop"
+        ? firstNativeDesktopCard
+        : modules.layoutMode === "responsive" &&
       modules.gameHistory?.parentElement === quickPlayHost
         ? modules.gameHistory
         : settings.dailyGamesPlacement === "main" &&
@@ -178,13 +227,12 @@ export class LayoutController {
 
     if (modules.layoutMode === "desktop" && modules.rightColumn) {
       const desiredOrder = [
-        modules.stats,
-        settings.showChessTv ? modules.chessTv : null,
-        settings.dailyGamesPlacement === "sidebar"
-          ? modules.dailyGames
-          : null,
-        settings.showLegendLeague ? modules.legendLeague : null
-      ].filter((element): element is HTMLElement => Boolean(element));
+        ...new Set(
+          settings.homepageSidebarOrder
+            .map((id) => sidebarCards[id] ?? null)
+            .filter((element): element is HTMLElement => Boolean(element))
+        )
+      ];
 
       const currentPrefix = Array.from(modules.rightColumn.children).slice(
         0,
@@ -196,7 +244,11 @@ export class LayoutController {
 
       if (!alreadyOrdered) {
         for (const element of desiredOrder) {
-          this.rememberPosition(element);
+          if (
+            element.getAttribute(MARKERS.owned) !== SIDEBAR_CARD_OWNER
+          ) {
+            this.rememberPosition(element);
+          }
         }
         for (const element of [...desiredOrder].reverse()) {
           modules.rightColumn.prepend(element);
@@ -215,8 +267,8 @@ export class LayoutController {
 
   cleanup(document: Document): void {
     document.documentElement.removeAttribute(MARKERS.dailyPlacement);
-    document.documentElement.removeAttribute(MARKERS.chessTvVisibility);
-    document.documentElement.removeAttribute(MARKERS.legendLeagueVisibility);
+    document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
+    document.documentElement.removeAttribute(MARKERS.sidebarHidden);
 
     for (const panel of document.querySelectorAll<HTMLElement>(
       `[${MARKERS.owned}="${QUICK_PLAY_OWNER}"]`
@@ -254,6 +306,11 @@ export class LayoutController {
           : null;
       position.parent.insertBefore(element, validSibling);
     }
+    for (const host of document.querySelectorAll<HTMLElement>(
+      `[${MARKERS.owned}="${SIDEBAR_CARD_OWNER}"]`
+    )) {
+      host.remove();
+    }
     this.originalPositions.clear();
   }
 
@@ -286,5 +343,46 @@ export class LayoutController {
         : null;
     position.parent.insertBefore(element, validSibling);
     this.originalPositions.delete(element);
+  }
+
+  private ensureBadgeCardHost(
+    document: Document,
+    rightColumn: HTMLElement,
+    id: "streaks" | "legend-league",
+    element: HTMLElement | null,
+    badgesContainer: HTMLElement | null
+  ): HTMLElement | null {
+    if (!element) {
+      return null;
+    }
+    if (
+      element.parentElement === rightColumn ||
+      element.getAttribute(MARKERS.owned) === SIDEBAR_CARD_OWNER
+    ) {
+      return element;
+    }
+    if (!badgesContainer?.contains(element)) {
+      return element;
+    }
+
+    const existingHost = rightColumn.querySelector<HTMLElement>(
+      `:scope > [${MARKERS.owned}="${SIDEBAR_CARD_OWNER}"][${MARKERS.sidebarCard}="${id}"]`
+    );
+    if (existingHost) {
+      if (!existingHost.contains(element)) {
+        this.rememberPosition(element);
+        existingHost.append(element);
+      }
+      return existingHost;
+    }
+
+    const host = document.createElement("div");
+    host.className = "badges-component sidebar-section";
+    host.setAttribute(MARKERS.owned, SIDEBAR_CARD_OWNER);
+    host.setAttribute(MARKERS.sidebarCard, id);
+    this.rememberPosition(element);
+    host.append(element);
+    rightColumn.insertBefore(host, badgesContainer);
+    return host;
   }
 }

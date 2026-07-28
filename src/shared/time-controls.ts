@@ -1,4 +1,8 @@
-import type { TimeControl, TimeControlId } from "./models";
+import type {
+  QuickPlayPresetCount,
+  TimeControl,
+  TimeControlId
+} from "./models";
 
 export const TIME_CONTROL_CATALOG: readonly TimeControl[] = [
   {
@@ -158,6 +162,49 @@ export const DEFAULT_EIGHT_TIME_CONTROL_IDS: readonly TimeControlId[] = [
   "3-2",
   "5-5"
 ] as const;
+
+export const QUICK_PLAY_PRESET_COUNTS: readonly QuickPlayPresetCount[] = [
+  1,
+  2,
+  3,
+  4,
+  6,
+  8
+] as const;
+
+export const DEFAULT_TIME_CONTROL_IDS_BY_COUNT: Readonly<
+  Record<QuickPlayPresetCount, readonly TimeControlId[]>
+> = {
+  1: ["10-0"],
+  2: ["10-0", "15-10"],
+  3: ["10-0", "15-10", "3-2"],
+  4: ["10-0", "10-5", "15-10", "3-2"],
+  6: DEFAULT_TIME_CONTROL_IDS,
+  8: DEFAULT_EIGHT_TIME_CONTROL_IDS
+};
+
+export function isQuickPlayPresetCount(
+  value: unknown
+): value is QuickPlayPresetCount {
+  return (
+    typeof value === "number" &&
+    QUICK_PLAY_PRESET_COUNTS.includes(value as QuickPlayPresetCount)
+  );
+}
+
+export function getDefaultTimeControlIds(
+  count: QuickPlayPresetCount
+): readonly TimeControlId[] {
+  return DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count];
+}
+
+export function getQuickPlayGridDimensions(
+  count: QuickPlayPresetCount
+): { columns: number; rows: number } {
+  return count > 4
+    ? { columns: count / 2, rows: 2 }
+    : { columns: count, rows: 1 };
+}
 
 export const TIME_CONTROLS: readonly TimeControl[] = DEFAULT_TIME_CONTROL_IDS.map(
   (id) => TIME_CONTROL_CATALOG.find((control) => control.id === id)!

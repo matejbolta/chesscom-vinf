@@ -1,10 +1,12 @@
 # ChessComVINF DOM Audit
 
-Audit date: 2026-07-27
-Source: private complete-page capture in `fixtures/raw/2026-07-16/` plus
+Audit date: 2026-07-28
+Source: private complete-page captures in `fixtures/raw/2026-07-16/` and
+the reduced/all-cards 2026-07-28 captures under `fixtures/raw/` plus
 user-provided live Inspector samples of the recurring campaign banner and exact
 homepage toolbar hierarchy
-Observed locale and variant: signed-in English desktop homepage
+Observed locale and variants: signed-in English legacy and redesigned desktop
+homepages
 Responsive coverage: sanitized semantic fixture; live signed-in Android capture
 was unavailable in this session
 
@@ -13,16 +15,41 @@ was unavailable in this session
 - Verified URL: `https://www.chess.com/home`
 - Verified metadata: `og:url` is `https://www.chess.com/home`.
 - Signed-in marker: `html.user-logged-in`.
-- Profile landmark: `[data-cy="profile-section"]` containing a home profile
-  action (`[data-page="home"][data-button="profile"]`).
-- Dashboard landmarks: `.promo-component`, `#vue-instance.layout-column-one`,
-  and `#vue-sidebar-instance.layout-column-two`.
-- The desktop guard requires the exact `/home` pathname and every landmark above.
+- Legacy profile landmark: `[data-cy="profile-section"]` containing a home
+  profile action (`[data-page="home"][data-button="profile"]`).
+- Legacy dashboard landmarks: `.promo-component`,
+  `#vue-instance.layout-column-one`, and
+  `#vue-sidebar-instance.layout-column-two`.
+- Redesigned dashboard landmarks: exact `#home-header`,
+  `#home-main.layout-column-one`, a native immediate-match link, and Game
+  History. `#home-sidebar.layout-column-two` upgrades the page to the
+  redesigned two-column desktop contract when present.
+- The redesigned shell no longer exposes the old `data-cy` profile landmark.
+  Its guard therefore combines the exact signed-in root class, route, shell,
+  native launch evidence, and Game History rather than guessing a replacement
+  profile selector.
+- The desktop guard requires the exact `/home` pathname and one complete
+  legacy or redesigned landmark set.
 - The responsive guard keeps the same protocol, host, route, signed-in marker,
   and profile requirements, then requires a native launch link, a main content
   host, and at least one of Game History, Daily Games, or Stats.
 
 ## Top dashboard
+
+### Redesigned home hero
+
+The 2026-07-28 rollout removes `.promo-component`, `#homepage-toolbar`, and
+`.promo-toolbar-user-info`. Its native play and recommendation area is the
+exact `section#home-header` inside `.layout-hero`. The immediate-match control
+now lives under `.play-online-quick-links-component`; the safe launch link
+contract itself is unchanged.
+
+VINF treats the complete `#home-header` as the redesigned native action module.
+It is hidden by default without deleting its native launch link. The Homepage
+setting `Native play panel` sets
+`data-chesscom-vinf-native-play-panel="visible"` and restores the complete
+native hero; disabling that setting hides it again. The empty `.layout-hero`
+wrapper has zero rendered height while hidden.
 
 ### Homepage toolbar
 
@@ -84,7 +111,7 @@ The extension hides all four native promo columns with namespaced attributes. In
 version 0.5, it moves the one owned Quick Play panel into
 `#vue-instance.layout-column-one` before the first visible native module, then
 hides the emptied `.promo-component`. The verified native launch link remains in
-that hidden DOM, so launch URL derivation is unchanged. The bare six/eight-button grid
+that hidden DOM, so launch URL derivation is unchanged. The bare configurable grid
 has no heading, subtitle, branding mark, icon, or Game Review card.
 
 A frame-by-frame review of the 2026-07-27 12:51 reload recording showed that
@@ -106,16 +133,25 @@ replaces its skeleton before populated rows arrive, and the ChessTV iframe
 paints its own white/black loading frames. Version 0.11.0 deliberately does not
 add synthetic placeholders or clone native content for those isolated changes.
 
+The redesigned page replaces this four-column promo row with `#home-header`.
+The old selectors remain supported for users who are still served the legacy
+homepage or an A/B rollback. Game Review path fallback now explicitly excludes
+the located Game History card because redesigned history rows themselves link
+to `/analysis/game/...`.
+
 ## Main content columns
 
 | Module | Primary locator | Node moved |
 | --- | --- | --- |
-| Quick Play | Extension-owned `[data-chesscom-vinf-owned="quick-play"]` | Inserted as a direct child of `#vue-instance` before Daily Games or Game History |
+| Quick Play | Extension-owned `[data-chesscom-vinf-owned="quick-play"]` | Inserted into legacy `#vue-instance` or redesigned `#home-main > .main-component` before the first visible native main section |
 | Daily Games | Direct child of `#vue-instance` containing a `/play/online/daily` link; namespaced marker after moving/hiding | `.home-container-component` wrapper moved to the sidebar, restored to main, or hidden intact |
-| Game History | Direct child of `#vue-instance` containing `.game-history-games-component` | `.home-container-component` wrapper |
-| Legend League | `#league-badge-sidebar` | Direct child of `#vue-sidebar-instance` (`.home-actions`), optionally hidden intact |
+| Game History | `.game-history-games-component` in either main-column host | Legacy `.home-container-component` wrapper or the redesigned direct `.main-section` card |
+| Daily Puzzle | `.daily-puzzle-wrap`, `.daily-puzzle-content`, or `.daily-puzzle-preview` | Direct redesigned `.cc-section` sidebar child |
+| Streaks | `.streak-badge-sidebar-wrapper` | Native streak subtree, moved intact into a reversible VINF card host |
+| Legend League | `#league-badge-sidebar`, `.badge-component`, or a sidebar `/leagues/` link | Legacy direct card or native redesigned badge subtree |
+| Friends | `.friends-content` or `/friends` link | Direct redesigned `.cc-section` sidebar child |
 | ChessTV | `.tv-player-component`, `.tv-player-iframe`, or `.tv-player-sidebar-close-button`; `/tv` link fallback | Direct `.cc-section` child, optionally hidden intact |
-| Stats | Direct right-column section containing a link whose pathname begins `/stats/overview/` | Direct `.cc-section` child |
+| Stats | Direct sidebar section containing legacy `/stats/overview/...`, redesigned `/stats/<member>`, or native Stats row classes | Direct `.cc-section` child |
 
 Original nodes are moved, not cloned. The controller records their original
 parent/sibling positions for route cleanup.
@@ -125,13 +161,19 @@ native `.layout-component` continues to own both columns, so the `300px` sidebar
 starts on the same row as Quick Play without absolute positioning or a replacement
 page grid. A `2.4rem` gap separates Quick Play from the first native left module.
 
-The default right-column order is Stats, ChessTV, Daily Games, then Legend
-League. Version 0.12.0 makes Daily Games tri-state: the original wrapper is moved
-intact and constrained to sidebar width, restored before Game History in its
-native main column, or hidden intact. ChessTV and Legend League each have an
-independent show/hide setting. Hidden modules stay in the DOM and cleanup restores
-all native visibility and positions. The retired `reorderGameHistory` and
-`moveDailyGamesToSidebar` booleans migrate to the new placement value.
+The default managed right-column order is Stats, ChessTV, Daily Games
+when present, Streaks, Legend League, Daily Puzzle, then Friends. Version 0.15
+makes all seven known positions orderable. Every card has independent Show/Hide;
+Daily Games additionally retains its Main/Right placement while hidden.
+Unknown native cards are preserved visibly after the managed cards.
+
+The redesigned page nests Streaks, a divider, and Legend League inside one
+`.badges-component`. To provide independent visibility and ordering, VINF moves
+the two native subtrees—without cloning—into two extension-owned
+`.badges-component.sidebar-section` hosts. The source wrapper is hidden only
+when no unmanaged content remains. Cleanup restores both subtrees around their
+original divider, removes the owned hosts, and restores every direct card's
+original parent/sibling position.
 
 Version 0.9.3 marks the document with
 `data-chesscom-vinf-daily-placement="sidebar"` as soon as the active desktop
@@ -152,36 +194,46 @@ appending them below the Daily Games and Game History skeletons. The Daily
 selectors stop matching as soon as its wrapper enters the right sidebar. The
 document marker is absent for `Main column` and is removed during cleanup.
 
-Version 0.12.0 also uses the Daily marker for `Hidden`, and adds early
-setting-specific document markers for hidden ChessTV and Legend League. Exact
-desktop CSS pre-hides a direct sidebar child containing the already-audited
-ChessTV player or `/tv` landmark, and a direct child containing
-`#league-badge-sidebar`. Element-level hidden markers remain authoritative after
-reconciliation. The runtime re-arms these document markers even while the target
-homepage is still hydrating, preventing optional cards from briefly painting.
+Version 0.15 keeps the Daily marker for `Hidden` and replaces card-specific
+flags with space-separated `data-chesscom-vinf-sidebar-hidden` IDs. Exact
+desktop CSS pre-hides audited Stats, ChessTV, Daily Puzzle, Friends, Streaks,
+and Legend League landmarks. Element-level hidden markers remain authoritative
+after reconciliation. The runtime re-arms the document marker even while the
+target homepage is hydrating, preventing optional cards from briefly painting.
 
 The player landmark is required because an online ChessTV card replaces the
 `Live on ChessTV` header/link with the current streamer name. The original
-link-only locator caused Legend League to move above an online TV card.
-When ChessTV and Legend League are adjacent after reordering, a namespaced module
-marker adds the standard `2.4rem` card gap between them.
+link-only locator caused another managed card to move above an online TV card.
+Namespaced module markers preserve the standard `2.4rem` gap between adjacent
+managed cards in legacy hosts.
+
+The redesigned hosts are `#home-main > .main-component` and
+`#home-sidebar > .sidebar-component`. They already use flex gaps, so VINF
+normalizes each to the established `2.4rem` spacing and suppresses its own
+legacy margin inside those hosts. A direct empty `.main-section` emitted by the
+new shell is hidden only while it contains no elements; native hydration makes
+it visible again automatically. The observed redesigned widths remain `728px`
+for the main column and `300px` for the sidebar.
 
 ### Stats card internals
 
-The saved signed-in homepage confirms two native row groups inside the Stats
+The saved signed-in homepages confirm two Stats schemas inside the native
 `.cc-section`:
 
 | Group | Native structure | Recognition |
 | --- | --- | --- |
 | Summary | Direct `ul.sidebar-ratings-general` containing direct `li.sidebar-ratings-item` rows | An exact descendant text node: `Games`, `Puzzles`, or `Lessons` |
 | Ratings | Direct `.stat-section-stats-section` children of the Stats card | Exact `.stat-section-section-link-name` text: `Rapid`, `Bullet`, `Blitz`, `Daily`, `Puzzles`, or `Live 960` |
-| Insights | A rating-shaped direct `.stat-section-stats-section` child | Descendant link beginning `/insights/`; exact `Insights` label is a fallback |
+| Legacy Insights | An optional rating-shaped direct `.stat-section-stats-section` child | Descendant link beginning `/insights/`; exact `Insights` label is a fallback |
+| Redesigned summary | Direct `.cc-aside-item-component` children | The same exact Games/Puzzles/Lessons text contract |
+| Redesigned ratings | Direct `.stat-item-stats-section` children | Exact `.cc-aside-item-label` text or the semantic `/member/<member>/stats/<category>` path |
 
 VINF moves the complete native wrappers rather than rebuilding their icons,
 ratings, links, buttons, or expansion behavior. Known rows follow the saved fixed
-order and carry the standard hidden marker when disabled in settings. Insights
-is never configurable: it remains visible and is appended after every other
-rating row.
+order and carry the standard hidden marker when disabled in settings. The
+2026-07-28 redesigned capture has no Insights row. If a legacy cohort supplies
+one, it is not configurable: VINF keeps that native row visible and appends it
+after every other rating row. VINF does not synthesize an Insights shortcut.
 
 After the requested order is established, repeated reconciliation must not
 append or otherwise move an already-correct row. Native expansion mutates the
@@ -189,21 +241,30 @@ rating subtree and may temporarily insert unlabeled rating-shaped content; VINF
 leaves that content unmanaged and in place. This is required for Chess.com's
 row-level expand/retract state to remain functional.
 
-Version 0.11.0 applies each visible known rating row's own saved `Expanded` or
-`Retracted` initial state once per native row instance. It clicks Chess.com's
-direct `button.stat-section-button` only when the explicit native chevron state
-differs from that row's preference: `arrow-chevron-bottom` is collapsed and
-`arrow-chevron-top` is expanded. The row is marked with the applied preference
-before the click, so expansion mutations cannot retrigger it. Later manual
-expand/retract actions remain untouched. A still-hydrating row with no
-recognizable state is left unmarked for a later reconciliation.
+VINF applies each visible known rating row's own saved `Expanded` or `Retracted`
+initial state once per native row instance. The legacy schema uses the direct
+`button.stat-section-button`; the current redesigned schema uses a direct
+`a.cc-aside-item-component` whose `.cc-aside-item-chevron` contains the native
+arrow glyph. VINF clicks only that native control and only when its explicit
+state differs from the preference: `arrow-chevron-bottom` is collapsed and
+`arrow-chevron-top`, or native content following the control inside the row, is
+expanded. The row is marked with the applied preference before the click, so
+expansion mutations cannot retrigger it. Later manual expand/retract actions
+remain untouched. A still-hydrating row with no recognizable state is left
+unmarked for a later reconciliation.
 
 The summary container itself is hidden when all three known summary rows are
 disabled and no unknown summary row exists, avoiding an empty divider block.
 Unknown future native rows are not hidden. Unknown rating rows retain their
-native relative order after the six known rows and before Insights. Cleanup
-restores every moved row to its original parent/sibling position and removes all
-VINF hidden markers.
+native relative order after the six known rows and before an optional legacy
+Insights row. Cleanup restores every moved row to its original parent/sibling
+position and removes all VINF hidden markers.
+
+The first redesigned capture exposed simple links, but the current rollout adds
+native chevrons and expandable detail content to those same rating rows. VINF
+supports both forms without synthesizing expansion UI: link-only rows remain
+untouched, while rows with an explicit native chevron receive their saved
+one-time initial state.
 
 The current defaults are:
 
@@ -211,7 +272,8 @@ The current defaults are:
 - rating order `Rapid`, `Blitz`, `Bullet`, `Daily`, `Puzzles`, `Live 960`, with
   only `Rapid` and `Blitz` visible;
 - every rating row's initial state `Retracted`;
-- `Insights` always visible at the bottom.
+- an optional native legacy `Insights` row remains visible at the bottom when
+  Chess.com supplies it.
 
 ## Verified quick-play launch method
 
@@ -251,8 +313,8 @@ The cross-platform preset audit found that desktop had consolidated `5 + 2` and
 The settings popup therefore uses a desktop-first union, but presents every
 Blitz choice in one time-ordered group: `3 min`, `3 + 2`, `5 min`, `5 + 2`,
 `5 + 3`, `5 + 5`. Source-platform availability remains internal metadata. It
-stores exactly the selected grid size of six or eight unique IDs. The original
-six controls remain the default six-button grid.
+stores exactly the selected count of 1, 2, 3, 4, 6, or 8 unique IDs. Counts up
+to four use one desktop row; six and eight retain their two-row layouts.
 
 Every selected option uses the same verified native route construction. Quick
 Play identifies each configured control as Bullet, Blitz, or Rapid and styles the
@@ -283,18 +345,17 @@ The extension does not guess a route or fall back to the last-used control.
   client-side navigation.
 - The emptied native promo area is hidden after Quick Play moves into the main
   column.
-- Below the extension breakpoint, the shortcut grid collapses from three columns
-  to two and then one without covering navigation.
+- Below the extension breakpoint, the shortcut grid collapses to two columns
+  and then one without covering navigation.
 - A responsive page without the desktop column IDs is located from `main` or
   `[role=main]`. Cards are resolved from stable destination paths and semantic
   headings while links inside `nav`, `header`, and `[role=navigation]` are
   excluded.
-- In responsive mode, Quick Play precedes Game History. When all retained cards
-  are direct siblings, their default visible order is Game History, Stats,
-  ChessTV, Daily Games, Legend League. Daily Games is restored to native flow for
-  `Main column` and omitted for `Hidden`; ChessTV and Legend League are omitted
-  when disabled. VINF does not move responsive cards across an uncertain nested
-  container boundary.
+- In responsive mode, Quick Play precedes Game History. When retained cards are
+  direct siblings, known cards follow the saved right-column order. Daily Games
+  is restored to native flow for `Main` and omitted for `Hidden`; every other
+  known card follows its saved Show/Hide state. VINF does not move responsive
+  cards across an uncertain nested container boundary.
 - The mutation observer falls back from `.base-container` to `main`,
   `[role=main]`, or `body`, so delayed mobile/responsive card replacement still
   schedules idempotent reconciliation.
@@ -317,6 +378,9 @@ capture.
 | Stats | Content link whose path begins `/stats/overview/` |
 | ChessTV | Existing player landmarks or `/tv` link |
 | Legend League | Existing badge or a `/leagues/` link outside the native action stack |
+| Daily Puzzle | Existing `.daily-puzzle-*` component landmarks |
+| Streaks | Existing `.streak-badge-sidebar-*` landmarks |
+| Friends | Existing `.friends-content` or `/friends` link |
 
 All fallbacks promote the semantic descendant only to a `section`, `article`,
 known native card wrapper, sanitized fixture wrapper, or direct main child. This
@@ -324,8 +388,8 @@ limits accidental movement of a broader page container.
 
 ## Known fallback behavior
 
-- Missing optional Daily Games, ChessTV, Legend League, or Game Review modules do
-  not block the remaining transformations.
+- Missing optional Daily Games, ChessTV, Daily Puzzle, Streaks, Legend League,
+  Friends, or Game Review modules do not block the remaining transformations.
 - An uncertain route or missing signed-in landmark results in no transformation.
 - Launch failure restores the controls after a bounded timeout, marks the failed
   button locally, and announces non-persistent text through a visually hidden

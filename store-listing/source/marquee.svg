@@ -117,11 +117,6 @@
         <text x="167" y="14" fill="#f5f4f2" font-weight="700" text-anchor="end">1016</text>
         <line y1="35" x2="170" y2="35" stroke="#45423e"/>
       </g>
-      <g transform="translate(14 192)" font-family="Arial, Helvetica, sans-serif" font-size="13">
-        <text y="16" fill="#f4c430" font-size="18">☀</text>
-        <text x="31" y="14" fill="#f5f4f2" font-weight="700">Insights</text>
-        <text x="168" y="14" fill="#aaa8a4" text-anchor="end">›</text>
-      </g>
     </g>
   </g>
 </svg>

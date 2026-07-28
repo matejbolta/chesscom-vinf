@@ -51,6 +51,13 @@ function hrefHasPath(element: Element, predicate: (path: string) => boolean): bo
   }
 }
 
+function isStatsCardPath(path: string): boolean {
+  return (
+    path.startsWith("/stats/overview/") ||
+    /^\/stats\/[^/]+\/?$/.test(path)
+  );
+}
+
 function findAnchorByPath(
   root: ParentNode,
   predicate: (path: string) => boolean,
@@ -124,17 +131,65 @@ function findModuleByHeading(
   return findModuleAncestor(root, heading ?? null);
 }
 
+function findSidebarCardElement(
+  rightColumn: HTMLElement | null,
+  landmark: Element | null,
+  nestedCardSelector?: string
+): HTMLElement | null {
+  if (!landmark) {
+    return null;
+  }
+  if (!rightColumn) {
+    return landmark instanceof HTMLElement
+      ? findModuleAncestor(
+          landmark.closest<HTMLElement>("main, [role='main']"),
+          landmark
+        ) ?? landmark
+      : landmark.parentElement;
+  }
+
+  const directCard = directChildContaining(rightColumn, landmark);
+  if (
+    directCard?.hasAttribute(MARKERS.sidebarCard) ||
+    !directCard?.matches(".badges-component") ||
+    !nestedCardSelector
+  ) {
+    return directCard;
+  }
+
+  return landmark.closest<HTMLElement>(nestedCardSelector);
+}
+
 export function locateHomepageModules(document: Document): HomepageModules {
   const contentRoot =
     document.querySelector<HTMLElement>("main, [role='main']") ??
     document.querySelector<HTMLElement>(".base-container");
   const promo = document.querySelector<HTMLElement>(".promo-component");
-  const desktopLeftColumn = document.querySelector<HTMLElement>(
+  const legacyLeftColumn = document.querySelector<HTMLElement>(
     "#vue-instance.layout-column-one"
   );
-  const desktopRightColumn = document.querySelector<HTMLElement>(
+  const legacyRightColumn = document.querySelector<HTMLElement>(
     "#vue-sidebar-instance.layout-column-two"
   );
+  const modernLeftShell = document.querySelector<HTMLElement>(
+    "#home-main.layout-column-one"
+  );
+  const modernRightShell = document.querySelector<HTMLElement>(
+    "#home-sidebar.layout-column-two"
+  );
+  const modernLeftColumn =
+    modernLeftShell?.querySelector<HTMLElement>(":scope > .main-component") ??
+    modernLeftShell;
+  const modernRightColumn =
+    modernRightShell?.querySelector<HTMLElement>(
+      ":scope > .sidebar-component"
+    ) ?? modernRightShell;
+  const desktopLeftColumn =
+    legacyLeftColumn ??
+    (modernLeftShell && modernRightShell ? modernLeftColumn : null);
+  const desktopRightColumn =
+    legacyRightColumn ??
+    (modernLeftShell && modernRightShell ? modernRightColumn : null);
   const layoutMode =
     desktopLeftColumn && desktopRightColumn ? "desktop" : "responsive";
 
@@ -148,8 +203,14 @@ export function locateHomepageModules(document: Document): HomepageModules {
     promoActionColumn?.querySelector<HTMLAnchorElement>(
       'a[href*="action=createLiveChallenge"]'
     ) ?? fallbackLaunchTemplate;
+  const modernHomeHeader = document.querySelector<HTMLElement>("#home-header");
   const nativeActionColumn =
-    promoActionColumn ?? findModuleAncestor(contentRoot, nativeLaunchTemplate);
+    promoActionColumn ??
+    (modernHomeHeader &&
+    nativeLaunchTemplate &&
+    modernHomeHeader.contains(nativeLaunchTemplate)
+      ? modernHomeHeader
+      : findModuleAncestor(contentRoot, nativeLaunchTemplate));
 
   const topLeagueLink = nativeActionColumn
     ? findAnchorByPath(nativeActionColumn, (path) => path.startsWith("/leagues/"))
@@ -185,14 +246,16 @@ export function locateHomepageModules(document: Document): HomepageModules {
       findModuleByPath(contentRoot, (path) => path.startsWith("/games/archive"));
 
   const rightSearchRoot = desktopRightColumn ?? contentRoot;
-  const stats = desktopRightColumn
-    ? directChildContaining(
-        desktopRightColumn,
-        findAnchorByPath(desktopRightColumn, (path) =>
-          path.startsWith("/stats/overview/")
-        )
+  const statsLandmark = rightSearchRoot
+    ? findAnchorByPath(rightSearchRoot, isStatsCardPath) ??
+      rightSearchRoot.querySelector<HTMLElement>(
+        ".stat-item-stats-section, .stat-section-stats-section"
       )
-    : findModuleByPath(contentRoot, (path) => path.startsWith("/stats/overview/"));
+    : null;
+  const stats = desktopRightColumn
+    ? directChildContaining(desktopRightColumn, statsLandmark)
+    : findModuleAncestor(contentRoot, statsLandmark) ??
+      findModuleByPath(contentRoot, isStatsCardPath);
   const chessTvPlayer =
     rightSearchRoot?.querySelector<HTMLElement>(
       ".tv-player-component, .tv-player-iframe, .tv-player-sidebar-close-button"
@@ -203,22 +266,69 @@ export function locateHomepageModules(document: Document): HomepageModules {
   const chessTv = desktopRightColumn
     ? directChildContaining(desktopRightColumn, chessTvPlayer ?? chessTvLink)
     : findModuleAncestor(contentRoot, chessTvPlayer ?? chessTvLink);
+  const badgesContainer =
+    Array.from(
+      rightSearchRoot?.querySelectorAll<HTMLElement>(".badges-component") ?? []
+    ).find((element) => !element.hasAttribute(MARKERS.sidebarCard)) ?? null;
+  const streakLandmark =
+    rightSearchRoot?.querySelector<HTMLElement>(
+      ".streak-badge-sidebar-wrapper, .streak-badge-sidebar-component"
+    ) ?? null;
+  const streaks = findSidebarCardElement(
+    desktopRightColumn,
+    streakLandmark,
+    ".streak-badge-sidebar-wrapper"
+  );
   const legendBadge =
     rightSearchRoot?.querySelector<HTMLElement>("#league-badge-sidebar") ?? null;
-  const legendLeague = desktopRightColumn
-    ? directChildContaining(desktopRightColumn, legendBadge)
-    : findModuleAncestor(contentRoot, legendBadge) ??
-      findModuleByPath(
-        contentRoot,
+  const legendLink = rightSearchRoot
+    ? findAnchorByPath(
+        rightSearchRoot,
         (path) => path.startsWith("/leagues/"),
         nativeActionColumn
-      );
+      )
+    : null;
+  const legendLeague =
+    findSidebarCardElement(
+      desktopRightColumn,
+      legendBadge ?? legendLink,
+      ".badge-component, #league-badge-sidebar"
+    ) ??
+    findModuleAncestor(contentRoot, legendBadge) ??
+    findModuleByPath(
+      contentRoot,
+      (path) => path.startsWith("/leagues/"),
+      nativeActionColumn
+    );
+  const dailyPuzzleLandmark =
+    rightSearchRoot?.querySelector<HTMLElement>(
+      ".daily-puzzle-wrap, .daily-puzzle-content, .daily-puzzle-preview"
+    ) ?? null;
+  const dailyPuzzle = desktopRightColumn
+    ? directChildContaining(desktopRightColumn, dailyPuzzleLandmark)
+    : findModuleAncestor(contentRoot, dailyPuzzleLandmark);
+  const friendsLandmark =
+    rightSearchRoot?.querySelector<HTMLElement>(".friends-content") ??
+    (rightSearchRoot
+      ? findAnchorByPath(rightSearchRoot, (path) => path === "/friends")
+      : null);
+  const friends = desktopRightColumn
+    ? directChildContaining(desktopRightColumn, friendsLandmark)
+    : findModuleAncestor(contentRoot, friendsLandmark);
 
   const responsiveMainHost =
     gameHistory?.parentElement ??
     dailyGames?.parentElement ??
     nativeActionColumn?.parentElement ??
     contentRoot;
+  const gameReview =
+    findDirectPromoChildByTitle(promo, "Game Review") ??
+    findModuleByHeading(contentRoot, "Game Review") ??
+    findModuleByPath(
+      contentRoot,
+      (path) => path.startsWith("/analysis/game/"),
+      gameHistory
+    );
 
   return {
     layoutMode,
@@ -233,19 +343,29 @@ export function locateHomepageModules(document: Document): HomepageModules {
     topLeagueSummary,
     puzzles:
       findDirectPromoChildByTitle(promo, "Puzzles") ??
-      findModuleByPath(contentRoot, (path) => path.startsWith("/puzzles")),
+      findModuleByPath(
+        contentRoot,
+        (path) => path.startsWith("/puzzles"),
+        nativeActionColumn
+      ),
     nextLesson:
       findDirectPromoChildByTitle(promo, "Next Lesson") ??
-      findModuleByPath(contentRoot, (path) => path.startsWith("/lessons/")),
-    gameReview:
-      findDirectPromoChildByTitle(promo, "Game Review") ??
-      findModuleByPath(contentRoot, (path) => path.startsWith("/analysis/game/")),
+      findModuleByPath(
+        contentRoot,
+        (path) => path.startsWith("/lessons/"),
+        nativeActionColumn
+      ),
+    gameReview,
     leftColumn: desktopLeftColumn ?? responsiveMainHost,
     dailyGames,
     gameHistory,
     rightColumn: desktopRightColumn,
     stats,
     chessTv,
-    legendLeague
+    legendLeague,
+    dailyPuzzle,
+    friends,
+    streaks,
+    badgesContainer
   };
 }

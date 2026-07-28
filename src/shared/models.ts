@@ -19,10 +19,22 @@ export type TimeControlId =
 
 export type TimeClass = "bullet" | "blitz" | "rapid";
 export type PresetAvailability = "both" | "desktop" | "mobile";
-export type QuickPlayPresetCount = 6 | 8;
+export type QuickPlayPresetCount = 1 | 2 | 3 | 4 | 6 | 8;
 export type StatsSummaryId = "games" | "puzzles" | "lessons";
 export type StatsDefaultState = "expanded" | "retracted";
 export type DailyGamesPlacement = "main" | "sidebar" | "hidden";
+export type DailyGamesVisiblePlacement = Exclude<
+  DailyGamesPlacement,
+  "hidden"
+>;
+export type HomepageSidebarCardId =
+  | "stats"
+  | "daily-puzzle"
+  | "streaks"
+  | "legend-league"
+  | "friends"
+  | "chess-tv"
+  | "daily-games";
 export type StatsRatingId =
   | "rapid"
   | "bullet"
@@ -43,9 +55,11 @@ export interface TimeControl {
 
 export interface ExtensionSettings {
   enabled: boolean;
+  showNativePlayPanel: boolean;
   dailyGamesPlacement: DailyGamesPlacement;
-  showChessTv: boolean;
-  showLegendLeague: boolean;
+  dailyGamesVisiblePlacement: DailyGamesVisiblePlacement;
+  homepageSidebarOrder: HomepageSidebarCardId[];
+  homepageSidebarVisible: HomepageSidebarCardId[];
   quickPlayPresetCount: QuickPlayPresetCount;
   timeControlIds: TimeControlId[];
   statsSummaryOrder: StatsSummaryId[];
@@ -80,6 +94,10 @@ export interface HomepageModules {
   stats: HTMLElement | null;
   chessTv: HTMLElement | null;
   legendLeague: HTMLElement | null;
+  dailyPuzzle: HTMLElement | null;
+  friends: HTMLElement | null;
+  streaks: HTMLElement | null;
+  badgesContainer: HTMLElement | null;
 }
 
 export type QuickPlayButtonState =

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { locateHomepageModules } from "../src/content/module-locator";
 import {
   loadHomepageFixture,
+  loadModernHomepageFixture,
   loadResponsiveHomepageFixture
 } from "./test-utils";
 
@@ -26,6 +27,10 @@ describe("locateHomepageModules", () => {
     expect(modules.stats?.dataset.fixtureModule).toBe("stats");
     expect(modules.chessTv?.dataset.fixtureModule).toBe("chess-tv");
     expect(modules.legendLeague?.dataset.fixtureModule).toBe("legend-league");
+    expect(modules.dailyPuzzle).toBeNull();
+    expect(modules.friends).toBeNull();
+    expect(modules.streaks).toBeNull();
+    expect(modules.badgesContainer).toBeNull();
   });
 
   it("tolerates absent optional modules", () => {
@@ -113,5 +118,32 @@ describe("locateHomepageModules", () => {
     expect(modules.stats?.dataset.fixtureModule).toBe("stats");
     expect(modules.chessTv?.dataset.fixtureModule).toBe("chess-tv");
     expect(modules.legendLeague?.dataset.fixtureModule).toBe("legend-league");
+  });
+
+  it("finds the redesigned desktop hosts and does not mistake Game History for Game Review", () => {
+    const document = loadModernHomepageFixture();
+    const modules = locateHomepageModules(document);
+
+    expect(modules.layoutMode).toBe("desktop");
+    expect(modules.leftColumn?.classList.contains("main-component")).toBe(true);
+    expect(modules.rightColumn?.classList.contains("sidebar-component")).toBe(
+      true
+    );
+    expect(modules.nativeActionColumn?.id).toBe("home-header");
+    expect(modules.nativeLaunchTemplate?.href).toContain(
+      "action=createLiveChallenge"
+    );
+    expect(modules.dailyGames).toBeNull();
+    expect(modules.gameHistory?.dataset.fixtureModule).toBe("game-history");
+    expect(modules.gameReview).toBeNull();
+    expect(modules.puzzles).toBeNull();
+    expect(modules.nextLesson).toBeNull();
+    expect(modules.stats?.dataset.fixtureModule).toBe("stats");
+    expect(modules.chessTv?.dataset.fixtureModule).toBe("chess-tv");
+    expect(modules.legendLeague?.dataset.fixtureModule).toBe("legend-league");
+    expect(modules.dailyPuzzle?.dataset.fixtureModule).toBe("daily-puzzle");
+    expect(modules.friends?.dataset.fixtureModule).toBe("friends");
+    expect(modules.streaks?.dataset.fixtureModule).toBe("streaks");
+    expect(modules.badgesContainer?.dataset.fixtureModule).toBe("badges");
   });
 });

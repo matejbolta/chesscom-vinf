@@ -9,6 +9,10 @@ const responsiveHomepageFixture = readFileSync(
   resolve(process.cwd(), "tests/fixtures/homepage-responsive.html"),
   "utf8"
 );
+const modernHomepageFixture = readFileSync(
+  resolve(process.cwd(), "tests/fixtures/homepage-modern.html"),
+  "utf8"
+);
 
 export const HOME_LOCATION = {
   protocol: "https:",
@@ -24,4 +28,9 @@ export function loadHomepageFixture(): Document {
 export function loadResponsiveHomepageFixture(): Document {
   const parser = new DOMParser();
   return parser.parseFromString(responsiveHomepageFixture, "text/html");
+}
+
+export function loadModernHomepageFixture(): Document {
+  const parser = new DOMParser();
+  return parser.parseFromString(modernHomepageFixture, "text/html");
 }

@@ -3,27 +3,175 @@ import { LayoutController } from "../src/content/layout-controller";
 import { NativeLaunchAdapter } from "../src/content/launch-adapter";
 import { MARKERS } from "../src/shared/constants";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
-import { DEFAULT_EIGHT_TIME_CONTROL_IDS } from "../src/shared/time-controls";
+import {
+  DEFAULT_EIGHT_TIME_CONTROL_IDS,
+  DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
+  QUICK_PLAY_PRESET_COUNTS
+} from "../src/shared/time-controls";
 import {
   HOME_LOCATION,
   loadHomepageFixture,
+  loadModernHomepageFixture,
   loadResponsiveHomepageFixture
 } from "./test-utils";
 
 function moduleOrder(container: Element): string[] {
   return Array.from(container.children)
-    .map((element) => (element as HTMLElement).dataset.fixtureModule)
+    .map(
+      (element) =>
+        (element as HTMLElement).dataset.fixtureModule ??
+        element.getAttribute(MARKERS.module) ??
+        undefined
+    )
     .filter((name): name is string => Boolean(name));
 }
 
 function visibleModuleOrder(container: Element): string[] {
   return Array.from(container.children)
     .filter((element) => !element.hasAttribute(MARKERS.hidden))
-    .map((element) => (element as HTMLElement).dataset.fixtureModule)
+    .map(
+      (element) =>
+        (element as HTMLElement).dataset.fixtureModule ??
+        element.getAttribute(MARKERS.module) ??
+        undefined
+    )
     .filter((name): name is string => Boolean(name));
 }
 
 describe("LayoutController", () => {
+  it("applies the focused layout to the redesigned desktop shell", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+
+    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+
+    const main = document.querySelector<HTMLElement>(
+      "#home-main > .main-component"
+    )!;
+    const sidebar = document.querySelector<HTMLElement>(
+      "#home-sidebar > .sidebar-component"
+    )!;
+    const quickPlay = document.querySelector<HTMLElement>(
+      `[${MARKERS.owned}="quick-play"]`
+    )!;
+
+    expect(quickPlay.parentElement).toBe(main);
+    expect(main.firstElementChild).toBe(quickPlay);
+    expect(quickPlay.nextElementSibling?.getAttribute("data-fixture-module")).toBe(
+      "main-placeholder"
+    );
+    expect(
+      document.querySelector("#home-header")?.getAttribute(MARKERS.hidden)
+    ).toBe("native-actions");
+    expect(
+      document
+        .querySelector('[data-fixture-module="game-history"]')
+        ?.hasAttribute(MARKERS.hidden)
+    ).toBe(false);
+    expect(visibleModuleOrder(sidebar)).toEqual([
+      "stats",
+      "chess-tv",
+      "streaks",
+      "legend-league",
+      "daily-puzzle",
+      "friends",
+      "unknown-card"
+    ]);
+
+    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+    expect(
+      document.querySelectorAll(`[${MARKERS.owned}="quick-play"]`)
+    ).toHaveLength(1);
+    expect(main.firstElementChild).toBe(quickPlay);
+
+    controller.cleanup(document);
+    expect(
+      document.querySelector(`[${MARKERS.owned}="quick-play"]`)
+    ).toBeNull();
+    expect(document.querySelector("#home-header")?.hasAttribute(MARKERS.hidden)).toBe(
+      false
+    );
+    expect(moduleOrder(sidebar)).toEqual([
+      "daily-puzzle",
+      "badges",
+      "friends",
+      "chess-tv",
+      "stats",
+      "unknown-card"
+    ]);
+    expect(main.hasAttribute(MARKERS.layout)).toBe(false);
+    expect(sidebar.hasAttribute(MARKERS.layout)).toBe(false);
+  });
+
+  it("shows, hides, and orders every known redesigned sidebar card safely", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const sidebar = document.querySelector<HTMLElement>(
+      "#home-sidebar > .sidebar-component"
+    )!;
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      showNativePlayPanel: true,
+      homepageSidebarOrder: [
+        "friends",
+        "daily-puzzle",
+        "legend-league",
+        "streaks",
+        "chess-tv",
+        "stats",
+        "daily-games"
+      ],
+      homepageSidebarVisible: [
+        "friends",
+        "legend-league",
+        "stats"
+      ]
+    });
+
+    expect(
+      document.querySelector("#home-header")?.hasAttribute(MARKERS.hidden)
+    ).toBe(false);
+    expect(document.documentElement.getAttribute(MARKERS.nativePlayPanel)).toBe(
+      "visible"
+    );
+    expect(visibleModuleOrder(sidebar)).toEqual([
+      "friends",
+      "legend-league",
+      "stats",
+      "unknown-card"
+    ]);
+    expect(
+      document
+        .querySelector('[data-fixture-module="daily-puzzle"]')
+        ?.getAttribute(MARKERS.hidden)
+    ).toBe("daily-puzzle");
+    expect(
+      document
+        .querySelector('[data-fixture-module="streaks"]')
+        ?.closest(`[${MARKERS.sidebarCard}="streaks"]`)
+        ?.getAttribute(MARKERS.hidden)
+    ).toBe("streaks");
+    expect(
+      document
+        .querySelector('[data-fixture-module="unknown-card"]')
+        ?.hasAttribute(MARKERS.hidden)
+    ).toBe(false);
+
+    controller.cleanup(document);
+    expect(document.documentElement.hasAttribute(MARKERS.nativePlayPanel)).toBe(
+      false
+    );
+    expect(moduleOrder(sidebar)).toEqual([
+      "daily-puzzle",
+      "badges",
+      "friends",
+      "chess-tv",
+      "stats",
+      "unknown-card"
+    ]);
+  });
+
   it("applies the required hierarchy and remains idempotent", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
@@ -221,6 +369,36 @@ describe("LayoutController", () => {
     ).toHaveLength(6);
   });
 
+  it("renders every supported shortcut count with its exact defaults", () => {
+    const document = loadHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    let previousPanel: HTMLElement | null = null;
+
+    for (const count of QUICK_PLAY_PRESET_COUNTS) {
+      controller.reconcile(document, HOME_LOCATION, {
+        ...DEFAULT_SETTINGS,
+        quickPlayPresetCount: count,
+        timeControlIds: [...DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]]
+      });
+
+      const panel = document.querySelector<HTMLElement>(
+        `[${MARKERS.owned}="quick-play"]`
+      )!;
+      expect(panel.dataset.presetCount).toBe(String(count));
+      expect(
+        Array.from(
+          panel.querySelectorAll<HTMLButtonElement>(
+            "[data-chesscom-vinf-time-control]"
+          )
+        ).map((button) => button.dataset.chesscomVinfTimeControl)
+      ).toEqual(DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]);
+      if (previousPanel) {
+        expect(panel).not.toBe(previousPanel);
+      }
+      previousPanel = panel;
+    }
+  });
+
   it("restores Daily Games immediately when its sidebar setting is disabled", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
@@ -284,8 +462,9 @@ describe("LayoutController", () => {
 
     controller.reconcile(document, HOME_LOCATION, {
       ...DEFAULT_SETTINGS,
-      showChessTv: false,
-      showLegendLeague: false
+      homepageSidebarVisible: DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+        (id) => id !== "chess-tv" && id !== "legend-league"
+      )
     });
 
     expect(
@@ -298,12 +477,9 @@ describe("LayoutController", () => {
         .querySelector('[data-fixture-module="legend-league"]')
         ?.getAttribute(MARKERS.hidden)
     ).toBe("legend-league");
-    expect(
-      document.documentElement.getAttribute(MARKERS.chessTvVisibility)
-    ).toBe("hidden");
-    expect(
-      document.documentElement.getAttribute(MARKERS.legendLeagueVisibility)
-    ).toBe("hidden");
+    expect(document.documentElement.getAttribute(MARKERS.sidebarHidden)).toBe(
+      "chess-tv legend-league"
+    );
     expect(visibleModuleOrder(rightColumn)).toEqual([
       "stats",
       "daily-games"
@@ -317,10 +493,7 @@ describe("LayoutController", () => {
       "legend-league"
     ]);
     expect(
-      document.documentElement.hasAttribute(MARKERS.chessTvVisibility)
-    ).toBe(false);
-    expect(
-      document.documentElement.hasAttribute(MARKERS.legendLeagueVisibility)
+      document.documentElement.hasAttribute(MARKERS.sidebarHidden)
     ).toBe(false);
   });
 
@@ -621,8 +794,12 @@ describe("LayoutController", () => {
     controller.reconcile(document, HOME_LOCATION, {
       ...DEFAULT_SETTINGS,
       dailyGamesPlacement: "hidden",
-      showChessTv: false,
-      showLegendLeague: false
+      homepageSidebarVisible: DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+        (id) =>
+          id !== "daily-games" &&
+          id !== "chess-tv" &&
+          id !== "legend-league"
+      )
     });
 
     expect(visibleModuleOrder(main)).toEqual(["game-history", "stats"]);

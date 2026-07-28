@@ -5,7 +5,12 @@ import {
   DEFAULT_SETTINGS,
   SETTINGS_STORAGE_KEY
 } from "../src/shared/settings";
-import { DEFAULT_EIGHT_TIME_CONTROL_IDS } from "../src/shared/time-controls";
+import {
+  DEFAULT_EIGHT_TIME_CONTROL_IDS,
+  DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
+  getQuickPlayGridDimensions,
+  QUICK_PLAY_PRESET_COUNTS
+} from "../src/shared/time-controls";
 
 async function flushAsyncWork(): Promise<void> {
   for (let index = 0; index < 30; index += 1) {
@@ -29,8 +34,14 @@ describe("settings popup", () => {
       ...DEFAULT_SETTINGS,
       enabled: false,
       dailyGamesPlacement: "main" as const,
-      showChessTv: false,
-      showLegendLeague: false
+      dailyGamesVisiblePlacement: "main" as const,
+      homepageSidebarVisible:
+        DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+          (id) =>
+            id !== "daily-games" &&
+            id !== "chess-tv" &&
+            id !== "legend-league"
+        )
     };
     const set = vi.fn(async () => undefined);
     vi.stubGlobal("chrome", {
@@ -47,12 +58,19 @@ describe("settings popup", () => {
 
     const enabled = document.querySelector<HTMLInputElement>("#enabled")!;
     const dailyGamesPlacement = document.querySelector<HTMLSelectElement>(
-      "#daily-games-placement"
+      "#homepage-daily-games-placement"
     )!;
-    const showChessTv =
-      document.querySelector<HTMLInputElement>("#show-chess-tv")!;
+    const showDailyGames = document.querySelector<HTMLInputElement>(
+      "#homepage-sidebar-list-daily-games"
+    )!;
+    const showNativePlayPanel = document.querySelector<HTMLInputElement>(
+      "#show-native-play-panel"
+    )!;
+    const showChessTv = document.querySelector<HTMLInputElement>(
+      "#homepage-sidebar-list-chess-tv"
+    )!;
     const showLegendLeague = document.querySelector<HTMLInputElement>(
-      "#show-legend-league"
+      "#homepage-sidebar-list-legend-league"
     )!;
     const presetCount = document.querySelector<HTMLSelectElement>(
       "#quick-play-preset-count"
@@ -72,10 +90,24 @@ describe("settings popup", () => {
     );
 
     expect(enabled.checked).toBe(false);
+    expect(showDailyGames.checked).toBe(true);
     expect(dailyGamesPlacement.value).toBe("main");
+    expect(dailyGamesPlacement.disabled).toBe(false);
+    expect(
+      Array.from(dailyGamesPlacement.options).map((option) => option.value)
+    ).toEqual(["main", "sidebar"]);
+    expect(showNativePlayPanel.checked).toBe(false);
     expect(showChessTv.checked).toBe(false);
+    expect(
+      document.querySelector(
+        'label[for="homepage-sidebar-list-chess-tv"]'
+      )?.textContent
+    ).toBe("ChessTV");
     expect(showLegendLeague.checked).toBe(false);
     expect(presetCount.value).toBe("6");
+    expect(
+      Array.from(presetCount.options).map((option) => option.value)
+    ).toEqual(QUICK_PLAY_PRESET_COUNTS.map(String));
     expect(selects).toHaveLength(6);
     expect(document.querySelectorAll("select")).toHaveLength(14);
     expect(rapidState.value).toBe("retracted");
@@ -107,7 +139,12 @@ describe("settings popup", () => {
     expect(masterCard).not.toBe(homepageCard);
     expect(masterCard?.querySelectorAll(".setting-row")).toHaveLength(1);
     expect(homepageCard?.querySelector("#enabled")).toBeNull();
-    expect(homepageCard?.querySelector("#daily-games-placement")).not.toBeNull();
+    expect(
+      homepageCard?.querySelector("#homepage-daily-games-placement")
+    ).not.toBeNull();
+    expect(
+      homepageCard?.querySelectorAll(".homepage-card-row")
+    ).toHaveLength(7);
     expect(document.querySelector(".save-button")).toBeNull();
     expect(Array.from(selects[0].options).map((option) => option.value)).toEqual([
       "30s-0",
@@ -142,17 +179,26 @@ describe("settings popup", () => {
         ?.disabled
     ).toBe(false);
 
-    presetCount.value = "8";
-    presetCount.dispatchEvent(new Event("change", { bubbles: true }));
-    selects = Array.from(
-      document.querySelectorAll<HTMLSelectElement>("#preset-list select")
-    );
-    expect(selects).toHaveLength(8);
-    expect(selects.map((select) => select.value)).toEqual(
-      DEFAULT_EIGHT_TIME_CONTROL_IDS
-    );
-    expect(document.querySelectorAll("select")).toHaveLength(16);
-    await flushAsyncWork();
+    for (const count of [1, 2, 3, 4, 8] as const) {
+      presetCount.value = String(count);
+      presetCount.dispatchEvent(new Event("change", { bubbles: true }));
+      const dimensions = getQuickPlayGridDimensions(count);
+      expect(document.querySelector("#preset-list")?.getAttribute(
+        "data-preset-columns"
+      )).toBe(String(dimensions.columns));
+      expect(document.querySelector("#preset-list")?.getAttribute(
+        "data-preset-rows"
+      )).toBe(String(dimensions.rows));
+      selects = Array.from(
+        document.querySelectorAll<HTMLSelectElement>("#preset-list select")
+      );
+      expect(selects).toHaveLength(count);
+      expect(selects.map((select) => select.value)).toEqual(
+        DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
+      );
+      expect(document.querySelectorAll("select")).toHaveLength(8 + count);
+      await flushAsyncWork();
+    }
     expect(set).toHaveBeenLastCalledWith({
       [SETTINGS_STORAGE_KEY]: {
         ...savedSettings,
@@ -163,6 +209,12 @@ describe("settings popup", () => {
 
     presetCount.value = "6";
     presetCount.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(document.querySelector("#preset-list")?.getAttribute(
+      "data-preset-columns"
+    )).toBe("3");
+    expect(document.querySelector("#preset-list")?.getAttribute(
+      "data-preset-rows"
+    )).toBe("2");
     selects = Array.from(
       document.querySelectorAll<HTMLSelectElement>("#preset-list select")
     );
@@ -174,8 +226,31 @@ describe("settings popup", () => {
 
     enabled.checked = true;
     enabled.dispatchEvent(new Event("change", { bubbles: true }));
+    showNativePlayPanel.checked = true;
+    showNativePlayPanel.dispatchEvent(new Event("change", { bubbles: true }));
     dailyGamesPlacement.value = "sidebar";
     dailyGamesPlacement.dispatchEvent(new Event("change", { bubbles: true }));
+    showDailyGames.checked = false;
+    showDailyGames.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushAsyncWork();
+    expect(dailyGamesPlacement.disabled).toBe(true);
+    expect(set).toHaveBeenLastCalledWith({
+      [SETTINGS_STORAGE_KEY]: {
+        ...DEFAULT_SETTINGS,
+        enabled: true,
+        showNativePlayPanel: true,
+        dailyGamesPlacement: "hidden",
+        homepageSidebarVisible:
+          DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+            (id) =>
+              id !== "daily-games" &&
+              id !== "chess-tv" &&
+              id !== "legend-league"
+          )
+      }
+    });
+    showDailyGames.checked = true;
+    showDailyGames.dispatchEvent(new Event("change", { bubbles: true }));
     showChessTv.checked = true;
     showChessTv.dispatchEvent(new Event("change", { bubbles: true }));
     showLegendLeague.checked = true;
@@ -188,6 +263,7 @@ describe("settings popup", () => {
       [SETTINGS_STORAGE_KEY]: {
         ...DEFAULT_SETTINGS,
         enabled: true,
+        showNativePlayPanel: true,
         timeControlIds: ["20s-1", "10-5", "15-10", "30-0", "3-2", "5-3"]
       }
     });
@@ -216,6 +292,7 @@ describe("settings popup", () => {
       [SETTINGS_STORAGE_KEY]: {
         ...DEFAULT_SETTINGS,
         enabled: true,
+        showNativePlayPanel: true,
         timeControlIds: ["20s-1", "10-5", "15-10", "30-0", "3-2", "5-3"],
         statsSummaryVisible: ["games", "puzzles"],
         statsRatingOrder: [
@@ -243,6 +320,7 @@ describe("settings popup", () => {
       [SETTINGS_STORAGE_KEY]: {
         ...DEFAULT_SETTINGS,
         enabled: false,
+        showNativePlayPanel: true,
         timeControlIds: DEFAULT_SETTINGS.timeControlIds,
         statsSummaryVisible: ["games", "puzzles"],
         statsRatingOrder: [
@@ -267,6 +345,8 @@ describe("settings popup", () => {
     });
 
     document.querySelector<HTMLButtonElement>("#reset-stats")!.click();
+    await flushAsyncWork();
+    document.querySelector<HTMLButtonElement>("#reset-homepage")!.click();
     await flushAsyncWork();
     expect(set).toHaveBeenLastCalledWith({
       [SETTINGS_STORAGE_KEY]: {

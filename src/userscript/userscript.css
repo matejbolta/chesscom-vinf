@@ -114,16 +114,25 @@
 }
 
 .chesscom-vinf-settings-presets {
+  --chesscom-vinf-preset-columns: 3;
+  --chesscom-vinf-preset-rows: 2;
+
   border-top: 1px solid #45423e;
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-template-columns: repeat(
+    var(--chesscom-vinf-preset-columns),
+    minmax(0, 1fr)
+  );
+  grid-template-rows: repeat(var(--chesscom-vinf-preset-rows), auto);
   padding: 1.4rem;
 }
 
 .chesscom-vinf-settings-presets label {
   display: grid;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .chesscom-vinf-settings-presets label > span {
@@ -190,6 +199,10 @@
   grid-template-columns: 3rem minmax(0, 1fr) 11rem 4.4rem 4.4rem;
 }
 
+.chesscom-vinf-settings-homepage-card-row {
+  grid-template-columns: 3rem minmax(0, 1fr) 9rem 4.4rem 4.4rem;
+}
+
 .chesscom-vinf-settings-preference-row input {
   accent-color: #81b64c;
   height: 2.4rem;
@@ -246,11 +259,18 @@
 
 @media (max-width: 450px) {
   .chesscom-vinf-settings-presets {
+    grid-auto-flow: row;
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
   }
 
   .chesscom-vinf-settings-preference-row--with-state {
     gap: 0.7rem;
     grid-template-columns: 2.8rem minmax(0, 1fr) 9.6rem 4rem 4rem;
+  }
+
+  .chesscom-vinf-settings-homepage-card-row {
+    gap: 0.7rem;
+    grid-template-columns: 2.8rem minmax(0, 1fr) 8.8rem 4rem 4rem;
   }
 }

@@ -1,7 +1,11 @@
 import { LayoutController } from "../../src/content/layout-controller";
 import { NativeLaunchAdapter } from "../../src/content/launch-adapter";
+import type { ExtensionSettings } from "../../src/shared/models";
 import { DEFAULT_SETTINGS } from "../../src/shared/settings";
-import { DEFAULT_EIGHT_TIME_CONTROL_IDS } from "../../src/shared/time-controls";
+import {
+  getDefaultTimeControlIds,
+  isQuickPlayPresetCount
+} from "../../src/shared/time-controls";
 
 const fixtureLocation = {
   protocol: "https:",
@@ -31,11 +35,17 @@ if (searchParams.has("pre-hydration")) {
     ?.classList.remove("game-history-games-component");
 }
 
-const previewSettings = searchParams.has("eight-preview")
+const requestedPresetCount = searchParams.has("eight-preview")
+  ? 8
+  : Number(searchParams.get("preset-count"));
+
+let previewSettings: ExtensionSettings = isQuickPlayPresetCount(
+  requestedPresetCount
+)
   ? {
       ...DEFAULT_SETTINGS,
-      quickPlayPresetCount: 8 as const,
-      timeControlIds: [...DEFAULT_EIGHT_TIME_CONTROL_IDS]
+      quickPlayPresetCount: requestedPresetCount,
+      timeControlIds: [...getDefaultTimeControlIds(requestedPresetCount)]
     }
   : searchParams.has("union-preview")
     ? {
@@ -50,6 +60,35 @@ const previewSettings = searchParams.has("eight-preview")
         ] as const
       }
     : DEFAULT_SETTINGS;
+
+if (searchParams.has("native-panel")) {
+  previewSettings = {
+    ...previewSettings,
+    showNativePlayPanel: true
+  };
+}
+
+if (searchParams.has("sidebar-preview")) {
+  previewSettings = {
+    ...previewSettings,
+    dailyGamesPlacement: "hidden",
+    homepageSidebarOrder: [
+      "daily-puzzle",
+      "stats",
+      "legend-league",
+      "friends",
+      "chess-tv",
+      "streaks",
+      "daily-games"
+    ],
+    homepageSidebarVisible: [
+      "daily-puzzle",
+      "stats",
+      "legend-league",
+      "friends"
+    ]
+  };
+}
 
 controller.reconcile(document, fixtureLocation, {
   ...previewSettings,

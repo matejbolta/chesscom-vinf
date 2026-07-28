@@ -5,7 +5,10 @@ import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const rawDirectory = new URL("../../fixtures/raw/2026-07-16/", import.meta.url);
+const rawDirectory = new URL(
+  "../../fixtures/raw/page-complete-all-cards-2026-07-28/",
+  import.meta.url
+);
 const rawHtmlUrl = new URL("Home - Chess.com.html", rawDirectory);
 const assetRoot = new URL("Home - Chess.com_files/", rawDirectory);
 const assetRootPath = fileURLToPath(assetRoot);
@@ -78,6 +81,13 @@ const server = createServer(async (request, response) => {
     response.end(safeHtml);
     return;
   }
+  if (pathname === "/home-narrow-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0"><iframe title="VINF narrow homepage preview" src="/home" style="border:0;height:720px;width:900px"></iframe></body></html>'
+    );
+    return;
+  }
   if (pathname === "/home-online-tv") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(onlineTvHtml);
@@ -86,6 +96,13 @@ const server = createServer(async (request, response) => {
   if (pathname === "/home-responsive") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(responsiveHtml);
+    return;
+  }
+  if (pathname === "/popup-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF popup preview" src="/popup" style="border:0;height:600px;width:420px"></iframe></body></html>'
+    );
     return;
   }
   if (pathname === "/popup" || pathname === "/popup.html") {

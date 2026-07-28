@@ -1217,3 +1217,114 @@ reduced to functional controls only.
 - Keep the exact sampled `#ead762` as the full-color interaction accent. The
   darker surfaces reduce lightness while retaining enough chroma to avoid both
   the earlier orange-ochre result and the later pale-khaki result.
+
+## 47. Version 0.14.0 Product Amendments
+
+- Expand the persisted Quick Play button-count choices to exactly `1`, `2`, `3`,
+  `4`, `6`, and `8` in both the desktop popup and Android settings.
+- Keep one desktop row for counts one through four. Preserve the existing two
+  rows of three for six and two rows of four for eight.
+- Keep the same `1.4rem` gap and exact Game History width for every count. A
+  one-button layout therefore renders one full-width control.
+- Use these defaults in visible order for the one-row layouts:
+  - one: `10`;
+  - two: `10`, `15 + 10`;
+  - three: `10`, `15 + 10`, `3 + 2`;
+  - four: `10`, `10 + 5`, `15 + 10`, `3 + 2`.
+- Preserve the established six- and eight-button defaults and their column-first
+  stored order.
+- Infer any supported count from a complete valid legacy preset array when the
+  explicit count is absent. Invalid, duplicate, or wrongly sized arrays fall
+  back to the complete defaults for the selected count.
+- Keep the README concise: describe the available counts and layout behavior
+  without reproducing every default preset combination.
+
+## 48. Version 0.14.1 Product Amendments
+
+- Support the 2026-07-28 Chess.com desktop redesign alongside the legacy
+  homepage contract; do not remove legacy selectors because rollout cohorts or
+  rollbacks may still serve that shell.
+- Recognize the redesigned exact `#home-header` hero,
+  `#home-main > .main-component`, and
+  `#home-sidebar > .sidebar-component`. Keep the native immediate-match link in
+  the hidden hero and continue deriving every launch from it.
+- Place Quick Play before the first redesigned main section, keep it exactly
+  `728px` wide with Game History at the audited desktop viewport, and preserve
+  the established `2.4rem` main/sidebar card gap.
+- Recognize redesigned Stats summary rows, link-only rating rows, `/stats`
+  header path, and `/leagues/` Legend League path. Preserve unknown native
+  sidebar cards after VINF's managed prefix.
+- Apply Stats visibility and order to the redesigned non-expandable rows without
+  inventing chevrons or synthetic expansion behavior. Preserve saved expansion
+  preferences for legacy or future expandable rows.
+- Exclude the located Game History card from Game Review path fallback because
+  redesigned history rows themselves use `/analysis/game/...` destinations.
+- Keep the new private complete-page capture ignored. Publish only a minimal
+  sanitized regression fixture containing no account-specific values.
+
+## 49. Version 0.15.0 Product Amendments
+
+- Add `Native play panel` to Homepage settings. It shows or hides the complete
+  redesigned `#home-header` play/recommendations hero while retaining the
+  existing hidden-by-default focused layout.
+- Catalog every right-column card observed in the all-enabled 2026-07-28
+  homepage capture: Stats, ChessTV, Daily Games, Streaks, Legend League,
+  Daily Puzzle, and Friends.
+- Give every normal right-column card independent Show/Hide and fixed-order
+  controls in both the desktop popup and Android userscript settings.
+- Keep Daily Games tri-state (`Main`, `Right`, `Hidden`) and place that selector
+  inside the same ordered right-column list.
+- Preserve unknown future native cards visibly after all managed cards.
+- Treat Chess.com's shared Streaks/League `.badges-component` safely: move each
+  native subtree into a reversible extension-owned card host, never clone it,
+  and restore the exact original wrapper/divider order during cleanup.
+- Migrate the retired `showChessTv` and `showLegendLeague` booleans into the new
+  sidebar visibility array when a saved object has not yet adopted the new
+  model.
+- Keep private captures ignored. Add only synthetic Daily Puzzle, Streaks,
+  Friends, League, and unknown-card structures to the public regression fixture.
+
+## 50. Version 0.15.1 Product Amendments
+
+- Replace the Daily Games `Main` / `Right` / `Hidden` dropdown presentation
+  with the same Show/Hide checkbox used by every other managed card.
+- Keep a compact `Main` / `Right` selector beside Daily Games. Disable it while
+  the card is unticked, retain its selected location, and restore the card there
+  when it is ticked again.
+- Apply the same interaction and persistence behavior in both the desktop popup
+  and Android userscript settings.
+- Preserve the existing internal `hidden` placement and document pre-hide
+  behavior so this settings-only refinement does not weaken startup stability.
+
+## 51. Version 0.15.2 Product Amendments
+
+- Support the current redesigned Stats rows whose native expand/retract control
+  is a direct `.cc-aside-item-component` anchor with a chevron, alongside the
+  legacy direct button and the earlier redesigned link-only variant.
+- Apply every visible rating's saved initial Expanded/Retracted preference
+  through Chess.com's native control once per row instance. Preserve all later
+  manual expansion and retraction.
+- Recognize both native chevron direction and expanded content following the
+  row control. Do not clone or synthesize the graph, breakdown rows, or
+  expansion interaction.
+- Treat Insights as optional homepage content. The current redesigned homepage
+  does not include it; VINF creates no replacement. If a legacy cohort supplies
+  a native Insights row, preserve it visibly at the bottom as before.
+
+## 52. Version 0.15.3 Product Amendments
+
+- Rename the VINF right-column setting from `ChessTV & events` to `ChessTV`.
+- Treat separate event banners as independent native homepage content. The
+  ChessTV label describes only the ChessTV card even if Chess.com's own settings
+  happen to group both features under one toggle.
+
+## 53. Version 0.15.4 Product Amendments
+
+- Make the Quick Play preset editor mirror the selected homepage button grid
+  instead of always rendering two fields per row.
+- Render counts 1–4 as one row with one through four columns. Render six as two
+  rows of three and eight as two rows of four.
+- Preserve the established column-first order for six and eight so shortcut
+  numbers occupy the same positions in settings and on the homepage.
+- Apply the same adaptive editor layout to the desktop popup and Android
+  settings dialog; retain a single-column fallback on narrow phones.

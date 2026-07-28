@@ -9,6 +9,13 @@ html[data-chesscom-vinf-active="true"] .promo-component {
   display: none !important;
 }
 
+html[data-chesscom-vinf-active="true"]:not(
+    [data-chesscom-vinf-native-play-panel="visible"]
+  )
+  #home-header {
+  display: none !important;
+}
+
 html[data-chesscom-vinf-daily-placement]
   #vue-instance.layout-column-one
   > :has(a[href*="/play/online/daily"]),
@@ -24,24 +31,86 @@ html[data-chesscom-vinf-daily-placement]
   display: none !important;
 }
 
-html[data-chesscom-vinf-chess-tv="hidden"]
-  #vue-sidebar-instance.layout-column-two
-  > :has(.tv-player-component),
-html[data-chesscom-vinf-chess-tv="hidden"]
-  #vue-sidebar-instance.layout-column-two
-  > :has(.tv-player-iframe),
-html[data-chesscom-vinf-chess-tv="hidden"]
-  #vue-sidebar-instance.layout-column-two
-  > :has(.tv-player-sidebar-close-button),
-html[data-chesscom-vinf-chess-tv="hidden"]
-  #vue-sidebar-instance.layout-column-two
-  > :has(a[href="/tv"]) {
+html[data-chesscom-vinf-daily-placement]
+  #home-main.layout-column-one
+  > .main-component
+  > :has(a[href*="/play/online/daily"]) {
   display: none !important;
 }
 
-html[data-chesscom-vinf-legend-league="hidden"]
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(.tv-player-component),
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(.tv-player-iframe),
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(.tv-player-sidebar-close-button),
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(a[href*="/tv"]) {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(.tv-player-component),
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(.tv-player-iframe),
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(.tv-player-sidebar-close-button),
+html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(a[href*="/tv"]) {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-sidebar-hidden~="legend-league"]
   #vue-sidebar-instance.layout-column-two
   > :has(#league-badge-sidebar) {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-sidebar-hidden~="legend-league"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  .badge-component {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-sidebar-hidden~="streaks"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  .streak-badge-sidebar-wrapper {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-sidebar-hidden~="daily-puzzle"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(.daily-puzzle-wrap),
+html[data-chesscom-vinf-sidebar-hidden~="daily-puzzle"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(.daily-puzzle-content),
+html[data-chesscom-vinf-sidebar-hidden~="friends"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(.friends-content),
+html[data-chesscom-vinf-sidebar-hidden~="stats"]
+  #home-sidebar.layout-column-two
+  > .sidebar-component
+  > :has(.stat-item-stats-section),
+html[data-chesscom-vinf-sidebar-hidden~="stats"]
+  #vue-sidebar-instance.layout-column-two
+  > :has(.stat-section-stats-section) {
   display: none !important;
 }
 
@@ -49,8 +118,32 @@ html[data-chesscom-vinf-legend-league="hidden"]
   display: none !important;
 }
 
-#vue-sidebar-instance > [data-chesscom-vinf-module] + [data-chesscom-vinf-module] {
+#vue-sidebar-instance > [data-chesscom-vinf-module] + [data-chesscom-vinf-module],
+[data-chesscom-vinf-layout="desktop-sidebar"]
+  > [data-chesscom-vinf-module]
+  + [data-chesscom-vinf-module] {
   margin-top: 2.4rem !important;
+}
+
+[data-chesscom-vinf-layout="desktop-main"].main-component,
+[data-chesscom-vinf-layout="desktop-sidebar"].sidebar-component {
+  gap: 2.4rem !important;
+}
+
+[data-chesscom-vinf-layout="desktop-main"].main-component
+  > [data-chesscom-vinf-owned="quick-play"] {
+  margin-bottom: 0;
+}
+
+[data-chesscom-vinf-layout="desktop-main"].main-component
+  > .main-section:not(:has(*)) {
+  display: none !important;
+}
+
+[data-chesscom-vinf-layout="desktop-sidebar"].sidebar-component
+  > [data-chesscom-vinf-module]
+  + [data-chesscom-vinf-module] {
+  margin-top: 0 !important;
 }
 
 [data-chesscom-vinf-module="daily-games"] {
@@ -72,6 +165,7 @@ html[data-chesscom-vinf-legend-league="hidden"]
 
 .chesscom-vinf-quick-play {
   --chesscom-vinf-quick-play-columns: 3;
+  --chesscom-vinf-quick-play-rows: 2;
 
   align-self: stretch;
   color: var(--color-text-boldest, #f1f1f1);
@@ -79,6 +173,26 @@ html[data-chesscom-vinf-legend-league="hidden"]
   flex-direction: column;
   min-width: 0;
   user-select: none;
+}
+
+.chesscom-vinf-quick-play[data-preset-count="1"] {
+  --chesscom-vinf-quick-play-columns: 1;
+  --chesscom-vinf-quick-play-rows: 1;
+}
+
+.chesscom-vinf-quick-play[data-preset-count="2"] {
+  --chesscom-vinf-quick-play-columns: 2;
+  --chesscom-vinf-quick-play-rows: 1;
+}
+
+.chesscom-vinf-quick-play[data-preset-count="3"] {
+  --chesscom-vinf-quick-play-columns: 3;
+  --chesscom-vinf-quick-play-rows: 1;
+}
+
+.chesscom-vinf-quick-play[data-preset-count="4"] {
+  --chesscom-vinf-quick-play-columns: 4;
+  --chesscom-vinf-quick-play-rows: 1;
 }
 
 .chesscom-vinf-quick-play[data-preset-count="8"] {
@@ -113,7 +227,8 @@ html[data-chesscom-vinf-legend-league="hidden"]
   grid-auto-flow: column;
   grid-template-columns:
     repeat(var(--chesscom-vinf-quick-play-columns), minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(7rem, 1fr));
+  grid-template-rows:
+    repeat(var(--chesscom-vinf-quick-play-rows), minmax(7rem, 1fr));
   width: 100%;
 }
 

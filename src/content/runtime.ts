@@ -56,45 +56,49 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
   }
 
   function syncDocumentSettingsMarkers(): void {
-    if (!settings) {
+    const currentSettings = settings;
+    if (!currentSettings) {
       return;
     }
-    const shouldPrehideNativeChrome = settings.enabled && isTargetRoute();
+    const shouldPrehideNativeChrome =
+      currentSettings.enabled && isTargetRoute();
     if (shouldPrehideNativeChrome) {
       document.documentElement.setAttribute(MARKERS.active, "true");
-      if (settings.dailyGamesPlacement === "main") {
+      if (currentSettings.dailyGamesPlacement === "main") {
         document.documentElement.removeAttribute(MARKERS.dailyPlacement);
       } else {
         document.documentElement.setAttribute(
           MARKERS.dailyPlacement,
-          settings.dailyGamesPlacement
+          currentSettings.dailyGamesPlacement
         );
       }
-      if (settings.showChessTv) {
-        document.documentElement.removeAttribute(MARKERS.chessTvVisibility);
-      } else {
+      if (currentSettings.showNativePlayPanel) {
         document.documentElement.setAttribute(
-          MARKERS.chessTvVisibility,
-          "hidden"
+          MARKERS.nativePlayPanel,
+          "visible"
         );
+      } else {
+        document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
       }
-      if (settings.showLegendLeague) {
-        document.documentElement.removeAttribute(
-          MARKERS.legendLeagueVisibility
+      const hiddenSidebarCards =
+        currentSettings.homepageSidebarOrder.filter(
+          (id) => !currentSettings.homepageSidebarVisible.includes(id)
+        );
+      if (hiddenSidebarCards.length > 0) {
+        document.documentElement.setAttribute(
+          MARKERS.sidebarHidden,
+          hiddenSidebarCards.join(" ")
         );
       } else {
-        document.documentElement.setAttribute(
-          MARKERS.legendLeagueVisibility,
-          "hidden"
-        );
+        document.documentElement.removeAttribute(MARKERS.sidebarHidden);
       }
       return;
     }
 
     document.documentElement.removeAttribute(MARKERS.active);
     document.documentElement.removeAttribute(MARKERS.dailyPlacement);
-    document.documentElement.removeAttribute(MARKERS.chessTvVisibility);
-    document.documentElement.removeAttribute(MARKERS.legendLeagueVisibility);
+    document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
+    document.documentElement.removeAttribute(MARKERS.sidebarHidden);
   }
 
   function reconcile(): void {

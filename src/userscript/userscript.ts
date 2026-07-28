@@ -1,13 +1,19 @@
 import { MARKERS } from "../shared/constants";
 import type {
   DailyGamesPlacement,
+  DailyGamesVisiblePlacement,
   ExtensionSettings,
+  HomepageSidebarCardId,
   QuickPlayPresetCount,
   StatsDefaultState,
   StatsRatingId,
   StatsSummaryId,
   TimeControlId
 } from "../shared/models";
+import {
+  HOMEPAGE_SIDEBAR_CARD_CATALOG,
+  type HomepageSidebarCard
+} from "../shared/homepage-cards";
 import {
   DEFAULT_SETTINGS,
   normalizeSettings,
@@ -19,8 +25,9 @@ import {
   type StatsPreference
 } from "../shared/stats";
 import {
-  DEFAULT_EIGHT_TIME_CONTROL_IDS,
-  DEFAULT_TIME_CONTROL_IDS,
+  getDefaultTimeControlIds,
+  getQuickPlayGridDimensions,
+  isQuickPlayPresetCount,
   TIME_CONTROL_SETTINGS_GROUPS
 } from "../shared/time-controls";
 import { startVinfRuntime, type SettingsSource } from "../content/runtime";
@@ -157,9 +164,17 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   homepage.className = "chesscom-vinf-settings-card";
   const homepageHeader = document.createElement("div");
   homepageHeader.className = "chesscom-vinf-settings-section-header";
+  const homepageCopy = document.createElement("div");
   const homepageTitle = document.createElement("h3");
   homepageTitle.textContent = "Homepage";
-  homepageHeader.append(homepageTitle);
+  const homepageHelp = document.createElement("p");
+  homepageHelp.textContent =
+    "Choose the native cards that complement Quick Play.";
+  const resetHomepage = document.createElement("button");
+  resetHomepage.type = "button";
+  resetHomepage.textContent = "Reset";
+  homepageCopy.append(homepageTitle, homepageHelp);
+  homepageHeader.append(homepageCopy, resetHomepage);
   homepage.append(homepageHeader);
 
   function createToggle(
@@ -223,29 +238,11 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     "Enable VINF",
     "Apply homepage enhancements"
   );
-  const dailyGamesPlacementSelect = createChoice(
+  const showNativePlayPanelInput = createToggle(
     homepage,
-    "chesscom-vinf-userscript-daily-placement",
-    "Daily Games",
-    "Choose where the native card appears",
-    "Daily Games placement",
-    [
-      ["main", "Main column"],
-      ["sidebar", "Right column"],
-      ["hidden", "Hidden"]
-    ]
-  );
-  const showChessTvInput = createToggle(
-    homepage,
-    "chesscom-vinf-userscript-chess-tv",
-    "Show ChessTV",
-    "Keep the native live broadcast card"
-  );
-  const showLegendLeagueInput = createToggle(
-    homepage,
-    "chesscom-vinf-userscript-legend-league",
-    "Show Legend League",
-    "Keep the native league card"
+    "chesscom-vinf-userscript-native-play-panel",
+    "Native play panel",
+    "Show Chess.com’s large play and recommendations panel"
   );
 
   const presets = document.createElement("section");
@@ -271,6 +268,10 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     "Choose the homepage grid size",
     "Quick Play shortcut count",
     [
+      ["1", "1 button"],
+      ["2", "2 buttons"],
+      ["3", "3 buttons"],
+      ["4", "4 buttons"],
       ["6", "6 buttons"],
       ["8", "8 buttons"]
     ]
@@ -281,21 +282,27 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const selects: HTMLSelectElement[] = [];
 
   function getPresetCount(): QuickPlayPresetCount {
-    return presetCountSelect.value === "8" ? 8 : 6;
-  }
-
-  function getDefaultPresetIds(
-    count: QuickPlayPresetCount
-  ): readonly TimeControlId[] {
-    return count === 8
-      ? DEFAULT_EIGHT_TIME_CONTROL_IDS
-      : DEFAULT_TIME_CONTROL_IDS;
+    const count = Number(presetCountSelect.value);
+    return isQuickPlayPresetCount(count)
+      ? count
+      : DEFAULT_SETTINGS.quickPlayPresetCount;
   }
 
   function renderPresetSelects(
     count: QuickPlayPresetCount,
     ids: readonly TimeControlId[]
   ): void {
+    const dimensions = getQuickPlayGridDimensions(count);
+    presetList.dataset.presetColumns = String(dimensions.columns);
+    presetList.dataset.presetRows = String(dimensions.rows);
+    presetList.style.setProperty(
+      "--chesscom-vinf-preset-columns",
+      String(dimensions.columns)
+    );
+    presetList.style.setProperty(
+      "--chesscom-vinf-preset-rows",
+      String(dimensions.rows)
+    );
     presetList.replaceChildren();
     selects.length = 0;
     for (let index = 0; index < count; index += 1) {
@@ -498,6 +505,176 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     };
   }
 
+  interface HomepageCardEditor {
+    element: HTMLElement;
+    getDailyGamesPlacement(): DailyGamesPlacement;
+    getDailyGamesVisiblePlacement(): DailyGamesVisiblePlacement;
+    getOrder(): HomepageSidebarCardId[];
+    getVisible(): HomepageSidebarCardId[];
+    render(
+      order: readonly HomepageSidebarCardId[],
+      visible: readonly HomepageSidebarCardId[],
+      dailyGamesPlacement: DailyGamesPlacement,
+      dailyGamesVisiblePlacement: DailyGamesVisiblePlacement
+    ): void;
+  }
+
+  function createHomepageCardEditor(
+    catalog: readonly HomepageSidebarCard[],
+    initialOrder: readonly HomepageSidebarCardId[],
+    initialVisible: readonly HomepageSidebarCardId[],
+    initialDailyGamesPlacement: DailyGamesPlacement,
+    initialDailyGamesVisiblePlacement: DailyGamesVisiblePlacement
+  ): HomepageCardEditor {
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "chesscom-vinf-settings-preference-group";
+    const legend = document.createElement("legend");
+    legend.textContent = "Right column";
+    const list = document.createElement("div");
+    list.className = "chesscom-vinf-settings-preference-list";
+    fieldset.append(legend, list);
+
+    let order = [...initialOrder];
+    let visible = new Set(initialVisible);
+    let dailyGamesPlacement = initialDailyGamesPlacement;
+    let dailyGamesVisiblePlacement = initialDailyGamesVisiblePlacement;
+    const labels = new Map(catalog.map((item) => [item.id, item.label]));
+
+    const render = (
+      nextOrder: readonly HomepageSidebarCardId[] = order,
+      nextVisible: readonly HomepageSidebarCardId[] = [...visible],
+      nextDailyGamesPlacement: DailyGamesPlacement = dailyGamesPlacement,
+      nextDailyGamesVisiblePlacement: DailyGamesVisiblePlacement =
+        dailyGamesVisiblePlacement
+    ): void => {
+      order = [...nextOrder];
+      visible = new Set(nextVisible);
+      dailyGamesPlacement = nextDailyGamesPlacement;
+      dailyGamesVisiblePlacement = nextDailyGamesVisiblePlacement;
+      list.replaceChildren();
+
+      order.forEach((id, index) => {
+        const row = document.createElement("div");
+        row.className =
+          "chesscom-vinf-settings-preference-row chesscom-vinf-settings-homepage-card-row";
+        const labelText = labels.get(id) ?? id;
+
+        if (id === "daily-games") {
+          const checkbox = document.createElement("input");
+          checkbox.id = `chesscom-vinf-homepage-${id}`;
+          checkbox.type = "checkbox";
+          checkbox.checked = dailyGamesPlacement !== "hidden";
+          const label = document.createElement("label");
+          label.htmlFor = checkbox.id;
+          label.textContent = labelText;
+          const select = document.createElement("select");
+          select.id = "chesscom-vinf-userscript-daily-placement";
+          select.className = "chesscom-vinf-settings-rating-state";
+          select.setAttribute("aria-label", "Daily Games placement");
+          for (const [value, text] of [
+            ["main", "Main"],
+            ["sidebar", "Right"]
+          ] as const) {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = text;
+            select.append(option);
+          }
+          select.value = dailyGamesVisiblePlacement;
+          select.disabled = !checkbox.checked;
+          checkbox.addEventListener("change", () => {
+            dailyGamesPlacement = checkbox.checked
+              ? dailyGamesVisiblePlacement
+              : "hidden";
+            select.disabled = !checkbox.checked;
+          });
+          select.addEventListener("change", () => {
+            dailyGamesVisiblePlacement =
+              select.value as DailyGamesVisiblePlacement;
+            if (checkbox.checked) {
+              dailyGamesPlacement = dailyGamesVisiblePlacement;
+            }
+          });
+          row.append(checkbox, label, select);
+        } else {
+          const checkbox = document.createElement("input");
+          const checkboxId = `chesscom-vinf-homepage-${id}`;
+          checkbox.id = checkboxId;
+          checkbox.type = "checkbox";
+          checkbox.checked = visible.has(id);
+          const label = document.createElement("label");
+          label.htmlFor = checkboxId;
+          label.textContent = labelText;
+          checkbox.addEventListener("change", () => {
+            if (checkbox.checked) {
+              visible.add(id);
+            } else {
+              visible.delete(id);
+            }
+          });
+          row.append(checkbox, label, document.createElement("span"));
+        }
+
+        const createMoveButton = (
+          symbol: string,
+          offset: -1 | 1
+        ): HTMLButtonElement => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "chesscom-vinf-settings-order-button";
+          button.textContent = symbol;
+          button.disabled =
+            offset === -1 ? index === 0 : index === order.length - 1;
+          button.setAttribute(
+            "aria-label",
+            `Move ${labelText} ${offset === -1 ? "up" : "down"}`
+          );
+          button.addEventListener("click", () => {
+            const nextIndex = index + offset;
+            if (nextIndex < 0 || nextIndex >= order.length) {
+              return;
+            }
+            [order[index], order[nextIndex]] = [order[nextIndex], order[index]];
+            render();
+            void save();
+          });
+          return button;
+        };
+
+        row.append(createMoveButton("↑", -1), createMoveButton("↓", 1));
+        list.append(row);
+      });
+    };
+
+    render();
+    return {
+      element: fieldset,
+      getDailyGamesPlacement: () => dailyGamesPlacement,
+      getDailyGamesVisiblePlacement: () => dailyGamesVisiblePlacement,
+      getOrder: () => [...order],
+      getVisible: () =>
+        order.filter((id) =>
+          id === "daily-games"
+            ? dailyGamesPlacement === "sidebar"
+            : visible.has(id)
+        ),
+      render
+    };
+  }
+
+  const homepageCardEditor = createHomepageCardEditor(
+    HOMEPAGE_SIDEBAR_CARD_CATALOG,
+    DEFAULT_SETTINGS.homepageSidebarOrder,
+    DEFAULT_SETTINGS.homepageSidebarVisible,
+    DEFAULT_SETTINGS.dailyGamesPlacement,
+    DEFAULT_SETTINGS.dailyGamesVisiblePlacement
+  );
+  const homepageNote = document.createElement("p");
+  homepageNote.className = "chesscom-vinf-settings-note";
+  homepageNote.textContent =
+    "Unknown future Chess.com cards stay visible after these cards.";
+  homepage.append(homepageCardEditor.element, homepageNote);
+
   const stats = document.createElement("section");
   stats.className = "chesscom-vinf-settings-card";
   const statsHeader = document.createElement("div");
@@ -528,7 +705,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   );
   const statsNote = document.createElement("p");
   statsNote.className = "chesscom-vinf-settings-note";
-  statsNote.textContent = "Insights always stays visible at the bottom.";
+  statsNote.textContent =
+    "If Chess.com includes Insights here, VINF keeps it visible at the bottom.";
   stats.append(
     statsHeader,
     statsSummaryEditor.element,
@@ -554,9 +732,13 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
 
   function render(settings: ExtensionSettings): void {
     enabledInput.checked = settings.enabled;
-    dailyGamesPlacementSelect.value = settings.dailyGamesPlacement;
-    showChessTvInput.checked = settings.showChessTv;
-    showLegendLeagueInput.checked = settings.showLegendLeague;
+    showNativePlayPanelInput.checked = settings.showNativePlayPanel;
+    homepageCardEditor.render(
+      settings.homepageSidebarOrder,
+      settings.homepageSidebarVisible,
+      settings.dailyGamesPlacement,
+      settings.dailyGamesVisiblePlacement
+    );
     presetCountSelect.value = String(settings.quickPlayPresetCount);
     renderPresetSelects(
       settings.quickPlayPresetCount,
@@ -586,10 +768,12 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     try {
       await store.save({
         enabled: enabledInput.checked,
-        dailyGamesPlacement:
-          dailyGamesPlacementSelect.value as DailyGamesPlacement,
-        showChessTv: showChessTvInput.checked,
-        showLegendLeague: showLegendLeagueInput.checked,
+        showNativePlayPanel: showNativePlayPanelInput.checked,
+        dailyGamesPlacement: homepageCardEditor.getDailyGamesPlacement(),
+        dailyGamesVisiblePlacement:
+          homepageCardEditor.getDailyGamesVisiblePlacement(),
+        homepageSidebarOrder: homepageCardEditor.getOrder(),
+        homepageSidebarVisible: homepageCardEditor.getVisible(),
         quickPlayPresetCount: getPresetCount(),
         timeControlIds: ids,
         statsSummaryOrder: statsSummaryEditor.getOrder(),
@@ -611,14 +795,24 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   });
   presetCountSelect.addEventListener("change", () => {
     const count = getPresetCount();
-    renderPresetSelects(count, getDefaultPresetIds(count));
+    renderPresetSelects(count, getDefaultTimeControlIds(count));
   });
   reset.addEventListener("click", () => {
-    getDefaultPresetIds(getPresetCount()).forEach((id, index) => {
+    getDefaultTimeControlIds(getPresetCount()).forEach((id, index) => {
       selects[index].value = id;
     });
     updateOptionAvailability();
     void save("Defaults restored.");
+  });
+  resetHomepage.addEventListener("click", () => {
+    showNativePlayPanelInput.checked = DEFAULT_SETTINGS.showNativePlayPanel;
+    homepageCardEditor.render(
+      DEFAULT_SETTINGS.homepageSidebarOrder,
+      DEFAULT_SETTINGS.homepageSidebarVisible,
+      DEFAULT_SETTINGS.dailyGamesPlacement,
+      DEFAULT_SETTINGS.dailyGamesVisiblePlacement
+    );
+    void save("Homepage defaults restored.");
   });
   resetStats.addEventListener("click", () => {
     statsSummaryEditor.render(

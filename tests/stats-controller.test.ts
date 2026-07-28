@@ -3,7 +3,11 @@ import { LayoutController } from "../src/content/layout-controller";
 import { NativeLaunchAdapter } from "../src/content/launch-adapter";
 import { MARKERS } from "../src/shared/constants";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
-import { HOME_LOCATION, loadHomepageFixture } from "./test-utils";
+import {
+  HOME_LOCATION,
+  loadHomepageFixture,
+  loadModernHomepageFixture
+} from "./test-utils";
 
 function statsModule(document: Document): HTMLElement {
   return document.querySelector<HTMLElement>(
@@ -28,6 +32,151 @@ function ratingOrder(document: Document): string[] {
 }
 
 describe("Stats preferences", () => {
+  it("orders and filters the redesigned expandable Stats rows without Insights", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+
+    controller.reconcile(document, HOME_LOCATION);
+
+    const stats = statsModule(document);
+    expect(
+      Array.from(
+        stats.querySelectorAll<HTMLElement>(":scope > [data-stats-summary]")
+      ).map((row) => row.dataset.statsSummary)
+    ).toEqual(["games", "puzzles", "lessons"]);
+    expect(
+      Array.from(
+        stats.querySelectorAll<HTMLElement>(":scope > [data-stats-rating]")
+      ).map((row) => row.dataset.statsRating)
+    ).toEqual(["rapid", "blitz", "bullet", "daily", "puzzles"]);
+    expect(
+      stats
+        .querySelector('[data-stats-summary="games"]')
+        ?.hasAttribute(MARKERS.hidden)
+    ).toBe(false);
+    expect(
+      stats
+        .querySelector('[data-stats-rating="rapid"]')
+        ?.hasAttribute(MARKERS.hidden)
+    ).toBe(false);
+    expect(
+      stats
+        .querySelector('[data-stats-rating="blitz"]')
+        ?.hasAttribute(MARKERS.hidden)
+    ).toBe(false);
+    expect(
+      stats
+        .querySelector('[data-stats-rating="bullet"]')
+        ?.hasAttribute(MARKERS.hidden)
+    ).toBe(true);
+    expect(
+      Array.from(stats.querySelectorAll<HTMLElement>(":scope > .stats-divider")).map(
+        (divider) => divider.hasAttribute(MARKERS.hidden)
+      )
+    ).toEqual([false, true]);
+    expect(
+      stats
+        .querySelector('[data-stats-rating="rapid"]')
+        ?.getAttribute(MARKERS.statsInitialState)
+    ).toBe("retracted");
+    expect(
+      stats
+        .querySelector('[data-stats-rating="blitz"]')
+        ?.getAttribute(MARKERS.statsInitialState)
+    ).toBe("retracted");
+    expect(stats.querySelector('a[href*="/insights/"]')).toBeNull();
+
+    controller.cleanup(document);
+    expect(
+      Array.from(
+        stats.querySelectorAll<HTMLElement>(":scope > [data-stats-summary]")
+      ).map((row) => row.dataset.statsSummary)
+    ).toEqual(["lessons", "games", "puzzles"]);
+    expect(
+      Array.from(
+        stats.querySelectorAll<HTMLElement>(":scope > [data-stats-rating]")
+      ).map((row) => row.dataset.statsRating)
+    ).toEqual(["bullet", "daily", "rapid", "blitz", "puzzles"]);
+    expect(stats.querySelector(`[${MARKERS.hidden}]`)).toBeNull();
+  });
+
+  it("applies anchor-based expansion states in the redesigned Stats card", () => {
+    const document = loadModernHomepageFixture();
+    const clickCounts = new Map<string, number>();
+
+    for (const id of ["rapid", "blitz"]) {
+      const row = document.querySelector<HTMLElement>(
+        `[data-stats-rating="${id}"]`
+      )!;
+      const control = row.querySelector<HTMLAnchorElement>(
+        ":scope > a.cc-aside-item-component"
+      )!;
+      const chevron = control.querySelector<SVGElement>("svg[data-glyph]")!;
+      if (id === "blitz") {
+        const initialContent = document.createElement("div");
+        initialContent.dataset.modernExpanded = "";
+        row.append(initialContent);
+        chevron.setAttribute("data-glyph", "arrow-chevron-top");
+      }
+      control.addEventListener("click", (event) => {
+        event.preventDefault();
+        clickCounts.set(id, (clickCounts.get(id) ?? 0) + 1);
+        const existingContent = row.querySelector("[data-modern-expanded]");
+        if (existingContent) {
+          existingContent.remove();
+          chevron.setAttribute("data-glyph", "arrow-chevron-bottom");
+          return;
+        }
+        const expandedContent = document.createElement("div");
+        expandedContent.dataset.modernExpanded = "";
+        row.append(expandedContent);
+        chevron.setAttribute("data-glyph", "arrow-chevron-top");
+      });
+    }
+
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const settings = {
+      ...DEFAULT_SETTINGS,
+      statsRatingStates: {
+        ...DEFAULT_SETTINGS.statsRatingStates,
+        rapid: "expanded" as const,
+        blitz: "retracted" as const
+      }
+    };
+    controller.reconcile(document, HOME_LOCATION, settings);
+    controller.reconcile(document, HOME_LOCATION, settings);
+
+    expect(clickCounts).toEqual(
+      new Map([
+        ["rapid", 1],
+        ["blitz", 1]
+      ])
+    );
+    expect(
+      document
+        .querySelector('[data-stats-rating="rapid"]')
+        ?.querySelector("[data-modern-expanded]")
+    ).not.toBeNull();
+    expect(
+      document
+        .querySelector('[data-stats-rating="blitz"]')
+        ?.querySelector("[data-modern-expanded]")
+    ).toBeNull();
+
+    const rapidControl = document.querySelector<HTMLAnchorElement>(
+      '[data-stats-rating="rapid"] > a.cc-aside-item-component'
+    )!;
+    rapidControl.click();
+    controller.reconcile(document, HOME_LOCATION, settings);
+
+    expect(clickCounts.get("rapid")).toBe(2);
+    expect(
+      document
+        .querySelector('[data-stats-rating="rapid"]')
+        ?.querySelector("[data-modern-expanded]")
+    ).toBeNull();
+  });
+
   it("applies the requested minimal defaults and fixes Insights at the bottom", () => {
     const document = loadHomepageFixture();
     new LayoutController(new NativeLaunchAdapter(vi.fn())).reconcile(

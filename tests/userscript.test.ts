@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RECONCILE_DELAY_MS } from "../src/shared/constants";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
-import { DEFAULT_EIGHT_TIME_CONTROL_IDS } from "../src/shared/time-controls";
+import {
+  DEFAULT_EIGHT_TIME_CONTROL_IDS,
+  DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
+  getQuickPlayGridDimensions,
+  QUICK_PLAY_PRESET_COUNTS
+} from "../src/shared/time-controls";
 import { loadResponsiveHomepageFixture } from "./test-utils";
 
 afterEach(() => {
@@ -66,13 +71,24 @@ describe("Android userscript shell", () => {
     ).toBe(true);
     expect(
       dialog?.querySelectorAll(".chesscom-vinf-settings-preference-row")
-    ).toHaveLength(9);
+    ).toHaveLength(16);
     const enabled = dialog?.querySelector<HTMLInputElement>(
       "#chesscom-vinf-userscript-enabled"
     );
     const dailyPlacement = dialog?.querySelector<HTMLSelectElement>(
       '[aria-label="Daily Games placement"]'
     );
+    const showDailyGames = dialog?.querySelector<HTMLInputElement>(
+      "#chesscom-vinf-homepage-daily-games"
+    );
+    const showNativePlayPanel = dialog?.querySelector<HTMLInputElement>(
+      "#chesscom-vinf-userscript-native-play-panel"
+    );
+    expect(
+      dialog?.querySelector(
+        'label[for="chesscom-vinf-homepage-chess-tv"]'
+      )?.textContent
+    ).toBe("ChessTV");
     const firstPreset = dialog?.querySelector<HTMLSelectElement>(
       '[aria-label="Quick Play shortcut 1"]'
     );
@@ -89,6 +105,11 @@ describe("Android userscript shell", () => {
         ?.closest(".chesscom-vinf-settings-card")
         ?.querySelector("h3")?.textContent
     ).toBe("Homepage");
+    expect(showDailyGames?.checked).toBe(true);
+    expect(dailyPlacement?.disabled).toBe(false);
+    expect(
+      Array.from(dailyPlacement?.options ?? []).map((option) => option.value)
+    ).toEqual(["main", "sidebar"]);
     expect(
       Array.from(firstPreset?.querySelectorAll("optgroup") ?? []).map(
         (group) => group.label
@@ -129,18 +150,34 @@ describe("Android userscript shell", () => {
     const presetCount = dialog!.querySelector<HTMLSelectElement>(
       '[aria-label="Quick Play shortcut count"]'
     )!;
-    presetCount.value = "8";
-    presetCount.dispatchEvent(new Event("change", { bubbles: true }));
-    let presetSelects = Array.from(
-      dialog!.querySelectorAll<HTMLSelectElement>(
-        '[aria-label^="Quick Play shortcut "]'
-      )
-    ).filter((select) => select !== presetCount);
-    expect(presetSelects).toHaveLength(8);
-    expect(presetSelects.map((select) => select.value)).toEqual(
-      DEFAULT_EIGHT_TIME_CONTROL_IDS
+    expect(Array.from(presetCount.options).map((option) => option.value)).toEqual(
+      QUICK_PLAY_PRESET_COUNTS.map(String)
     );
-    await Promise.resolve();
+    let presetSelects: HTMLSelectElement[] = [];
+    for (const count of [1, 2, 3, 4, 8] as const) {
+      presetCount.value = String(count);
+      presetCount.dispatchEvent(new Event("change", { bubbles: true }));
+      const dimensions = getQuickPlayGridDimensions(count);
+      const presetList = dialog!.querySelector(
+        ".chesscom-vinf-settings-presets"
+      );
+      expect(presetList?.getAttribute("data-preset-columns")).toBe(
+        String(dimensions.columns)
+      );
+      expect(presetList?.getAttribute("data-preset-rows")).toBe(
+        String(dimensions.rows)
+      );
+      presetSelects = Array.from(
+        dialog!.querySelectorAll<HTMLSelectElement>(
+          '[aria-label^="Quick Play shortcut "]'
+        )
+      ).filter((select) => select !== presetCount);
+      expect(presetSelects).toHaveLength(count);
+      expect(presetSelects.map((select) => select.value)).toEqual(
+        DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
+      );
+      await Promise.resolve();
+    }
     expect(setValue).toHaveBeenLastCalledWith("vinfSettings", {
       ...DEFAULT_SETTINGS,
       quickPlayPresetCount: 8,
@@ -149,6 +186,16 @@ describe("Android userscript shell", () => {
 
     presetCount.value = "6";
     presetCount.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(
+      dialog!
+        .querySelector(".chesscom-vinf-settings-presets")
+        ?.getAttribute("data-preset-columns")
+    ).toBe("3");
+    expect(
+      dialog!
+        .querySelector(".chesscom-vinf-settings-presets")
+        ?.getAttribute("data-preset-rows")
+    ).toBe("2");
     presetSelects = Array.from(
       dialog!.querySelectorAll<HTMLSelectElement>(
         '[aria-label^="Quick Play shortcut "]'
@@ -165,15 +212,18 @@ describe("Android userscript shell", () => {
     )!;
     puzzles.checked = true;
     puzzles.dispatchEvent(new Event("change", { bubbles: true }));
-    dailyPlacement!.value = "hidden";
-    dailyPlacement!.dispatchEvent(new Event("change", { bubbles: true }));
+    showNativePlayPanel!.checked = true;
+    showNativePlayPanel!.dispatchEvent(new Event("change", { bubbles: true }));
+    showDailyGames!.checked = false;
+    showDailyGames!.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(dailyPlacement!.disabled).toBe(true);
     const showChessTv = dialog!.querySelector<HTMLInputElement>(
-      "#chesscom-vinf-userscript-chess-tv"
+      "#chesscom-vinf-homepage-chess-tv"
     )!;
     showChessTv.checked = false;
     showChessTv.dispatchEvent(new Event("change", { bubbles: true }));
     const showLegendLeague = dialog!.querySelector<HTMLInputElement>(
-      "#chesscom-vinf-userscript-legend-league"
+      "#chesscom-vinf-homepage-legend-league"
     )!;
     showLegendLeague.checked = false;
     showLegendLeague.dispatchEvent(new Event("change", { bubbles: true }));
@@ -185,9 +235,15 @@ describe("Android userscript shell", () => {
     await Promise.resolve();
     expect(setValue).toHaveBeenLastCalledWith("vinfSettings", {
       ...DEFAULT_SETTINGS,
+      showNativePlayPanel: true,
       dailyGamesPlacement: "hidden",
-      showChessTv: false,
-      showLegendLeague: false,
+      homepageSidebarVisible:
+        DEFAULT_SETTINGS.homepageSidebarVisible.filter(
+          (id) =>
+            id !== "daily-games" &&
+            id !== "chess-tv" &&
+            id !== "legend-league"
+        ),
       statsSummaryVisible: ["games", "puzzles"],
       statsRatingStates: {
         ...DEFAULT_SETTINGS.statsRatingStates,

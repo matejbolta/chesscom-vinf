@@ -2,9 +2,9 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-07-27.
-Current source version: 0.13.4.
-Latest desktop package: `release/chesscom-vinf-0.13.4.zip`.
+Last updated: 2026-07-28.
+Current source version: 0.15.4.
+Latest desktop package: `release/chesscom-vinf-0.15.4.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
 ## Start Here
@@ -15,14 +15,14 @@ only the signed-in Chess.com homepage:
 
     https://www.chess.com/home
 
-It replaces the visually dominant homepage promo area with a focused six/eight-button
+It replaces the visually dominant homepage promo area with a focused configurable
 Quick Play grid, promotes Game History and Stats, moves Daily Games into the
 sidebar by default, and removes homepage cards that the user does not need.
 
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 0.13.4. This handoff is the shortest
+chronological amendments through version 0.15.4. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current User Experience
@@ -32,7 +32,7 @@ canonical statement of the current product.
 The transformed desktop homepage has:
 
 - the normal Chess.com left navigation untouched;
-- a bare user-selected six- or eight-button Quick Play grid at the top of the
+- a bare user-selected 1/2/3/4/6/8-button Quick Play grid at the top of the
   native main/left column;
 - Quick Play exactly as wide as Game History;
 - no Quick Play heading, subtitle, logo, clock glyphs, or visible launch-status
@@ -41,15 +41,21 @@ The transformed desktop homepage has:
 - no transient Daily Games row above Quick Play when Chess.com inserts that
   native module late;
 - the right sidebar beginning at the same vertical position as Quick Play;
-- right-sidebar order: Stats, ChessTV, Daily Games, Legend League;
-- minimal fixed Stats content by default: Games, Rapid, Blitz, then Insights.
+- a configurable right sidebar containing Stats, ChessTV, Daily Games
+  when placed there, Streaks, Legend League, Daily Puzzle, and Friends;
+- a fixed user-selected order for those known sidebar cards, with unknown future
+  native cards preserved visibly after the managed cards;
+- minimal fixed Stats content by default: Games, Rapid, then Blitz; an optional
+  legacy Insights row stays last if Chess.com supplies it.
 
 The extension hides:
 
 - the optional recurring top campaign at the exact `#main-banner` landmark;
 - the visible avatar, username, and flag header at exact `#homepage-toolbar`;
 - every separate `.promo-toolbar-user-info` compatibility variant;
-- Chess.com's native homepage quick-action column;
+- Chess.com's legacy native quick-action column and, by default, redesigned
+  exact `#home-header` hero; the redesigned native play/recommendations panel
+  can be shown from Homepage settings;
 - the profile-adjacent top Legend League summary inside that column;
 - Puzzles;
 - Next Lesson;
@@ -61,13 +67,22 @@ launch URLs from it.
 
 ### Quick Play visual rules
 
-- Exactly six or eight controls are rendered, matching the grid size selected
-  by the user.
+- Exactly 1, 2, 3, 4, 6, or 8 controls are rendered, matching the button count
+  selected by the user.
 - Labels are centered and time-only: `10`, `10 + 5`, `30 sec`, and so on.
 - Accessible names remain action-oriented: for example `Play 10 + 5`.
 - Buttons have no icons and do not say `Play` visibly.
-- Desktop grid flow is column-first with two rows: three columns for six
-  controls and four columns for eight.
+- On desktop, counts 1–4 use one row with the selected number of equal columns.
+  Six and eight retain column-first flow with two rows and three/four columns.
+- Every count keeps the same 1.4rem gaps and fills the exact Game History width;
+  a one-button grid is therefore one full-width control.
+- The default one- through four-button layouts are:
+
+      1:  10
+      2:  10       15 + 10
+      3:  10       15 + 10       3 + 2
+      4:  10       10 + 5        15 + 10       3 + 2
+
 - The default six-button layout is:
 
       10       15 + 10       3 + 2
@@ -93,39 +108,54 @@ The toolbar popup contains:
 
 - VINF branding and the current version;
 - a standalone top card containing only `Enable VINF`;
-- a `Homepage` card containing the Daily Games placement selector
-  (`Main column`, `Right column`, or `Hidden`) and independent `Show ChessTV`
-  and `Show Legend League` toggles;
-- a six/eight Quick Play size selector and the corresponding number of preset
-  selectors;
+- a `Homepage` card with a `Native play panel` switch and a right-column editor
+  for Stats, ChessTV, Daily Games, Streaks, Legend League, Daily Puzzle,
+  and Friends;
+- Show/Hide checkboxes and fixed-order arrows for every right-column card;
+  Daily Games additionally has a `Main` / `Right` selector that retains its
+  choice while the card is hidden;
+- a 1/2/3/4/6/8 Quick Play count selector and the corresponding number of
+  preset selectors;
+- a preset-selector grid that mirrors the homepage layout: one row for 1–4,
+  two column-first rows of three for 6, and two of four for 8;
 - summary and rating visibility/order controls for the native Stats card;
 - an independent `Expanded` / `Retracted` selector beside every Stats rating
   row;
-- separate Quick Play and Stats Reset actions;
+- separate Homepage, Quick Play, and Stats Reset actions;
 - brief autosave status feedback.
 
 Every toggle, select, Stats checkbox, row movement, and Reset saves immediately.
 There is no Save button. Storage writes are serialized so rapid changes cannot
 finish out of order. A choice already used by one shortcut is disabled in the
 other active selectors. Quick Play Reset restores the selected grid size's
-presets. Stats Reset restores only the Stats visibility/order/state defaults.
-Neither Reset changes the homepage module settings.
+presets. Homepage Reset restores only native panel/card visibility, placement,
+and order. Stats Reset restores only the Stats visibility/order/state defaults.
 
 Stats defaults are summary order Games/Puzzles/Lessons with only Games visible,
 and rating order Rapid/Blitz/Bullet/Daily/Puzzles/Live 960 with only Rapid and
 Blitz visible. Every known rating row stores its own initial state, defaulting
 to `Retracted`; `Expanded` is also available. Hidden rows retain that choice
 while their selector is disabled. VINF applies the selected state once through
-each visible native row's own button, then respects every later manual expansion
-or collapse. Insights is not configurable: it always remains visible at the
-bottom. Known native rows are moved/hidden rather than rebuilt. Unknown future
-rows are preserved.
+each visible native row's own button or current anchor-based chevron control,
+then respects every later manual expansion or collapse. The redesigned rollout
+does not provide an Insights row. VINF creates no replacement; if a legacy
+cohort supplies the native row, it remains visible at the bottom. Known native
+rows are moved/hidden rather than rebuilt. Unknown future rows are preserved.
+
+Chess.com still offers the separate Diamond-only Insights product. Its
+2026-01-27 Help Center article routes users through `Train` → `Insights`, and
+2026 forum activity confirms the service still updates. The 2026-07-28 homepage
+rollout removed only the Stats-card shortcut, so VINF must not interpret its
+absence as a product shutdown or add a synthetic replacement.
 
 Disabling VINF removes extension-owned UI and restores hidden/moved native nodes.
-Daily Games defaults to the right sidebar between ChessTV and Legend League. It
-can instead return to its original main column or be hidden. ChessTV and Legend
-League can be hidden independently. All three settings move or hide complete
-native nodes and update immediately without a reload.
+Daily Games defaults to the right sidebar and can instead return to its original
+main column or be hidden through its standard card checkbox. Every known
+right-column card can be shown, hidden, and reordered without rebuilding its
+content. Chess.com's redesigned combined
+Streaks/League wrapper is reversibly separated into two native-content card
+hosts so the two items remain independently configurable. Unknown cards are not
+hidden or absorbed into this managed model.
 
 ### Android tablet
 
@@ -140,13 +170,15 @@ settings modal with the same Stats controls.
 Open the modal through the `VINF settings` userscript command or the
 `/home#vinf-settings` fallback.
 
-In a semantic responsive/single-column DOM, default visible order is Quick Play,
-Game History, Stats, ChessTV, Daily Games, Legend League. Optional cards follow
-the same placement/visibility settings as desktop. Native actions, Puzzles,
-Next Lesson, Game Review, and `#main-banner` remain hidden. The exact
-`#homepage-toolbar` and all `.promo-toolbar-user-info` variants are also hidden
-when present, without targeting `#mobile-toolbar` or generic responsive profile
-controls. The grid is two columns at tablet widths and one column below 450px.
+In a semantic responsive/single-column DOM, Quick Play precedes Game History and
+available known cards follow the saved right-column order. Optional cards
+follow the same placement/visibility settings as desktop. Legacy native actions,
+Puzzles, Next Lesson, Game Review, and `#main-banner` remain hidden. The exact
+`#homepage-toolbar` and all
+`.promo-toolbar-user-info` variants are also hidden when present, without
+targeting `#mobile-toolbar` or generic responsive profile controls. The
+redesigned `#home-header` follows the Native play panel setting. The grid is two
+columns at tablet widths and one column below 450px.
 
 Read `docs/ANDROID.md` for current platform evidence, installation steps, live
 tablet checks, and limitations.
@@ -154,7 +186,7 @@ tablet checks, and limitations.
 ## Time-Control Catalog
 
 The popup offers a desktop-first union of 17 controls observed across current
-Chess.com desktop and mobile clients. Exactly six or eight may be active at once.
+Chess.com desktop and mobile clients. Exactly 1, 2, 3, 4, 6, or 8 may be active.
 
 ### Bullet
 
@@ -202,18 +234,17 @@ Research context:
 
 ### Defaults
 
-Do not change the six defaults casually. Their stored/render order is:
+The shared per-count default map is:
 
-    10-0, 10-5, 15-10, 30-0, 3-2, 5-3
+    1: 10-0
+    2: 10-0, 15-10
+    3: 10-0, 15-10, 3-2
+    4: 10-0, 10-5, 15-10, 3-2
+    6: 10-0, 10-5, 15-10, 30-0, 3-2, 5-3
+    8: 10-0, 10-5, 15-10, 30-0, 1-1, 3-0, 3-2, 5-5
 
-Because the desktop grid flows by column, that produces the intended two-row
-layout shown above.
-
-The eight-button stored/render order is:
-
-    10-0, 10-5, 15-10, 30-0, 1-1, 3-0, 3-2, 5-5
-
-That produces the documented two-row, four-column layout.
+The six/eight arrays remain stored in column-first render order. Counts 1–4
+render in their straightforward one-row order.
 
 ## Non-Negotiable Product Rules
 
@@ -221,7 +252,7 @@ That produces the documented two-row, four-column layout.
 
 2. Leave the main Chess.com navigation intact.
 
-3. Render exactly the selected six or eight unique Quick Play controls.
+3. Render exactly the selected 1, 2, 3, 4, 6, or 8 unique Quick Play controls.
 
 4. Derive every launch from Chess.com's native immediate-match link. Never call
    a private matchmaking endpoint, copy credentials, inspect cookies, or invent
@@ -257,19 +288,24 @@ That produces the documented two-row, four-column layout.
     avatar/name/flag row. Keep it in the DOM so signed-in detection still works;
     do not broadly hide `#mobile-toolbar` or generic headers.
 
-14. Keep popup settings autosaving. Quick Play Reset is preset-only and Stats
+14. Keep the redesigned exact `#home-header` hero hidden by default while
+    preserving its native immediate-match link in the DOM; show the complete
+    native panel only when its explicit Homepage setting is enabled.
+
+15. Keep popup settings autosaving. Quick Play Reset is preset-only and Stats
     Reset is Stats-only.
 
-15. Keep Insights visible and last. Hide or reorder only positively recognized
-    native Stats rows; preserve unknown future rows.
+16. Keep any native Insights row visible and last, but do not synthesize one
+    when Chess.com omits it. Hide or reorder only positively recognized native
+    Stats rows; preserve unknown future rows.
 
-16. Do not add telemetry, analytics, ads, tracking, remote code, remote
+17. Do not add telemetry, analytics, ads, tracking, remote code, remote
     configuration, or extension-owned network requests.
 
-17. Never commit or package raw signed-in page captures, account identifiers,
+18. Never commit or package raw signed-in page captures, account identifiers,
     session markup, tokens, screenshots, or reference assets.
 
-18. Do not broaden hosts, routes, or permissions without an explicit product
+19. Do not broaden hosts, routes, or permissions without an explicit product
     decision.
 
 ## Native Launch Contract
@@ -302,19 +338,25 @@ click creates an external side effect.
 
 ## Homepage Detection and DOM Contracts
 
-The runtime guard requires all of:
+Every runtime guard requires:
 
 - HTTPS;
 - host `chess.com` or `www.chess.com`;
 - exact pathname `/home` or `/home/`;
-- `html.user-logged-in`;
-- signed-in profile landmark;
-- `.promo-component`;
-- `#vue-instance.layout-column-one`;
-- `#vue-sidebar-instance.layout-column-two`.
+- `html.user-logged-in`.
+
+The legacy contract additionally requires its signed-in profile landmark,
+`.promo-component`, `#vue-instance.layout-column-one`, and
+`#vue-sidebar-instance.layout-column-two`. The 2026-07-28 redesign removed the
+old profile data attributes and uses exact `#home-header`,
+`#home-main.layout-column-one`, `#home-sidebar.layout-column-two`, a native
+immediate-match link, and Game History. VINF recognizes only a complete legacy
+or redesigned contract; it does not weaken the fail-closed route guard.
 
 Important locators:
 
+- redesigned native hero: exact `#home-header`, containing
+  `.play-online-quick-links-component`;
 - recurring top campaign: exact optional `#main-banner`; never campaign text,
   `data-name`, assets, or generated classes;
 - visible desktop profile strip: exact optional `#homepage-toolbar`, whose
@@ -323,26 +365,42 @@ Important locators:
 - empty/variant promo user strips: all exact optional
   `.promo-toolbar-user-info` instances; never username, member URL, avatar,
   flag, or generic profile selectors;
-- native action stack: `.play-quick-links-component`, promoted to its direct
-  promo child;
+- native action stack: legacy `.play-quick-links-component` promoted to its
+  direct promo child, or redesigned exact `#home-header`;
 - native launch template: link containing `action=createLiveChallenge` inside
   that action stack;
 - Puzzles/Next Lesson/Game Review: exact English `.promo-title` within a direct
   promo child;
-- Game History: `.game-history-games-component`, promoted to the direct left
-  column child;
+- Game History: `.game-history-games-component`, promoted to the direct legacy
+  wrapper or used as the redesigned direct `.main-section`;
 - Daily Games: direct left-column child containing `/play/online/daily`, with
   `.current-games-header-list` and the earlier
   `.home-current-games-loading-view-toggle-container` as desktop
   pre-hydration fallbacks;
+- redesigned main/sidebar hosts: `#home-main > .main-component` and
+  `#home-sidebar > .sidebar-component`;
+- redesigned Stats: direct sidebar card containing `/stats/<member>` or
+  `.stat-item-stats-section`;
+- redesigned Daily Puzzle: direct sidebar section containing
+  `.daily-puzzle-wrap`, `.daily-puzzle-content`, or `.daily-puzzle-preview`;
+- redesigned Streaks: `.streak-badge-sidebar-wrapper`;
+- redesigned Legend League: `.badge-component`, `#league-badge-sidebar`, or a
+  sidebar `/leagues/` link;
+- redesigned Friends: direct sidebar section containing `.friends-content` or
+  the `/friends` destination;
 - Stats: direct sidebar child containing `/stats/overview/`;
 - Stats summary rows: direct `li.sidebar-ratings-item` children of direct
   `ul.sidebar-ratings-general`, recognized by exact descendant text node Games,
   Puzzles, or Lessons;
-- Stats rating rows: direct `.stat-section-stats-section` children, recognized
-  by exact `.stat-section-section-link-name` text;
-- Insights: rating-shaped row containing a link beginning `/insights/`, with an
-  exact-label fallback; always visible and appended last;
+- Stats rating rows: direct `.stat-section-stats-section` legacy children or
+  `.stat-item-stats-section` redesigned children, recognized by exact native
+  label text or a semantic Stats path;
+- Stats expansion controls: legacy direct `button.stat-section-button`, or a
+  redesigned direct `.cc-aside-item-component` anchor/button containing a
+  `.cc-aside-item-chevron` native arrow glyph;
+- optional legacy Insights: rating-shaped row containing a link beginning
+  `/insights/`, with an exact-label fallback; preserved visibly and appended
+  last if present;
 - ChessTV: player/iframe/close-button landmark, with `/tv` link fallback;
 - Legend League: `#league-badge-sidebar`, promoted to its direct sidebar child.
 
@@ -388,20 +446,21 @@ its final component class has not hydrated yet, Quick Play anchors before the
 first direct `.home-container-component` instead of appending below loading
 cards. Cleanup and `Main column` placement remove the marker.
 
-Version 0.12 uses the same marker with value `hidden` for hidden Daily Games,
-and adds `data-chesscom-vinf-chess-tv="hidden"` plus
-`data-chesscom-vinf-legend-league="hidden"`. After local settings load, the
-runtime pre-arms these exact document markers even while `/home` landmarks are
-incomplete, then re-arms them after any provisional controller cleanup. Exact
-desktop `:has(...)` rules cover the already-audited native TV and league
-landmarks until element-level hidden markers take over. Main-column placement,
-showing a card, disabling VINF, or leaving `/home` removes the relevant marker.
+Version 0.15 replaces the separate TV/League document flags with the
+space-separated `data-chesscom-vinf-sidebar-hidden` marker. After local settings
+load, the runtime pre-arms this marker even while `/home` landmarks are
+incomplete, then re-arms it after any provisional controller cleanup. Exact
+desktop `:has(...)` rules cover the audited Stats, TV, Daily Puzzle, Friends,
+Streaks, and League landmarks until element-level hidden markers take over.
+Daily Games retains its separate placement marker.
 
 After stored settings load, the runtime also sets
 `data-chesscom-vinf-active="true"` on the exact enabled `/home` document before
 complete homepage landmarks are required. Namespaced CSS uses that stable
 ancestor to pre-hide exact native `#homepage-toolbar`, `#main-banner`,
-`.promo-toolbar-user-info`, and `.promo-component` replacements. This closes a
+`.promo-toolbar-user-info`, and `.promo-component` replacements. `#home-header`
+is pre-hidden unless `data-chesscom-vinf-native-play-panel="visible"` is
+present. This closes a
 roughly three-frame native promo repaint found by reviewing the 2026-07-27 12:51
 recording at 60fps. Element-level markers remain for inspection and cleanup; the
 document marker disappears immediately on disable or route departure.
@@ -417,10 +476,12 @@ Stored shape:
 ```ts
 interface ExtensionSettings {
   enabled: boolean;
+  showNativePlayPanel: boolean;
   dailyGamesPlacement: "main" | "sidebar" | "hidden";
-  showChessTv: boolean;
-  showLegendLeague: boolean;
-  quickPlayPresetCount: 6 | 8;
+  dailyGamesVisiblePlacement: "main" | "sidebar";
+  homepageSidebarOrder: HomepageSidebarCardId[]; // all seven IDs exactly once
+  homepageSidebarVisible: HomepageSidebarCardId[]; // visible known cards
+  quickPlayPresetCount: 1 | 2 | 3 | 4 | 6 | 8;
   timeControlIds: TimeControlId[]; // exactly the selected count of unique IDs
   statsSummaryOrder: StatsSummaryId[]; // all three IDs exactly once
   statsSummaryVisible: StatsSummaryId[]; // zero to three known IDs
@@ -433,13 +494,17 @@ interface ExtensionSettings {
 }
 ```
 
-Defaults are enabled, Daily Games in the sidebar, ChessTV and Legend League
-visible, six-button mode, and the original six IDs documented above. Stats
-defaults are Games only plus Rapid/Blitz, in the fixed orders described in
-Current User Experience, with all six rating-state values initially retracted.
+Defaults are enabled, the native play panel hidden, every known sidebar card
+visible, Daily Games shown in the sidebar with its remembered visible placement
+also set to sidebar, six-button mode, and the original six IDs documented
+above. The default managed sidebar order is Stats, ChessTV, Daily Games,
+Streaks, Legend League, Daily Puzzle, Friends. Stats defaults are
+Games only plus Rapid/Blitz, in the fixed orders described in Current User
+Experience, with all six rating-state values initially retracted.
 `normalizeSettings` is the persistence boundary; old saved objects infer
-six-button mode from their valid six-ID array and automatically gain all Stats
-defaults. A valid legacy eight-ID array infers eight-button mode. The retired
+their button count from any complete valid 1/2/3/4/6/8-ID array and automatically
+gain all Stats defaults. Existing valid six- and eight-ID arrays therefore keep
+their previous modes. The retired
 global `statsDefaultState` value is copied to all six per-rating entries during
 migration.
 
@@ -447,6 +512,10 @@ Preserve these migrations:
 
 - old `reorderGameHistory` becomes `dailyGamesPlacement`;
 - retired `moveDailyGamesToSidebar` becomes `dailyGamesPlacement`;
+- `dailyGamesVisiblePlacement` falls back to the current visible placement, or
+  Right when migrating an already-hidden card;
+- retired `showChessTv` and `showLegendLeague` seed the corresponding new card
+  visibility entries when the new visibility array is absent;
 - retired `15-0` becomes `20-0`.
 - retired global `statsDefaultState` becomes the fallback for every missing
   `statsRatingStates` entry.
@@ -473,16 +542,18 @@ Visibility arrays filter unknown and duplicate IDs; an empty array is valid.
     src/content/module-locator.ts      Semantic/native module discovery
     src/content/layout-controller.ts   Idempotent hide/move/order/cleanup logic
     src/content/stats-controller.ts    Native Stats recognition/order/visibility
-    src/content/quick-play-renderer.ts Six/eight-button UI and interaction states
+    src/content/quick-play-renderer.ts Configurable Quick Play UI and interaction states
     src/content/launch-adapter.ts       Validated native URL derivation
     src/content/content.css             Homepage layout and category styling
     src/popup/                          Autosaving settings UI
     src/userscript/                     Android userscript entry and modal CSS
     src/shared/models.ts                Settings/time-control types
+    src/shared/homepage-cards.ts        Known sidebar card catalog and defaults
     src/shared/settings.ts              Normalization, migration, local storage
     src/shared/stats.ts                 Stats row catalogs and defaults
-    src/shared/time-controls.ts         17-control catalog and 6/8 defaults
+    src/shared/time-controls.ts         17-control catalog and per-count defaults
     tests/fixtures/homepage.html        Small sanitized DOM fixture
+    tests/fixtures/homepage-modern.html Redesigned desktop regression fixture
     tests/fixtures/homepage-responsive.html  Responsive semantic fixture
     tests/visual/                       Local full-page visual harness
     scripts/build.mjs                   Production dist builder
@@ -500,9 +571,11 @@ the content script itself is narrowly matched to `https://www.chess.com/home*`.
 The extension stores only:
 
 - enabled state;
+- native play-panel visibility;
 - Daily Games placement;
-- ChessTV and Legend League visibility;
-- selected Quick Play grid size and its six or eight preset IDs;
+- Daily Games' remembered Main/Right location while hidden;
+- known homepage sidebar card order and visibility;
+- selected Quick Play button count and its matching preset IDs;
 - Stats summary/rating order and visibility IDs;
 - six per-rating initial `expanded` or `retracted` preferences.
 
@@ -533,25 +606,26 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 0.13.4, the suite has 70 passing tests across twelve files. Important
+As of version 0.15.4, the suite has 80 passing tests across twelve files. Important
 coverage includes:
 
-- exact signed-in homepage detection and route rejection;
+- exact legacy/redesigned signed-in homepage detection and route rejection;
 - semantic module location and missing optional modules;
 - idempotent layout, cleanup, native restoration, and sidebar order;
 - all 17 launch base/increment mappings;
-- exactly six or eight accessible rendered shortcuts and mixed
+- every supported 1/2/3/4/6/8 shortcut count and mixed
   Bullet/Blitz/Rapid sets;
 - launch de-duplication, timeout recovery, and fail-closed behavior;
 - settings defaults, migration, normalization, autosave, and duplicate blocking;
 - Stats defaults, custom order/visibility, scoped resets, cleanup restoration,
-  unknown-row preservation, fixed Insights placement, and expansion-safe
-  idempotence;
+  unknown-row preservation, optional legacy Insights placement, and
+  expansion-safe idempotence;
 - independent one-time native initial expansion or retraction for every visible
   known rating row, preserving later manual state changes;
 - dynamic content replacement, route departure, and settings changes;
-- tri-state Daily Games placement plus independent ChessTV/Legend visibility on
-  desktop and responsive layouts, including early hidden-card pre-arming;
+- Daily Games visibility with remembered Main/Right placement plus visibility
+  and fixed ordering for all seven known sidebar cards on desktop and
+  responsive layouts, including early hidden-card pre-arming;
 - late and pre-hydration Daily Games insertion with a pre-armed native-slot
   marker, both native loading-shell fallbacks, and Quick Play-first loading
   placement even before Game History receives its final component class;
@@ -563,8 +637,13 @@ coverage includes:
   instances hiding plus cleanup, without account-specific selectors;
 - exact and dynamically replaced `#homepage-toolbar` hiding plus cleanup while
   its signed-in descendant remains available to the page guard;
-- enabled-document pre-hiding of exact native toolbar/banner/promo replacements
-  before delayed mutation reconciliation;
+- redesigned `#home-header`, column-host, Game History, Stats, Daily Puzzle,
+  Streaks, League, Friends, ChessTV, and unknown-card compatibility without
+  mistaking history analysis links for Game Review;
+- legacy button-based, redesigned link-only, and redesigned anchor/chevron
+  expandable Stats schema handling;
+- enabled-document pre-hiding of exact native toolbar/hero/banner/promo
+  replacements before delayed mutation reconciliation;
 - document-start observation, settings-load gating, and landmarks arriving after
   runtime startup.
 
@@ -579,19 +658,26 @@ pnpm visual
 Useful routes:
 
     http://127.0.0.1:4173/home
+    http://127.0.0.1:4173/home?preset-count=1
+    http://127.0.0.1:4173/home?preset-count=4
     http://127.0.0.1:4173/home?eight-preview=1
     http://127.0.0.1:4173/home?union-preview=1
     http://127.0.0.1:4173/home?pre-hydration=1
+    http://127.0.0.1:4173/home?native-panel=1
+    http://127.0.0.1:4173/home?sidebar-preview=1
     http://127.0.0.1:4173/home-online-tv
     http://127.0.0.1:4173/home-responsive
+    http://127.0.0.1:4173/home-narrow-preview
+    http://127.0.0.1:4173/popup-preview
     http://127.0.0.1:4173/popup
 
 `union-preview=1` renders Bullet, mobile Blitz, and Rapid examples without
 starting a game. At the 1600px verification viewport, Quick Play and Game History
 were both 728px wide. Version 0.9.0 was visually checked at desktop, extension
-popup, and responsive fixture sizes with no browser-console errors. The desktop
-Stats card rendered only Games, Rapid, Blitz, and Insights in that order; the
-popup's nine Stats controls were readable and scrollable at 420×600.
+popup, and responsive fixture sizes with no browser-console errors. The legacy
+desktop Stats fixture rendered Games, Rapid, Blitz, and Insights in that order;
+the current redesigned fixture has no Insights row. The popup's Stats controls
+were readable and scrollable at 420×600.
 
 ### Brave/Chrome unpacked testing
 
@@ -608,7 +694,7 @@ QA. The live checklist belongs to the user in their signed-in browser.
 Run `pnpm build:android`, then install
 `dist-android/chesscom-vinf.user.js` in Violentmonkey on Firefox for Android.
 Detailed local-paste and local-network install methods are in `docs/ANDROID.md`.
-The real tablet DOM and six live clocks require human-controlled signed-in
+The real tablet DOM and live clocks require human-controlled signed-in
 testing; automated tests use only a sanitized responsive fixture.
 
 The user's last successful tablet update path was:
@@ -650,11 +736,23 @@ dependency or request directive.
 
 Current artifact:
 
-    release/chesscom-vinf-0.13.4.zip
+    release/chesscom-vinf-0.15.4.zip
+
+SHA-256:
+
+    7c7268ff3a0c5f0044251ecd7539bdba364d403d015a072d0e8bc83c110eb7fb
 
 Android artifact:
 
     dist-android/chesscom-vinf.user.js
+
+Convenience Chrome Web Store handoff:
+
+    release/chesscom-vinf-0.15.4-store-submission.zip
+
+SHA-256:
+
+    720f295468f0a61d7ed30d7c5e23b58db48e484e2d809fe5e5c345037c19dbde
 
 The project is an independent public Git repository:
 
@@ -669,6 +767,18 @@ Public-safe Chrome Web Store copy and synthetic graphic assets live under
 
     https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md
 
+Version 0.13.4 remains the Chrome Web Store package until the user uploads and
+submits the prepared 0.15.4 update. `store-listing/SUBMISSION.md` contains the
+current field-by-field 0.15.4 update handoff using copy-safe fenced text blocks
+instead of Markdown blockquotes. Its public-safe synthetic screenshots and
+marquee artwork were refreshed for the redesigned homepage, the new card
+editor, the mirrored eight-button settings grid, and the removal of Insights
+from Chess.com's current Stats card.
+
+The intended public source tag for this release is `v0.15.4`. The release ZIP is
+ignored by Git and may be attached separately to a GitHub release or uploaded
+directly to the Chrome Web Store.
+
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
 secret-shaped credentials, and weakened raw-capture ignore rules.
@@ -679,13 +789,14 @@ Before any public release beyond private use, a human in a signed-in browser
 should verify:
 
 1. Load `dist/` unpacked in current Brave and Chrome.
-2. Start one real match for each currently selected control in the active grid.
+2. Start one real match for each currently selected control in the active grid
+   and verify the supported button counts as needed.
 3. Confirm every resulting clock exactly matches its button.
 4. Confirm popup settings, including Stats visibility/order and independent
    per-rating initial states, survive popup close/reopen and browser restart.
 5. Confirm extension disable/enable restores and reapplies the native page.
-6. Confirm all three Daily Games placements and both optional-card toggles apply
-   without a reload.
+6. Confirm Daily Games Show/Hide and Main/Right placement plus every known
+   right-column card's visibility/order apply without a reload.
 7. Confirm refresh, SPA departure/return, and narrow-window behavior.
 8. Confirm Game History, Stats, navigation, and every enabled optional card
    remain usable.
@@ -709,8 +820,13 @@ reverse them while “cleaning up” code:
 - Clock icons were intentionally removed.
 - Quick Play intentionally matches the full Game History width and aligns left.
 - The complete sidebar intentionally starts alongside Quick Play.
-- Daily Games intentionally sits between ChessTV and Legend League by default,
-  but all three cards now have explicit presentation settings.
+- The default managed sidebar order is intentionally Stats, ChessTV,
+  Daily Games, Streaks, Legend League, Daily Puzzle, Friends. Every known card
+  now has explicit presentation settings. Daily Games uses the same checkbox
+  plus a Main/Right selector that preserves its location while hidden.
+- The right-column label is intentionally `ChessTV`, not `ChessTV & events`.
+  Separate event banners are different native homepage modules even when
+  Chess.com's own settings group both features under one toggle.
 - A late or pre-hydration native Daily Games row must never flash above or shift
   Quick Play; both native loading-shell fallbacks and the temporary left-slot
   CSS guard are intentional.
@@ -727,14 +843,18 @@ reverse them while “cleaning up” code:
   `oklch(70% 0.11 100)` edge. Do not recreate a dark yellow by lowering HSL
   lightness or by blending the pale source into gray; those approaches produced
   ochre and milky results respectively.
-- Six-button mode intentionally uses two rows of three. Eight-button mode keeps
-  the same gap and total Game History width while using two rows of four.
+- Counts 1–4 intentionally use one full-width desktop row with equal columns.
+  Six-button mode uses two rows of three. Eight-button mode keeps the same gap
+  and total Game History width while using two rows of four.
+- Desktop and Android preset editors intentionally mirror those positions,
+  including the established column-first numbering for six and eight.
 - Rapid popup order is intentionally `10`, `10+5`, `15+10`, `20`, `30`, `60`.
 - Desktop and Android settings intentionally share one Blitz group ordered
   `3`, `3+2`, `5`, `5+2`, `5+3`, `5+5`; do not recreate a mobile subgroup.
 - There is intentionally no Save button in the popup.
-- Stats intentionally defaults to Games, retracted Rapid, retracted Blitz, and
-  Insights. Insights is not configurable and always remains last.
+- Stats intentionally defaults to Games, retracted Rapid, and retracted Blitz.
+  The current homepage omits Insights; VINF does not recreate it. An optional
+  native legacy Insights row is not configurable and always remains last.
 - Unknown future Stats rows must remain visible; never hide unrecognized native
   rows.
 - Native Stats expand/retract must remain functional. Never re-append an
@@ -751,6 +871,16 @@ reverse them while “cleaning up” code:
   intentionally hidden without targeting `#mobile-toolbar` or generic headers.
 - Every `.promo-toolbar-user-info` compatibility variant remains hidden; the
   live marked instance was empty and the class is not assumed to be unique.
+- The 2026-07-28 redesign is a separate explicit contract: `#home-header`,
+  `#home-main > .main-component`, and
+  `#home-sidebar > .sidebar-component`. Preserve the legacy contract alongside
+  it for A/B cohorts and rollbacks.
+- Redesigned Game History contains `/analysis/game/...` links. Always exclude
+  the located history card from Game Review path fallback.
+- Redesigned Stats rows may be link-only or natively expandable anchor rows.
+  Apply visibility/order in both cases, and apply initial state only when an
+  explicit native chevron control exists. Never synthesize chevrons, graphs, or
+  expansion content.
 
 ## Known Limitations and Risks
 
@@ -758,16 +888,17 @@ reverse them while “cleaning up” code:
   link at any time.
 - Campaign content is intentionally ignored; if Chess.com changes the
   `#main-banner` landmark itself, the exact selector will need a new live audit.
-- If Chess.com renames `#homepage-toolbar` or `.promo-toolbar-user-info`,
+- If Chess.com renames `#homepage-toolbar`, `#home-header`, or
+  `.promo-toolbar-user-info`,
   re-audit the exact semantic modules; do not replace them with account-specific
   or broad profile selectors.
-- The primary complete-page capture and sanitized DOM fixture date from
-  2026-07-16.
+- Private complete-page captures and sanitized desktop fixtures cover both the
+  2026-07-16 legacy shell and 2026-07-28 redesign.
 - Promo-card detection uses exact English titles and may not work in other
   locales.
-- Known Stats row recognition uses exact English native labels. Semantic
-  `/insights/` routing is preferred for Insights, but a non-English Stats rollout
-  may require a sanitized audit update.
+- Known Stats row recognition uses exact English native labels. Semantic paths
+  are preferred where available, but a non-English Stats rollout may require a
+  sanitized audit update.
 - The popup catalog is intentionally static. Reading native controls dynamically
   would require additional active-tab communication/permissions and still would
   not solve mobile/desktop rollout differences.
@@ -797,7 +928,8 @@ Check:
 - the unpacked extension was reloaded after build;
 - the page was refreshed after extension reload;
 - popup `Enable VINF` persisted as checked;
-- required profile/promo/column landmarks still exist.
+- either the complete legacy profile/promo/column contract or complete
+  redesigned header/main-column contract still exists.
 
 ### Quick Play appears but every button is disabled
 
@@ -811,19 +943,24 @@ Check mutation-triggered reconciliation, namespaced markers, and original
 position tracking. Repeated `reconcile` calls must preserve one owned panel and
 an already-correct sidebar prefix.
 
-### ChessTV or Legend League order is wrong
+### A right-column card is missing or ordered incorrectly
 
-Check both online ChessTV player landmarks and the `/tv` fallback. The online
-card may show a streamer name instead of `Live on ChessTV`.
+Check the card's semantic locator in `DOM_AUDIT.md` and its saved position in
+`homepageSidebarOrder`. For ChessTV, check both online player landmarks and the
+`/tv` fallback because the online card may show a streamer name instead of
+`Live on ChessTV`. For Streaks or Legend League, also inspect the shared native
+badges wrapper and the reversible VINF-owned card hosts.
 
 ### Stats order or visibility is wrong
 
-Confirm the Stats card still has direct `ul.sidebar-ratings-general` summary
-rows and direct `.stat-section-stats-section` rating wrappers matching
-`DOM_AUDIT.md`. Known rows should carry `stats-summary-*` or `stats-rating-*`
-hidden reasons when disabled. Insights must remain unmarked and last. Do not
-hide an unknown row to make the card look tidy; capture the smallest sanitized
-new structure and update the catalog/audit deliberately.
+Confirm the Stats card still has either legacy direct
+`ul.sidebar-ratings-general` summary rows and `.stat-section-stats-section`
+rating wrappers, or redesigned direct `.cc-aside-item-component` summaries and
+`.stat-item-stats-section` ratings matching `DOM_AUDIT.md`. Known rows should
+carry `stats-summary-*` or `stats-rating-*` hidden reasons when disabled. Any
+native Insights row must remain unmarked and last. Do not hide an unknown row
+to make the card look tidy; capture the smallest sanitized new structure and
+update the catalog/audit deliberately.
 
 ### The top avatar/name strip remains visible
 

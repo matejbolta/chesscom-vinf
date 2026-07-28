@@ -37,11 +37,15 @@ select {
 }
 
 .showcase,
-.homepage-scene,
-.settings-scene,
 .promo {
   height: 100%;
   width: 100%;
+}
+
+.homepage-scene,
+.settings-scene {
+  height: 800px;
+  width: 1280px;
 }
 
 .homepage-scene,
@@ -339,8 +343,7 @@ html[data-view="home8"] .quick-grid--eight {
 }
 
 .stats-summary,
-.rating-row,
-.insights {
+.rating-row {
   align-items: center;
   display: flex;
   min-height: 52px;
@@ -436,12 +439,6 @@ html[data-view="home8"] .chevron {
 
 .red {
   color: #e65a4f;
-}
-
-.insights {
-  font-size: 13px;
-  font-weight: 700;
-  justify-content: space-between;
 }
 
 .tv-card .panel-header {
@@ -622,12 +619,14 @@ html[data-view="home8"] .tv-card {
   border: 1px solid #46433f;
   border-radius: 12px;
   box-shadow: 0 22px 80px rgb(0 0 0 / 52%);
-  height: 736px;
+  height: 785px;
   overflow: hidden;
   padding: 16px;
   position: absolute;
   right: 72px;
-  top: 32px;
+  top: 18px;
+  transform: scale(0.92);
+  transform-origin: top right;
   width: 400px;
 }
 
@@ -701,6 +700,49 @@ html[data-view="home8"] .tv-card {
   gap: 2px;
 }
 
+.homepage-choice {
+  align-items: center;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 18px 1fr 24px 24px;
+  min-height: 29px;
+  padding: 0 12px;
+}
+
+.homepage-choice--daily {
+  grid-template-columns: 18px 1fr 54px 24px 24px;
+}
+
+.homepage-choice > span {
+  align-items: center;
+  background: var(--green);
+  color: #1e2914;
+  display: flex;
+  font-size: 10px;
+  font-weight: 900;
+  height: 15px;
+  justify-content: center;
+  width: 15px;
+}
+
+.homepage-choice i {
+  background: #211f1c;
+  border: 1px solid #4a4844;
+  border-radius: 4px;
+  font-size: 8px;
+  font-style: normal;
+  padding: 5px;
+}
+
+.homepage-choice button {
+  background: #211f1c;
+  border: 1px solid #4a4844;
+  border-radius: 4px;
+  color: white;
+  height: 23px;
+  padding: 0;
+}
+
 .popup-card b {
   font-size: 11px;
 }
@@ -767,7 +809,9 @@ html[data-view="home8"] .tv-card {
   border-top: 1px solid #45423e;
   display: grid;
   gap: 7px;
-  grid-template-columns: repeat(2, 1fr);
+  grid-auto-flow: column;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, auto);
   padding: 9px 12px 11px;
 }
 
@@ -787,7 +831,9 @@ html[data-view="home8"] .tv-card {
   color: white;
   font-size: 10px;
   height: 28px;
-  padding: 0 8px;
+  min-width: 0;
+  padding: 0 6px;
+  width: 100%;
 }
 
 .stats-popup {
