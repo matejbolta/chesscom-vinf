@@ -767,13 +767,14 @@ Public-safe Chrome Web Store copy and synthetic graphic assets live under
 
     https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md
 
-Version 0.13.4 remains the Chrome Web Store package until the user uploads and
-submits the prepared 0.15.4 update. `store-listing/SUBMISSION.md` contains the
-current field-by-field 0.15.4 update handoff using copy-safe fenced text blocks
-instead of Markdown blockquotes. Its public-safe synthetic screenshots and
-marquee artwork were refreshed for the redesigned homepage, the new card
-editor, the mirrored eight-button settings grid, and the removal of Insights
-from Chess.com's current Stats card.
+Version 0.15.4 was submitted to the Chrome Web Store by the user on 2026-07-28.
+Treat it as the current submitted store version unless a later handoff records a
+review rejection, approval, or newer upload. `store-listing/SUBMISSION.md`
+contains the complete field-by-field 0.15.4 update record using copy-safe fenced
+text blocks instead of Markdown blockquotes. Its public-safe synthetic
+screenshots and marquee artwork were refreshed for the redesigned homepage, the
+new card editor, the mirrored eight-button settings grid, and the removal of
+Insights from Chess.com's current Stats card.
 
 `store-listing/UPDATE_TLDR.md` is the preferred dashboard workflow for this
 update. It lists only what changes from the already submitted 0.13.4 version,
@@ -786,10 +787,8 @@ The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
     https://github.com/matejbolta/chesscom-vinf/releases/tag/v0.15.4
 
 That GitHub release includes `chesscom-vinf-0.15.4.zip` with the same SHA-256
-recorded above. The local release ZIP remains ignored by Git and is also the
-artifact prepared for direct Chrome Web Store upload. The Chrome Web Store
-update itself still requires the user to upload the package and submit it in
-Google's dashboard.
+recorded above. The local release ZIP remains ignored by Git and is the same
+artifact submitted to the Chrome Web Store.
 
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
