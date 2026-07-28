@@ -1,28 +1,35 @@
-# Chrome Web Store update TL;DR — 0.13.4 to 0.15.4
+# Chrome Web Store update TL;DR — 0.15.4 to 0.15.5
 
-This is the short update checklist. You do not need to repeat the complete
-first-submission setup recorded in `SUBMISSION.md`.
+This is the short checklist for updating the already submitted 0.15.4 item.
+You do not need to repeat the original submission setup.
 
 ## Do these
 
 - [ ] Open the existing item with extension ID
   `pfdelnfocedcbpomokhdaampckmhomme`.
-- [ ] Upload `release/chesscom-vinf-0.15.4.zip` as the new package.
-- [ ] Replace the store description with the current copy from the
+- [ ] Upload `release/chesscom-vinf-0.15.5.zip`.
+- [ ] In the permission disclosure for the new `sidePanel` permission, copy
+  only the text inside this block:
+
+```text
+Shows the same packaged local VINF settings interface in Chromium’s persistent side panel when the user explicitly opens it from the extension popup. It does not access page content, account data, or browsing activity.
+```
+
+- [ ] Replace the store description with the current copy in the
   `Description` section of `SUBMISSION.md`.
-- [ ] Replace all three screenshots:
-  - `assets/screenshot-01-focused-home.jpg`
-  - `assets/screenshot-02-eight-presets.jpg`
-  - `assets/screenshot-03-settings.jpg`
-- [ ] Replace the marquee promo tile with
-  `assets/marquee-promo-1400x560.jpg`.
-- [ ] Save the draft, check the listing preview, and submit the update for
-  review.
+- [ ] Replace only the settings screenshot:
+  `assets/screenshot-03-settings.jpg`.
+- [ ] Save the draft, inspect the listing preview and permission summary, then
+  submit the update for review.
 
 ## Leave these unchanged
 
 - Store icon: `assets/store-icon-128.png`
+- Homepage screenshots:
+  - `assets/screenshot-01-focused-home.jpg`
+  - `assets/screenshot-02-eight-presets.jpg`
 - Small promo tile: `assets/small-promo-440x280.jpg`
+- Marquee promo tile: `assets/marquee-promo-1400x560.jpg`
 - Category: `Productivity`
 - Language: `English`
 - Mature content: `Off`
@@ -36,38 +43,36 @@ first-submission setup recorded in `SUBMISSION.md`.
 
 ## Privacy and permissions
 
-Nothing became more invasive.
+One narrow UI permission is new; data practices are unchanged.
 
-- Permissions remain only `storage`.
+- Permissions are now `storage` and `sidePanel`.
+- `sidePanel` only displays the extension's own packaged settings page.
 - Site access remains only `https://www.chess.com/home*`.
 - Remote code remains `No`.
 - Data collected remains `None`.
 - Keep every data-use category unchecked.
 - Keep all three required data-use certifications checked.
 
-The privacy-policy text was refreshed to describe the additional local
-presentation settings, but its public URL is unchanged. No new disclosure
-category or permission justification is required.
+The privacy policy now explicitly describes the side panel. Its public URL is
+unchanged. No data-use category should be enabled.
 
-## What users gain compared with 0.13.4
+## What users gain compared with 0.15.4
 
-- Compatibility with Chess.com's redesigned homepage while retaining support
-  for the preceding layout.
-- Quick Play grids with 1, 2, 3, or 4 buttons in addition to 6 and 8.
-- A shortcut settings grid that mirrors the actual homepage layout.
-- Show/Hide and fixed ordering for all known right-column cards.
-- A separate setting for Chess.com's large native play panel.
-- Separate Daily Games visibility and Main/Right placement.
-- Updated Stats handling for the redesigned card and legacy expandable rows.
-- Preservation of unknown future homepage cards.
-- Updated Android userscript parity and settings migration.
+- A popup header action that keeps VINF settings open in Chromium's persistent
+  right-side panel.
+- A clear `×` beside the version badge closes the panel from inside VINF on
+  browsers that expose the current close API.
+- The side panel reuses the exact same autosaving settings and local storage.
+- The toolbar popup remains the default entry point.
+- Unsupported or rejected Side Panel API behavior leaves the normal popup
+  usable.
 
 ## Package identity
 
-- Version: `0.15.4`
-- File: `release/chesscom-vinf-0.15.4.zip`
+- Version: `0.15.5`
+- File: `release/chesscom-vinf-0.15.5.zip`
 - SHA-256:
-  `7c7268ff3a0c5f0044251ecd7539bdba364d403d015a072d0e8bc83c110eb7fb`
+  `7acdb9526189c7bcbd87ddc71dcb529d8954f8722eb3c7223a6c07ca3541f3de`
 
 The complete field-by-field reference and all copy-ready text remain in
 `SUBMISSION.md`.

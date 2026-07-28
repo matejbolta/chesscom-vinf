@@ -135,11 +135,17 @@
       </p>
       <p>
         These settings remain in the user’s browser and are not transmitted to
-        the developer. They can be changed from the extension popup or removed
-        by uninstalling the extension and clearing its extension data.
+        the developer. They can be changed from the extension popup or the
+        optional browser side panel, or removed by uninstalling the extension
+        and clearing its extension data.
       </p>
 
       <h2>Site access and network activity</h2>
+      <p>
+        The <code>sidePanel</code> permission is used only to show the same
+        packaged local settings interface in Chromium’s persistent side panel.
+        It does not provide website or account access.
+      </p>
       <p>
         The content script is limited to
         <code>https://www.chess.com/home*</code>. ChessComVINF does not make

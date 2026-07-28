@@ -30,7 +30,19 @@ import {
   TIME_CONTROL_SETTINGS_GROUPS
 } from "../shared/time-controls";
 
+const isSidePanelSurface =
+  window.location.pathname.endsWith("/sidepanel.html");
+document.documentElement.dataset.surface = isSidePanelSurface
+  ? "side-panel"
+  : "popup";
+
 const form = document.querySelector<HTMLFormElement>("#settings-form")!;
+const openSidePanelButton = document.querySelector<HTMLButtonElement>(
+  "#open-side-panel"
+)!;
+const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
+  "#close-side-panel"
+)!;
 const enabledInput = document.querySelector<HTMLInputElement>("#enabled")!;
 const showNativePlayPanelInput = document.querySelector<HTMLInputElement>(
   "#show-native-play-panel"
@@ -61,6 +73,40 @@ let initialized = false;
 let latestSaveId = 0;
 let saveQueue: Promise<void> = Promise.resolve();
 let statusTimer: number | undefined;
+
+type SidePanelApi = {
+  open?(options: { windowId: number }): Promise<void>;
+  close?(options: { windowId: number }): Promise<void>;
+};
+
+const sidePanelApi = (
+  chrome as typeof chrome & {
+    sidePanel?: SidePanelApi;
+  }
+).sidePanel;
+let sidePanelWindowId: number | undefined;
+
+const canOpenSidePanel =
+  !isSidePanelSurface && typeof sidePanelApi?.open === "function";
+const canCloseSidePanel =
+  isSidePanelSurface && typeof sidePanelApi?.close === "function";
+
+if (
+  (canOpenSidePanel || canCloseSidePanel) &&
+  typeof chrome.windows?.getCurrent === "function"
+) {
+  void chrome.windows
+    .getCurrent()
+    .then((currentWindow) => {
+      if (currentWindow.id === undefined) {
+        return;
+      }
+      sidePanelWindowId = currentWindow.id;
+      openSidePanelButton.hidden = !canOpenSidePanel;
+      closeSidePanelButton.hidden = !canCloseSidePanel;
+    })
+    .catch(() => {});
+}
 
 class HomepageCardEditor {
   private order: HomepageSidebarCardId[];
@@ -497,6 +543,37 @@ function showStatus(message: string, isError = false): void {
     }, 1400);
   }
 }
+
+openSidePanelButton.addEventListener("click", () => {
+  if (!sidePanelApi?.open || sidePanelWindowId === undefined) {
+    showStatus("Side panel is not available in this browser.", true);
+    return;
+  }
+
+  openSidePanelButton.disabled = true;
+  void sidePanelApi.open({ windowId: sidePanelWindowId }).then(
+    () => {
+      window.close();
+    },
+    () => {
+      openSidePanelButton.disabled = false;
+      showStatus("Side panel is not available in this browser.", true);
+    }
+  );
+});
+
+closeSidePanelButton.addEventListener("click", () => {
+  if (!sidePanelApi?.close || sidePanelWindowId === undefined) {
+    showStatus("Close this panel from the browser toolbar.", true);
+    return;
+  }
+
+  closeSidePanelButton.disabled = true;
+  void sidePanelApi.close({ windowId: sidePanelWindowId }).catch(() => {
+    closeSidePanelButton.disabled = false;
+    showStatus("Close this panel from the browser toolbar.", true);
+  });
+});
 
 function updateOptionAvailability(): void {
   const selectedIds = selects.map((select) => select.value);

@@ -657,12 +657,35 @@ html[data-view="home8"] .tv-card {
   font-size: 10px;
 }
 
+.side-panel-mock {
+  align-items: center;
+  background: #312e2b;
+  border: 1px solid #4a4844;
+  border-radius: 6px;
+  color: #c8c7c5;
+  display: flex;
+  height: 26px;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0;
+  width: 26px;
+}
+
+.side-panel-mock svg {
+  fill: none;
+  height: 15px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 15px;
+}
+
 .popup-header > span {
   background: #3a3936;
   border-radius: 999px;
   color: #c8c7c5;
   font-size: 9px;
-  margin-left: auto;
   padding: 4px 7px;
 }
 

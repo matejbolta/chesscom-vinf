@@ -13,7 +13,37 @@
         <h1>ChessComVINF</h1>
         <p>Version Infinity</p>
       </div>
-      <span class="version">v0.15.4</span>
+      <div class="header-actions">
+        <button
+          id="open-side-panel"
+          class="side-panel-button"
+          type="button"
+          aria-label="Keep settings open in side panel"
+          title="Keep settings open in side panel"
+          hidden
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3.5" y="4" width="17" height="16" rx="2"></rect>
+            <path d="M15 4v16"></path>
+            <path d="m8 9 2-2 2 2"></path>
+            <path d="M10 7v6"></path>
+          </svg>
+        </button>
+        <span class="version">v0.15.5</span>
+        <button
+          id="close-side-panel"
+          class="side-panel-button side-panel-close-button"
+          type="button"
+          aria-label="Close settings side panel"
+          title="Close settings side panel"
+          hidden
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m7 7 10 10"></path>
+            <path d="M17 7 7 17"></path>
+          </svg>
+        </button>
+      </div>
     </header>
 
     <form id="settings-form">

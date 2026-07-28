@@ -57,18 +57,28 @@ describe("privacy boundaries", () => {
     expect(fixture).not.toMatch(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i);
   });
 
-  it("uses a narrow manifest with only local-settings permission", () => {
+  it("uses a narrow manifest with only local-settings and side-panel permissions", () => {
     const manifest = JSON.parse(
       readFileSync(resolve(process.cwd(), "public/manifest.json"), "utf8")
     );
+    const builder = readFileSync(
+      resolve(process.cwd(), "scripts/build.mjs"),
+      "utf8"
+    );
 
-    expect(manifest.permissions).toEqual(["storage"]);
+    expect(manifest.permissions).toEqual(["storage", "sidePanel"]);
     expect(manifest.host_permissions).toBeUndefined();
     expect(manifest.content_scripts[0].matches).toEqual([
       "https://www.chess.com/home*"
     ]);
     expect(manifest.content_scripts[0].run_at).toBe("document_start");
     expect(manifest.action.default_popup).toBe("popup.html");
+    expect(manifest.side_panel).toEqual({
+      default_path: "sidepanel.html"
+    });
+    expect(builder).toContain(
+      'cp("src/popup/popup.html", "dist/sidepanel.html")'
+    );
   });
 
   it("keeps the Android userscript local and narrowly granted", () => {

@@ -20,6 +20,9 @@ async function flushAsyncWork(): Promise<void> {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+  vi.resetModules();
+  window.history.replaceState({}, "", "/");
 });
 
 describe("settings popup", () => {
@@ -44,18 +47,35 @@ describe("settings popup", () => {
         )
     };
     const set = vi.fn(async () => undefined);
+    const openSidePanel = vi.fn(async () => undefined);
+    const getCurrentWindow = vi.fn(async () => ({ id: 42 }));
+    const closePopup = vi
+      .spyOn(window, "close")
+      .mockImplementation(() => undefined);
     vi.stubGlobal("chrome", {
       storage: {
         local: {
           get: vi.fn(async () => ({ [SETTINGS_STORAGE_KEY]: savedSettings })),
           set
         }
+      },
+      sidePanel: {
+        open: openSidePanel
+      },
+      windows: {
+        getCurrent: getCurrentWindow
       }
     });
 
     await import("../src/popup/popup");
     await flushAsyncWork();
 
+    const openSidePanelButton = document.querySelector<HTMLButtonElement>(
+      "#open-side-panel"
+    )!;
+    const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
+      "#close-side-panel"
+    )!;
     const enabled = document.querySelector<HTMLInputElement>("#enabled")!;
     const dailyGamesPlacement = document.querySelector<HTMLSelectElement>(
       "#homepage-daily-games-placement"
@@ -89,6 +109,22 @@ describe("settings popup", () => {
       '[aria-labelledby="homepage-heading"]'
     );
 
+    expect(document.documentElement.dataset.surface).toBe("popup");
+    expect(openSidePanelButton.hidden).toBe(false);
+    expect(closeSidePanelButton.hidden).toBe(true);
+    openSidePanelButton.click();
+    await flushAsyncWork();
+    expect(getCurrentWindow).toHaveBeenCalledOnce();
+    expect(openSidePanel).toHaveBeenCalledWith({ windowId: 42 });
+    expect(closePopup).toHaveBeenCalledOnce();
+    openSidePanelButton.disabled = false;
+    openSidePanel.mockRejectedValueOnce(new Error("Unsupported"));
+    openSidePanelButton.click();
+    await flushAsyncWork();
+    expect(openSidePanelButton.disabled).toBe(false);
+    expect(document.querySelector("#status")?.textContent).toBe(
+      "Side panel is not available in this browser."
+    );
     expect(enabled.checked).toBe(false);
     expect(showDailyGames.checked).toBe(true);
     expect(dailyGamesPlacement.value).toBe("main");
@@ -354,5 +390,57 @@ describe("settings popup", () => {
         enabled: false
       }
     });
+  });
+
+  it("reuses the settings UI and closes itself from inside the side panel", async () => {
+    const html = readFileSync(
+      resolve(process.cwd(), "src/popup/popup.html"),
+      "utf8"
+    );
+    document.documentElement.innerHTML = html;
+    window.history.replaceState({}, "", "/sidepanel.html");
+
+    const getCurrentWindow = vi.fn(async () => ({ id: 42 }));
+    const closeSidePanel = vi.fn(async () => undefined);
+    vi.stubGlobal("chrome", {
+      storage: {
+        local: {
+          get: vi.fn(async () => ({})),
+          set: vi.fn(async () => undefined)
+        }
+      },
+      sidePanel: {
+        close: closeSidePanel
+      },
+      windows: {
+        getCurrent: getCurrentWindow
+      }
+    });
+
+    await import("../src/popup/popup");
+    await flushAsyncWork();
+
+    expect(document.documentElement.dataset.surface).toBe("side-panel");
+    expect(
+      document.querySelector<HTMLButtonElement>("#open-side-panel")?.hidden
+    ).toBe(true);
+    const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
+      "#close-side-panel"
+    )!;
+    expect(closeSidePanelButton.hidden).toBe(false);
+    expect(getCurrentWindow).toHaveBeenCalledOnce();
+
+    closeSidePanelButton.click();
+    await flushAsyncWork();
+    expect(closeSidePanel).toHaveBeenCalledWith({ windowId: 42 });
+
+    closeSidePanelButton.disabled = false;
+    closeSidePanel.mockRejectedValueOnce(new Error("Unsupported"));
+    closeSidePanelButton.click();
+    await flushAsyncWork();
+    expect(closeSidePanelButton.disabled).toBe(false);
+    expect(document.querySelector("#status")?.textContent).toBe(
+      "Close this panel from the browser toolbar."
+    );
   });
 });

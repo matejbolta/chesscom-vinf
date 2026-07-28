@@ -3,8 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-07-28.
-Current source version: 0.15.4.
-Latest desktop package: `release/chesscom-vinf-0.15.4.zip`.
+Current source version: 0.15.5.
+Latest desktop package: `release/chesscom-vinf-0.15.5.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
 ## Start Here
@@ -22,7 +22,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 0.15.4. This handoff is the shortest
+chronological amendments through version 0.15.5. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current User Experience
@@ -122,6 +122,8 @@ The toolbar popup contains:
 - an independent `Expanded` / `Retracted` selector beside every Stats rating
   row;
 - separate Homepage, Quick Play, and Stats Reset actions;
+- a compact header button that opens the same settings UI in Chromium's
+  persistent side panel when the browser supports it;
 - brief autosave status feedback.
 
 Every toggle, select, Stats checkbox, row movement, and Reset saves immediately.
@@ -130,6 +132,15 @@ finish out of order. A choice already used by one shortcut is disabled in the
 other active selectors. Quick Play Reset restores the selected grid size's
 presets. Homepage Reset restores only native panel/card visibility, placement,
 and order. Stats Reset restores only the Stats visibility/order/state defaults.
+The toolbar popup remains the default action. `sidepanel.html` reuses the same
+HTML, CSS, JavaScript, storage model, and autosave queue at a responsive width.
+The open-panel button is hidden in that surface. When the current browser
+provides Chrome 141+'s `chrome.sidePanel.close()`, a compact `×` beside the
+version badge closes the global panel for the current window. Opening happens
+only from the popup click; the popup closes only after
+`chrome.sidePanel.open()` succeeds. Missing methods leave their related action
+hidden, and rejected calls keep the remaining UI usable with local fallback
+feedback.
 
 Stats defaults are summary order Games/Puzzles/Lessons with only Games visible,
 and rating order Rapid/Blitz/Bullet/Daily/Puzzles/Live 960 with only Rapid and
@@ -307,6 +318,10 @@ render in their straightforward one-row order.
 
 19. Do not broaden hosts, routes, or permissions without an explicit product
     decision.
+
+20. Keep the toolbar popup as the default settings entry point. The optional
+    persistent Side Panel UI must reuse the same packaged local settings page,
+    open only from a user gesture, and degrade without affecting settings.
 
 ## Native Launch Contract
 
@@ -545,7 +560,7 @@ Visibility arrays filter unknown and duplicate IDs; an empty array is valid.
     src/content/quick-play-renderer.ts Configurable Quick Play UI and interaction states
     src/content/launch-adapter.ts       Validated native URL derivation
     src/content/content.css             Homepage layout and category styling
-    src/popup/                          Autosaving settings UI
+    src/popup/                          Shared popup/side-panel autosaving UI
     src/userscript/                     Android userscript entry and modal CSS
     src/shared/models.ts                Settings/time-control types
     src/shared/homepage-cards.ts        Known sidebar card catalog and defaults
@@ -565,8 +580,11 @@ Visibility arrays filter unknown and duplicate IDs; an empty array is valid.
 
 ## Privacy and Fixture Safety
 
-The manifest has only the `storage` permission. It has no host permission entry;
-the content script itself is narrowly matched to `https://www.chess.com/home*`.
+The manifest has only the `storage` and `sidePanel` permissions. `storage`
+persists local preferences; `sidePanel` displays the same packaged settings UI
+in Chromium's persistent panel and grants no page/account access. The manifest
+has no host permission entry; the content script itself is narrowly matched to
+`https://www.chess.com/home*`.
 
 The extension stores only:
 
@@ -606,7 +624,7 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 0.15.4, the suite has 80 passing tests across twelve files. Important
+As of version 0.15.5, the suite has 81 passing tests across twelve files. Important
 coverage includes:
 
 - exact legacy/redesigned signed-in homepage detection and route rejection;
@@ -645,7 +663,11 @@ coverage includes:
 - enabled-document pre-hiding of exact native toolbar/hero/banner/promo
   replacements before delayed mutation reconciliation;
 - document-start observation, settings-load gating, and landmarks arriving after
-  runtime startup.
+  runtime startup;
+- popup-to-side-panel opening with the current browser window, plus the narrow
+  `storage`/`sidePanel` manifest boundary;
+- successful and rejected in-panel close behavior using the same browser
+  window.
 
 ### Local visual harness
 
@@ -670,6 +692,8 @@ Useful routes:
     http://127.0.0.1:4173/home-narrow-preview
     http://127.0.0.1:4173/popup-preview
     http://127.0.0.1:4173/popup
+    http://127.0.0.1:4173/sidepanel-preview
+    http://127.0.0.1:4173/sidepanel.html
 
 `union-preview=1` renders Bullet, mobile Blitz, and Rapid examples without
 starting a game. At the 1600px verification viewport, Quick Play and Game History
@@ -677,7 +701,8 @@ were both 728px wide. Version 0.9.0 was visually checked at desktop, extension
 popup, and responsive fixture sizes with no browser-console errors. The legacy
 desktop Stats fixture rendered Games, Rapid, Blitz, and Insights in that order;
 the current redesigned fixture has no Insights row. The popup's Stats controls
-were readable and scrollable at 420×600.
+were readable and scrollable at 420×600. The shared settings surface must also
+be checked at the 360×780 side-panel preview.
 
 ### Brave/Chrome unpacked testing
 
@@ -736,11 +761,11 @@ dependency or request directive.
 
 Current artifact:
 
-    release/chesscom-vinf-0.15.4.zip
+    release/chesscom-vinf-0.15.5.zip
 
 SHA-256:
 
-    7c7268ff3a0c5f0044251ecd7539bdba364d403d015a072d0e8bc83c110eb7fb
+    7acdb9526189c7bcbd87ddc71dcb529d8954f8722eb3c7223a6c07ca3541f3de
 
 Android artifact:
 
@@ -748,11 +773,11 @@ Android artifact:
 
 Convenience Chrome Web Store handoff:
 
-    release/chesscom-vinf-0.15.4-store-submission.zip
+    release/chesscom-vinf-0.15.5-store-submission.zip
 
 SHA-256:
 
-    6e8aa0d65cc7254304ff70a66c2abfa6f7154105dcc9d83d153a921a153e62ee
+    24d65639a2b6e7e03c8c7f9e80bb322ef986288b6ae384e3cd1a7a114c2673e5
 
 The project is an independent public Git repository:
 
@@ -770,14 +795,13 @@ Public-safe Chrome Web Store copy and synthetic graphic assets live under
 Version 0.15.4 was submitted to the Chrome Web Store by the user on 2026-07-28.
 Treat it as the current submitted store version unless a later handoff records a
 review rejection, approval, or newer upload. `store-listing/SUBMISSION.md`
-contains the complete field-by-field 0.15.4 update record using copy-safe fenced
-text blocks instead of Markdown blockquotes. Its public-safe synthetic
-screenshots and marquee artwork were refreshed for the redesigned homepage, the
-new card editor, the mirrored eight-button settings grid, and the removal of
-Insights from Chess.com's current Stats card.
+now contains the complete field-by-field 0.15.5 update record using copy-safe
+fenced text blocks instead of Markdown blockquotes. The settings screenshot is
+public-safe and now shows the side-panel action; the two homepage screenshots
+and promo artwork remain unchanged from 0.15.4.
 
 `store-listing/UPDATE_TLDR.md` is the preferred dashboard workflow for this
-update. It lists only what changes from the already submitted 0.13.4 version,
+update. It lists only what changes from the already submitted 0.15.4 version,
 what remains unchanged, and the exact package identity. Keep the longer
 submission document as the full reference rather than making the user repeat
 the original submission process.
@@ -787,8 +811,9 @@ The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
     https://github.com/matejbolta/chesscom-vinf/releases/tag/v0.15.4
 
 That GitHub release includes `chesscom-vinf-0.15.4.zip` with the same SHA-256
-recorded above. The local release ZIP remains ignored by Git and is the same
-artifact submitted to the Chrome Web Store.
+recorded in its release. Version 0.15.5 is the current source on `main`, but is
+not yet tagged, released on GitHub, or uploaded to the Chrome Web Store. The
+local release directory remains ignored by Git.
 
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,

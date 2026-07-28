@@ -15,6 +15,13 @@ body {
   padding: 18px;
 }
 
+.header-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
 .app-header {
   align-items: center;
   display: flex;
@@ -53,8 +60,65 @@ h1 {
   border-radius: 999px;
   color: #c8c7c5;
   font-size: 11px;
-  margin-left: auto;
   padding: 4px 8px;
+}
+
+.side-panel-button {
+  align-items: center;
+  appearance: none;
+  background: #312e2b;
+  border: 1px solid #4a4844;
+  border-radius: 7px;
+  color: #c8c7c5;
+  cursor: pointer;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  padding: 0;
+  transition:
+    border-color 120ms ease,
+    color 120ms ease,
+    background-color 120ms ease;
+  width: 30px;
+}
+
+.side-panel-button[hidden] {
+  display: none;
+}
+
+.side-panel-button:hover:not(:disabled) {
+  background: #3a3936;
+  border-color: #81b64c;
+  color: #fff;
+}
+
+.side-panel-button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.side-panel-button svg {
+  fill: none;
+  height: 18px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 18px;
+}
+
+.side-panel-close-button:hover:not(:disabled) {
+  background: rgb(240 123 113 / 10%);
+  border-color: #f07b71;
+}
+
+html[data-surface="side-panel"] body {
+  min-width: 0;
+}
+
+html[data-surface="side-panel"] #open-side-panel,
+html[data-surface="popup"] #close-side-panel {
+  display: none;
 }
 
 #settings-form {
@@ -356,4 +420,36 @@ select {
 
 .status.error {
   color: #f07b71;
+}
+
+@media (max-width: 359px) {
+  body {
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .app-header {
+    gap: 9px;
+  }
+
+  .app-header img {
+    height: 42px;
+    width: 42px;
+  }
+
+  .preset-list {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+
+  .setting-row--select {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .setting-row--select select {
+    flex-basis: auto;
+    width: 100%;
+  }
 }

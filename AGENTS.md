@@ -27,6 +27,9 @@ directory.
   private matchmaking endpoint or reuse account credentials.
 - Prefer semantic landmarks and URLs over generated class names.
 - Keep DOM reconciliation idempotent and safe when optional modules are absent.
+- Keep the toolbar popup as the default settings entry point. The optional
+  Chromium side panel must reuse the same local autosaving UI and fail safely
+  when a browser does not expose `chrome.sidePanel`.
 - Do not add telemetry, analytics, remote code, or extension-owned network calls.
 - Never commit raw signed-in page captures or account-specific data.
 

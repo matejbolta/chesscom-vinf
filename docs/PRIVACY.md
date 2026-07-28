@@ -17,7 +17,10 @@ ChessComVINF runs entirely inside the signed-in Chess.com homepage.
   homepage to start a selected game.
 
 The extension requests Chrome's `storage` permission only for those local
-preferences and runs its content script only on `https://www.chess.com/home*`.
+preferences and the `sidePanel` permission only to show the same local settings
+interface in Chromium's persistent side panel. Opening that panel collects or
+transmits nothing. The content script runs only on
+`https://www.chess.com/home*`.
 
 The Android userscript has the same privacy boundary. It grants only
 `GM_getValue`, `GM_setValue`, `GM_addValueChangeListener`, and

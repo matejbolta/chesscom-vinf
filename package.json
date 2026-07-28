@@ -1,6 +1,6 @@
 {
   "name": "chesscom-vinf",
-  "version": "0.15.4",
+  "version": "0.15.5",
   "private": true,
   "description": "A focused, infinitely improving Chess.com homepage.",
   "type": "module",

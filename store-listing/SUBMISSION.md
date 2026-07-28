@@ -1,6 +1,6 @@
-# Chrome Web Store update — ChessComVINF 0.15.4
+# Chrome Web Store update — ChessComVINF 0.15.5
 
-For the short list of changes from the already submitted 0.13.4 version, use
+For the short list of changes from the already submitted 0.15.4 version, use
 `UPDATE_TLDR.md`. The rest of this file is the complete field-by-field reference
 and copy-ready text.
 
@@ -12,9 +12,9 @@ Markdown blockquote characters.
 
 - Extension ID: `pfdelnfocedcbpomokhdaampckmhomme`
 - Current public repository: `https://github.com/matejbolta/chesscom-vinf`
-- Published source commit: `3f055bd`
-- Published tag: `v0.15.4`
-- GitHub release:
+- Previous published source commit: `3f055bd`
+- Previous published tag: `v0.15.4`
+- Previous GitHub release:
   `https://github.com/matejbolta/chesscom-vinf/releases/tag/v0.15.4`
 - Category: `Productivity`
 - Language: `English`
@@ -23,10 +23,10 @@ Markdown blockquote characters.
 
 ## Package
 
-- Upload: `../release/chesscom-vinf-0.15.4.zip`
-- Version: `0.15.4`
+- Upload: `../release/chesscom-vinf-0.15.5.zip`
+- Version: `0.15.5`
 - SHA-256:
-  `7c7268ff3a0c5f0044251ecd7539bdba364d403d015a072d0e8bc83c110eb7fb`
+  `7acdb9526189c7bcbd87ddc71dcb529d8954f8722eb3c7223a6c07ca3541f3de`
 
 The package contains only the Manifest V3 extension. The Android userscript,
 private fixtures, source maps, store assets, and release documentation are not
@@ -61,7 +61,8 @@ Features:
 • Choose which Stats rows appear, their fixed order, and whether each enabled rating starts expanded or retracted when Chess.com supports expansion.
 • Hide recurring campaign banners and the redundant homepage profile strip.
 • Save every setting immediately without a separate Save button.
-• Disable all VINF changes instantly from the extension popup.
+• Open and close settings from Chromium’s persistent side panel when supported.
+• Disable all VINF changes instantly from the popup or side panel.
 
 Privacy:
 
@@ -113,6 +114,12 @@ Improve the signed-in Chess.com homepage by simplifying its layout and providing
 Stores only the user’s local VINF settings—enabled state, selected time controls, native module placement and visibility, right-column order, and Stats display preferences—so they persist across browser sessions. No account or page data is stored.
 ```
 
+### Permission justification — sidePanel
+
+```text
+Shows the same packaged local VINF settings interface in Chromium’s persistent side panel when the user explicitly opens it from the extension popup. It does not access page content, account data, or browsing activity.
+```
+
 ### Site access justification
 
 ```text
@@ -154,9 +161,10 @@ ChessComVINF applies only to the signed-in Chess.com homepage.
 
 1. Sign in to a Chess.com test account and open https://www.chess.com/home.
 2. Confirm that configurable Quick Play buttons appear at the top, with Game History directly below and the selected native cards arranged in the right column.
-3. Open the ChessComVINF toolbar popup. Change the Quick Play grid size, select different time controls, change Daily Games placement, change right-column card visibility/order, and change Stats visibility/order/initial state.
-4. Refresh the homepage and confirm that the settings persist.
-5. Turn off “Enable VINF” and confirm that the native homepage layout is restored after the page updates.
+3. Open the ChessComVINF toolbar popup. Use its header button to open the same settings in the browser side panel.
+4. Change the Quick Play grid size, selected time controls, Daily Games placement, right-column card visibility/order, and Stats visibility/order/initial state.
+5. Refresh the homepage and confirm that the settings persist.
+6. Turn off “Enable VINF” and confirm that the native homepage layout is restored after the page updates.
 
 Most functionality can be reviewed without starting a live game. If a Quick Play shortcut is tested, it uses Chess.com’s own native game-start URL. No developer-provided account or credentials are required.
 ```
@@ -166,38 +174,36 @@ Most functionality can be reviewed without starting a live game. If a Quick Play
 Suggested title:
 
 ```text
-ChessComVINF 0.15.4
+ChessComVINF 0.15.5
 ```
 
 Suggested release notes:
 
 ```text
-ChessComVINF 0.15.4 updates VINF for Chess.com’s redesigned homepage and expands homepage customization.
+ChessComVINF 0.15.5 adds an optional persistent settings side panel while keeping the familiar toolbar popup.
 
 Highlights:
 
-• Supports both the redesigned and preceding signed-in homepage layouts.
-• Adds 1, 2, 3, and 4-button Quick Play grids alongside the existing 6 and 8-button layouts.
-• Makes the shortcut editor mirror the selected homepage grid.
-• Adds visibility and fixed ordering for all known right-column cards.
-• Adds a separate native play-panel visibility setting.
-• Keeps Daily Games visibility separate from its Main/Right placement.
-• Updates Stats handling for Chess.com’s new card structure while preserving legacy expandable rows.
-• Preserves unknown future homepage cards instead of hiding them.
-• Includes updated Android userscript parity and extensive migration coverage.
+• Opens the complete VINF settings UI in Chromium’s persistent right-side panel from a compact popup header action.
+• Adds a clear in-panel close button beside the version badge on browsers that expose the current close API.
+• Reuses the same immediate autosave behavior and local settings in both surfaces.
+• Keeps the toolbar popup as the default entry point.
+• Adapts the settings layout to narrow side-panel widths.
+• Leaves the popup usable if the browser does not expose or accept the Side Panel API.
 
 Privacy remains unchanged: no analytics, telemetry, remote code, or collected account data.
 ```
 
 ## Final update sequence
 
-1. GitHub source, tag, release page, and release ZIP are already published.
-2. Confirm the public privacy-policy URL still renders before submission.
+1. Publish the 0.15.5 source, tag, release page, and matching release ZIP.
+2. Confirm the public privacy-policy URL includes the side-panel disclosure.
 3. In the Chrome Web Store dashboard, open extension
    `pfdelnfocedcbpomokhdaampckmhomme`.
-4. Upload `release/chesscom-vinf-0.15.4.zip` as the new package.
+4. Upload `release/chesscom-vinf-0.15.5.zip` as the new package.
 5. Replace the store description with the copy-ready description above.
-6. Upload the refreshed screenshots if the dashboard does not retain them
-   automatically.
-7. Confirm the Privacy and Distribution answers still match this file.
-8. Save the draft, inspect the listing preview, and submit the update for review.
+6. Add the `sidePanel` permission justification above.
+7. Replace only `assets/screenshot-03-settings.jpg`.
+8. Confirm the remaining Privacy and Distribution answers still match this
+   file.
+9. Save the draft, inspect the listing preview, and submit the update for review.

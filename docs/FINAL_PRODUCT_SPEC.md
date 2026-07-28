@@ -1328,3 +1328,22 @@ reduced to functional controls only.
   numbers occupy the same positions in settings and on the homepage.
 - Apply the same adaptive editor layout to the desktop popup and Android
   settings dialog; retain a single-column fallback on narrow phones.
+
+## 54. Version 0.15.5 Product Amendments
+
+- Keep the toolbar popup as the default settings entry point.
+- Add a compact header action that opens the same packaged settings page in
+  Chromium's persistent right-side panel.
+- Reuse the existing autosave behavior and `chrome.storage.local` settings
+  model; do not create a second settings implementation or storage format.
+- Request the narrow MV3 `sidePanel` permission and declare
+  `sidepanel.html` as the extension's default side-panel page.
+- Open the panel only from an explicit user click. Close the transient popup
+  only after the browser confirms that the side panel opened.
+- Hide the open-panel action inside the side panel itself and adapt the shared
+  settings layout to narrower panel widths.
+- When `chrome.sidePanel.close()` is available, show a compact `×` beside the
+  version badge inside the side panel and close the global panel for its current
+  browser window. Keep the native browser close control as the fallback.
+- Feature-detect the API. If Chrome/Brave does not expose or accept it, leave
+  the popup open and show a local error without affecting saved settings.

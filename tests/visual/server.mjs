@@ -25,6 +25,29 @@ const harness = await build({
 const harnessCode = harness.outputFiles[0].text;
 const contentCss = await readFile(new URL("../../dist/content.css", import.meta.url), "utf8");
 const popupHtml = await readFile(new URL("../../dist/popup.html", import.meta.url), "utf8");
+const sidePanelHtml = await readFile(
+  new URL("../../dist/sidepanel.html", import.meta.url),
+  "utf8"
+);
+const sidePanelPreviewHtml = sidePanelHtml.replace(
+  '<script src="popup.js"></script>',
+  `<script>
+    globalThis.chrome ??= {};
+    chrome.storage = {
+      local: {
+        get: async () => ({}),
+        set: async () => {}
+      }
+    };
+    chrome.windows = {
+      getCurrent: async () => ({ id: 1 })
+    };
+    chrome.sidePanel = {
+      close: async () => {}
+    };
+  </script>
+  <script src="popup.js"></script>`
+);
 const popupCss = await readFile(new URL("../../dist/popup.css", import.meta.url), "utf8");
 const popupJs = await readFile(new URL("../../dist/popup.js", import.meta.url), "utf8");
 const rawHtml = await readFile(rawHtmlUrl, "utf8");
@@ -105,9 +128,21 @@ const server = createServer(async (request, response) => {
     );
     return;
   }
+  if (pathname === "/sidepanel-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF side panel preview" src="/sidepanel.html" style="border:0;height:780px;width:360px"></iframe></body></html>'
+    );
+    return;
+  }
   if (pathname === "/popup" || pathname === "/popup.html") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(popupHtml);
+    return;
+  }
+  if (pathname === "/sidepanel.html") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(sidePanelPreviewHtml);
     return;
   }
   if (pathname === "/popup.css") {

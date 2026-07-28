@@ -17,6 +17,9 @@ top card. Its `Homepage` section can show or hide Chess.com's large native play
 panel, independently show or hide every known right-column card, and keep those
 cards in a user-selected order. Daily Games has the same visibility checkbox,
 plus a Main/Right placement selector that remembers its location while hidden.
+On supported Chromium browsers, the header button can move the same autosaving
+settings UI into the browser's persistent side panel. A close button beside the
+version badge closes that panel without reaching for the browser toolbar.
 The remaining sections choose 1,
 2, 3, 4, 6, or 8 unique Bullet/Blitz/Rapid Quick Play presets and control the
 visibility and fixed order of native Stats rows. Every enabled rating row can
@@ -56,7 +59,9 @@ pnpm build:android
 ```
 
 Load `dist/` as an unpacked extension in Chrome or Brave. `pnpm package` creates
-a versioned zip under `release/`.
+a versioned zip under `release/`. The toolbar popup remains the default entry
+point; use its side-panel button when you want settings to stay open while
+browsing.
 
 `pnpm build:android` creates `dist-android/chesscom-vinf.user.js` for local
 installation in Violentmonkey on Firefox for Android. It does not modify the

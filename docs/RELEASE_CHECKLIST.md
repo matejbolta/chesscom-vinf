@@ -5,12 +5,13 @@
 - [x] TypeScript strict typecheck passes.
 - [x] Unit and DOM integration tests pass.
 - [x] Production build succeeds.
-- [x] Packaged manifest contains only the local `storage` permission.
+- [x] Packaged manifest contains only the local `storage` and `sidePanel`
+  permissions.
 - [x] Package contains no raw fixture, screenshot, source map, or account data.
 - [x] Chrome Web Store copy contains no Markdown blockquote prefixes, reflects
   every current homepage control, and keeps the zero-collection disclosures.
 - [x] Public-safe store screenshots use only synthetic identities and reflect
-  the current 0.15.4 homepage and settings UI.
+  the current 0.15.5 homepage and settings UI.
 - [x] All 17 catalog controls map to their exact native base/increment pairs.
 - [x] Popup uses a desktop-first union of Bullet, Blitz, and Rapid presets.
 - [x] Desktop and Android settings share one Blitz group ordered `3 min`,
@@ -24,6 +25,14 @@
 - [x] Desktop and Android settings rebuild the correct number of selectors and
   disable duplicate choices across all active selectors.
 - [x] Every toggle, preset change, and preset reset saves without a submit action.
+- [x] The toolbar popup remains the default action; its header button opens the
+  shared settings UI in the side panel from a user gesture.
+- [x] The side-panel entry point uses the same local settings code and hides its
+  own open-panel action.
+- [x] Chrome 141+'s in-panel `×` closes the global panel for the current window;
+  rejected or missing close support retains the browser-toolbar fallback.
+- [x] Missing or rejected Side Panel API support leaves the popup usable and
+  does not change stored settings.
 - [x] Stats summary/rating visibility and fixed order normalize and autosave.
 - [x] Daily Games visibility plus `Main` / `Right` placement normalize,
   autosave, preserve the selected location while hidden, and migrate both
@@ -112,6 +121,9 @@
   native `#ead762` bolt color rather than ochre HSL or milky alpha blending.
 - [x] Starting or failing a launch never inserts a visible status row.
 - [x] Settings popup is usable at extension-popup dimensions.
+- [x] Shared settings UI is usable at Chromium side-panel dimensions.
+- [x] The in-panel `×` is visible beside the version badge without crowding the
+  settings title at side-panel width.
 - [x] Homepage's seven-card visibility/order editor is readable and scrollable
   at extension-popup dimensions.
 - [x] Stats visibility/order controls remain readable and scrollable at popup
@@ -153,6 +165,12 @@ Complete these before publishing a release beyond private use:
   browser restart; any native Insights row must remain last.
 - [ ] Verify Daily Games visibility and Main/Right placement plus every known
   sidebar card's visibility/order persist after Brave restarts.
+- [ ] Open settings from the popup into Chrome's side panel; verify it remains
+  open across homepage tab changes, autosaved changes apply, and the internal
+  `×` closes the panel.
+- [ ] Repeat the side-panel check in current Brave. If Brave does not expose the
+  open/close method, verify the remaining native browser control and popup
+  fallback remain usable.
 - [ ] Install the userscript in Firefox/Violentmonkey on the Android tablet.
 - [ ] Verify portrait and landscape layout on the signed-in tablet homepage.
 - [ ] Verify all grid sizes, their real clocks, and Android settings persistence.

@@ -14,6 +14,7 @@ async function copyStatic() {
   );
   await cp("src/content/content.css", "dist/content.css");
   await cp("src/popup/popup.html", "dist/popup.html");
+  await cp("src/popup/popup.html", "dist/sidepanel.html");
   await cp("src/popup/popup.css", "dist/popup.css");
 }
 
