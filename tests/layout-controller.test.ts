@@ -58,7 +58,7 @@ describe("LayoutController", () => {
     expect(quickPlay.parentElement).toBe(main);
     expect(main.firstElementChild).toBe(quickPlay);
     expect(quickPlay.nextElementSibling?.getAttribute("data-fixture-module")).toBe(
-      "main-placeholder"
+      "recommended-match"
     );
     expect(
       document.querySelector("#home-header")?.getAttribute(MARKERS.hidden)
@@ -120,7 +120,9 @@ describe("LayoutController", () => {
         "streaks",
         "chess-tv",
         "stats",
-        "daily-games"
+        "daily-games",
+        "recommended-match",
+        "game-history"
       ],
       homepageSidebarVisible: [
         "friends",
@@ -169,6 +171,71 @@ describe("LayoutController", () => {
       "chess-tv",
       "stats",
       "unknown-card"
+    ]);
+  });
+
+  it("applies the saved managed-card order within the desktop main column", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const main = document.querySelector<HTMLElement>(
+      "#home-main > .main-component"
+    )!;
+    const recommendedMatch = document.querySelector<HTMLElement>(
+      '[data-fixture-module="recommended-match"]'
+    )!;
+    const gameHistory = document.querySelector<HTMLElement>(
+      '[data-fixture-module="game-history"]'
+    )!;
+    const mainPlaceholder = document.querySelector<HTMLElement>(
+      '[data-fixture-module="main-placeholder"]'
+    )!;
+    const historyFirstOrder = [
+      "stats",
+      "chess-tv",
+      "daily-games",
+      "game-history",
+      "recommended-match",
+      "streaks",
+      "legend-league",
+      "daily-puzzle",
+      "friends"
+    ] as const;
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      homepageSidebarOrder: [...historyFirstOrder]
+    });
+
+    const quickPlay = document.querySelector<HTMLElement>(
+      `[${MARKERS.owned}="quick-play"]`
+    )!;
+    expect(Array.from(main.children).slice(0, 4)).toEqual([
+      quickPlay,
+      gameHistory,
+      recommendedMatch,
+      mainPlaceholder
+    ]);
+
+    const prepend = vi.spyOn(main, "prepend");
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      homepageSidebarOrder: [...historyFirstOrder]
+    });
+    expect(prepend).not.toHaveBeenCalled();
+
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
+    expect(Array.from(main.children).slice(0, 4)).toEqual([
+      quickPlay,
+      recommendedMatch,
+      gameHistory,
+      mainPlaceholder
+    ]);
+
+    controller.cleanup(document);
+    expect(Array.from(main.children)).toEqual([
+      recommendedMatch,
+      mainPlaceholder,
+      gameHistory
     ]);
   });
 
@@ -383,7 +450,15 @@ describe("LayoutController", () => {
 
       const panel = document.querySelector<HTMLElement>(
         `[${MARKERS.owned}="quick-play"]`
-      )!;
+      );
+      if (count === 0) {
+        expect(panel).toBeNull();
+        previousPanel = null;
+        continue;
+      }
+      if (!panel) {
+        throw new Error(`Missing Quick Play panel for ${count} shortcuts`);
+      }
       expect(panel.dataset.presetCount).toBe(String(count));
       expect(
         Array.from(
@@ -397,6 +472,164 @@ describe("LayoutController", () => {
       }
       previousPanel = panel;
     }
+  });
+
+  it("removes Quick Play entirely when zero shortcuts are selected", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+
+    controller.reconcile(document, HOME_LOCATION);
+    expect(
+      document.querySelector(`[${MARKERS.owned}="quick-play"]`)
+    ).not.toBeNull();
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      quickPlayPresetCount: 0,
+      timeControlIds: []
+    });
+
+    expect(
+      document.querySelector(`[${MARKERS.owned}="quick-play"]`)
+    ).toBeNull();
+    expect(
+      document.querySelector("#home-main > .main-component")?.firstElementChild
+        ?.getAttribute("data-fixture-module")
+    ).toBe("recommended-match");
+  });
+
+  it("renders repeated Quick Play presets as independent buttons", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      timeControlIds: [
+        "10-0",
+        "10-0",
+        "10-0",
+        "10-0",
+        "10-0",
+        "10-0"
+      ]
+    });
+
+    const buttons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>(
+        "[data-chesscom-vinf-time-control]"
+      )
+    );
+    expect(buttons).toHaveLength(6);
+    expect(
+      buttons.map((button) => button.dataset.chesscomVinfTimeControl)
+    ).toEqual(["10-0", "10-0", "10-0", "10-0", "10-0", "10-0"]);
+  });
+
+  it("moves, hides, and restores the native Recommended Match card", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const main = document.querySelector<HTMLElement>(
+      "#home-main > .main-component"
+    )!;
+    const sidebar = document.querySelector<HTMLElement>(
+      "#home-sidebar > .sidebar-component"
+    )!;
+    const recommendedMatch = document.querySelector<HTMLElement>(
+      '[data-fixture-module="recommended-match"]'
+    )!;
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      recommendedMatchPlacement: "sidebar",
+      recommendedMatchVisiblePlacement: "sidebar",
+      homepageSidebarVisible: [
+        ...DEFAULT_SETTINGS.homepageSidebarVisible,
+        "recommended-match"
+      ]
+    });
+
+    expect(recommendedMatch.parentElement).toBe(sidebar);
+    expect(recommendedMatch.getAttribute(MARKERS.module)).toBe(
+      "recommended-match"
+    );
+    expect(
+      document.documentElement.getAttribute(MARKERS.recommendedPlacement)
+    ).toBe("sidebar");
+    expect(visibleModuleOrder(sidebar)).toContain("recommended-match");
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      recommendedMatchPlacement: "hidden"
+    });
+
+    expect(recommendedMatch.parentElement).toBe(main);
+    expect(recommendedMatch.getAttribute(MARKERS.hidden)).toBe(
+      "recommended-match"
+    );
+    expect(
+      document.documentElement.getAttribute(MARKERS.recommendedPlacement)
+    ).toBe("hidden");
+
+    controller.cleanup(document);
+    expect(recommendedMatch.parentElement).toBe(main);
+    expect(recommendedMatch.hasAttribute(MARKERS.hidden)).toBe(false);
+    expect(
+      document.documentElement.hasAttribute(MARKERS.recommendedPlacement)
+    ).toBe(false);
+  });
+
+  it("moves, hides, and restores the native Game History card", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const main = document.querySelector<HTMLElement>(
+      "#home-main > .main-component"
+    )!;
+    const sidebar = document.querySelector<HTMLElement>(
+      "#home-sidebar > .sidebar-component"
+    )!;
+    const gameHistory = document.querySelector<HTMLElement>(
+      '[data-fixture-module="game-history"]'
+    )!;
+
+    const sidebarSettings = {
+      ...DEFAULT_SETTINGS,
+      gameHistoryPlacement: "sidebar" as const,
+      gameHistoryVisiblePlacement: "sidebar" as const,
+      homepageSidebarVisible: [
+        ...DEFAULT_SETTINGS.homepageSidebarVisible,
+        "game-history" as const
+      ]
+    };
+    controller.reconcile(document, HOME_LOCATION, sidebarSettings);
+
+    expect(gameHistory.parentElement).toBe(sidebar);
+    expect(gameHistory.getAttribute(MARKERS.module)).toBe("game-history");
+    expect(
+      document.documentElement.getAttribute(MARKERS.gameHistoryPlacement)
+    ).toBe("sidebar");
+    expect(visibleModuleOrder(sidebar)).toContain("game-history");
+
+    // A second pass must rediscover the already-moved native card.
+    controller.reconcile(document, HOME_LOCATION, sidebarSettings);
+    expect(gameHistory.parentElement).toBe(sidebar);
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      gameHistoryPlacement: "hidden"
+    });
+
+    expect(gameHistory.parentElement).toBe(main);
+    expect(gameHistory.getAttribute(MARKERS.hidden)).toBe("game-history");
+    expect(
+      document.documentElement.getAttribute(MARKERS.gameHistoryPlacement)
+    ).toBe("hidden");
+
+    controller.cleanup(document);
+    expect(gameHistory.parentElement).toBe(main);
+    expect(gameHistory.hasAttribute(MARKERS.hidden)).toBe(false);
+    expect(
+      document.documentElement.hasAttribute(MARKERS.gameHistoryPlacement)
+    ).toBe(false);
   });
 
   it("restores Daily Games immediately when its sidebar setting is disabled", () => {
@@ -750,6 +983,7 @@ describe("LayoutController", () => {
     expect(main.getAttribute(MARKERS.layout)).toBe("single-column");
     expect(main.firstElementChild?.getAttribute(MARKERS.owned)).toBe("quick-play");
     expect(moduleOrder(main)).toEqual([
+      "recommended-match",
       "game-history",
       "stats",
       "chess-tv",
@@ -778,12 +1012,58 @@ describe("LayoutController", () => {
       "next-lesson",
       "game-review",
       "daily-games",
+      "recommended-match",
       "game-history",
       "stats",
       "chess-tv",
       "legend-league"
     ]);
     expect(document.querySelector(`[${MARKERS.hidden}]`)).toBeNull();
+  });
+
+  it("applies the saved managed-card order within the responsive main group", () => {
+    const document = loadResponsiveHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const main = document.querySelector<HTMLElement>("main")!;
+    const settings = {
+      ...DEFAULT_SETTINGS,
+      homepageSidebarOrder: [
+        "stats",
+        "chess-tv",
+        "daily-games",
+        "game-history",
+        "recommended-match",
+        "streaks",
+        "legend-league",
+        "daily-puzzle",
+        "friends"
+      ] as const
+    };
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...settings,
+      homepageSidebarOrder: [...settings.homepageSidebarOrder]
+    });
+
+    expect(moduleOrder(main)).toEqual([
+      "game-history",
+      "recommended-match",
+      "stats",
+      "chess-tv",
+      "daily-games",
+      "legend-league",
+      "native-actions",
+      "puzzles",
+      "next-lesson",
+      "game-review"
+    ]);
+
+    const prepend = vi.spyOn(main, "prepend");
+    controller.reconcile(document, HOME_LOCATION, {
+      ...settings,
+      homepageSidebarOrder: [...settings.homepageSidebarOrder]
+    });
+    expect(prepend).not.toHaveBeenCalled();
   });
 
   it("supports a minimal responsive flow with optional cards hidden", () => {
@@ -794,6 +1074,8 @@ describe("LayoutController", () => {
     controller.reconcile(document, HOME_LOCATION, {
       ...DEFAULT_SETTINGS,
       dailyGamesPlacement: "hidden",
+      recommendedMatchPlacement: "hidden",
+      gameHistoryPlacement: "hidden",
       homepageSidebarVisible: DEFAULT_SETTINGS.homepageSidebarVisible.filter(
         (id) =>
           id !== "daily-games" &&
@@ -802,8 +1084,14 @@ describe("LayoutController", () => {
       )
     });
 
-    expect(visibleModuleOrder(main)).toEqual(["game-history", "stats"]);
-    for (const name of ["daily-games", "chess-tv", "legend-league"]) {
+    expect(visibleModuleOrder(main)).toEqual(["stats"]);
+    for (const name of [
+      "daily-games",
+      "recommended-match",
+      "game-history",
+      "chess-tv",
+      "legend-league"
+    ]) {
       expect(
         document
           .querySelector(`[data-fixture-module="${name}"]`)

@@ -1347,3 +1347,76 @@ reduced to functional controls only.
   browser window. Keep the native browser close control as the fallback.
 - Feature-detect the API. If Chrome/Brave does not expose or accept it, leave
   the popup open and show a local error without affecting saved settings.
+
+## 55. Version 0.16.0 Product Amendments
+
+- Recognize Chess.com's redesigned native Recommended Match card through its
+  stable challenge-tile structure, without depending on dynamic title text,
+  counts, opponents, or account data.
+- Give Recommended Match the same Show/Hide and remembered `Main` / `Right`
+  placement model as Daily Games. It defaults visible in its native Main
+  position.
+- Include Recommended Match in the fixed managed-card order when it is placed
+  in the right column. Preserve unknown future cards after all managed cards.
+- Preserve an existing seven-card saved order during migration by inserting
+  Recommended Match immediately after Daily Games rather than resetting the
+  user's order.
+- Pre-hide Recommended Match at document start when its saved placement is
+  Right or Hidden so it cannot flash in Main before reconciliation.
+- Force the native Recommended Match tile wrapper to a single column at sidebar
+  width while keeping the original native card node intact.
+- Add `0 buttons` to the Quick Play count choices. Zero must remove the complete
+  extension-owned Quick Play module and all preset selectors while preserving
+  the rest of the homepage transformation and the default six-button mode.
+- Apply the same card controls and zero-button mode to the Android userscript
+  settings surface.
+
+## 56. Version 0.17.0 Product Amendments
+
+- Allow every Quick Play shortcut selector to use any supported time control,
+  even when another active selector already uses it. A user may therefore keep
+  two or more identical buttons such as multiple `10 min` controls.
+- Preserve repeated valid preset IDs during normalization, count inference,
+  autosave, desktop rendering, and Android rendering. Invalid or incorrectly
+  sized arrays still fall back to the selected count's complete defaults.
+- Remove duplicate-option disabling and duplicate-selection errors from both
+  settings surfaces. This supersedes the uniqueness rules in versions 0.6 and
+  0.14.
+- Give Game History the same Show/Hide checkbox and remembered `Main` / `Right`
+  placement model as Daily Games and Recommended Match. It defaults visible in
+  Main.
+- Include Game History in the managed right-column order when placed Right.
+  Preserve previous eight-card orders by inserting it immediately after
+  Recommended Match, and preserve older seven-card orders by inserting both
+  newer main cards without changing existing relative order.
+- Pre-hide Game History at document start when its saved placement is Right or
+  Hidden. Continue locating it by VINF's module marker after a move so repeated
+  reconciliation remains idempotent.
+- Move the complete native Game History card without rebuilding rows, links, or
+  history data. At sidebar width, retain horizontal overflow for native content
+  that is wider than the right column.
+- Apply the same Game History controls and repeated-preset behavior to the
+  Android userscript settings surface.
+
+## 57. Version 0.17.1 Product Amendments
+
+- Treat the managed-card sequence as one shared relative order for both
+  placement choices. Filter it independently within Main and Right so movable
+  Main cards such as Game History and Recommended Match honor the same order
+  arrows, while Quick Play remains pinned above the Main sequence.
+
+## 58. Version 0.17.2 Product Amendments
+
+- Changing the Quick Play button count must no longer replace the complete
+  selection with a count-specific preset.
+- When shrinking from a larger grid to a smaller grid, keep exactly the leading
+  selections that fit in the new count.
+- When expanding, preserve every existing selection in its current position and
+  fill only the new slots. Retain intentional duplicates already selected.
+- Fill expansion slots with the first controls not already represented, in this
+  fixed order: `10`, `10 + 5`, `15 + 10`, `30`, `3`, `3 + 2`, `5 + 5`,
+  `1 + 1`.
+- Keep the explicit Reset action tied to the established per-count defaults;
+  this adaptive sequence applies only when the user changes the button count.
+- Apply the same resize behavior to the desktop popup, Chromium side panel, and
+  Android userscript settings.

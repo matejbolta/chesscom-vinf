@@ -121,13 +121,17 @@ On the Chess.com homepage, open Firefox's Extensions menu, choose Violentmonkey,
 and run **VINF settings**. The command opens a touch-friendly modal with the
 master VINF toggle in its own top card. A separate `Homepage` card contains the
 Native play panel switch plus visibility and fixed-order controls for every
-known right-column card. Daily Games uses the same visibility checkbox plus a
-`Main` / `Right` selector that remembers its location while hidden. Quick Play
-can use 1, 2, 3, 4, 6, or 8 unique
-presets from the same unified Bullet, Blitz, and Rapid groups as desktop. Its
-editor mirrors the homepage grid above phone width: one row for 1–4 and
-column-first two-row grids for 6 and 8. The Blitz group is ordered `3 min`,
-`3 + 2`, `5 min`, `5 + 2`, `5 + 3`, `5 + 5`.
+known managed card. Daily Games, Recommended Match, and Game History use the
+same visibility checkbox plus a `Main` / `Right` selector that remembers their
+location while hidden. The one saved sequence determines their relative order
+within either placement. Quick Play can use 0, 1, 2, 3, 4, 6, or 8 presets from
+the same unified Bullet, Blitz, and Rapid groups as desktop. Zero removes Quick
+Play entirely, and the same time control may be selected more than once.
+Shrinking the grid keeps its leading selections; expanding it preserves every
+existing selection and fills only the new slots. Its editor mirrors the
+homepage grid above phone width: one row for 1–4 and column-first two-row grids
+for 6 and 8. The Blitz group is ordered `3 min`, `3 + 2`, `5 min`, `5 + 2`,
+`5 + 3`, `5 + 5`.
 The modal also provides Stats visibility/order controls and an independent
 `Expanded` or `Retracted` selector for every rating row. A selector remains
 visible but disabled while its row is unticked, preserving the saved choice for
@@ -173,12 +177,14 @@ VINF has two DOM modes:
 
 - **Two-column:** either the legacy `#vue-instance` /
   `#vue-sidebar-instance` hosts or redesigned `#home-main` /
-  `#home-sidebar` hosts keep their existing behavior and sidebar ordering.
+  `#home-sidebar` hosts keep their existing behavior, with the saved card order
+  filtered independently within Main and Right.
 - **Responsive/single-column:** VINF finds cards using semantic URLs, headings,
-  and native component landmarks. Quick Play is inserted before Game History;
-  known retained cards then follow the saved right-column order. Daily Games
-  follows its visibility plus Main/Right placement, and every other known card
-  follows its Show/Hide setting. Legacy native action, Puzzles, Next Lesson,
+  and native component landmarks. Quick Play is inserted before the movable
+  Main-card group; that group and the conceptual Right-card group each follow
+  the saved card order. Daily Games, Recommended Match, and Game History follow
+  their visibility plus Main/Right placement, and every other known card follows
+  its Show/Hide setting. Legacy native action, Puzzles, Next Lesson,
   Game Review, and the optional
   `#main-banner` campaign are hidden. Every optional
   `.promo-toolbar-user-info` compatibility variant is also hidden. The exact
@@ -210,9 +216,11 @@ the signed-in tablet, verify:
    If it serves `.promo-toolbar-user-info`, confirm that strip is absent too.
    If it serves `#homepage-toolbar`, confirm that header is absent too.
    If it serves `#home-header`, verify the Native play panel setting.
-4. Game History and Stats remain usable. Verify Daily Games in each placement,
-   then show/hide and reorder every available right-column card.
-5. In every grid size, each active button starts the exact displayed clock. Do
+4. Game History and Stats remain usable. Verify Daily Games, Recommended Match,
+   and Game History in each placement, then show/hide and reorder every
+   available managed card in both placement groups.
+5. In every nonzero grid size, each active button starts the exact displayed
+   clock; also verify that zero removes the complete Quick Play module. Do
    this manually; every click can enter real matchmaking.
 6. Change a preset, each homepage-module setting, Stats visibility/order, and
    several per-rating initial states through VINF settings; reload the page and

@@ -4,8 +4,10 @@ import {
   normalizeSettings
 } from "../src/shared/settings";
 import {
+  QUICK_PLAY_EXPANSION_FALLBACK_IDS,
   DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
-  QUICK_PLAY_PRESET_COUNTS
+  QUICK_PLAY_PRESET_COUNTS,
+  resizeTimeControlIds
 } from "../src/shared/time-controls";
 
 describe("settings", () => {
@@ -21,7 +23,7 @@ describe("settings", () => {
     ]);
   });
 
-  it("accepts six unique supported presets", () => {
+  it("accepts six supported presets", () => {
     expect(
       normalizeSettings({
         enabled: false,
@@ -41,9 +43,66 @@ describe("settings", () => {
     });
   });
 
+  it("accepts repeated Quick Play presets", () => {
+    const repeatedIds = [
+      "10-0",
+      "10-0",
+      "10-0",
+      "10-0",
+      "10-0",
+      "10-0"
+    ] as const;
+    expect(
+      normalizeSettings({
+        quickPlayPresetCount: 6,
+        timeControlIds: repeatedIds
+      }).timeControlIds
+    ).toEqual(repeatedIds);
+    expect(
+      normalizeSettings({
+        timeControlIds: ["10-0", "10-0", "10-0"]
+      })
+    ).toMatchObject({
+      quickPlayPresetCount: 3,
+      timeControlIds: ["10-0", "10-0", "10-0"]
+    });
+  });
+
+  it("preserves existing presets and fills only new slots when expanding", () => {
+    expect(
+      resizeTimeControlIds(
+        ["5-0", "5-0", "15-10", "30-0", "3-2", "5-3"],
+        8
+      )
+    ).toEqual([
+      "5-0",
+      "5-0",
+      "15-10",
+      "30-0",
+      "3-2",
+      "5-3",
+      "10-0",
+      "10-5"
+    ]);
+    expect(resizeTimeControlIds([], 8)).toEqual(
+      QUICK_PLAY_EXPANSION_FALLBACK_IDS
+    );
+  });
+
+  it("keeps only the leading presets when shrinking", () => {
+    expect(
+      resizeTimeControlIds(
+        ["5-0", "5-0", "15-10", "30-0", "3-2", "5-3"],
+        3
+      )
+    ).toEqual(["5-0", "5-0", "15-10"]);
+    expect(resizeTimeControlIds(["10-0"], 0)).toEqual([]);
+  });
+
   it("accepts and infers every supported shortcut count", () => {
     for (const count of QUICK_PLAY_PRESET_COUNTS) {
       const normalized = normalizeSettings({
+        ...(count === 0 ? { quickPlayPresetCount: 0 } : {}),
         timeControlIds: DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
       });
 
@@ -52,6 +111,19 @@ describe("settings", () => {
         DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
       );
     }
+  });
+
+  it("requires an explicit zero-button choice instead of inferring it from missing presets", () => {
+    expect(normalizeSettings({ timeControlIds: [] })).toMatchObject({
+      quickPlayPresetCount: DEFAULT_SETTINGS.quickPlayPresetCount,
+      timeControlIds: DEFAULT_SETTINGS.timeControlIds
+    });
+    expect(
+      normalizeSettings({ quickPlayPresetCount: 0, timeControlIds: [] })
+    ).toMatchObject({
+      quickPlayPresetCount: 0,
+      timeControlIds: []
+    });
   });
 
   it("falls back to each requested grid's complete defaults", () => {
@@ -78,7 +150,7 @@ describe("settings", () => {
     ).toEqual(["20-0", "10-5", "15-10", "30-0", "3-2", "5-3"]);
   });
 
-  it("falls back safely for duplicates, invalid IDs, or the wrong count", () => {
+  it("falls back safely for invalid IDs or the wrong count", () => {
     expect(
       normalizeSettings({
         enabled: true,
@@ -108,22 +180,29 @@ describe("settings", () => {
   it("normalizes module placement and visibility settings", () => {
     const migrated = normalizeSettings({
       dailyGamesPlacement: "hidden",
+      recommendedMatchPlacement: "sidebar",
+      recommendedMatchVisiblePlacement: "sidebar",
+      gameHistoryPlacement: "hidden",
+      gameHistoryVisiblePlacement: "sidebar",
       showChessTv: false,
       showLegendLeague: false
     });
     expect(migrated).toMatchObject({
       dailyGamesPlacement: "hidden",
       dailyGamesVisiblePlacement: "sidebar",
+      recommendedMatchPlacement: "sidebar",
+      recommendedMatchVisiblePlacement: "sidebar",
+      gameHistoryPlacement: "hidden",
+      gameHistoryVisiblePlacement: "sidebar",
       showNativePlayPanel: false
     });
-    expect(migrated.homepageSidebarVisible).toEqual(
-      DEFAULT_SETTINGS.homepageSidebarVisible.filter(
-        (id) =>
-          id !== "daily-games" &&
-          id !== "chess-tv" &&
-          id !== "legend-league"
-      )
-    );
+    expect(migrated.homepageSidebarVisible).toEqual([
+      "stats",
+      "recommended-match",
+      "streaks",
+      "daily-puzzle",
+      "friends"
+    ]);
     expect(
       normalizeSettings({
         ...DEFAULT_SETTINGS,
@@ -144,6 +223,8 @@ describe("settings", () => {
       showNativePlayPanel: true,
       homepageSidebarOrder: [
         "friends",
+        "recommended-match",
+        "game-history",
         "daily-puzzle",
         "stats",
         "streaks",
@@ -155,6 +236,7 @@ describe("settings", () => {
         "friends",
         "stats",
         "daily-games",
+        "recommended-match",
         "invalid",
         "friends"
       ]
@@ -163,6 +245,8 @@ describe("settings", () => {
     expect(normalized.showNativePlayPanel).toBe(true);
     expect(normalized.homepageSidebarOrder).toEqual([
       "friends",
+      "recommended-match",
+      "game-history",
       "daily-puzzle",
       "stats",
       "streaks",
@@ -174,6 +258,61 @@ describe("settings", () => {
       "friends",
       "stats",
       "daily-games"
+    ]);
+  });
+
+  it("preserves the previous eight-card order and inserts Game History after Recommended Match", () => {
+    expect(
+      normalizeSettings({
+        ...DEFAULT_SETTINGS,
+        homepageSidebarOrder: [
+          "friends",
+          "daily-games",
+          "recommended-match",
+          "stats",
+          "daily-puzzle",
+          "legend-league",
+          "streaks",
+          "chess-tv"
+        ]
+      }).homepageSidebarOrder
+    ).toEqual([
+      "friends",
+      "daily-games",
+      "recommended-match",
+      "game-history",
+      "stats",
+      "daily-puzzle",
+      "legend-league",
+      "streaks",
+      "chess-tv"
+    ]);
+  });
+
+  it("preserves the retired seven-card order and inserts both newer main cards", () => {
+    expect(
+      normalizeSettings({
+        ...DEFAULT_SETTINGS,
+        homepageSidebarOrder: [
+          "friends",
+          "daily-games",
+          "stats",
+          "daily-puzzle",
+          "legend-league",
+          "streaks",
+          "chess-tv"
+        ]
+      }).homepageSidebarOrder
+    ).toEqual([
+      "friends",
+      "daily-games",
+      "recommended-match",
+      "game-history",
+      "stats",
+      "daily-puzzle",
+      "legend-league",
+      "streaks",
+      "chess-tv"
     ]);
   });
 

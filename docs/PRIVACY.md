@@ -9,9 +9,9 @@ ChessComVINF runs entirely inside the signed-in Chess.com homepage.
 - It makes no extension-owned network requests.
 - It stores no usernames, ratings, game history, credentials, cookies, or tokens.
 - It stores only local presentation preferences: enabled state, native play
-  panel visibility, right-column card visibility/order, Daily Games placement
-  and remembered visible location, the selected Quick Play button count and
-  preset IDs, and the visible
+  panel visibility, managed-card visibility/order, Daily Games, Recommended
+  Match, and Game History placement and remembered visible locations, the
+  selected Quick Play button count and preset IDs, and the visible
   rows/order/initial states selected for the native Stats card.
 - It uses the native Chess.com page action already present in the authenticated
   homepage to start a selected game.

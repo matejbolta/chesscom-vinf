@@ -2,8 +2,14 @@ import type {
   DailyGamesPlacement,
   DailyGamesVisiblePlacement,
   ExtensionSettings,
+  GameHistoryPlacement,
+  GameHistoryVisiblePlacement,
   HomepageSidebarCardId,
+  MainColumnCardPlacement,
+  MainColumnCardVisiblePlacement,
   QuickPlayPresetCount,
+  RecommendedMatchPlacement,
+  RecommendedMatchVisiblePlacement,
   StatsDefaultState,
   StatsRatingId,
   StatsSummaryId,
@@ -27,6 +33,7 @@ import {
   getDefaultTimeControlIds,
   getQuickPlayGridDimensions,
   isQuickPlayPresetCount,
+  resizeTimeControlIds,
   TIME_CONTROL_SETTINGS_GROUPS
 } from "../shared/time-controls";
 
@@ -113,6 +120,10 @@ class HomepageCardEditor {
   private visible: Set<HomepageSidebarCardId>;
   private dailyGamesPlacement: DailyGamesPlacement;
   private dailyGamesVisiblePlacement: DailyGamesVisiblePlacement;
+  private recommendedMatchPlacement: RecommendedMatchPlacement;
+  private recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement;
+  private gameHistoryPlacement: GameHistoryPlacement;
+  private gameHistoryVisiblePlacement: GameHistoryVisiblePlacement;
 
   constructor(
     private readonly container: HTMLElement,
@@ -120,12 +131,21 @@ class HomepageCardEditor {
     order: readonly HomepageSidebarCardId[],
     visible: readonly HomepageSidebarCardId[],
     dailyGamesPlacement: DailyGamesPlacement,
-    dailyGamesVisiblePlacement: DailyGamesVisiblePlacement
+    dailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
+    recommendedMatchPlacement: RecommendedMatchPlacement,
+    recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
+    gameHistoryPlacement: GameHistoryPlacement,
+    gameHistoryVisiblePlacement: GameHistoryVisiblePlacement
   ) {
     this.order = [...order];
     this.visible = new Set(visible);
     this.dailyGamesPlacement = dailyGamesPlacement;
     this.dailyGamesVisiblePlacement = dailyGamesVisiblePlacement;
+    this.recommendedMatchPlacement = recommendedMatchPlacement;
+    this.recommendedMatchVisiblePlacement =
+      recommendedMatchVisiblePlacement;
+    this.gameHistoryPlacement = gameHistoryPlacement;
+    this.gameHistoryVisiblePlacement = gameHistoryVisiblePlacement;
     this.render();
   }
 
@@ -133,12 +153,21 @@ class HomepageCardEditor {
     order: readonly HomepageSidebarCardId[],
     visible: readonly HomepageSidebarCardId[],
     dailyGamesPlacement: DailyGamesPlacement,
-    dailyGamesVisiblePlacement: DailyGamesVisiblePlacement
+    dailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
+    recommendedMatchPlacement: RecommendedMatchPlacement,
+    recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
+    gameHistoryPlacement: GameHistoryPlacement,
+    gameHistoryVisiblePlacement: GameHistoryVisiblePlacement
   ): void {
     this.order = [...order];
     this.visible = new Set(visible);
     this.dailyGamesPlacement = dailyGamesPlacement;
     this.dailyGamesVisiblePlacement = dailyGamesVisiblePlacement;
+    this.recommendedMatchPlacement = recommendedMatchPlacement;
+    this.recommendedMatchVisiblePlacement =
+      recommendedMatchVisiblePlacement;
+    this.gameHistoryPlacement = gameHistoryPlacement;
+    this.gameHistoryVisiblePlacement = gameHistoryVisiblePlacement;
     this.render();
   }
 
@@ -147,11 +176,18 @@ class HomepageCardEditor {
   }
 
   getVisible(): HomepageSidebarCardId[] {
-    return this.order.filter((id) =>
-      id === "daily-games"
-        ? this.dailyGamesPlacement === "sidebar"
-        : this.visible.has(id)
-    );
+    return this.order.filter((id) => {
+      if (id === "daily-games") {
+        return this.dailyGamesPlacement === "sidebar";
+      }
+      if (id === "recommended-match") {
+        return this.recommendedMatchPlacement === "sidebar";
+      }
+      if (id === "game-history") {
+        return this.gameHistoryPlacement === "sidebar";
+      }
+      return this.visible.has(id);
+    });
   }
 
   getDailyGamesPlacement(): DailyGamesPlacement {
@@ -160,6 +196,70 @@ class HomepageCardEditor {
 
   getDailyGamesVisiblePlacement(): DailyGamesVisiblePlacement {
     return this.dailyGamesVisiblePlacement;
+  }
+
+  getRecommendedMatchPlacement(): RecommendedMatchPlacement {
+    return this.recommendedMatchPlacement;
+  }
+
+  getRecommendedMatchVisiblePlacement(): RecommendedMatchVisiblePlacement {
+    return this.recommendedMatchVisiblePlacement;
+  }
+
+  getGameHistoryPlacement(): GameHistoryPlacement {
+    return this.gameHistoryPlacement;
+  }
+
+  getGameHistoryVisiblePlacement(): GameHistoryVisiblePlacement {
+    return this.gameHistoryVisiblePlacement;
+  }
+
+  private getPlacement(
+    id: "daily-games" | "recommended-match" | "game-history"
+  ): MainColumnCardPlacement {
+    if (id === "daily-games") {
+      return this.dailyGamesPlacement;
+    }
+    return id === "recommended-match"
+      ? this.recommendedMatchPlacement
+      : this.gameHistoryPlacement;
+  }
+
+  private getVisiblePlacement(
+    id: "daily-games" | "recommended-match" | "game-history"
+  ): MainColumnCardVisiblePlacement {
+    if (id === "daily-games") {
+      return this.dailyGamesVisiblePlacement;
+    }
+    return id === "recommended-match"
+      ? this.recommendedMatchVisiblePlacement
+      : this.gameHistoryVisiblePlacement;
+  }
+
+  private setPlacement(
+    id: "daily-games" | "recommended-match" | "game-history",
+    placement: MainColumnCardPlacement
+  ): void {
+    if (id === "daily-games") {
+      this.dailyGamesPlacement = placement;
+    } else if (id === "recommended-match") {
+      this.recommendedMatchPlacement = placement;
+    } else {
+      this.gameHistoryPlacement = placement;
+    }
+  }
+
+  private setVisiblePlacement(
+    id: "daily-games" | "recommended-match" | "game-history",
+    placement: MainColumnCardVisiblePlacement
+  ): void {
+    if (id === "daily-games") {
+      this.dailyGamesVisiblePlacement = placement;
+    } else if (id === "recommended-match") {
+      this.recommendedMatchVisiblePlacement = placement;
+    } else {
+      this.gameHistoryVisiblePlacement = placement;
+    }
   }
 
   private move(id: HomepageSidebarCardId, offset: -1 | 1): void {
@@ -186,18 +286,25 @@ class HomepageCardEditor {
       const row = document.createElement("div");
       row.className = "homepage-card-row";
 
-      if (id === "daily-games") {
+      if (
+        id === "daily-games" ||
+        id === "recommended-match" ||
+        id === "game-history"
+      ) {
         const checkbox = document.createElement("input");
         checkbox.id = `${this.container.id}-${id}`;
         checkbox.type = "checkbox";
-        checkbox.checked = this.dailyGamesPlacement !== "hidden";
+        checkbox.checked = this.getPlacement(id) !== "hidden";
         const label = document.createElement("label");
         label.htmlFor = checkbox.id;
         label.textContent = labels.get(id) ?? id;
         const select = document.createElement("select");
-        select.id = "homepage-daily-games-placement";
+        select.id = `homepage-${id}-placement`;
         select.className = "homepage-card-placement";
-        select.setAttribute("aria-label", "Daily Games placement");
+        select.setAttribute(
+          "aria-label",
+          `${labels.get(id) ?? id} placement`
+        );
         for (const [value, text] of [
           ["main", "Main"],
           ["sidebar", "Right"]
@@ -207,19 +314,22 @@ class HomepageCardEditor {
           option.textContent = text;
           select.append(option);
         }
-        select.value = this.dailyGamesVisiblePlacement;
+        select.value = this.getVisiblePlacement(id);
         select.disabled = !checkbox.checked;
         checkbox.addEventListener("change", () => {
-          this.dailyGamesPlacement = checkbox.checked
-            ? this.dailyGamesVisiblePlacement
-            : "hidden";
+          this.setPlacement(
+            id,
+            checkbox.checked ? this.getVisiblePlacement(id) : "hidden"
+          );
           select.disabled = !checkbox.checked;
         });
         select.addEventListener("change", () => {
-          this.dailyGamesVisiblePlacement =
-            select.value as DailyGamesVisiblePlacement;
+          this.setVisiblePlacement(
+            id,
+            select.value as MainColumnCardVisiblePlacement
+          );
           if (checkbox.checked) {
-            this.dailyGamesPlacement = this.dailyGamesVisiblePlacement;
+            this.setPlacement(id, this.getVisiblePlacement(id));
           }
         });
         row.append(checkbox, label, select);
@@ -430,7 +540,11 @@ const homepageCardEditor = new HomepageCardEditor(
   DEFAULT_SETTINGS.homepageSidebarOrder,
   DEFAULT_SETTINGS.homepageSidebarVisible,
   DEFAULT_SETTINGS.dailyGamesPlacement,
-  DEFAULT_SETTINGS.dailyGamesVisiblePlacement
+  DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
+  DEFAULT_SETTINGS.recommendedMatchPlacement,
+  DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
+  DEFAULT_SETTINGS.gameHistoryPlacement,
+  DEFAULT_SETTINGS.gameHistoryVisiblePlacement
 );
 const statsSummaryEditor = new StatsPreferenceEditor<StatsSummaryId>(
   statsSummaryList,
@@ -490,6 +604,7 @@ function renderPresetSelects(
   const dimensions = getQuickPlayGridDimensions(count);
   presetList.dataset.presetColumns = String(dimensions.columns);
   presetList.dataset.presetRows = String(dimensions.rows);
+  presetList.hidden = count === 0;
   presetList.style.setProperty(
     "--chesscom-vinf-preset-columns",
     String(dimensions.columns)
@@ -504,7 +619,6 @@ function renderPresetSelects(
     const select = createPresetSelect(index);
     select.value = ids[index] ?? "";
   }
-  updateOptionAvailability();
 }
 
 function renderSettings(settings: ExtensionSettings): void {
@@ -514,7 +628,11 @@ function renderSettings(settings: ExtensionSettings): void {
     settings.homepageSidebarOrder,
     settings.homepageSidebarVisible,
     settings.dailyGamesPlacement,
-    settings.dailyGamesVisiblePlacement
+    settings.dailyGamesVisiblePlacement,
+    settings.recommendedMatchPlacement,
+    settings.recommendedMatchVisiblePlacement,
+    settings.gameHistoryPlacement,
+    settings.gameHistoryVisiblePlacement
   );
   presetCountSelect.value = String(settings.quickPlayPresetCount);
   renderPresetSelects(
@@ -530,7 +648,6 @@ function renderSettings(settings: ExtensionSettings): void {
     settings.statsRatingVisible,
     settings.statsRatingStates
   );
-  updateOptionAvailability();
 }
 
 function showStatus(message: string, isError = false): void {
@@ -575,22 +692,8 @@ closeSidePanelButton.addEventListener("click", () => {
   });
 });
 
-function updateOptionAvailability(): void {
-  const selectedIds = selects.map((select) => select.value);
-  for (const select of selects) {
-    for (const option of Array.from(select.options)) {
-      option.disabled =
-        option.value !== select.value && selectedIds.includes(option.value);
-    }
-  }
-}
-
-function readSettings(): ExtensionSettings | null {
+function readSettings(): ExtensionSettings {
   const timeControlIds = selects.map((select) => select.value as TimeControlId);
-  if (new Set(timeControlIds).size !== selects.length) {
-    showStatus(`Choose ${selects.length} unique time controls.`, true);
-    return null;
-  }
 
   return {
     enabled: enabledInput.checked,
@@ -598,6 +701,13 @@ function readSettings(): ExtensionSettings | null {
     dailyGamesPlacement: homepageCardEditor.getDailyGamesPlacement(),
     dailyGamesVisiblePlacement:
       homepageCardEditor.getDailyGamesVisiblePlacement(),
+    recommendedMatchPlacement:
+      homepageCardEditor.getRecommendedMatchPlacement(),
+    recommendedMatchVisiblePlacement:
+      homepageCardEditor.getRecommendedMatchVisiblePlacement(),
+    gameHistoryPlacement: homepageCardEditor.getGameHistoryPlacement(),
+    gameHistoryVisiblePlacement:
+      homepageCardEditor.getGameHistoryVisiblePlacement(),
     homepageSidebarOrder: homepageCardEditor.getOrder(),
     homepageSidebarVisible: homepageCardEditor.getVisible(),
     quickPlayPresetCount: getPresetCount(),
@@ -612,9 +722,6 @@ function readSettings(): ExtensionSettings | null {
 
 function queueSave(successMessage = "Settings saved."): void {
   const settings = readSettings();
-  if (!settings) {
-    return;
-  }
 
   const saveId = ++latestSaveId;
   showStatus("Saving…");
@@ -648,20 +755,22 @@ form.addEventListener("change", () => {
   if (!initialized) {
     return;
   }
-  updateOptionAvailability();
   queueSave();
 });
 
 presetCountSelect.addEventListener("change", () => {
   const count = getPresetCount();
-  renderPresetSelects(count, getDefaultTimeControlIds(count));
+  const resizedIds = resizeTimeControlIds(
+    selects.map((select) => select.value as TimeControlId),
+    count
+  );
+  renderPresetSelects(count, resizedIds);
 });
 
 resetButton.addEventListener("click", () => {
   getDefaultTimeControlIds(getPresetCount()).forEach((id, index) => {
     selects[index].value = id;
   });
-  updateOptionAvailability();
   if (initialized) {
     queueSave("Defaults restored.");
   }
@@ -673,7 +782,11 @@ resetHomepageButton.addEventListener("click", () => {
     DEFAULT_SETTINGS.homepageSidebarOrder,
     DEFAULT_SETTINGS.homepageSidebarVisible,
     DEFAULT_SETTINGS.dailyGamesPlacement,
-    DEFAULT_SETTINGS.dailyGamesVisiblePlacement
+    DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
+    DEFAULT_SETTINGS.recommendedMatchPlacement,
+    DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
+    DEFAULT_SETTINGS.gameHistoryPlacement,
+    DEFAULT_SETTINGS.gameHistoryVisiblePlacement
   );
   if (initialized) {
     queueSave("Homepage defaults restored.");

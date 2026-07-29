@@ -3,8 +3,14 @@ import type {
   DailyGamesPlacement,
   DailyGamesVisiblePlacement,
   ExtensionSettings,
+  GameHistoryPlacement,
+  GameHistoryVisiblePlacement,
   HomepageSidebarCardId,
+  MainColumnCardPlacement,
+  MainColumnCardVisiblePlacement,
   QuickPlayPresetCount,
+  RecommendedMatchPlacement,
+  RecommendedMatchVisiblePlacement,
   StatsDefaultState,
   StatsRatingId,
   StatsSummaryId,
@@ -28,6 +34,7 @@ import {
   getDefaultTimeControlIds,
   getQuickPlayGridDimensions,
   isQuickPlayPresetCount,
+  resizeTimeControlIds,
   TIME_CONTROL_SETTINGS_GROUPS
 } from "../shared/time-controls";
 import { startVinfRuntime, type SettingsSource } from "../content/runtime";
@@ -253,7 +260,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const presetsTitle = document.createElement("h3");
   presetsTitle.textContent = "Quick Play presets";
   const presetsHelp = document.createElement("p");
-  presetsHelp.textContent = "Choose unique time controls for the homepage.";
+  presetsHelp.textContent =
+    "Choose how many shortcuts appear and their time controls.";
   const reset = document.createElement("button");
   reset.type = "button";
   reset.textContent = "Reset";
@@ -268,6 +276,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     "Choose the homepage grid size",
     "Quick Play shortcut count",
     [
+      ["0", "0 buttons"],
       ["1", "1 button"],
       ["2", "2 buttons"],
       ["3", "3 buttons"],
@@ -295,6 +304,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     const dimensions = getQuickPlayGridDimensions(count);
     presetList.dataset.presetColumns = String(dimensions.columns);
     presetList.dataset.presetRows = String(dimensions.rows);
+    presetList.hidden = count === 0;
     presetList.style.setProperty(
       "--chesscom-vinf-preset-columns",
       String(dimensions.columns)
@@ -327,7 +337,6 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       presetList.append(label);
       selects.push(select);
     }
-    updateOptionAvailability();
   }
 
   renderPresetSelects(
@@ -509,13 +518,21 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     element: HTMLElement;
     getDailyGamesPlacement(): DailyGamesPlacement;
     getDailyGamesVisiblePlacement(): DailyGamesVisiblePlacement;
+    getRecommendedMatchPlacement(): RecommendedMatchPlacement;
+    getRecommendedMatchVisiblePlacement(): RecommendedMatchVisiblePlacement;
+    getGameHistoryPlacement(): GameHistoryPlacement;
+    getGameHistoryVisiblePlacement(): GameHistoryVisiblePlacement;
     getOrder(): HomepageSidebarCardId[];
     getVisible(): HomepageSidebarCardId[];
     render(
       order: readonly HomepageSidebarCardId[],
       visible: readonly HomepageSidebarCardId[],
       dailyGamesPlacement: DailyGamesPlacement,
-      dailyGamesVisiblePlacement: DailyGamesVisiblePlacement
+      dailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
+      recommendedMatchPlacement: RecommendedMatchPlacement,
+      recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
+      gameHistoryPlacement: GameHistoryPlacement,
+      gameHistoryVisiblePlacement: GameHistoryVisiblePlacement
     ): void;
   }
 
@@ -524,12 +541,16 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     initialOrder: readonly HomepageSidebarCardId[],
     initialVisible: readonly HomepageSidebarCardId[],
     initialDailyGamesPlacement: DailyGamesPlacement,
-    initialDailyGamesVisiblePlacement: DailyGamesVisiblePlacement
+    initialDailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
+    initialRecommendedMatchPlacement: RecommendedMatchPlacement,
+    initialRecommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
+    initialGameHistoryPlacement: GameHistoryPlacement,
+    initialGameHistoryVisiblePlacement: GameHistoryVisiblePlacement
   ): HomepageCardEditor {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "chesscom-vinf-settings-preference-group";
     const legend = document.createElement("legend");
-    legend.textContent = "Right column";
+    legend.textContent = "Cards";
     const list = document.createElement("div");
     list.className = "chesscom-vinf-settings-preference-list";
     fieldset.append(legend, list);
@@ -538,6 +559,11 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     let visible = new Set(initialVisible);
     let dailyGamesPlacement = initialDailyGamesPlacement;
     let dailyGamesVisiblePlacement = initialDailyGamesVisiblePlacement;
+    let recommendedMatchPlacement = initialRecommendedMatchPlacement;
+    let recommendedMatchVisiblePlacement =
+      initialRecommendedMatchVisiblePlacement;
+    let gameHistoryPlacement = initialGameHistoryPlacement;
+    let gameHistoryVisiblePlacement = initialGameHistoryVisiblePlacement;
     const labels = new Map(catalog.map((item) => [item.id, item.label]));
 
     const render = (
@@ -545,13 +571,68 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       nextVisible: readonly HomepageSidebarCardId[] = [...visible],
       nextDailyGamesPlacement: DailyGamesPlacement = dailyGamesPlacement,
       nextDailyGamesVisiblePlacement: DailyGamesVisiblePlacement =
-        dailyGamesVisiblePlacement
+        dailyGamesVisiblePlacement,
+      nextRecommendedMatchPlacement: RecommendedMatchPlacement =
+        recommendedMatchPlacement,
+      nextRecommendedMatchVisiblePlacement:
+        RecommendedMatchVisiblePlacement =
+        recommendedMatchVisiblePlacement,
+      nextGameHistoryPlacement: GameHistoryPlacement =
+        gameHistoryPlacement,
+      nextGameHistoryVisiblePlacement: GameHistoryVisiblePlacement =
+        gameHistoryVisiblePlacement
     ): void => {
       order = [...nextOrder];
       visible = new Set(nextVisible);
       dailyGamesPlacement = nextDailyGamesPlacement;
       dailyGamesVisiblePlacement = nextDailyGamesVisiblePlacement;
+      recommendedMatchPlacement = nextRecommendedMatchPlacement;
+      recommendedMatchVisiblePlacement =
+        nextRecommendedMatchVisiblePlacement;
+      gameHistoryPlacement = nextGameHistoryPlacement;
+      gameHistoryVisiblePlacement = nextGameHistoryVisiblePlacement;
       list.replaceChildren();
+
+      const getPlacement = (
+        id: "daily-games" | "recommended-match" | "game-history"
+      ): MainColumnCardPlacement =>
+        id === "daily-games"
+          ? dailyGamesPlacement
+          : id === "recommended-match"
+            ? recommendedMatchPlacement
+            : gameHistoryPlacement;
+      const getVisiblePlacement = (
+        id: "daily-games" | "recommended-match" | "game-history"
+      ): MainColumnCardVisiblePlacement =>
+        id === "daily-games"
+          ? dailyGamesVisiblePlacement
+          : id === "recommended-match"
+            ? recommendedMatchVisiblePlacement
+            : gameHistoryVisiblePlacement;
+      const setPlacement = (
+        id: "daily-games" | "recommended-match" | "game-history",
+        placement: MainColumnCardPlacement
+      ): void => {
+        if (id === "daily-games") {
+          dailyGamesPlacement = placement;
+        } else if (id === "recommended-match") {
+          recommendedMatchPlacement = placement;
+        } else {
+          gameHistoryPlacement = placement;
+        }
+      };
+      const setVisiblePlacement = (
+        id: "daily-games" | "recommended-match" | "game-history",
+        placement: MainColumnCardVisiblePlacement
+      ): void => {
+        if (id === "daily-games") {
+          dailyGamesVisiblePlacement = placement;
+        } else if (id === "recommended-match") {
+          recommendedMatchVisiblePlacement = placement;
+        } else {
+          gameHistoryVisiblePlacement = placement;
+        }
+      };
 
       order.forEach((id, index) => {
         const row = document.createElement("div");
@@ -559,18 +640,22 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           "chesscom-vinf-settings-preference-row chesscom-vinf-settings-homepage-card-row";
         const labelText = labels.get(id) ?? id;
 
-        if (id === "daily-games") {
+        if (
+          id === "daily-games" ||
+          id === "recommended-match" ||
+          id === "game-history"
+        ) {
           const checkbox = document.createElement("input");
           checkbox.id = `chesscom-vinf-homepage-${id}`;
           checkbox.type = "checkbox";
-          checkbox.checked = dailyGamesPlacement !== "hidden";
+          checkbox.checked = getPlacement(id) !== "hidden";
           const label = document.createElement("label");
           label.htmlFor = checkbox.id;
           label.textContent = labelText;
           const select = document.createElement("select");
-          select.id = "chesscom-vinf-userscript-daily-placement";
+          select.id = `chesscom-vinf-userscript-${id}-placement`;
           select.className = "chesscom-vinf-settings-rating-state";
-          select.setAttribute("aria-label", "Daily Games placement");
+          select.setAttribute("aria-label", `${labelText} placement`);
           for (const [value, text] of [
             ["main", "Main"],
             ["sidebar", "Right"]
@@ -580,19 +665,22 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
             option.textContent = text;
             select.append(option);
           }
-          select.value = dailyGamesVisiblePlacement;
+          select.value = getVisiblePlacement(id);
           select.disabled = !checkbox.checked;
           checkbox.addEventListener("change", () => {
-            dailyGamesPlacement = checkbox.checked
-              ? dailyGamesVisiblePlacement
-              : "hidden";
+            setPlacement(
+              id,
+              checkbox.checked ? getVisiblePlacement(id) : "hidden"
+            );
             select.disabled = !checkbox.checked;
           });
           select.addEventListener("change", () => {
-            dailyGamesVisiblePlacement =
-              select.value as DailyGamesVisiblePlacement;
+            setVisiblePlacement(
+              id,
+              select.value as MainColumnCardVisiblePlacement
+            );
             if (checkbox.checked) {
-              dailyGamesPlacement = dailyGamesVisiblePlacement;
+              setPlacement(id, getVisiblePlacement(id));
             }
           });
           row.append(checkbox, label, select);
@@ -651,13 +739,25 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       element: fieldset,
       getDailyGamesPlacement: () => dailyGamesPlacement,
       getDailyGamesVisiblePlacement: () => dailyGamesVisiblePlacement,
+      getRecommendedMatchPlacement: () => recommendedMatchPlacement,
+      getRecommendedMatchVisiblePlacement: () =>
+        recommendedMatchVisiblePlacement,
+      getGameHistoryPlacement: () => gameHistoryPlacement,
+      getGameHistoryVisiblePlacement: () => gameHistoryVisiblePlacement,
       getOrder: () => [...order],
       getVisible: () =>
-        order.filter((id) =>
-          id === "daily-games"
-            ? dailyGamesPlacement === "sidebar"
-            : visible.has(id)
-        ),
+        order.filter((id) => {
+          if (id === "daily-games") {
+            return dailyGamesPlacement === "sidebar";
+          }
+          if (id === "recommended-match") {
+            return recommendedMatchPlacement === "sidebar";
+          }
+          if (id === "game-history") {
+            return gameHistoryPlacement === "sidebar";
+          }
+          return visible.has(id);
+        }),
       render
     };
   }
@@ -667,12 +767,16 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     DEFAULT_SETTINGS.homepageSidebarOrder,
     DEFAULT_SETTINGS.homepageSidebarVisible,
     DEFAULT_SETTINGS.dailyGamesPlacement,
-    DEFAULT_SETTINGS.dailyGamesVisiblePlacement
+    DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
+    DEFAULT_SETTINGS.recommendedMatchPlacement,
+    DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
+    DEFAULT_SETTINGS.gameHistoryPlacement,
+    DEFAULT_SETTINGS.gameHistoryVisiblePlacement
   );
   const homepageNote = document.createElement("p");
   homepageNote.className = "chesscom-vinf-settings-note";
   homepageNote.textContent =
-    "Unknown future Chess.com cards stay visible after these cards.";
+    "Order applies within Main and Right. Unknown future Chess.com cards stay visible after these cards.";
   homepage.append(homepageCardEditor.element, homepageNote);
 
   const stats = document.createElement("section");
@@ -721,15 +825,6 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   form.append(header, master, homepage, presets, stats, status);
   dialog.append(form);
 
-  function updateOptionAvailability(): void {
-    const selected = selects.map((select) => select.value);
-    for (const select of selects) {
-      for (const option of Array.from(select.options)) {
-        option.disabled = option.value !== select.value && selected.includes(option.value);
-      }
-    }
-  }
-
   function render(settings: ExtensionSettings): void {
     enabledInput.checked = settings.enabled;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -737,7 +832,11 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       settings.homepageSidebarOrder,
       settings.homepageSidebarVisible,
       settings.dailyGamesPlacement,
-      settings.dailyGamesVisiblePlacement
+      settings.dailyGamesVisiblePlacement,
+      settings.recommendedMatchPlacement,
+      settings.recommendedMatchVisiblePlacement,
+      settings.gameHistoryPlacement,
+      settings.gameHistoryVisiblePlacement
     );
     presetCountSelect.value = String(settings.quickPlayPresetCount);
     renderPresetSelects(
@@ -753,16 +852,10 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       settings.statsRatingVisible,
       settings.statsRatingStates
     );
-    updateOptionAvailability();
   }
 
   async function save(message = "Settings saved."): Promise<void> {
     const ids = selects.map((select) => select.value as TimeControlId);
-    if (new Set(ids).size !== selects.length) {
-      status.textContent = `Choose ${selects.length} unique time controls.`;
-      status.dataset.error = "true";
-      return;
-    }
     status.textContent = "Saving…";
     delete status.dataset.error;
     try {
@@ -772,6 +865,14 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         dailyGamesPlacement: homepageCardEditor.getDailyGamesPlacement(),
         dailyGamesVisiblePlacement:
           homepageCardEditor.getDailyGamesVisiblePlacement(),
+        recommendedMatchPlacement:
+          homepageCardEditor.getRecommendedMatchPlacement(),
+        recommendedMatchVisiblePlacement:
+          homepageCardEditor.getRecommendedMatchVisiblePlacement(),
+        gameHistoryPlacement:
+          homepageCardEditor.getGameHistoryPlacement(),
+        gameHistoryVisiblePlacement:
+          homepageCardEditor.getGameHistoryVisiblePlacement(),
         homepageSidebarOrder: homepageCardEditor.getOrder(),
         homepageSidebarVisible: homepageCardEditor.getVisible(),
         quickPlayPresetCount: getPresetCount(),
@@ -790,18 +891,20 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   }
 
   form.addEventListener("change", () => {
-    updateOptionAvailability();
     void save();
   });
   presetCountSelect.addEventListener("change", () => {
     const count = getPresetCount();
-    renderPresetSelects(count, getDefaultTimeControlIds(count));
+    const resizedIds = resizeTimeControlIds(
+      selects.map((select) => select.value as TimeControlId),
+      count
+    );
+    renderPresetSelects(count, resizedIds);
   });
   reset.addEventListener("click", () => {
     getDefaultTimeControlIds(getPresetCount()).forEach((id, index) => {
       selects[index].value = id;
     });
-    updateOptionAvailability();
     void save("Defaults restored.");
   });
   resetHomepage.addEventListener("click", () => {
@@ -810,7 +913,11 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       DEFAULT_SETTINGS.homepageSidebarOrder,
       DEFAULT_SETTINGS.homepageSidebarVisible,
       DEFAULT_SETTINGS.dailyGamesPlacement,
-      DEFAULT_SETTINGS.dailyGamesVisiblePlacement
+      DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
+      DEFAULT_SETTINGS.recommendedMatchPlacement,
+      DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
+      DEFAULT_SETTINGS.gameHistoryPlacement,
+      DEFAULT_SETTINGS.gameHistoryVisiblePlacement
     );
     void save("Homepage defaults restored.");
   });

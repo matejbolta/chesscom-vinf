@@ -29,7 +29,7 @@
             <path d="M10 7v6"></path>
           </svg>
         </button>
-        <span class="version">v0.15.5</span>
+        <span class="version">v0.17.2</span>
         <button
           id="close-side-panel"
           class="side-panel-button side-panel-close-button"
@@ -73,11 +73,12 @@
           <input id="show-native-play-panel" type="checkbox" role="switch">
         </label>
         <fieldset class="stats-group homepage-card-group">
-          <legend>Right column</legend>
+          <legend>Cards</legend>
           <div id="homepage-sidebar-list" class="homepage-card-list"></div>
         </fieldset>
         <p class="stats-note">
-          Unknown future Chess.com cards stay visible after these cards.
+          Order applies within Main and Right. Unknown future Chess.com cards
+          stay visible after these cards.
         </p>
       </section>
 
@@ -85,7 +86,7 @@
         <div class="section-heading">
           <div>
             <h2 id="quick-play-heading">Quick Play presets</h2>
-            <p>Choose unique time controls for the homepage.</p>
+            <p>Choose how many shortcuts appear and their time controls.</p>
           </div>
           <button id="reset-presets" class="text-button" type="button">Reset</button>
         </div>
@@ -95,6 +96,7 @@
             <small>Choose the homepage grid size</small>
           </span>
           <select id="quick-play-preset-count" aria-label="Quick Play shortcut count">
+            <option value="0">0 buttons</option>
             <option value="1">1 button</option>
             <option value="2">2 buttons</option>
             <option value="3">3 buttons</option>

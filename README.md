@@ -14,17 +14,23 @@ endorsed by, or sponsored by Chess.com.
 
 The extension toolbar popup keeps its master `Enable VINF` switch in a standalone
 top card. Its `Homepage` section can show or hide Chess.com's large native play
-panel, independently show or hide every known right-column card, and keep those
-cards in a user-selected order. Daily Games has the same visibility checkbox,
-plus a Main/Right placement selector that remembers its location while hidden.
+panel, independently show or hide every known managed card, and apply one
+user-selected relative order within both the Main and Right columns. Daily
+Games, Recommended Match, and Game History each have a visibility checkbox plus
+a Main/Right placement selector that remembers the selected location while
+hidden.
 On supported Chromium browsers, the header button can move the same autosaving
 settings UI into the browser's persistent side panel. A close button beside the
 version badge closes that panel without reaching for the browser toolbar.
-The remaining sections choose 1,
-2, 3, 4, 6, or 8 unique Bullet/Blitz/Rapid Quick Play presets and control the
-visibility and fixed order of native Stats rows. Every enabled rating row can
-start expanded or retracted independently. Every change saves immediately to
-local browser storage; there is no separate Save step.
+The remaining sections choose 0, 1, 2, 3, 4, 6, or 8
+Bullet/Blitz/Rapid Quick Play presets and control the visibility and fixed order
+of native Stats rows. A time control may be selected more than once. Zero
+removes Quick Play from the homepage completely.
+Changing the button count keeps the leading selections already chosen; larger
+grids add sensible non-repeating fallbacks only in the new slots.
+Every enabled rating row can start expanded or retracted independently. Every
+change saves immediately to local browser storage; there is no separate Save
+step.
 
 The Stats card defaults to one summary (`Games`), then retracted `Rapid` and
 retracted `Blitz`. Games/Puzzles/Lessons and the six native rating categories
@@ -35,10 +41,10 @@ preserves it at the bottom.
 
 The settings UI offers a unified 17-control desktop/mobile catalog. Quick Play
 shows centered, time-only labels with category-colored Bullet, Blitz, and Rapid
-buttons. Its preset selectors mirror that chosen grid: 1–4 use one row, while 6
-and 8 use two rows of three or four. Every homepage layout keeps the same gaps
-and fills the exact Game History column width, while Stats and the remaining
-sidebar modules begin alongside it.
+buttons when enabled. Its preset selectors mirror that chosen grid: 1–4 use one
+row, while 6 and 8 use two rows of three or four. Every nonzero homepage layout
+keeps the same gaps and fills the exact Game History column width, while Stats
+and the remaining sidebar modules begin alongside it.
 
 Version 0.8 adds a separate Android delivery: a Firefox/Violentmonkey userscript
 that reuses the same validated launch, layout, time-control, and dynamic-page

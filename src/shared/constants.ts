@@ -4,10 +4,12 @@ export const MARKERS = {
   active: "data-chesscom-vinf-active",
   dailyPlacement: "data-chesscom-vinf-daily-placement",
   hidden: "data-chesscom-vinf-hidden",
+  gameHistoryPlacement: "data-chesscom-vinf-game-history-placement",
   layout: "data-chesscom-vinf-layout",
   module: "data-chesscom-vinf-module",
   nativePlayPanel: "data-chesscom-vinf-native-play-panel",
   owned: "data-chesscom-vinf-owned",
+  recommendedPlacement: "data-chesscom-vinf-recommended-placement",
   sidebarCard: "data-chesscom-vinf-sidebar-card",
   sidebarHidden: "data-chesscom-vinf-sidebar-hidden",
   statsInitialState: "data-chesscom-vinf-stats-initial-state"

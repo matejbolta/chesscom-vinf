@@ -18,9 +18,12 @@ directory.
 
 - Run only on the signed-in Chess.com homepage.
 - Keep Chess.com's main navigation; hide the native Game Review homepage card.
-- Expose 1, 2, 3, 4, 6, or 8 user-selected time controls. Default to the
-  original six recorded in `docs/FINAL_PRODUCT_SPEC.md`; use the per-count
-  defaults in `src/shared/time-controls.ts`.
+- Expose 0, 1, 2, 3, 4, 6, or 8 user-selected time controls. Zero removes the
+  Quick Play module entirely. Default to the original six recorded in
+  `docs/FINAL_PRODUCT_SPEC.md`; use the per-count defaults in
+  `src/shared/time-controls.ts`. When the count changes, preserve the leading
+  selections and fill only new slots from the documented fallback sequence.
+  Repeated selections are valid and must persist.
 - Keep the settings catalog as the documented desktop-first union of 17 Bullet,
   Blitz, and Rapid controls unless the user explicitly changes that decision.
 - Derive launches from Chess.com's native immediate-match link; never call a

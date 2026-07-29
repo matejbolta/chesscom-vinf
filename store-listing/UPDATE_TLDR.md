@@ -1,22 +1,22 @@
-# Chrome Web Store update TL;DR — 0.15.4 to 0.15.5
+# Chrome Web Store update TL;DR — 0.15.4 to 0.17.2
 
-This is the short checklist for updating the already submitted 0.15.4 item.
+This is the short checklist for updating the currently uploaded 0.15.4 item.
 You do not need to repeat the original submission setup.
 
 ## Do these
 
 - [ ] Open the existing item with extension ID
   `pfdelnfocedcbpomokhdaampckmhomme`.
-- [ ] Upload `release/chesscom-vinf-0.15.5.zip`.
-- [ ] In the permission disclosure for the new `sidePanel` permission, copy
+- [ ] Upload `release/chesscom-vinf-0.17.2.zip`.
+- [ ] Add the permission disclosure for the new `sidePanel` permission. Copy
   only the text inside this block:
 
 ```text
 Shows the same packaged local VINF settings interface in Chromium’s persistent side panel when the user explicitly opens it from the extension popup. It does not access page content, account data, or browsing activity.
 ```
 
-- [ ] Replace the store description with the current copy in the
-  `Description` section of `SUBMISSION.md`.
+- [ ] Replace the store description with the current copy in the `Description`
+  section of `SUBMISSION.md`.
 - [ ] Replace only the settings screenshot:
   `assets/screenshot-03-settings.jpg`.
 - [ ] Save the draft, inspect the listing preview and permission summary, then
@@ -41,38 +41,43 @@ Shows the same packaged local VINF settings interface in Chromium’s persistent
 - Visibility, regions, pricing, and in-app-purchase settings
 - Reviewer test instructions: they may remain empty
 
-## Privacy and permissions
+## Permissions and privacy
 
-One narrow UI permission is new; data practices are unchanged.
+Only one permission changes compared with uploaded version 0.15.4:
 
-- Permissions are now `storage` and `sidePanel`.
-- `sidePanel` only displays the extension's own packaged settings page.
+- Existing permission: `storage`
+- New permission: `sidePanel`
 - Site access remains only `https://www.chess.com/home*`.
 - Remote code remains `No`.
 - Data collected remains `None`.
 - Keep every data-use category unchecked.
 - Keep all three required data-use certifications checked.
 
-The privacy policy now explicitly describes the side panel. Its public URL is
-unchanged. No data-use category should be enabled.
+The side panel displays only VINF’s packaged local settings page. The extension
+still has no analytics, telemetry, advertising, remote code, account-data
+collection, or extension-owned network requests.
 
 ## What users gain compared with 0.15.4
 
-- A popup header action that keeps VINF settings open in Chromium's persistent
-  right-side panel.
-- A clear `×` beside the version badge closes the panel from inside VINF on
-  browsers that expose the current close API.
-- The side panel reuses the exact same autosaving settings and local storage.
-- The toolbar popup remains the default entry point.
-- Unsupported or rejected Side Panel API behavior leaves the normal popup
-  usable.
+- Keep the complete autosaving settings UI open in Chromium’s persistent side
+  panel, with an in-panel close button when supported.
+- Choose zero Quick Play buttons to remove the module completely.
+- Reuse the same time control in multiple Quick Play buttons.
+- Change the button count without losing existing choices: shrinking keeps the
+  leading controls, while expanding fills only new slots.
+- Show, hide, and place Daily Games, Recommended Match, and Game History in
+  either Main or Right.
+- Apply one saved managed-card order independently within both Main and Right,
+  while Quick Play stays first.
+- Keep the toolbar popup as the default settings entry point and preserve safe
+  fallback behavior when Side Panel APIs are unavailable.
 
 ## Package identity
 
-- Version: `0.15.5`
-- File: `release/chesscom-vinf-0.15.5.zip`
+- Version: `0.17.2`
+- File: `release/chesscom-vinf-0.17.2.zip`
 - SHA-256:
-  `7acdb9526189c7bcbd87ddc71dcb529d8954f8722eb3c7223a6c07ca3541f3de`
+  `43a4a7742eceb3ab72f8a522305f94f5fed7d4c8a447497e8cdc25c5f4905247`
 
 The complete field-by-field reference and all copy-ready text remain in
 `SUBMISSION.md`.

@@ -35,9 +35,12 @@ if (searchParams.has("pre-hydration")) {
     ?.classList.remove("game-history-games-component");
 }
 
+const presetCountParameter = searchParams.get("preset-count");
 const requestedPresetCount = searchParams.has("eight-preview")
   ? 8
-  : Number(searchParams.get("preset-count"));
+  : presetCountParameter === null
+    ? Number.NaN
+    : Number(presetCountParameter);
 
 let previewSettings: ExtensionSettings = isQuickPlayPresetCount(
   requestedPresetCount
@@ -79,13 +82,85 @@ if (searchParams.has("sidebar-preview")) {
       "friends",
       "chess-tv",
       "streaks",
-      "daily-games"
+      "daily-games",
+      "recommended-match",
+      "game-history"
     ],
     homepageSidebarVisible: [
       "daily-puzzle",
       "stats",
       "legend-league",
       "friends"
+    ]
+  };
+}
+
+if (searchParams.has("recommended-right")) {
+  previewSettings = {
+    ...previewSettings,
+    recommendedMatchPlacement: "sidebar",
+    recommendedMatchVisiblePlacement: "sidebar",
+    homepageSidebarVisible: [
+      ...previewSettings.homepageSidebarVisible,
+      "recommended-match"
+    ]
+  };
+}
+
+if (searchParams.has("recommended-hidden")) {
+  previewSettings = {
+    ...previewSettings,
+    recommendedMatchPlacement: "hidden"
+  };
+}
+
+if (searchParams.has("game-history-right")) {
+  previewSettings = {
+    ...previewSettings,
+    gameHistoryPlacement: "sidebar",
+    gameHistoryVisiblePlacement: "sidebar",
+    homepageSidebarVisible: [
+      ...previewSettings.homepageSidebarVisible,
+      "game-history"
+    ]
+  };
+}
+
+if (searchParams.has("game-history-hidden")) {
+  previewSettings = {
+    ...previewSettings,
+    gameHistoryPlacement: "hidden"
+  };
+}
+
+if (searchParams.has("main-order-preview")) {
+  previewSettings = {
+    ...previewSettings,
+    homepageSidebarOrder: [
+      "stats",
+      "chess-tv",
+      "daily-games",
+      "game-history",
+      "recommended-match",
+      "streaks",
+      "legend-league",
+      "daily-puzzle",
+      "friends"
+    ]
+  };
+}
+
+if (searchParams.has("duplicate-preview")) {
+  previewSettings = {
+    ...previewSettings,
+    quickPlayPresetCount: 6,
+    timeControlIds: [
+      "10-0",
+      "10-0",
+      "10-0",
+      "10-0",
+      "10-0",
+      "10-0"
     ]
   };
 }

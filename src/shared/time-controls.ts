@@ -163,7 +163,19 @@ export const DEFAULT_EIGHT_TIME_CONTROL_IDS: readonly TimeControlId[] = [
   "5-5"
 ] as const;
 
+export const QUICK_PLAY_EXPANSION_FALLBACK_IDS: readonly TimeControlId[] = [
+  "10-0",
+  "10-5",
+  "15-10",
+  "30-0",
+  "3-0",
+  "3-2",
+  "5-5",
+  "1-1"
+] as const;
+
 export const QUICK_PLAY_PRESET_COUNTS: readonly QuickPlayPresetCount[] = [
+  0,
   1,
   2,
   3,
@@ -175,6 +187,7 @@ export const QUICK_PLAY_PRESET_COUNTS: readonly QuickPlayPresetCount[] = [
 export const DEFAULT_TIME_CONTROL_IDS_BY_COUNT: Readonly<
   Record<QuickPlayPresetCount, readonly TimeControlId[]>
 > = {
+  0: [],
   1: ["10-0"],
   2: ["10-0", "15-10"],
   3: ["10-0", "15-10", "3-2"],
@@ -198,9 +211,36 @@ export function getDefaultTimeControlIds(
   return DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count];
 }
 
+export function resizeTimeControlIds(
+  currentIds: readonly TimeControlId[],
+  nextCount: QuickPlayPresetCount
+): TimeControlId[] {
+  const nextIds = currentIds.slice(0, nextCount);
+  if (nextIds.length >= nextCount) {
+    return nextIds;
+  }
+
+  const usedIds = new Set(nextIds);
+  for (const fallbackId of QUICK_PLAY_EXPANSION_FALLBACK_IDS) {
+    if (nextIds.length >= nextCount) {
+      break;
+    }
+    if (usedIds.has(fallbackId)) {
+      continue;
+    }
+    nextIds.push(fallbackId);
+    usedIds.add(fallbackId);
+  }
+
+  return nextIds;
+}
+
 export function getQuickPlayGridDimensions(
   count: QuickPlayPresetCount
 ): { columns: number; rows: number } {
+  if (count === 0) {
+    return { columns: 1, rows: 0 };
+  }
   return count > 4
     ? { columns: count / 2, rows: 2 }
     : { columns: count, rows: 1 };

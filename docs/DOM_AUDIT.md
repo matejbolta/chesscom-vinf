@@ -1,8 +1,9 @@
 # ChessComVINF DOM Audit
 
-Audit date: 2026-07-28
+Audit date: 2026-07-29
 Source: private complete-page captures in `fixtures/raw/2026-07-16/` and
-the reduced/all-cards 2026-07-28 captures under `fixtures/raw/` plus
+the reduced/all-cards 2026-07-28 and Recommended Match 2026-07-29 captures
+under `fixtures/raw/` plus
 user-provided live Inspector samples of the recurring campaign banner and exact
 homepage toolbar hierarchy
 Observed locale and variants: signed-in English legacy and redesigned desktop
@@ -145,6 +146,7 @@ to `/analysis/game/...`.
 | --- | --- | --- |
 | Quick Play | Extension-owned `[data-chesscom-vinf-owned="quick-play"]` | Inserted into legacy `#vue-instance` or redesigned `#home-main > .main-component` before the first visible native main section |
 | Daily Games | Direct child of `#vue-instance` containing a `/play/online/daily` link; namespaced marker after moving/hiding | `.home-container-component` wrapper moved to the sidebar, restored to main, or hidden intact |
+| Recommended Match | Redesigned main-column card containing `.play-online-section-body .challenge-tile-component`, excluding the native `#home-header` action panel; namespaced marker after moving/hiding | Direct `#home-main > .main-component` child moved to the sidebar, restored to main, or hidden intact |
 | Game History | `.game-history-games-component` in either main-column host | Legacy `.home-container-component` wrapper or the redesigned direct `.main-section` card |
 | Daily Puzzle | `.daily-puzzle-wrap`, `.daily-puzzle-content`, or `.daily-puzzle-preview` | Direct redesigned `.cc-section` sidebar child |
 | Streaks | `.streak-badge-sidebar-wrapper` | Native streak subtree, moved intact into a reversible VINF card host |
@@ -160,12 +162,28 @@ Quick Play fills the same `728px` observed desktop column as Game History. The
 native `.layout-component` continues to own both columns, so the `300px` sidebar
 starts on the same row as Quick Play without absolute positioning or a replacement
 page grid. A `2.4rem` gap separates Quick Play from the first native left module.
+When the saved count is zero, the controller removes every extension-owned
+Quick Play panel and leaves the native main-card sequence as the column start.
 
-The default managed right-column order is Stats, ChessTV, Daily Games
-when present, Streaks, Legend League, Daily Puzzle, then Friends. Version 0.15
-makes all seven known positions orderable. Every card has independent Show/Hide;
-Daily Games additionally retains its Main/Right placement while hidden.
-Unknown native cards are preserved visibly after the managed cards.
+The default managed card order is Stats, ChessTV, Daily Games, Recommended
+Match, Game History, Streaks, Legend League, Daily Puzzle, then Friends. Version
+0.17 makes all nine known positions orderable. The controller filters that one
+saved sequence per column: visible movable cards assigned to Main form the
+managed prefix below Quick Play, while cards assigned to Right form the managed
+sidebar prefix. Every card has independent Show/Hide; Daily Games, Recommended
+Match, and Game History additionally retain their Main/Right placement while
+hidden. Recommended Match and Game History default to Main. Unknown native cards
+are preserved visibly after the managed cards in their native column.
+
+The 2026-07-29 capture confirms that Recommended Match is a native direct
+main-column section rather than part of the large `#home-header` panel. Its
+generic card heading includes a dynamic count, so VINF does not depend on title
+copy or that count. The stable structural contract is a challenge tile inside
+`.play-online-section-body`, promoted to the direct
+`#home-main > .main-component` child. When moved into the desktop sidebar, VINF
+keeps the native node and forces `.play-online-wrapper` to one column because
+Chess.com's viewport media query would otherwise retain its two-column
+main-card layout inside the 300px sidebar.
 
 The redesigned page nests Streaks, a divider, and Legend League inside one
 `.badges-component`. To provide independent visibility and ordering, VINF moves
@@ -200,6 +218,24 @@ desktop CSS pre-hides audited Stats, ChessTV, Daily Puzzle, Friends, Streaks,
 and Legend League landmarks. Element-level hidden markers remain authoritative
 after reconciliation. The runtime re-arms the document marker even while the
 target homepage is hydrating, preventing optional cards from briefly painting.
+
+Version 0.16 adds
+`data-chesscom-vinf-recommended-placement="sidebar|hidden"` with an exact
+`:has(.play-online-section-body .challenge-tile-component)` pre-hide under the
+redesigned main host. This prevents the native card from flashing in Main before
+it is moved or hidden. The marker is absent for Main and is removed on cleanup.
+The locator first accepts VINF's module marker after a move, so mutation
+reconciliation remains idempotent.
+
+Version 0.17 adds
+`data-chesscom-vinf-game-history-placement="sidebar|hidden"`. Legacy CSS
+pre-hides the direct main wrapper containing `.game-history-games-component`;
+redesigned CSS pre-hides the direct component itself. The locator accepts
+VINF's existing `game-history` module marker before searching the native main
+host, so a card already moved Right remains discoverable on every later
+reconciliation. At 300px sidebar width, the complete native card is preserved
+and its wide history content may scroll horizontally rather than being rebuilt
+or truncated.
 
 The player landmark is required because an online ChessTV card replaces the
 `Live on ChessTV` header/link with the current streamer name. The original
@@ -313,8 +349,10 @@ The cross-platform preset audit found that desktop had consolidated `5 + 2` and
 The settings popup therefore uses a desktop-first union, but presents every
 Blitz choice in one time-ordered group: `3 min`, `3 + 2`, `5 min`, `5 + 2`,
 `5 + 3`, `5 + 5`. Source-platform availability remains internal metadata. It
-stores exactly the selected count of 1, 2, 3, 4, 6, or 8 unique IDs. Counts up
-to four use one desktop row; six and eight retain their two-row layouts.
+stores exactly the selected count of 0, 1, 2, 3, 4, 6, or 8 IDs. Repeated IDs
+are valid, so users may dedicate multiple buttons to the same clock. Zero
+stores an empty array and renders no Quick Play module. Counts up to four use
+one desktop row; six and eight retain their two-row layouts.
 
 Every selected option uses the same verified native route construction. Quick
 Play identifies each configured control as Bullet, Blitz, or Rapid and styles the
@@ -351,11 +389,12 @@ The extension does not guess a route or fall back to the last-used control.
   `[role=main]`. Cards are resolved from stable destination paths and semantic
   headings while links inside `nav`, `header`, and `[role=navigation]` are
   excluded.
-- In responsive mode, Quick Play precedes Game History. When retained cards are
-  direct siblings, known cards follow the saved right-column order. Daily Games
-  is restored to native flow for `Main` and omitted for `Hidden`; every other
-  known card follows its saved Show/Hide state. VINF does not move responsive
-  cards across an uncertain nested container boundary.
+- In responsive mode, Quick Play precedes the movable Main-card group. When
+  retained cards are direct siblings, that group and the conceptual Right-card
+  group each follow the same saved managed-card order. Daily Games, Recommended
+  Match, and Game History are omitted for `Hidden`; every other known card
+  follows its saved Show/Hide state. VINF does not move responsive cards across
+  an uncertain nested container boundary.
 - The mutation observer falls back from `.base-container` to `main`,
   `[role=main]`, or `body`, so delayed mobile/responsive card replacement still
   schedules idempotent reconciliation.

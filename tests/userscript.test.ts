@@ -2,9 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { RECONCILE_DELAY_MS } from "../src/shared/constants";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
 import {
-  DEFAULT_EIGHT_TIME_CONTROL_IDS,
-  DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
   getQuickPlayGridDimensions,
+  QUICK_PLAY_EXPANSION_FALLBACK_IDS,
   QUICK_PLAY_PRESET_COUNTS
 } from "../src/shared/time-controls";
 import { loadResponsiveHomepageFixture } from "./test-utils";
@@ -53,12 +52,22 @@ describe("Android userscript shell", () => {
       "[data-chesscom-vinf-userscript-settings]"
     );
     expect(dialog?.open).toBe(true);
-    expect(dialog?.querySelectorAll("select")).toHaveLength(14);
+    expect(dialog?.querySelectorAll("select")).toHaveLength(16);
     expect(
       dialog?.querySelector<HTMLSelectElement>(
         '[aria-label="Daily Games placement"]'
       )?.value
     ).toBe("sidebar");
+    expect(
+      dialog?.querySelector<HTMLSelectElement>(
+        '[aria-label="Recommended Match placement"]'
+      )?.value
+    ).toBe("main");
+    expect(
+      dialog?.querySelector<HTMLSelectElement>(
+        '[aria-label="Game History placement"]'
+      )?.value
+    ).toBe("main");
     expect(
       dialog?.querySelector<HTMLSelectElement>(
         '[aria-label="Rapid initial state"]'
@@ -71,7 +80,7 @@ describe("Android userscript shell", () => {
     ).toBe(true);
     expect(
       dialog?.querySelectorAll(".chesscom-vinf-settings-preference-row")
-    ).toHaveLength(16);
+    ).toHaveLength(18);
     const enabled = dialog?.querySelector<HTMLInputElement>(
       "#chesscom-vinf-userscript-enabled"
     );
@@ -153,8 +162,36 @@ describe("Android userscript shell", () => {
     expect(Array.from(presetCount.options).map((option) => option.value)).toEqual(
       QUICK_PLAY_PRESET_COUNTS.map(String)
     );
-    let presetSelects: HTMLSelectElement[] = [];
-    for (const count of [1, 2, 3, 4, 8] as const) {
+    let presetSelects = Array.from(
+      dialog!.querySelectorAll<HTMLSelectElement>(
+        '[aria-label^="Quick Play shortcut "]'
+      )
+    ).filter((select) => select !== presetCount);
+    presetSelects[0].value = "5-0";
+    presetSelects[1].value = "5-0";
+    const resizeExpectations = [
+      [
+        8,
+        [
+          "5-0",
+          "5-0",
+          "15-10",
+          "30-0",
+          "3-2",
+          "5-3",
+          "10-0",
+          "10-5"
+        ]
+      ],
+      [3, ["5-0", "5-0", "15-10"]],
+      [6, ["5-0", "5-0", "15-10", "10-0", "10-5", "30-0"]],
+      [4, ["5-0", "5-0", "15-10", "10-0"]],
+      [2, ["5-0", "5-0"]],
+      [1, ["5-0"]],
+      [0, []],
+      [8, [...QUICK_PLAY_EXPANSION_FALLBACK_IDS]]
+    ] as const;
+    for (const [count, expectedIds] of resizeExpectations) {
       presetCount.value = String(count);
       presetCount.dispatchEvent(new Event("change", { bubbles: true }));
       const dimensions = getQuickPlayGridDimensions(count);
@@ -167,21 +204,20 @@ describe("Android userscript shell", () => {
       expect(presetList?.getAttribute("data-preset-rows")).toBe(
         String(dimensions.rows)
       );
+      expect(presetList?.hasAttribute("hidden")).toBe(count === 0);
       presetSelects = Array.from(
         dialog!.querySelectorAll<HTMLSelectElement>(
           '[aria-label^="Quick Play shortcut "]'
         )
       ).filter((select) => select !== presetCount);
       expect(presetSelects).toHaveLength(count);
-      expect(presetSelects.map((select) => select.value)).toEqual(
-        DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
-      );
+      expect(presetSelects.map((select) => select.value)).toEqual(expectedIds);
       await Promise.resolve();
     }
     expect(setValue).toHaveBeenLastCalledWith("vinfSettings", {
       ...DEFAULT_SETTINGS,
       quickPlayPresetCount: 8,
-      timeControlIds: DEFAULT_EIGHT_TIME_CONTROL_IDS
+      timeControlIds: QUICK_PLAY_EXPANSION_FALLBACK_IDS
     });
 
     presetCount.value = "6";
@@ -203,9 +239,28 @@ describe("Android userscript shell", () => {
     ).filter((select) => select !== presetCount);
     expect(presetSelects).toHaveLength(6);
     expect(presetSelects.map((select) => select.value)).toEqual(
+      QUICK_PLAY_EXPANSION_FALLBACK_IDS.slice(0, 6)
+    );
+    presetCount
+      .closest(".chesscom-vinf-settings-card")
+      ?.querySelector<HTMLButtonElement>("button")
+      ?.click();
+    await Promise.resolve();
+    expect(presetSelects.map((select) => select.value)).toEqual(
       DEFAULT_SETTINGS.timeControlIds
     );
+    expect(
+      Array.from(presetSelects[0].options).every(
+        (option) => !option.disabled
+      )
+    ).toBe(true);
+    presetSelects[0].value = presetSelects[1].value;
+    presetSelects[0].dispatchEvent(new Event("change", { bubbles: true }));
     await Promise.resolve();
+    expect(setValue).toHaveBeenLastCalledWith("vinfSettings", {
+      ...DEFAULT_SETTINGS,
+      timeControlIds: ["10-5", "10-5", "15-10", "30-0", "3-2", "5-3"]
+    });
 
     const puzzles = dialog!.querySelector<HTMLInputElement>(
       "#chesscom-vinf-summary-puzzles"
@@ -244,6 +299,7 @@ describe("Android userscript shell", () => {
             id !== "chess-tv" &&
             id !== "legend-league"
         ),
+      timeControlIds: ["10-5", "10-5", "15-10", "30-0", "3-2", "5-3"],
       statsSummaryVisible: ["games", "puzzles"],
       statsRatingStates: {
         ...DEFAULT_SETTINGS.statsRatingStates,

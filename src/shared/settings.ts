@@ -1,8 +1,8 @@
 import type {
-  DailyGamesPlacement,
-  DailyGamesVisiblePlacement,
   ExtensionSettings,
   HomepageSidebarCardId,
+  MainColumnCardPlacement,
+  MainColumnCardVisiblePlacement,
   StatsDefaultState,
   StatsRatingId,
   StatsRatingStates,
@@ -37,6 +37,10 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   showNativePlayPanel: false,
   dailyGamesPlacement: "sidebar",
   dailyGamesVisiblePlacement: "sidebar",
+  recommendedMatchPlacement: "main",
+  recommendedMatchVisiblePlacement: "main",
+  gameHistoryPlacement: "main",
+  gameHistoryVisiblePlacement: "main",
   homepageSidebarOrder: [...DEFAULT_HOMEPAGE_SIDEBAR_ORDER],
   homepageSidebarVisible: [...DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE],
   quickPlayPresetCount: 6,
@@ -110,17 +114,70 @@ function normalizeVisible<TId extends string>(
   ];
 }
 
+function normalizeHomepageSidebarOrder(
+  value: unknown
+): HomepageSidebarCardId[] {
+  if (!Array.isArray(value)) {
+    return [...DEFAULT_SETTINGS.homepageSidebarOrder];
+  }
+
+  const unique = [
+    ...new Set(
+      value.filter(
+        (id): id is HomepageSidebarCardId =>
+          typeof id === "string" &&
+          validHomepageSidebarCardIds.has(id as HomepageSidebarCardId)
+      )
+    )
+  ];
+  if (unique.length === validHomepageSidebarCardIds.size) {
+    return unique;
+  }
+
+  const previousCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
+    (id) => id !== "game-history"
+  );
+  if (
+    unique.length === previousCardIds.length &&
+    !unique.includes("game-history") &&
+    previousCardIds.every((id) => unique.includes(id))
+  ) {
+    const recommendedMatchIndex = unique.indexOf("recommended-match");
+    unique.splice(recommendedMatchIndex + 1, 0, "game-history");
+    return unique;
+  }
+
+  const earlierCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
+    (id) => id !== "recommended-match" && id !== "game-history"
+  );
+  if (
+    unique.length === earlierCardIds.length &&
+    !unique.includes("recommended-match") &&
+    !unique.includes("game-history") &&
+    earlierCardIds.every((id) => unique.includes(id))
+  ) {
+    const dailyGamesIndex = unique.indexOf("daily-games");
+    unique.splice(dailyGamesIndex + 1, 0, "recommended-match");
+    unique.splice(dailyGamesIndex + 2, 0, "game-history");
+    return unique;
+  }
+
+  return [...DEFAULT_SETTINGS.homepageSidebarOrder];
+}
+
 function isStatsDefaultState(value: unknown): value is StatsDefaultState {
   return value === "expanded" || value === "retracted";
 }
 
-function isDailyGamesPlacement(value: unknown): value is DailyGamesPlacement {
+function isMainColumnCardPlacement(
+  value: unknown
+): value is MainColumnCardPlacement {
   return value === "main" || value === "sidebar" || value === "hidden";
 }
 
-function isDailyGamesVisiblePlacement(
+function isMainColumnCardVisiblePlacement(
   value: unknown
-): value is DailyGamesVisiblePlacement {
+): value is MainColumnCardVisiblePlacement {
   return value === "main" || value === "sidebar";
 }
 
@@ -156,6 +213,10 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     showNativePlayPanel?: unknown;
     dailyGamesPlacement?: unknown;
     dailyGamesVisiblePlacement?: unknown;
+    recommendedMatchPlacement?: unknown;
+    recommendedMatchVisiblePlacement?: unknown;
+    gameHistoryPlacement?: unknown;
+    gameHistoryVisiblePlacement?: unknown;
     homepageSidebarOrder?: unknown;
     homepageSidebarVisible?: unknown;
     showChessTv?: unknown;
@@ -180,10 +241,9 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       (id): id is TimeControlId =>
         typeof id === "string" && validTimeControlIds.has(id as TimeControlId)
     );
-  const uniqueIds = [...new Set(ids)];
   const inferredPresetCount =
+    rawIds.length > 0 &&
     rawIds.length === ids.length &&
-    ids.length === uniqueIds.length &&
     isQuickPlayPresetCount(ids.length)
       ? ids.length
       : DEFAULT_SETTINGS.quickPlayPresetCount;
@@ -197,9 +257,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   );
   const hasCompletePresetSelection =
     rawIds.length === quickPlayPresetCount &&
-    ids.length === quickPlayPresetCount &&
-    uniqueIds.length === quickPlayPresetCount;
-  const dailyGamesPlacement = isDailyGamesPlacement(
+    ids.length === quickPlayPresetCount;
+  const dailyGamesPlacement = isMainColumnCardPlacement(
     candidate.dailyGamesPlacement
   )
     ? candidate.dailyGamesPlacement
@@ -212,20 +271,43 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
           ? "sidebar"
           : "main"
         : DEFAULT_SETTINGS.dailyGamesPlacement;
-  const dailyGamesVisiblePlacement = isDailyGamesVisiblePlacement(
+  const dailyGamesVisiblePlacement = isMainColumnCardVisiblePlacement(
     candidate.dailyGamesVisiblePlacement
   )
     ? candidate.dailyGamesVisiblePlacement
-    : isDailyGamesVisiblePlacement(dailyGamesPlacement)
+    : isMainColumnCardVisiblePlacement(dailyGamesPlacement)
       ? dailyGamesPlacement
       : DEFAULT_SETTINGS.dailyGamesVisiblePlacement;
+  const recommendedMatchPlacement = isMainColumnCardPlacement(
+    candidate.recommendedMatchPlacement
+  )
+    ? candidate.recommendedMatchPlacement
+    : DEFAULT_SETTINGS.recommendedMatchPlacement;
+  const recommendedMatchVisiblePlacement =
+    isMainColumnCardVisiblePlacement(
+      candidate.recommendedMatchVisiblePlacement
+    )
+      ? candidate.recommendedMatchVisiblePlacement
+      : isMainColumnCardVisiblePlacement(recommendedMatchPlacement)
+        ? recommendedMatchPlacement
+        : DEFAULT_SETTINGS.recommendedMatchVisiblePlacement;
+  const gameHistoryPlacement = isMainColumnCardPlacement(
+    candidate.gameHistoryPlacement
+  )
+    ? candidate.gameHistoryPlacement
+    : DEFAULT_SETTINGS.gameHistoryPlacement;
+  const gameHistoryVisiblePlacement = isMainColumnCardVisiblePlacement(
+    candidate.gameHistoryVisiblePlacement
+  )
+    ? candidate.gameHistoryVisiblePlacement
+    : isMainColumnCardVisiblePlacement(gameHistoryPlacement)
+      ? gameHistoryPlacement
+      : DEFAULT_SETTINGS.gameHistoryVisiblePlacement;
   const hasSidebarVisibility = Array.isArray(
     candidate.homepageSidebarVisible
   );
-  const homepageSidebarOrder = normalizeCompleteOrder(
-    candidate.homepageSidebarOrder,
-    validHomepageSidebarCardIds,
-    DEFAULT_SETTINGS.homepageSidebarOrder
+  const homepageSidebarOrder = normalizeHomepageSidebarOrder(
+    candidate.homepageSidebarOrder
   );
   const normalizedHomepageSidebarVisible = normalizeVisible(
     candidate.homepageSidebarVisible,
@@ -238,10 +320,20 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     if (id === "legend-league" && !hasSidebarVisibility) {
       return candidate.showLegendLeague !== false;
     }
-    return id !== "daily-games";
+    return (
+      id !== "daily-games" &&
+      id !== "recommended-match" &&
+      id !== "game-history"
+    );
   });
   if (dailyGamesPlacement === "sidebar") {
     normalizedHomepageSidebarVisible.push("daily-games");
+  }
+  if (recommendedMatchPlacement === "sidebar") {
+    normalizedHomepageSidebarVisible.push("recommended-match");
+  }
+  if (gameHistoryPlacement === "sidebar") {
+    normalizedHomepageSidebarVisible.push("game-history");
   }
   const homepageSidebarVisibleSet = new Set(
     normalizedHomepageSidebarVisible
@@ -261,12 +353,16 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
         : DEFAULT_SETTINGS.showNativePlayPanel,
     dailyGamesPlacement,
     dailyGamesVisiblePlacement,
+    recommendedMatchPlacement,
+    recommendedMatchVisiblePlacement,
+    gameHistoryPlacement,
+    gameHistoryVisiblePlacement,
     homepageSidebarOrder,
     homepageSidebarVisible,
     quickPlayPresetCount,
     timeControlIds:
       hasCompletePresetSelection
-        ? uniqueIds
+        ? ids
         : [...defaultTimeControlIds],
     statsSummaryOrder: normalizeCompleteOrder(
       candidate.statsSummaryOrder,

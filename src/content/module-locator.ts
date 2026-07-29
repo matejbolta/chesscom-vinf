@@ -235,15 +235,36 @@ export function locateHomepageModules(document: Document): HomepageModules {
           )
         ) ?? directChildContaining(desktopLeftColumn, dailyGamesHeader)
       : findModuleByPath(contentRoot, (path) => path === "/play/online/daily"));
+  const movedRecommendedMatch = document.querySelector<HTMLElement>(
+    `[${MARKERS.module}="recommended-match"]`
+  );
+  const recommendedMatchLandmark =
+    Array.from(
+      contentRoot?.querySelectorAll<HTMLElement>(
+        ".play-online-section-body .challenge-tile-component"
+      ) ?? []
+    ).find((element) => !nativeActionColumn?.contains(element)) ?? null;
+  const recommendedMatch =
+    movedRecommendedMatch ??
+    (desktopLeftColumn
+      ? directChildContaining(desktopLeftColumn, recommendedMatchLandmark)
+      : findModuleAncestor(contentRoot, recommendedMatchLandmark));
 
   const historyComponent = desktopLeftColumn?.querySelector<HTMLElement>(
     ".game-history-games-component"
   ) ?? contentRoot?.querySelector<HTMLElement>(".game-history-games-component") ?? null;
-  const gameHistory = desktopLeftColumn
-    ? directChildContaining(desktopLeftColumn, historyComponent)
-    : findModuleAncestor(contentRoot, historyComponent) ??
-      findModuleByHeading(contentRoot, "Game History") ??
-      findModuleByPath(contentRoot, (path) => path.startsWith("/games/archive"));
+  const movedGameHistory = document.querySelector<HTMLElement>(
+    `[${MARKERS.module}="game-history"]`
+  );
+  const gameHistory =
+    movedGameHistory ??
+    (desktopLeftColumn
+      ? directChildContaining(desktopLeftColumn, historyComponent)
+      : findModuleAncestor(contentRoot, historyComponent) ??
+        findModuleByHeading(contentRoot, "Game History") ??
+        findModuleByPath(contentRoot, (path) =>
+          path.startsWith("/games/archive")
+        ));
 
   const rightSearchRoot = desktopRightColumn ?? contentRoot;
   const statsLandmark = rightSearchRoot
@@ -358,6 +379,7 @@ export function locateHomepageModules(document: Document): HomepageModules {
     gameReview,
     leftColumn: desktopLeftColumn ?? responsiveMainHost,
     dailyGames,
+    recommendedMatch,
     gameHistory,
     rightColumn: desktopRightColumn,
     stats,

@@ -6,9 +6,8 @@ import {
   SETTINGS_STORAGE_KEY
 } from "../src/shared/settings";
 import {
-  DEFAULT_EIGHT_TIME_CONTROL_IDS,
-  DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
   getQuickPlayGridDimensions,
+  QUICK_PLAY_EXPANSION_FALLBACK_IDS,
   QUICK_PLAY_PRESET_COUNTS
 } from "../src/shared/time-controls";
 
@@ -26,7 +25,7 @@ afterEach(() => {
 });
 
 describe("settings popup", () => {
-  it("loads saved settings and autosaves every unique selection", async () => {
+  it("loads saved settings and autosaves repeated preset selections", async () => {
     const html = readFileSync(
       resolve(process.cwd(), "src/popup/popup.html"),
       "utf8"
@@ -83,6 +82,19 @@ describe("settings popup", () => {
     const showDailyGames = document.querySelector<HTMLInputElement>(
       "#homepage-sidebar-list-daily-games"
     )!;
+    const recommendedMatchPlacement =
+      document.querySelector<HTMLSelectElement>(
+        "#homepage-recommended-match-placement"
+      )!;
+    const showRecommendedMatch = document.querySelector<HTMLInputElement>(
+      "#homepage-sidebar-list-recommended-match"
+    )!;
+    const gameHistoryPlacement = document.querySelector<HTMLSelectElement>(
+      "#homepage-game-history-placement"
+    )!;
+    const showGameHistory = document.querySelector<HTMLInputElement>(
+      "#homepage-sidebar-list-game-history"
+    )!;
     const showNativePlayPanel = document.querySelector<HTMLInputElement>(
       "#show-native-play-panel"
     )!;
@@ -132,6 +144,12 @@ describe("settings popup", () => {
     expect(
       Array.from(dailyGamesPlacement.options).map((option) => option.value)
     ).toEqual(["main", "sidebar"]);
+    expect(showRecommendedMatch.checked).toBe(true);
+    expect(recommendedMatchPlacement.value).toBe("main");
+    expect(recommendedMatchPlacement.disabled).toBe(false);
+    expect(showGameHistory.checked).toBe(true);
+    expect(gameHistoryPlacement.value).toBe("main");
+    expect(gameHistoryPlacement.disabled).toBe(false);
     expect(showNativePlayPanel.checked).toBe(false);
     expect(showChessTv.checked).toBe(false);
     expect(
@@ -145,7 +163,7 @@ describe("settings popup", () => {
       Array.from(presetCount.options).map((option) => option.value)
     ).toEqual(QUICK_PLAY_PRESET_COUNTS.map(String));
     expect(selects).toHaveLength(6);
-    expect(document.querySelectorAll("select")).toHaveLength(14);
+    expect(document.querySelectorAll("select")).toHaveLength(16);
     expect(rapidState.value).toBe("retracted");
     expect(rapidState.disabled).toBe(false);
     expect(bulletState.disabled).toBe(true);
@@ -179,8 +197,14 @@ describe("settings popup", () => {
       homepageCard?.querySelector("#homepage-daily-games-placement")
     ).not.toBeNull();
     expect(
+      homepageCard?.querySelector("#homepage-recommended-match-placement")
+    ).not.toBeNull();
+    expect(
+      homepageCard?.querySelector("#homepage-game-history-placement")
+    ).not.toBeNull();
+    expect(
       homepageCard?.querySelectorAll(".homepage-card-row")
-    ).toHaveLength(7);
+    ).toHaveLength(9);
     expect(document.querySelector(".save-button")).toBeNull();
     expect(Array.from(selects[0].options).map((option) => option.value)).toEqual([
       "30s-0",
@@ -209,13 +233,104 @@ describe("settings popup", () => {
     expect(
       selects[0].querySelector<HTMLOptionElement>('option[value="10-5"]')
         ?.disabled
-    ).toBe(true);
+    ).toBe(false);
     expect(
       selects[0].querySelector<HTMLOptionElement>('option[value="10-0"]')
         ?.disabled
     ).toBe(false);
 
-    for (const count of [1, 2, 3, 4, 8] as const) {
+    recommendedMatchPlacement.value = "sidebar";
+    recommendedMatchPlacement.dispatchEvent(
+      new Event("change", { bubbles: true })
+    );
+    await flushAsyncWork();
+    expect(set).toHaveBeenLastCalledWith({
+      [SETTINGS_STORAGE_KEY]: {
+        ...savedSettings,
+        recommendedMatchPlacement: "sidebar",
+        recommendedMatchVisiblePlacement: "sidebar",
+        homepageSidebarVisible: [
+          "stats",
+          "recommended-match",
+          "streaks",
+          "daily-puzzle",
+          "friends"
+        ]
+      }
+    });
+
+    gameHistoryPlacement.value = "sidebar";
+    gameHistoryPlacement.dispatchEvent(
+      new Event("change", { bubbles: true })
+    );
+    await flushAsyncWork();
+    expect(set).toHaveBeenLastCalledWith({
+      [SETTINGS_STORAGE_KEY]: {
+        ...savedSettings,
+        recommendedMatchPlacement: "sidebar",
+        recommendedMatchVisiblePlacement: "sidebar",
+        gameHistoryPlacement: "sidebar",
+        gameHistoryVisiblePlacement: "sidebar",
+        homepageSidebarVisible: [
+          "stats",
+          "recommended-match",
+          "game-history",
+          "streaks",
+          "daily-puzzle",
+          "friends"
+        ]
+      }
+    });
+    gameHistoryPlacement.value = "main";
+    gameHistoryPlacement.dispatchEvent(
+      new Event("change", { bubbles: true })
+    );
+    await flushAsyncWork();
+    expect(set).toHaveBeenLastCalledWith({
+      [SETTINGS_STORAGE_KEY]: {
+        ...savedSettings,
+        recommendedMatchPlacement: "sidebar",
+        recommendedMatchVisiblePlacement: "sidebar",
+        homepageSidebarVisible: [
+          "stats",
+          "recommended-match",
+          "streaks",
+          "daily-puzzle",
+          "friends"
+        ]
+      }
+    });
+    recommendedMatchPlacement.value = "main";
+    recommendedMatchPlacement.dispatchEvent(
+      new Event("change", { bubbles: true })
+    );
+    await flushAsyncWork();
+
+    selects[0].value = "5-0";
+    selects[1].value = "5-0";
+    const resizeExpectations = [
+      [
+        8,
+        [
+          "5-0",
+          "5-0",
+          "15-10",
+          "30-0",
+          "3-2",
+          "5-3",
+          "10-0",
+          "10-5"
+        ]
+      ],
+      [3, ["5-0", "5-0", "15-10"]],
+      [6, ["5-0", "5-0", "15-10", "10-0", "10-5", "30-0"]],
+      [4, ["5-0", "5-0", "15-10", "10-0"]],
+      [2, ["5-0", "5-0"]],
+      [1, ["5-0"]],
+      [0, []],
+      [8, [...QUICK_PLAY_EXPANSION_FALLBACK_IDS]]
+    ] as const;
+    for (const [count, expectedIds] of resizeExpectations) {
       presetCount.value = String(count);
       presetCount.dispatchEvent(new Event("change", { bubbles: true }));
       const dimensions = getQuickPlayGridDimensions(count);
@@ -229,17 +344,18 @@ describe("settings popup", () => {
         document.querySelectorAll<HTMLSelectElement>("#preset-list select")
       );
       expect(selects).toHaveLength(count);
-      expect(selects.map((select) => select.value)).toEqual(
-        DEFAULT_TIME_CONTROL_IDS_BY_COUNT[count]
+      expect(selects.map((select) => select.value)).toEqual(expectedIds);
+      expect(document.querySelector("#preset-list")?.hasAttribute("hidden")).toBe(
+        count === 0
       );
-      expect(document.querySelectorAll("select")).toHaveLength(8 + count);
+      expect(document.querySelectorAll("select")).toHaveLength(10 + count);
       await flushAsyncWork();
     }
     expect(set).toHaveBeenLastCalledWith({
       [SETTINGS_STORAGE_KEY]: {
         ...savedSettings,
         quickPlayPresetCount: 8,
-        timeControlIds: DEFAULT_EIGHT_TIME_CONTROL_IDS
+        timeControlIds: QUICK_PLAY_EXPANSION_FALLBACK_IDS
       }
     });
 
@@ -256,9 +372,14 @@ describe("settings popup", () => {
     );
     expect(selects).toHaveLength(6);
     expect(selects.map((select) => select.value)).toEqual(
-      DEFAULT_SETTINGS.timeControlIds
+      QUICK_PLAY_EXPANSION_FALLBACK_IDS.slice(0, 6)
     );
     await flushAsyncWork();
+    document.querySelector<HTMLButtonElement>("#reset-presets")!.click();
+    await flushAsyncWork();
+    expect(selects.map((select) => select.value)).toEqual(
+      DEFAULT_SETTINGS.timeControlIds
+    );
 
     enabled.checked = true;
     enabled.dispatchEvent(new Event("change", { bubbles: true }));
@@ -291,7 +412,7 @@ describe("settings popup", () => {
     showChessTv.dispatchEvent(new Event("change", { bubbles: true }));
     showLegendLeague.checked = true;
     showLegendLeague.dispatchEvent(new Event("change", { bubbles: true }));
-    selects[0].value = "20s-1";
+    selects[0].value = selects[1].value;
     selects[0].dispatchEvent(new Event("change", { bubbles: true }));
     await flushAsyncWork();
 
@@ -300,7 +421,7 @@ describe("settings popup", () => {
         ...DEFAULT_SETTINGS,
         enabled: true,
         showNativePlayPanel: true,
-        timeControlIds: ["20s-1", "10-5", "15-10", "30-0", "3-2", "5-3"]
+        timeControlIds: ["10-5", "10-5", "15-10", "30-0", "3-2", "5-3"]
       }
     });
     await vi.waitFor(() => {
@@ -329,7 +450,7 @@ describe("settings popup", () => {
         ...DEFAULT_SETTINGS,
         enabled: true,
         showNativePlayPanel: true,
-        timeControlIds: ["20s-1", "10-5", "15-10", "30-0", "3-2", "5-3"],
+        timeControlIds: ["10-5", "10-5", "15-10", "30-0", "3-2", "5-3"],
         statsSummaryVisible: ["games", "puzzles"],
         statsRatingOrder: [
           "blitz",

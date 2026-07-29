@@ -255,6 +255,10 @@ button:focus-visible {
   padding: 12px 14px 14px;
 }
 
+.preset-list[hidden] {
+  display: none;
+}
+
 .preset-field {
   display: grid;
   gap: 4px;

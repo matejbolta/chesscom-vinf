@@ -38,6 +38,32 @@ html[data-chesscom-vinf-daily-placement]
   display: none !important;
 }
 
+html[data-chesscom-vinf-recommended-placement]
+  #home-main.layout-column-one
+  > .main-component
+  > :has(.play-online-section-body .challenge-tile-component),
+html[data-chesscom-vinf-recommended-placement]
+  main[data-fixture-layout="responsive"]
+  > :has(.play-online-section-body .challenge-tile-component) {
+  display: none !important;
+}
+
+html[data-chesscom-vinf-game-history-placement]
+  #vue-instance.layout-column-one
+  > :has(.game-history-games-component),
+html[data-chesscom-vinf-game-history-placement]
+  #home-main.layout-column-one
+  > .main-component
+  > .game-history-games-component,
+html[data-chesscom-vinf-game-history-placement]
+  main[data-fixture-layout="responsive"]
+  > .game-history-games-component,
+html[data-chesscom-vinf-game-history-placement]
+  main[data-fixture-layout="responsive"]
+  > :has(a[href*="/games/archive"]) {
+  display: none !important;
+}
+
 html[data-chesscom-vinf-sidebar-hidden~="chess-tv"]
   #vue-sidebar-instance.layout-column-two
   > :has(.tv-player-component),
@@ -146,7 +172,10 @@ html[data-chesscom-vinf-sidebar-hidden~="stats"]
   margin-top: 0 !important;
 }
 
-[data-chesscom-vinf-module="daily-games"] {
+[data-chesscom-vinf-module="daily-games"],
+[data-chesscom-vinf-module="recommended-match"],
+[data-chesscom-vinf-module="game-history"] {
+  box-sizing: border-box;
   margin-bottom: 0 !important;
   min-width: 0;
   width: 100%;
@@ -161,6 +190,17 @@ html[data-chesscom-vinf-sidebar-hidden~="stats"]
 [data-chesscom-vinf-module="daily-games"]
   .current-games-header-toggle-container {
   flex-shrink: 0;
+}
+
+[data-chesscom-vinf-layout="desktop-sidebar"]
+  > [data-chesscom-vinf-module="recommended-match"]
+  .play-online-wrapper {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+[data-chesscom-vinf-layout="desktop-sidebar"]
+  > [data-chesscom-vinf-module="game-history"] {
+  overflow-x: auto !important;
 }
 
 .chesscom-vinf-quick-play {

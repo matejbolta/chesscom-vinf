@@ -19,12 +19,27 @@ export type TimeControlId =
 
 export type TimeClass = "bullet" | "blitz" | "rapid";
 export type PresetAvailability = "both" | "desktop" | "mobile";
-export type QuickPlayPresetCount = 1 | 2 | 3 | 4 | 6 | 8;
+export type QuickPlayPresetCount = 0 | 1 | 2 | 3 | 4 | 6 | 8;
 export type StatsSummaryId = "games" | "puzzles" | "lessons";
 export type StatsDefaultState = "expanded" | "retracted";
-export type DailyGamesPlacement = "main" | "sidebar" | "hidden";
+export type MainColumnCardPlacement = "main" | "sidebar" | "hidden";
+export type MainColumnCardVisiblePlacement = Exclude<
+  MainColumnCardPlacement,
+  "hidden"
+>;
+export type DailyGamesPlacement = MainColumnCardPlacement;
 export type DailyGamesVisiblePlacement = Exclude<
   DailyGamesPlacement,
+  "hidden"
+>;
+export type RecommendedMatchPlacement = MainColumnCardPlacement;
+export type RecommendedMatchVisiblePlacement = Exclude<
+  RecommendedMatchPlacement,
+  "hidden"
+>;
+export type GameHistoryPlacement = MainColumnCardPlacement;
+export type GameHistoryVisiblePlacement = Exclude<
+  GameHistoryPlacement,
   "hidden"
 >;
 export type HomepageSidebarCardId =
@@ -34,7 +49,9 @@ export type HomepageSidebarCardId =
   | "legend-league"
   | "friends"
   | "chess-tv"
-  | "daily-games";
+  | "daily-games"
+  | "recommended-match"
+  | "game-history";
 export type StatsRatingId =
   | "rapid"
   | "bullet"
@@ -58,6 +75,10 @@ export interface ExtensionSettings {
   showNativePlayPanel: boolean;
   dailyGamesPlacement: DailyGamesPlacement;
   dailyGamesVisiblePlacement: DailyGamesVisiblePlacement;
+  recommendedMatchPlacement: RecommendedMatchPlacement;
+  recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement;
+  gameHistoryPlacement: GameHistoryPlacement;
+  gameHistoryVisiblePlacement: GameHistoryVisiblePlacement;
   homepageSidebarOrder: HomepageSidebarCardId[];
   homepageSidebarVisible: HomepageSidebarCardId[];
   quickPlayPresetCount: QuickPlayPresetCount;
@@ -89,6 +110,7 @@ export interface HomepageModules {
   gameReview: HTMLElement | null;
   leftColumn: HTMLElement | null;
   dailyGames: HTMLElement | null;
+  recommendedMatch: HTMLElement | null;
   gameHistory: HTMLElement | null;
   rightColumn: HTMLElement | null;
   stats: HTMLElement | null;

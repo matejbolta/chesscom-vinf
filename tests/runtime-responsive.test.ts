@@ -7,6 +7,8 @@ import { loadResponsiveHomepageFixture } from "./test-utils";
 afterEach(() => {
   document.documentElement.removeAttribute(MARKERS.active);
   document.documentElement.removeAttribute(MARKERS.dailyPlacement);
+  document.documentElement.removeAttribute(MARKERS.recommendedPlacement);
+  document.documentElement.removeAttribute(MARKERS.gameHistoryPlacement);
   document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
   document.documentElement.removeAttribute(MARKERS.sidebarHidden);
   vi.clearAllTimers();
@@ -106,6 +108,8 @@ describe("responsive runtime lifecycle", () => {
       load: async () => ({
         ...DEFAULT_SETTINGS,
         dailyGamesPlacement: "hidden",
+        recommendedMatchPlacement: "hidden",
+        gameHistoryPlacement: "hidden",
         homepageSidebarVisible: DEFAULT_SETTINGS.homepageSidebarVisible.filter(
           (id) =>
             id !== "daily-games" &&
@@ -120,6 +124,12 @@ describe("responsive runtime lifecycle", () => {
     expect(document.documentElement.getAttribute(MARKERS.active)).toBe("true");
     expect(
       document.documentElement.getAttribute(MARKERS.dailyPlacement)
+    ).toBe("hidden");
+    expect(
+      document.documentElement.getAttribute(MARKERS.recommendedPlacement)
+    ).toBe("hidden");
+    expect(
+      document.documentElement.getAttribute(MARKERS.gameHistoryPlacement)
     ).toBe("hidden");
     expect(document.documentElement.getAttribute(MARKERS.sidebarHidden)).toBe(
       "chess-tv daily-games legend-league"

@@ -49,13 +49,32 @@ export class LayoutController {
     } else {
       document.documentElement.removeAttribute(MARKERS.dailyPlacement);
     }
+    if (settings.recommendedMatchPlacement !== "main") {
+      document.documentElement.setAttribute(
+        MARKERS.recommendedPlacement,
+        settings.recommendedMatchPlacement
+      );
+    } else {
+      document.documentElement.removeAttribute(MARKERS.recommendedPlacement);
+    }
+    if (settings.gameHistoryPlacement !== "main") {
+      document.documentElement.setAttribute(
+        MARKERS.gameHistoryPlacement,
+        settings.gameHistoryPlacement
+      );
+    } else {
+      document.documentElement.removeAttribute(MARKERS.gameHistoryPlacement);
+    }
     if (settings.showNativePlayPanel) {
       document.documentElement.setAttribute(MARKERS.nativePlayPanel, "visible");
     } else {
       document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
     }
     const hiddenSidebarCards = settings.homepageSidebarOrder.filter(
-      (id) => !settings.homepageSidebarVisible.includes(id)
+      (id) =>
+        id !== "recommended-match" &&
+        id !== "game-history" &&
+        !settings.homepageSidebarVisible.includes(id)
     );
     if (hiddenSidebarCards.length > 0) {
       document.documentElement.setAttribute(
@@ -80,7 +99,11 @@ export class LayoutController {
     this.hide(modules.nextLesson, "next-lesson");
     this.hide(modules.gameReview, "game-review");
 
-    if (settings.dailyGamesPlacement !== "sidebar" && modules.dailyGames) {
+    if (
+      settings.dailyGamesPlacement !== "sidebar" &&
+      modules.dailyGames &&
+      modules.dailyGames.parentElement !== quickPlayHost
+    ) {
       this.restorePosition(modules.dailyGames);
       modules.dailyGames.removeAttribute(MARKERS.module);
     }
@@ -88,6 +111,31 @@ export class LayoutController {
       this.hide(modules.dailyGames, "daily-games");
     } else {
       this.show(modules.dailyGames);
+    }
+    if (
+      settings.recommendedMatchPlacement !== "sidebar" &&
+      modules.recommendedMatch &&
+      modules.recommendedMatch.parentElement !== quickPlayHost
+    ) {
+      this.restorePosition(modules.recommendedMatch);
+      modules.recommendedMatch.removeAttribute(MARKERS.module);
+    }
+    if (settings.recommendedMatchPlacement === "hidden") {
+      this.hide(modules.recommendedMatch, "recommended-match");
+    } else {
+      this.show(modules.recommendedMatch);
+    }
+    if (
+      settings.gameHistoryPlacement !== "sidebar" &&
+      modules.gameHistory &&
+      modules.gameHistory.parentElement !== quickPlayHost
+    ) {
+      this.restorePosition(modules.gameHistory);
+    }
+    if (settings.gameHistoryPlacement === "hidden") {
+      this.hide(modules.gameHistory, "game-history");
+    } else {
+      this.show(modules.gameHistory);
     }
 
     modules.promo?.setAttribute(MARKERS.layout, "quick-play-in-main");
@@ -99,6 +147,12 @@ export class LayoutController {
       modules.rightColumn?.setAttribute(MARKERS.layout, "desktop-sidebar");
     }
     modules.gameHistory?.setAttribute(MARKERS.module, "game-history");
+    if (settings.recommendedMatchPlacement === "main") {
+      modules.recommendedMatch?.setAttribute(
+        MARKERS.module,
+        "recommended-match"
+      );
+    }
 
     const sidebarCards: Partial<
       Record<HomepageSidebarCardId, HTMLElement | null>
@@ -112,6 +166,14 @@ export class LayoutController {
       "daily-games":
         settings.dailyGamesPlacement === "sidebar"
           ? modules.dailyGames
+          : null,
+      "recommended-match":
+        settings.recommendedMatchPlacement === "sidebar"
+          ? modules.recommendedMatch
+          : null,
+      "game-history":
+        settings.gameHistoryPlacement === "sidebar"
+          ? modules.gameHistory
           : null
     };
 
@@ -145,47 +207,117 @@ export class LayoutController {
         continue;
       }
       card.setAttribute(MARKERS.module, id);
-      if (id === "daily-games" || visibleSidebarCards.has(id)) {
+      if (
+        id === "daily-games" ||
+        id === "recommended-match" ||
+        id === "game-history" ||
+        visibleSidebarCards.has(id)
+      ) {
         this.show(card);
       } else {
         this.hide(card, id);
       }
     }
 
+    const mainCards: Partial<
+      Record<HomepageSidebarCardId, HTMLElement | null>
+    > = {
+      "daily-games":
+        settings.dailyGamesPlacement === "main" ? modules.dailyGames : null,
+      "recommended-match":
+        settings.recommendedMatchPlacement === "main"
+          ? modules.recommendedMatch
+          : null,
+      "game-history":
+        settings.gameHistoryPlacement === "main"
+          ? modules.gameHistory
+          : null
+    };
+    const desiredMainOrder = [
+      ...new Set(
+        settings.homepageSidebarOrder
+          .map((id) => mainCards[id] ?? null)
+          .filter((element): element is HTMLElement => Boolean(element))
+      )
+    ];
+
     if (modules.layoutMode === "responsive") {
       const allResponsiveModules = [
+        modules.recommendedMatch,
+        modules.dailyGames,
         modules.gameHistory,
-        ...settings.homepageSidebarOrder.map((id) => sidebarCards[id] ?? null),
-        settings.dailyGamesPlacement === "main" ? modules.dailyGames : null
+        ...settings.homepageSidebarOrder.map((id) => sidebarCards[id] ?? null)
       ].filter((element): element is HTMLElement => Boolean(element));
 
-      if (settings.dailyGamesPlacement !== "main") {
-        const visibleResponsiveModules = [
-          modules.gameHistory,
-          ...settings.homepageSidebarOrder.map((id) => {
-            if (
-              id !== "daily-games" &&
-              !visibleSidebarCards.has(id)
-            ) {
-              return null;
-            }
-            return sidebarCards[id] ?? null;
-          })
-        ].filter((element): element is HTMLElement => Boolean(element));
-        const canSafelyReorder = visibleResponsiveModules.every(
-          (element) => element.parentElement === quickPlayHost
+      const visibleResponsiveModules = [
+        ...desiredMainOrder,
+        ...settings.homepageSidebarOrder.map((id) => {
+          if (
+            id !== "daily-games" &&
+            id !== "recommended-match" &&
+            id !== "game-history" &&
+            !visibleSidebarCards.has(id)
+          ) {
+            return null;
+          }
+          return sidebarCards[id] ?? null;
+        })
+      ].filter((element): element is HTMLElement => Boolean(element));
+      const uniqueResponsiveModules = [...new Set(visibleResponsiveModules)];
+      const canSafelyReorder = uniqueResponsiveModules.every(
+        (element) => element.parentElement === quickPlayHost
+      );
+      const currentManagedPrefix = Array.from(quickPlayHost.children)
+        .filter(
+          (element): element is HTMLElement =>
+            element instanceof HTMLElement &&
+            element.getAttribute(MARKERS.owned) !== QUICK_PLAY_OWNER &&
+            !element.hasAttribute(MARKERS.hidden)
+        )
+        .slice(0, uniqueResponsiveModules.length);
+      const alreadyOrdered =
+        canSafelyReorder &&
+        uniqueResponsiveModules.every(
+          (element, index) => currentManagedPrefix[index] === element
         );
-        if (canSafelyReorder) {
-          for (const element of visibleResponsiveModules) {
-            this.rememberPosition(element);
-          }
-          for (const element of [...visibleResponsiveModules].reverse()) {
-            quickPlayHost.prepend(element);
-          }
+      if (canSafelyReorder && !alreadyOrdered) {
+        for (const element of uniqueResponsiveModules) {
+          this.rememberPosition(element);
         }
-      } else {
+        for (const element of [...uniqueResponsiveModules].reverse()) {
+          quickPlayHost.prepend(element);
+        }
+      } else if (!canSafelyReorder) {
         for (const element of allResponsiveModules) {
           this.restorePosition(element);
+        }
+      }
+    }
+
+    if (modules.layoutMode === "desktop" && desiredMainOrder.length > 0) {
+      const canSafelyReorder = desiredMainOrder.every(
+        (element) => element.parentElement === quickPlayHost
+      );
+      const currentManagedPrefix = Array.from(quickPlayHost.children)
+        .filter(
+          (element): element is HTMLElement =>
+            element instanceof HTMLElement &&
+            element.getAttribute(MARKERS.owned) !== QUICK_PLAY_OWNER &&
+            !element.hasAttribute(MARKERS.hidden)
+        )
+        .slice(0, desiredMainOrder.length);
+      const alreadyOrdered =
+        canSafelyReorder &&
+        desiredMainOrder.every(
+          (element, index) => currentManagedPrefix[index] === element
+        );
+
+      if (canSafelyReorder && !alreadyOrdered) {
+        for (const element of desiredMainOrder) {
+          this.rememberPosition(element);
+        }
+        for (const element of [...desiredMainOrder].reverse()) {
+          quickPlayHost.prepend(element);
         }
       }
     }
@@ -198,6 +330,10 @@ export class LayoutController {
               !element.hasAttribute(MARKERS.hidden) &&
               (element !== modules.dailyGames ||
                 settings.dailyGamesPlacement === "main") &&
+              (element !== modules.recommendedMatch ||
+                settings.recommendedMatchPlacement === "main") &&
+              (element !== modules.gameHistory ||
+                settings.gameHistoryPlacement === "main") &&
               element.matches(".home-container-component, .main-section")
           ) ??
           (modules.gameHistory?.parentElement === quickPlayHost
@@ -205,25 +341,26 @@ export class LayoutController {
             : null))
         : null;
     const firstMainModule =
-      modules.layoutMode === "desktop"
-        ? firstNativeDesktopCard
-        : modules.layoutMode === "responsive" &&
-      modules.gameHistory?.parentElement === quickPlayHost
-        ? modules.gameHistory
-        : settings.dailyGamesPlacement === "main" &&
-            modules.dailyGames?.parentElement === quickPlayHost
-        ? modules.dailyGames
-        : modules.gameHistory?.parentElement === quickPlayHost
-          ? modules.gameHistory
-          : firstNativeDesktopCard;
+      desiredMainOrder.find(
+        (element) => element.parentElement === quickPlayHost
+      ) ?? firstNativeDesktopCard;
 
-    ensureQuickPlayPanel(
-      document,
-      quickPlayHost,
-      firstMainModule,
-      this.adapter,
-      getTimeControls(settings.timeControlIds)
-    );
+    const timeControls = getTimeControls(settings.timeControlIds);
+    if (timeControls.length === 0) {
+      for (const panel of document.querySelectorAll<HTMLElement>(
+        `[${MARKERS.owned}="${QUICK_PLAY_OWNER}"]`
+      )) {
+        destroyQuickPlayPanel(panel);
+      }
+    } else {
+      ensureQuickPlayPanel(
+        document,
+        quickPlayHost,
+        firstMainModule,
+        this.adapter,
+        timeControls
+      );
+    }
 
     if (modules.layoutMode === "desktop" && modules.rightColumn) {
       const desiredOrder = [
@@ -267,6 +404,8 @@ export class LayoutController {
 
   cleanup(document: Document): void {
     document.documentElement.removeAttribute(MARKERS.dailyPlacement);
+    document.documentElement.removeAttribute(MARKERS.recommendedPlacement);
+    document.documentElement.removeAttribute(MARKERS.gameHistoryPlacement);
     document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
     document.documentElement.removeAttribute(MARKERS.sidebarHidden);
 

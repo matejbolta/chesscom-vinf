@@ -23,6 +23,7 @@ describe("locateHomepageModules", () => {
     expect(modules.nextLesson?.dataset.fixtureModule).toBe("next-lesson");
     expect(modules.gameReview?.dataset.fixtureModule).toBe("game-review");
     expect(modules.dailyGames?.dataset.fixtureModule).toBe("daily-games");
+    expect(modules.recommendedMatch).toBeNull();
     expect(modules.gameHistory?.dataset.fixtureModule).toBe("game-history");
     expect(modules.stats?.dataset.fixtureModule).toBe("stats");
     expect(modules.chessTv?.dataset.fixtureModule).toBe("chess-tv");
@@ -114,6 +115,9 @@ describe("locateHomepageModules", () => {
     expect(modules.nextLesson?.dataset.fixtureModule).toBe("next-lesson");
     expect(modules.gameReview?.dataset.fixtureModule).toBe("game-review");
     expect(modules.dailyGames?.dataset.fixtureModule).toBe("daily-games");
+    expect(modules.recommendedMatch?.dataset.fixtureModule).toBe(
+      "recommended-match"
+    );
     expect(modules.gameHistory?.dataset.fixtureModule).toBe("game-history");
     expect(modules.stats?.dataset.fixtureModule).toBe("stats");
     expect(modules.chessTv?.dataset.fixtureModule).toBe("chess-tv");
@@ -134,6 +138,9 @@ describe("locateHomepageModules", () => {
       "action=createLiveChallenge"
     );
     expect(modules.dailyGames).toBeNull();
+    expect(modules.recommendedMatch?.dataset.fixtureModule).toBe(
+      "recommended-match"
+    );
     expect(modules.gameHistory?.dataset.fixtureModule).toBe("game-history");
     expect(modules.gameReview).toBeNull();
     expect(modules.puzzles).toBeNull();

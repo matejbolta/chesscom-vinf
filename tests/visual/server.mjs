@@ -50,9 +50,24 @@ const sidePanelPreviewHtml = sidePanelHtml.replace(
 );
 const popupCss = await readFile(new URL("../../dist/popup.css", import.meta.url), "utf8");
 const popupJs = await readFile(new URL("../../dist/popup.js", import.meta.url), "utf8");
+const showcaseCss = await readFile(
+  new URL("../../store-listing/source/showcase.css", import.meta.url),
+  "utf8"
+);
+const showcaseSourceHtml = await readFile(
+  new URL("../../store-listing/source/showcase.html", import.meta.url),
+  "utf8"
+);
+const showcaseHtml = showcaseSourceHtml
+  .replace('href="showcase.css"', 'href="/showcase.css"')
+  .replaceAll("../../public/icons/icon-128.png", "/icons/icon-128.png");
 const rawHtml = await readFile(rawHtmlUrl, "utf8");
 const responsiveFixtureHtml = await readFile(
   new URL("../fixtures/homepage-responsive.html", import.meta.url),
+  "utf8"
+);
+const modernFixtureHtml = await readFile(
+  new URL("../fixtures/homepage-modern.html", import.meta.url),
   "utf8"
 );
 
@@ -80,6 +95,59 @@ const responsiveHtml = responsiveFixtureHtml
   .replace(
     "</head>",
     '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>'
+  )
+  .replace(
+    "</body>",
+    '<script src="/chesscom-vinf-visual-harness.js"></script></body>'
+  );
+const modernHtml = modernFixtureHtml
+  .replace(
+    "</head>",
+    `<style>
+      html { font-size: 62.5%; }
+      body {
+        background: #302e2b;
+        color: #f1f1f1;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 0;
+      }
+      #navigation-sidebar { display: none; }
+      .home-layout {
+        display: grid;
+        gap: 2.4rem;
+        grid-template-columns: minmax(0, 72.8rem) minmax(26rem, 30rem);
+        margin: 2.4rem auto;
+        max-width: 105.2rem;
+      }
+      .layout-hero { grid-column: 1 / -1; }
+      .cc-section {
+        background: #262522;
+        border-radius: .5rem;
+        margin-bottom: 1.6rem;
+        padding: 1.6rem;
+      }
+      .cc-aside-header-component {
+        align-items: center;
+        display: flex;
+        font-size: 1.8rem;
+        font-weight: 700;
+        justify-content: space-between;
+        margin-bottom: 1.2rem;
+      }
+      .play-online-wrapper {
+        display: grid;
+        gap: 1.2rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .challenge-tile-component {
+        background: #3a3834;
+        border-radius: .4rem;
+        min-height: 12rem;
+        padding: 1.2rem;
+      }
+      a { color: inherit; }
+    </style>
+    <link rel="stylesheet" href="/chesscom-vinf-content.css"></head>`
   )
   .replace(
     "</body>",
@@ -121,6 +189,11 @@ const server = createServer(async (request, response) => {
     response.end(responsiveHtml);
     return;
   }
+  if (pathname === "/home-modern") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(modernHtml);
+    return;
+  }
   if (pathname === "/popup-preview") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(
@@ -143,6 +216,23 @@ const server = createServer(async (request, response) => {
   if (pathname === "/sidepanel.html") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(sidePanelPreviewHtml);
+    return;
+  }
+  if (pathname === "/store-showcase") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(showcaseHtml);
+    return;
+  }
+  if (pathname === "/store-settings-capture") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="margin:0"><iframe title="VINF store settings capture" src="/store-showcase?view=settings" style="border:0;display:block;height:800px;width:1280px"></iframe></body></html>'
+    );
+    return;
+  }
+  if (pathname === "/showcase.css") {
+    response.writeHead(200, { "content-type": "text/css; charset=utf-8" });
+    response.end(showcaseCss);
     return;
   }
   if (pathname === "/popup.css") {

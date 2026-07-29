@@ -11,19 +11,23 @@
 - [x] Chrome Web Store copy contains no Markdown blockquote prefixes, reflects
   every current homepage control, and keeps the zero-collection disclosures.
 - [x] Public-safe store screenshots use only synthetic identities and reflect
-  the current 0.15.5 homepage and settings UI.
+  the last explicitly prepared Store version, 0.17.2.
 - [x] All 17 catalog controls map to their exact native base/increment pairs.
 - [x] Popup uses a desktop-first union of Bullet, Blitz, and Rapid presets.
 - [x] Desktop and Android settings share one Blitz group ordered `3 min`,
   `3 + 2`, `5 min`, `5 + 2`, `5 + 3`, `5 + 5`.
 - [x] The master VINF switch is a standalone top card; Homepage contains the
-  native play-panel switch and the complete right-column card editor.
-- [x] Quick Play counts 1, 2, 3, 4, 6, and 8 normalize, autosave, migrate legacy
-  arrays, and use complete unique defaults for the selected size.
+  native play-panel switch and the complete managed-card editor.
+- [x] Quick Play counts 0, 1, 2, 3, 4, 6, and 8 normalize, autosave, migrate
+  legacy arrays, and use complete defaults for the selected size; zero
+  removes the complete Quick Play module.
 - [x] Desktop and Android preset selectors mirror the selected homepage grid:
   one row for 1–4 and column-first two-row grids for 6 and 8.
 - [x] Desktop and Android settings rebuild the correct number of selectors and
-  disable duplicate choices across all active selectors.
+  allow repeated time-control choices across all active selectors.
+- [x] Changing the shortcut count preserves leading selections when shrinking
+  and fills only new slots from the shared non-repeating fallback sequence when
+  expanding, on both desktop and Android.
 - [x] Every toggle, preset change, and preset reset saves without a submit action.
 - [x] The toolbar popup remains the default action; its header button opens the
   shared settings UI in the side panel from a user gesture.
@@ -37,8 +41,14 @@
 - [x] Daily Games visibility plus `Main` / `Right` placement normalize,
   autosave, preserve the selected location while hidden, and migrate both
   retired boolean settings.
-- [x] All seven known right-column cards normalize, autosave, show/hide, and
-  keep a fixed order.
+- [x] Recommended Match visibility plus `Main` / `Right` placement normalize,
+  autosave, preserve the selected location while hidden, and retain an existing
+  seven-card order during migration.
+- [x] Game History visibility plus `Main` / `Right` placement normalize,
+  autosave, preserve the selected location while hidden, and retain existing
+  eight- and seven-card orders during migration.
+- [x] All nine known managed cards normalize, autosave, show/hide, and use one
+  fixed relative order within both Main and Right placements.
 - [x] Legacy ChessTV/Legend booleans migrate into the new visibility model.
 - [x] Per-rating initial `Expanded` or `Retracted` states normalize, autosave,
   migrate from the retired global state, and are available in both settings
@@ -57,6 +67,11 @@
   view-toggle shell.
 - [x] Hidden Daily Games and known sidebar cards are pre-armed at document start
   and remain reversible during cleanup.
+- [x] Right-column or hidden Recommended Match is pre-armed at document start,
+  discovered without dynamic text, and remains reversible during cleanup.
+- [x] Right-column or hidden Game History is pre-armed at document start,
+  rediscovered through its module marker after moving, and remains reversible
+  during cleanup.
 - [x] Enabled `/home` uses a namespaced document marker to pre-hide exact native
   promo/header replacements before delayed mutation reconciliation.
 - [x] Quick Play anchors before the first native main card while Game History
@@ -101,12 +116,18 @@
   same top position.
 - [x] Game History leads the main column after Daily Games moves to the sidebar.
 - [x] Every captured right-column card follows its saved fixed order.
+- [x] Daily Games, Recommended Match, and Game History follow that same saved
+  relative order when two or more are placed in Main, below Quick Play.
 - [x] Default Stats content is Games, retracted Rapid, and retracted Blitz; an
   optional legacy Insights row remains last when Chess.com supplies it.
 - [x] Daily Games renders cleanly at sidebar width in its saved managed
   position.
 - [x] Main-column placement restores Daily Games to the left column; Hidden
   removes it visually without deleting the native node.
+- [x] Recommended Match defaults to Main, renders as one column at sidebar
+  width when moved Right, and hides/restores without rebuilding its native tile.
+- [x] Game History defaults to Main, moves intact to the sidebar with horizontal
+  overflow available for its native wide content, and hides/restores cleanly.
 - [x] Stats, ChessTV, Streaks, Legend League, Daily Puzzle, and Friends
   can each be hidden without disturbing the remaining sidebar order.
 - [x] Online ChessTV streamer-title variants remain in their saved managed
@@ -117,6 +138,7 @@
   fitting two rows of four equal buttons.
 - [x] One through four buttons use one desktop row, equal gaps, and the complete
   Game History width.
+- [x] Zero buttons leaves no Quick Play panel or empty homepage placeholder.
 - [x] Blitz uses a chroma-preserving OKLCH palette derived from the sampled
   native `#ead762` bolt color rather than ochre HSL or milky alpha blending.
 - [x] Starting or failing a launch never inserts a visible status row.
@@ -124,18 +146,18 @@
 - [x] Shared settings UI is usable at Chromium side-panel dimensions.
 - [x] The in-panel `×` is visible beside the version badge without crowding the
   settings title at side-panel width.
-- [x] Homepage's seven-card visibility/order editor is readable and scrollable
+- [x] Homepage's nine-card visibility/order editor is readable and scrollable
   at extension-popup dimensions.
 - [x] Stats visibility/order controls remain readable and scrollable at popup
   dimensions.
 - [x] Per-rating `Expanded` / `Retracted` selectors are readable at popup
   dimensions, align between their row labels and order arrows, and disable when
   the corresponding row is unticked.
-- [x] Selected presets are unavailable in every other active shortcut menu.
+- [x] Repeated presets remain available in every active shortcut menu.
 - [x] Narrow desktop width: shortcut grid collapses to two columns.
 - [x] Stacked width: Quick Play remains usable above the main modules.
-- [x] Responsive single-column fixture orders Quick Play, Game History, and all
-  present managed cards without duplication.
+- [x] Responsive single-column fixture keeps Quick Play first, then applies the
+  saved order within its Main and conceptual Right groups without duplication.
 
 ## Live browser gate
 
@@ -165,6 +187,10 @@ Complete these before publishing a release beyond private use:
   browser restart; any native Insights row must remain last.
 - [ ] Verify Daily Games visibility and Main/Right placement plus every known
   sidebar card's visibility/order persist after Brave restarts.
+- [ ] Verify Recommended Match in Main, Right, and Hidden; when Right, confirm
+  its tile remains a readable single column and its saved order persists.
+- [ ] Verify Game History in Main, Right, and Hidden; when Right, confirm its
+  native rows remain usable and its saved order persists.
 - [ ] Open settings from the popup into Chrome's side panel; verify it remains
   open across homepage tab changes, autosaved changes apply, and the internal
   `×` closes the panel.

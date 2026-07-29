@@ -72,6 +72,26 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
           currentSettings.dailyGamesPlacement
         );
       }
+      if (currentSettings.recommendedMatchPlacement === "main") {
+        document.documentElement.removeAttribute(
+          MARKERS.recommendedPlacement
+        );
+      } else {
+        document.documentElement.setAttribute(
+          MARKERS.recommendedPlacement,
+          currentSettings.recommendedMatchPlacement
+        );
+      }
+      if (currentSettings.gameHistoryPlacement === "main") {
+        document.documentElement.removeAttribute(
+          MARKERS.gameHistoryPlacement
+        );
+      } else {
+        document.documentElement.setAttribute(
+          MARKERS.gameHistoryPlacement,
+          currentSettings.gameHistoryPlacement
+        );
+      }
       if (currentSettings.showNativePlayPanel) {
         document.documentElement.setAttribute(
           MARKERS.nativePlayPanel,
@@ -82,7 +102,10 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
       }
       const hiddenSidebarCards =
         currentSettings.homepageSidebarOrder.filter(
-          (id) => !currentSettings.homepageSidebarVisible.includes(id)
+          (id) =>
+            id !== "recommended-match" &&
+            id !== "game-history" &&
+            !currentSettings.homepageSidebarVisible.includes(id)
         );
       if (hiddenSidebarCards.length > 0) {
         document.documentElement.setAttribute(
@@ -97,6 +120,8 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
 
     document.documentElement.removeAttribute(MARKERS.active);
     document.documentElement.removeAttribute(MARKERS.dailyPlacement);
+    document.documentElement.removeAttribute(MARKERS.recommendedPlacement);
+    document.documentElement.removeAttribute(MARKERS.gameHistoryPlacement);
     document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
     document.documentElement.removeAttribute(MARKERS.sidebarHidden);
   }

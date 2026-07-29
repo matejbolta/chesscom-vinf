@@ -129,6 +129,10 @@
   padding: 1.4rem;
 }
 
+.chesscom-vinf-settings-presets[hidden] {
+  display: none;
+}
+
 .chesscom-vinf-settings-presets label {
   display: grid;
   gap: 0.5rem;
