@@ -886,10 +886,11 @@ The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
 
 That GitHub release includes `chesscom-vinf-0.15.4.zip` with the same SHA-256
 recorded in its release. Version 0.17.2 source commit `beb4163` is published on
-`main`. Version 0.17.3 fixes only narrow toolbar-popup layout and is prepared for
-the Chrome Web Store, but is not tagged or released on GitHub. Its local
-`dist/`, `dist-android/`, Store ZIP, and convenience submission archive are
-rebuilt and validated. The local release directory remains ignored by Git.
+`main`. Version 0.17.3 source release commit `fb454d6` fixes only narrow
+toolbar-popup layout and is published on `main`, but is not tagged or released
+on GitHub. Its local `dist/`, `dist-android/`, Store ZIP, and convenience
+submission archive are rebuilt and validated. The local release directory
+remains ignored by Git.
 
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
