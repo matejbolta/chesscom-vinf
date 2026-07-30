@@ -174,28 +174,6 @@ ChessComVINF applies only to the signed-in Chess.com homepage.
 Most functionality can be reviewed without starting a live game. If a Quick Play shortcut is tested, it uses Chess.com’s own native game-start URL. No developer-provided account or credentials are required.
 ```
 
-## Optional GitHub release notes
-
-Suggested title:
-
-```text
-ChessComVINF 0.17.3
-```
-
-Suggested release notes:
-
-```text
-ChessComVINF 0.17.3 fixes the narrow toolbar-popup layout.
-
-Highlights:
-
-• Keeps Quick Play selectors in the same grid as the chosen homepage layout, including two rows of four for eight presets.
-• Prevents switches from shrinking beside wrapped setting labels.
-• Preserves the existing persistent side-panel layout and all saved settings.
-
-Privacy remains unchanged: no analytics, telemetry, remote code, collected account data, or extension-owned network requests.
-```
-
 ## Final update sequence
 
 1. Push the 0.17.3 source to the public repository.

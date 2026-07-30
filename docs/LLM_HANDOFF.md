@@ -827,6 +827,11 @@ for the Chrome Web Store:
 8. Run the privacy scan and confirm no raw fixtures, captures, source maps, or
    account data are included.
 
+Push prepared source changes to `main` when the user asks. The public repository
+is source history, not an alternative distribution channel: do not create Git
+tags or GitHub Releases unless the user separately and explicitly requests
+them.
+
 For Android, also run `pnpm build:android`, inspect the userscript metadata, and
 confirm it contains only the four documented local GM grants and no remote
 dependency or request directive.
@@ -849,7 +854,7 @@ Latest convenience Chrome Web Store handoff:
 
 SHA-256:
 
-    ed002db5d1d71e96be2b6cccac61e11396998fbba073d6350d494e45405ebaef
+    04f3ebeea91b952564e6552bf29653216d6d2e63826e914c579c740a8a328111
 
 The project is an independent public Git repository:
 
@@ -880,17 +885,13 @@ point to `SUBMISSION.md` for the full reference. Do not pad it with unchanged
 fields, hashes, validation history, release narration, or a condensed replay of
 the complete submission process.
 
-The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
-
-    https://github.com/matejbolta/chesscom-vinf/releases/tag/v0.15.4
-
-That GitHub release includes `chesscom-vinf-0.15.4.zip` with the same SHA-256
-recorded in its release. Version 0.17.2 source commit `beb4163` is published on
-`main`. Version 0.17.3 source release commit `fb454d6` fixes only narrow
-toolbar-popup layout and is published on `main`, but is not tagged or released
-on GitHub. Its local `dist/`, `dist-android/`, Store ZIP, and convenience
-submission archive are rebuilt and validated. The local release directory
-remains ignored by Git.
+The obsolete `v0.15.4` tag and GitHub Release were removed on 2026-07-30 because
+Chrome Web Store is the distribution channel. Version 0.17.2 source commit
+`beb4163` and version 0.17.3 source commit `fb454d6` are published on `main`.
+Version 0.17.3 fixes only narrow toolbar-popup layout and is not tagged or
+released on GitHub. Its local `dist/`, `dist-android/`, Store ZIP, and
+convenience submission archive are rebuilt and validated. The local release
+directory remains ignored by Git.
 
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
