@@ -2,9 +2,9 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-07-29.
-Current source version: 0.17.2.
-Latest Store-prepared desktop package: `release/chesscom-vinf-0.17.2.zip`.
+Last updated: 2026-07-30.
+Current source version: 0.17.3.
+Latest Store-prepared desktop package: `release/chesscom-vinf-0.17.3.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
 ## Start Here
@@ -22,7 +22,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 0.17.2. This handoff is the shortest
+chronological amendments through version 0.17.3. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current User Experience
@@ -124,6 +124,8 @@ The toolbar popup contains:
   preserve all existing selections while filling only new slots when expanding;
 - a preset-selector grid that mirrors the homepage layout: one row for 1–4,
   two column-first rows of three for 6, and two of four for 8;
+- a narrow-popup layout that preserves that selected grid instead of falling
+  back to two columns, with non-shrinking switch tracks beside wrapped labels;
 - summary and rating visibility/order controls for the native Stats card;
 - an independent `Expanded` / `Retracted` selector beside every Stats rating
   row;
@@ -675,7 +677,7 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 0.17.2, the suite has 93 passing tests across twelve files. Important
+As of version 0.17.3, the suite has 95 passing tests across thirteen files. Important
 coverage includes:
 
 - exact legacy/redesigned signed-in homepage detection and route rejection;
@@ -753,6 +755,7 @@ Useful routes:
     http://127.0.0.1:4173/home-modern?preset-count=0
     http://127.0.0.1:4173/home-narrow-preview
     http://127.0.0.1:4173/popup-preview
+    http://127.0.0.1:4173/popup-narrow-preview
     http://127.0.0.1:4173/popup
     http://127.0.0.1:4173/sidepanel-preview
     http://127.0.0.1:4173/sidepanel.html
@@ -830,11 +833,11 @@ dependency or request directive.
 
 Latest explicitly prepared Store artifact:
 
-    release/chesscom-vinf-0.17.2.zip
+    release/chesscom-vinf-0.17.3.zip
 
 SHA-256:
 
-    43a4a7742eceb3ab72f8a522305f94f5fed7d4c8a447497e8cdc25c5f4905247
+    b86d0a876ba0408f64821996c303012b228e0112c3268293742ef1e7b1d107b7
 
 Android artifact:
 
@@ -842,11 +845,11 @@ Android artifact:
 
 Latest convenience Chrome Web Store handoff:
 
-    release/chesscom-vinf-0.17.2-store-submission.zip
+    release/chesscom-vinf-0.17.3-store-submission.zip
 
 SHA-256:
 
-    c024e3d1e3ae0d52bce35fee811113d7b762f8cbb9b362b07f9308bc570d8a97
+    ed002db5d1d71e96be2b6cccac61e11396998fbba073d6350d494e45405ebaef
 
 The project is an independent public Git repository:
 
@@ -861,19 +864,21 @@ Public-safe Chrome Web Store copy and synthetic graphic assets live under
 
     https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md
 
-Version 0.15.4 was submitted to the Chrome Web Store by the user on 2026-07-28.
-Treat it as the current submitted store version unless a later handoff records a
-review rejection, approval, or newer upload. `store-listing/SUBMISSION.md`
-contains the complete field-by-field 0.17.2 update record using copy-safe
-fenced text blocks instead of Markdown blockquotes. The settings screenshot is
-public-safe and shows the side-panel action and prepared version; the two
-homepage screenshots and promo artwork remain unchanged from 0.15.4.
+Version 0.17.2 was the current Chrome Web Store build tested by the user on
+2026-07-30. Treat it as the uploaded Store baseline unless a later handoff
+records a newer upload. `store-listing/SUBMISSION.md` contains the complete
+field-by-field 0.17.3 update record using copy-safe fenced text blocks instead
+of Markdown blockquotes. The refreshed settings screenshot is public-safe and
+shows version 0.17.3; the two homepage screenshots and promo artwork remain
+unchanged.
 
-`store-listing/UPDATE_TLDR.md` is the preferred dashboard workflow for this
-update. It lists only what changes from the already submitted 0.15.4 version,
-what remains unchanged, and the exact package identity. Keep the longer
-submission document as the full reference rather than making the user repeat
-the original submission process.
+`store-listing/UPDATE_TLDR.md` is the preferred dashboard workflow for each
+update. Treat its minimal 0.17.2-to-0.17.3 structure as the canonical template:
+name the package to upload, list only dashboard fields or assets that actually
+need changing, include copy-ready replacement text only when required, then
+point to `SUBMISSION.md` for the full reference. Do not pad it with unchanged
+fields, hashes, validation history, release narration, or a condensed replay of
+the complete submission process.
 
 The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
 
@@ -881,10 +886,10 @@ The 0.15.4 source release commit is `3f055bd`, and tag `v0.15.4` is public at:
 
 That GitHub release includes `chesscom-vinf-0.15.4.zip` with the same SHA-256
 recorded in its release. Version 0.17.2 source commit `beb4163` is published on
-`main` and prepared for the Chrome Web Store, but is not yet tagged, released on
-GitHub, or uploaded to the Chrome Web Store. Its local `dist/`, `dist-android/`,
-Store ZIP, and convenience submission archive are rebuilt and validated. The
-local release directory remains ignored by Git.
+`main`. Version 0.17.3 fixes only narrow toolbar-popup layout and is prepared for
+the Chrome Web Store, but is not tagged or released on GitHub. Its local
+`dist/`, `dist-android/`, Store ZIP, and convenience submission archive are
+rebuilt and validated. The local release directory remains ignored by Git.
 
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
@@ -965,6 +970,10 @@ reverse them while “cleaning up” code:
   module; do not render an empty panel or infer zero from missing legacy data.
 - Desktop and Android preset editors intentionally mirror those positions,
   including the established column-first numbering for six and eight.
+- The narrow desktop toolbar popup intentionally keeps the same preset-editor
+  columns as the selected homepage grid. Do not reintroduce a generic two-column
+  media-query fallback. Switch tracks are non-shrinking so wrapped setting copy
+  cannot squeeze or visually break their controls.
 - Repeated Quick Play presets are intentional. Never disable a valid choice
   merely because another active shortcut already uses it.
 - Changing the Quick Play count intentionally preserves the leading existing

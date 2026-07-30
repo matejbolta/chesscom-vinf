@@ -1420,3 +1420,14 @@ reduced to functional controls only.
   this adaptive sequence applies only when the user changes the button count.
 - Apply the same resize behavior to the desktop popup, Chromium side panel, and
   Android userscript settings.
+
+## 59. Version 0.17.3 Product Amendments
+
+- Keep every desktop preset editor aligned with the selected homepage grid even
+  in the narrow toolbar popup: one row for counts one through four, two rows of
+  three for six, and two rows of four for eight.
+- Compact labels, gaps, and select padding at narrow popup width instead of
+  replacing the selected layout with a generic two-column fallback.
+- Prevent switch tracks from flex-shrinking beside wrapped setting labels so
+  controls such as `Native play panel` retain their intended shape.
+- Preserve the already-correct wider side-panel layout.

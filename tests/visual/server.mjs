@@ -201,6 +201,13 @@ const server = createServer(async (request, response) => {
     );
     return;
   }
+  if (pathname === "/popup-narrow-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF narrow popup preview" src="/popup" style="border:0;height:900px;width:320px"></iframe></body></html>'
+    );
+    return;
+  }
   if (pathname === "/sidepanel-preview") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(
@@ -226,7 +233,7 @@ const server = createServer(async (request, response) => {
   if (pathname === "/store-settings-capture") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(
-      '<!doctype html><html><body style="margin:0"><iframe title="VINF store settings capture" src="/store-showcase?view=settings" style="border:0;display:block;height:800px;width:1280px"></iframe></body></html>'
+      '<!doctype html><html><head><style>html{scrollbar-width:none}::-webkit-scrollbar{display:none}</style></head><body style="margin:0"><iframe title="VINF store settings capture" src="/store-showcase?view=settings" style="border:0;display:block;height:800px;pointer-events:none;width:1280px"></iframe></body></html>'
     );
     return;
   }

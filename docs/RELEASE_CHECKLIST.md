@@ -11,7 +11,7 @@
 - [x] Chrome Web Store copy contains no Markdown blockquote prefixes, reflects
   every current homepage control, and keeps the zero-collection disclosures.
 - [x] Public-safe store screenshots use only synthetic identities and reflect
-  the last explicitly prepared Store version, 0.17.2.
+  the last explicitly prepared Store version, 0.17.3.
 - [x] All 17 catalog controls map to their exact native base/increment pairs.
 - [x] Popup uses a desktop-first union of Bullet, Blitz, and Rapid presets.
 - [x] Desktop and Android settings share one Blitz group ordered `3 min`,
@@ -23,6 +23,8 @@
   removes the complete Quick Play module.
 - [x] Desktop and Android preset selectors mirror the selected homepage grid:
   one row for 1–4 and column-first two-row grids for 6 and 8.
+- [x] At 320px toolbar-popup width, that preset grid remains intact and switch
+  tracks cannot shrink beside wrapped labels.
 - [x] Desktop and Android settings rebuild the correct number of selectors and
   allow repeated time-control choices across all active selectors.
 - [x] Changing the shortcut count preserves leading selections when shrinking
@@ -143,6 +145,8 @@
   native `#ead762` bolt color rather than ochre HSL or milky alpha blending.
 - [x] Starting or failing a launch never inserts a visible status row.
 - [x] Settings popup is usable at extension-popup dimensions.
+- [x] Eight-preset settings render as four columns by two rows without overflow
+  in the dedicated 320px popup fixture.
 - [x] Shared settings UI is usable at Chromium side-panel dimensions.
 - [x] The in-panel `×` is visible beside the version badge without crowding the
   settings title at side-panel width.
