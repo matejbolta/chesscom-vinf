@@ -42,7 +42,10 @@ export type GameHistoryVisiblePlacement = Exclude<
   GameHistoryPlacement,
   "hidden"
 >;
+export type ProfilePlacement = MainColumnCardPlacement;
+export type ProfileVisiblePlacement = Exclude<ProfilePlacement, "hidden">;
 export type HomepageSidebarCardId =
+  | "profile"
   | "stats"
   | "daily-puzzle"
   | "streaks"
@@ -73,6 +76,8 @@ export interface TimeControl {
 export interface ExtensionSettings {
   enabled: boolean;
   showNativePlayPanel: boolean;
+  profilePlacement: ProfilePlacement;
+  profileVisiblePlacement: ProfileVisiblePlacement;
   dailyGamesPlacement: DailyGamesPlacement;
   dailyGamesVisiblePlacement: DailyGamesVisiblePlacement;
   recommendedMatchPlacement: RecommendedMatchPlacement;
@@ -98,6 +103,7 @@ export interface LocationLike {
 
 export interface HomepageModules {
   layoutMode: "desktop" | "responsive";
+  profile: HTMLElement | null;
   homepageToolbar: HTMLElement | null;
   mainBanner: HTMLElement | null;
   promoUserInfos: HTMLElement[];

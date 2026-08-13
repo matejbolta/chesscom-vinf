@@ -7,6 +7,8 @@ import type {
   HomepageSidebarCardId,
   MainColumnCardPlacement,
   MainColumnCardVisiblePlacement,
+  ProfilePlacement,
+  ProfileVisiblePlacement,
   QuickPlayPresetCount,
   RecommendedMatchPlacement,
   RecommendedMatchVisiblePlacement,
@@ -118,6 +120,8 @@ if (
 class HomepageCardEditor {
   private order: HomepageSidebarCardId[];
   private visible: Set<HomepageSidebarCardId>;
+  private profilePlacement: ProfilePlacement;
+  private profileVisiblePlacement: ProfileVisiblePlacement;
   private dailyGamesPlacement: DailyGamesPlacement;
   private dailyGamesVisiblePlacement: DailyGamesVisiblePlacement;
   private recommendedMatchPlacement: RecommendedMatchPlacement;
@@ -130,6 +134,8 @@ class HomepageCardEditor {
     private readonly catalog: readonly HomepageSidebarCard[],
     order: readonly HomepageSidebarCardId[],
     visible: readonly HomepageSidebarCardId[],
+    profilePlacement: ProfilePlacement,
+    profileVisiblePlacement: ProfileVisiblePlacement,
     dailyGamesPlacement: DailyGamesPlacement,
     dailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
     recommendedMatchPlacement: RecommendedMatchPlacement,
@@ -139,6 +145,8 @@ class HomepageCardEditor {
   ) {
     this.order = [...order];
     this.visible = new Set(visible);
+    this.profilePlacement = profilePlacement;
+    this.profileVisiblePlacement = profileVisiblePlacement;
     this.dailyGamesPlacement = dailyGamesPlacement;
     this.dailyGamesVisiblePlacement = dailyGamesVisiblePlacement;
     this.recommendedMatchPlacement = recommendedMatchPlacement;
@@ -152,6 +160,8 @@ class HomepageCardEditor {
   set(
     order: readonly HomepageSidebarCardId[],
     visible: readonly HomepageSidebarCardId[],
+    profilePlacement: ProfilePlacement,
+    profileVisiblePlacement: ProfileVisiblePlacement,
     dailyGamesPlacement: DailyGamesPlacement,
     dailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
     recommendedMatchPlacement: RecommendedMatchPlacement,
@@ -161,6 +171,8 @@ class HomepageCardEditor {
   ): void {
     this.order = [...order];
     this.visible = new Set(visible);
+    this.profilePlacement = profilePlacement;
+    this.profileVisiblePlacement = profileVisiblePlacement;
     this.dailyGamesPlacement = dailyGamesPlacement;
     this.dailyGamesVisiblePlacement = dailyGamesVisiblePlacement;
     this.recommendedMatchPlacement = recommendedMatchPlacement;
@@ -177,6 +189,9 @@ class HomepageCardEditor {
 
   getVisible(): HomepageSidebarCardId[] {
     return this.order.filter((id) => {
+      if (id === "profile") {
+        return this.profilePlacement === "sidebar";
+      }
       if (id === "daily-games") {
         return this.dailyGamesPlacement === "sidebar";
       }
@@ -188,6 +203,14 @@ class HomepageCardEditor {
       }
       return this.visible.has(id);
     });
+  }
+
+  getProfilePlacement(): ProfilePlacement {
+    return this.profilePlacement;
+  }
+
+  getProfileVisiblePlacement(): ProfileVisiblePlacement {
+    return this.profileVisiblePlacement;
   }
 
   getDailyGamesPlacement(): DailyGamesPlacement {
@@ -215,8 +238,11 @@ class HomepageCardEditor {
   }
 
   private getPlacement(
-    id: "daily-games" | "recommended-match" | "game-history"
+    id: "profile" | "daily-games" | "recommended-match" | "game-history"
   ): MainColumnCardPlacement {
+    if (id === "profile") {
+      return this.profilePlacement;
+    }
     if (id === "daily-games") {
       return this.dailyGamesPlacement;
     }
@@ -226,8 +252,11 @@ class HomepageCardEditor {
   }
 
   private getVisiblePlacement(
-    id: "daily-games" | "recommended-match" | "game-history"
+    id: "profile" | "daily-games" | "recommended-match" | "game-history"
   ): MainColumnCardVisiblePlacement {
+    if (id === "profile") {
+      return this.profileVisiblePlacement;
+    }
     if (id === "daily-games") {
       return this.dailyGamesVisiblePlacement;
     }
@@ -237,10 +266,12 @@ class HomepageCardEditor {
   }
 
   private setPlacement(
-    id: "daily-games" | "recommended-match" | "game-history",
+    id: "profile" | "daily-games" | "recommended-match" | "game-history",
     placement: MainColumnCardPlacement
   ): void {
-    if (id === "daily-games") {
+    if (id === "profile") {
+      this.profilePlacement = placement;
+    } else if (id === "daily-games") {
       this.dailyGamesPlacement = placement;
     } else if (id === "recommended-match") {
       this.recommendedMatchPlacement = placement;
@@ -250,10 +281,12 @@ class HomepageCardEditor {
   }
 
   private setVisiblePlacement(
-    id: "daily-games" | "recommended-match" | "game-history",
+    id: "profile" | "daily-games" | "recommended-match" | "game-history",
     placement: MainColumnCardVisiblePlacement
   ): void {
-    if (id === "daily-games") {
+    if (id === "profile") {
+      this.profileVisiblePlacement = placement;
+    } else if (id === "daily-games") {
       this.dailyGamesVisiblePlacement = placement;
     } else if (id === "recommended-match") {
       this.recommendedMatchVisiblePlacement = placement;
@@ -287,6 +320,7 @@ class HomepageCardEditor {
       row.className = "homepage-card-row";
 
       if (
+        id === "profile" ||
         id === "daily-games" ||
         id === "recommended-match" ||
         id === "game-history"
@@ -539,6 +573,8 @@ const homepageCardEditor = new HomepageCardEditor(
   HOMEPAGE_SIDEBAR_CARD_CATALOG,
   DEFAULT_SETTINGS.homepageSidebarOrder,
   DEFAULT_SETTINGS.homepageSidebarVisible,
+  DEFAULT_SETTINGS.profilePlacement,
+  DEFAULT_SETTINGS.profileVisiblePlacement,
   DEFAULT_SETTINGS.dailyGamesPlacement,
   DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
   DEFAULT_SETTINGS.recommendedMatchPlacement,
@@ -627,6 +663,8 @@ function renderSettings(settings: ExtensionSettings): void {
   homepageCardEditor.set(
     settings.homepageSidebarOrder,
     settings.homepageSidebarVisible,
+    settings.profilePlacement,
+    settings.profileVisiblePlacement,
     settings.dailyGamesPlacement,
     settings.dailyGamesVisiblePlacement,
     settings.recommendedMatchPlacement,
@@ -698,6 +736,9 @@ function readSettings(): ExtensionSettings {
   return {
     enabled: enabledInput.checked,
     showNativePlayPanel: showNativePlayPanelInput.checked,
+    profilePlacement: homepageCardEditor.getProfilePlacement(),
+    profileVisiblePlacement:
+      homepageCardEditor.getProfileVisiblePlacement(),
     dailyGamesPlacement: homepageCardEditor.getDailyGamesPlacement(),
     dailyGamesVisiblePlacement:
       homepageCardEditor.getDailyGamesVisiblePlacement(),
@@ -781,6 +822,8 @@ resetHomepageButton.addEventListener("click", () => {
   homepageCardEditor.set(
     DEFAULT_SETTINGS.homepageSidebarOrder,
     DEFAULT_SETTINGS.homepageSidebarVisible,
+    DEFAULT_SETTINGS.profilePlacement,
+    DEFAULT_SETTINGS.profileVisiblePlacement,
     DEFAULT_SETTINGS.dailyGamesPlacement,
     DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
     DEFAULT_SETTINGS.recommendedMatchPlacement,

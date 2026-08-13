@@ -4,6 +4,7 @@ import {
   HOME_LOCATION,
   loadHomepageFixture,
   loadModernHomepageFixture,
+  loadPreviousModernHomepageFixture,
   loadResponsiveHomepageFixture
 } from "./test-utils";
 
@@ -22,6 +23,12 @@ describe("isChessComHomepage", () => {
     expect(isChessComHomepage(loadModernHomepageFixture(), HOME_LOCATION)).toBe(
       true
     );
+  });
+
+  it("keeps accepting the previous direct redesigned sidebar shell", () => {
+    expect(
+      isChessComHomepage(loadPreviousModernHomepageFixture(), HOME_LOCATION)
+    ).toBe(true);
   });
 
   it.each(["/game/live/123", "/analysis", "/puzzles", "/lessons/example"])(

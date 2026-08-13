@@ -54,7 +54,7 @@ describe("content script lifecycle", () => {
     ).toBe("game-review");
     expect(
       document.querySelector("#homepage-toolbar")?.getAttribute(MARKERS.hidden)
-    ).toBe("homepage-toolbar");
+    ).toBe("profile");
     expect(document.querySelector("#main-banner")?.getAttribute(MARKERS.hidden)).toBe(
       "main-banner"
     );
@@ -93,7 +93,7 @@ describe("content script lifecycle", () => {
     await vi.advanceTimersByTimeAsync(RECONCILE_DELAY_MS);
 
     expect(newPuzzles.getAttribute(MARKERS.hidden)).toBe("puzzles");
-    expect(newHomepageToolbar.getAttribute(MARKERS.hidden)).toBe("homepage-toolbar");
+    expect(newHomepageToolbar.getAttribute(MARKERS.hidden)).toBe("profile");
     expect(newMainBanner.getAttribute(MARKERS.hidden)).toBe("main-banner");
     expect(newPromoUserInfo.getAttribute(MARKERS.hidden)).toBe("promo-user-info");
     expect(

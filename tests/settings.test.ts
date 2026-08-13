@@ -179,6 +179,8 @@ describe("settings", () => {
 
   it("normalizes module placement and visibility settings", () => {
     const migrated = normalizeSettings({
+      profilePlacement: "sidebar",
+      profileVisiblePlacement: "sidebar",
       dailyGamesPlacement: "hidden",
       recommendedMatchPlacement: "sidebar",
       recommendedMatchVisiblePlacement: "sidebar",
@@ -188,6 +190,8 @@ describe("settings", () => {
       showLegendLeague: false
     });
     expect(migrated).toMatchObject({
+      profilePlacement: "sidebar",
+      profileVisiblePlacement: "sidebar",
       dailyGamesPlacement: "hidden",
       dailyGamesVisiblePlacement: "sidebar",
       recommendedMatchPlacement: "sidebar",
@@ -197,6 +201,7 @@ describe("settings", () => {
       showNativePlayPanel: false
     });
     expect(migrated.homepageSidebarVisible).toEqual([
+      "profile",
       "stats",
       "recommended-match",
       "streaks",
@@ -223,6 +228,7 @@ describe("settings", () => {
       showNativePlayPanel: true,
       homepageSidebarOrder: [
         "friends",
+        "profile",
         "recommended-match",
         "game-history",
         "daily-puzzle",
@@ -245,6 +251,7 @@ describe("settings", () => {
     expect(normalized.showNativePlayPanel).toBe(true);
     expect(normalized.homepageSidebarOrder).toEqual([
       "friends",
+      "profile",
       "recommended-match",
       "game-history",
       "daily-puzzle",
@@ -258,6 +265,36 @@ describe("settings", () => {
       "friends",
       "stats",
       "daily-games"
+    ]);
+  });
+
+  it("preserves the previous nine-card order and adds Profile first", () => {
+    expect(
+      normalizeSettings({
+        ...DEFAULT_SETTINGS,
+        homepageSidebarOrder: [
+          "friends",
+          "daily-games",
+          "recommended-match",
+          "game-history",
+          "stats",
+          "daily-puzzle",
+          "legend-league",
+          "streaks",
+          "chess-tv"
+        ]
+      }).homepageSidebarOrder
+    ).toEqual([
+      "profile",
+      "friends",
+      "daily-games",
+      "recommended-match",
+      "game-history",
+      "stats",
+      "daily-puzzle",
+      "legend-league",
+      "streaks",
+      "chess-tv"
     ]);
   });
 
@@ -277,6 +314,7 @@ describe("settings", () => {
         ]
       }).homepageSidebarOrder
     ).toEqual([
+      "profile",
       "friends",
       "daily-games",
       "recommended-match",
@@ -304,6 +342,7 @@ describe("settings", () => {
         ]
       }).homepageSidebarOrder
     ).toEqual([
+      "profile",
       "friends",
       "daily-games",
       "recommended-match",

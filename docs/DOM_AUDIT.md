@@ -1,9 +1,9 @@
 # ChessComVINF DOM Audit
 
-Audit date: 2026-07-29
+Audit date: 2026-08-12
 Source: private complete-page captures in `fixtures/raw/2026-07-16/` and
-the reduced/all-cards 2026-07-28 and Recommended Match 2026-07-29 captures
-under `fixtures/raw/` plus
+the reduced/all-cards 2026-07-28, Recommended Match 2026-07-29, and complete
+2026-08-12 captures under `fixtures/raw/` plus
 user-provided live Inspector samples of the recurring campaign banner and exact
 homepage toolbar hierarchy
 Observed locale and variants: signed-in English legacy and redesigned desktop
@@ -23,8 +23,10 @@ was unavailable in this session
   `#vue-sidebar-instance.layout-column-two`.
 - Redesigned dashboard landmarks: exact `#home-header`,
   `#home-main.layout-column-one`, a native immediate-match link, and Game
-  History. `#home-sidebar.layout-column-two` upgrades the page to the
-  redesigned two-column desktop contract when present.
+  History. Either the previous `#home-sidebar.layout-column-two` shell or the
+  current `#home-sidebar-container.layout-column-two` wrapper around
+  `#home-sidebar` upgrades the page to the redesigned two-column desktop
+  contract when present.
 - The redesigned shell no longer exposes the old `data-cy` profile landmark.
   Its guard therefore combines the exact signed-in root class, route, shell,
   native launch evidence, and Game History rather than guessing a replacement
@@ -39,26 +41,29 @@ was unavailable in this session
 
 ### Redesigned home hero
 
-The 2026-07-28 rollout removes `.promo-component`, `#homepage-toolbar`, and
-`.promo-toolbar-user-info`. Its native play and recommendation area is the
-exact `section#home-header` inside `.layout-hero`. The immediate-match control
-now lives under `.play-online-quick-links-component`; the safe launch link
-contract itself is unchanged.
+The redesigned native header is the exact `section#home-header` inside
+`.layout-hero`. Its `.header-component` now contains two distinct direct
+children: `.header-hero` is the avatar/username/flag strip, while the
+`.cc-section` containing `.header-play-header-grid` is the large native play
+and recommendations panel. The immediate-match control lives under
+`.play-online-quick-links-component`; the safe launch-link contract is
+unchanged.
 
-VINF treats the complete `#home-header` as the redesigned native action module.
-It is hidden by default without deleting its native launch link. The Homepage
-setting `Native play panel` sets
-`data-chesscom-vinf-native-play-panel="visible"` and restores the complete
-native hero; disabling that setting hides it again. The empty `.layout-hero`
-wrapper has zero rendered height while hidden.
+VINF treats the exact `.header-hero` as the native Profile card. It is hidden by
+default, but its card setting can move the original node into Main or Right and
+place it according to the shared managed-card order. The `Native play panel`
+setting controls only the sibling `.cc-section` containing the play grid and
+native launch link. It is hidden by default without deleting that link; setting
+`data-chesscom-vinf-native-play-panel="visible"` restores it.
 
 ### Homepage toolbar
 
-The visible avatar, username, and country-flag row is the exact
+The legacy visible avatar, username, and country-flag row is the exact
 `header#homepage-toolbar`. Its child `.toolbar-user-info` carries
-`data-cy="profile-section"`. The signed-in landmark remains queryable when its
-ancestor is hidden, so VINF marks the complete header with
-`data-chesscom-vinf-hidden="homepage-toolbar"` rather than removing it.
+`data-cy="profile-section"`. This exact header is the legacy Profile card. VINF
+moves the original node for Main/Right placement or marks it
+`data-chesscom-vinf-hidden="profile"` while hidden; it is never cloned or
+removed. The signed-in landmark remains queryable in every state.
 
 The 2026-07-26 live Inspector sample corrected versions 0.8.2 and 0.8.3: those
 versions targeted a separate `.promo-toolbar-user-info` node, but that node was
@@ -88,13 +93,11 @@ The live hierarchy also contains a separate optional
 visible avatar/name row.
 
 Version 0.8.2 assumed this class was unique. Live verification still showed the
-desktop row, so version 0.8.3 removes that uniqueness assumption and marks every
-exact `.promo-toolbar-user-info` instance with
-`data-chesscom-vinf-hidden="promo-user-info"`. Nodes stay in the DOM, so the
-signed-in profile landmark remains available to the homepage guard. Cleanup
-removes every marker, and mutation reconciliation hides all current or replaced
-instances. Version 0.8.4 retains this compatibility behavior while targeting the
-actual visible `#homepage-toolbar`.
+desktop row, so version 0.8.3 removed that uniqueness assumption. Current VINF
+hides every empty exact instance as `promo-user-info`. Only when neither primary
+Profile landmark exists may the first nonempty exact instance become the
+managed Profile card. Nodes stay in the DOM, cleanup removes every marker, and
+mutation reconciliation handles replacements without account-specific text.
 
 ### Native promo row
 
@@ -145,6 +148,7 @@ to `/analysis/game/...`.
 | Module | Primary locator | Node moved |
 | --- | --- | --- |
 | Quick Play | Extension-owned `[data-chesscom-vinf-owned="quick-play"]` | Inserted into legacy `#vue-instance` or redesigned `#home-main > .main-component` before the first visible native main section |
+| Profile | Existing VINF `profile` marker, redesigned `#home-header > .header-component > .header-hero`, legacy `#homepage-toolbar`, or a nonempty exact `.promo-toolbar-user-info` compatibility fallback | Original native profile strip moved to Main or Right, or hidden intact |
 | Daily Games | Direct child of `#vue-instance` containing a `/play/online/daily` link; namespaced marker after moving/hiding | `.home-container-component` wrapper moved to the sidebar, restored to main, or hidden intact |
 | Recommended Match | Redesigned main-column card containing `.play-online-section-body .challenge-tile-component`, excluding the native `#home-header` action panel; namespaced marker after moving/hiding | Direct `#home-main > .main-component` child moved to the sidebar, restored to main, or hidden intact |
 | Game History | `.game-history-games-component` in either main-column host | Legacy `.home-container-component` wrapper or the redesigned direct `.main-section` card |
@@ -165,15 +169,16 @@ page grid. A `2.4rem` gap separates Quick Play from the first native left module
 When the saved count is zero, the controller removes every extension-owned
 Quick Play panel and leaves the native main-card sequence as the column start.
 
-The default managed card order is Stats, ChessTV, Daily Games, Recommended
-Match, Game History, Streaks, Legend League, Daily Puzzle, then Friends. Version
-0.17 makes all nine known positions orderable. The controller filters that one
+The default managed card order is Profile, Stats, ChessTV, Daily Games,
+Recommended Match, Game History, Streaks, Legend League, Daily Puzzle, then
+Friends. All ten known positions are orderable. The controller filters that one
 saved sequence per column: visible movable cards assigned to Main form the
 managed prefix below Quick Play, while cards assigned to Right form the managed
-sidebar prefix. Every card has independent Show/Hide; Daily Games, Recommended
-Match, and Game History additionally retain their Main/Right placement while
-hidden. Recommended Match and Game History default to Main. Unknown native cards
-are preserved visibly after the managed cards in their native column.
+sidebar prefix. Every card has independent Show/Hide; Profile, Daily Games,
+Recommended Match, and Game History additionally retain their Main/Right
+placement while hidden. Profile defaults hidden with Main remembered;
+Recommended Match and Game History default visible in Main. Unknown native
+cards are preserved visibly after the managed cards in their native column.
 
 The 2026-07-29 capture confirms that Recommended Match is a native direct
 main-column section rather than part of the large `#home-header` panel. Its
@@ -243,6 +248,17 @@ link-only locator caused another managed card to move above an online TV card.
 Namespaced module markers preserve the standard `2.4rem` gap between adjacent
 managed cards in legacy hosts.
 
+The native player iframe advertises `allow="autoplay; fullscreen"`. VINF leaves
+that iframe completely native: it does not change `src`, `allow`, hidden state,
+loading, autoplay, or playback. The ChessTV card setting controls only whether
+the complete native card is displayed and where it sits in managed order.
+
+The current large native play panel itself contains a `Game Review` tile and an
+`/analysis/game/` link. Game Review heading/path fallbacks therefore exclude
+both the located native play panel and Game History. Otherwise the fallback
+promotes the complete play panel and hides it as the standalone Game Review
+card, making `Native play panel` appear nonfunctional.
+
 The redesigned hosts are `#home-main > .main-component` and
 `#home-sidebar > .sidebar-component`. They already use flex gaps, so VINF
 normalizes each to the established `2.4rem` spacing and suppresses its own
@@ -250,6 +266,14 @@ legacy margin inside those hosts. A direct empty `.main-section` emitted by the
 new shell is hidden only while it contains no elements; native hydration makes
 it visible again automatically. The observed redesigned widths remain `728px`
 for the main column and `300px` for the sidebar.
+
+The 2026-08-12 capture adds one wrapper without changing the actual card host:
+`#home-sidebar-container.layout-column-two > #home-sidebar >
+.sidebar-component`. The earlier shell put `layout-column-two` directly on
+`#home-sidebar`. VINF accepts only those two exact generations as desktop and
+continues operating on the same direct `.sidebar-component`; it does not use a
+generic layout-column fallback. Exact early-hide rules target
+`#home-sidebar > .sidebar-component`, which is stable across both generations.
 
 ### Stats card internals
 
@@ -366,8 +390,9 @@ The extension does not guess a route or fall back to the last-used control.
 
 - Homepage modules are rendered by multiple Vue mounts and may be replaced after
   initial HTML delivery.
-- The exact `#homepage-toolbar` is the visible profile strip and must be hidden
-  reversibly even though its descendant remains the signed-in guard landmark.
+- The exact `#homepage-toolbar` and redesigned `.header-hero` are two generations
+  of the movable Profile card. Preserve the exact native node and signed-in
+  landmark while applying Hidden/Main/Right.
 - The optional `#main-banner` campaign may be inserted or replaced dynamically;
   repeated reconciliation must hide the current node without deleting it.
 - Every optional `.promo-toolbar-user-info` instance follows the same
@@ -391,8 +416,8 @@ The extension does not guess a route or fall back to the last-used control.
   excluded.
 - In responsive mode, Quick Play precedes the movable Main-card group. When
   retained cards are direct siblings, that group and the conceptual Right-card
-  group each follow the same saved managed-card order. Daily Games, Recommended
-  Match, and Game History are omitted for `Hidden`; every other known card
+  group each follow the same saved managed-card order. Profile, Daily Games,
+  Recommended Match, and Game History are omitted for `Hidden`; every other known card
   follows its saved Show/Hide state. VINF does not move responsive cards across
   an uncertain nested container boundary.
 - The mutation observer falls back from `.base-container` to `main`,

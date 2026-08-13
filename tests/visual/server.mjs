@@ -197,7 +197,7 @@ const server = createServer(async (request, response) => {
   if (pathname === "/popup-preview") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(
-      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF popup preview" src="/popup" style="border:0;height:600px;width:420px"></iframe></body></html>'
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF popup preview" src="/popup" style="border:0;height:600px;width:390px"></iframe></body></html>'
     );
     return;
   }

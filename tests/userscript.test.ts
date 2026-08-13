@@ -52,7 +52,17 @@ describe("Android userscript shell", () => {
       "[data-chesscom-vinf-userscript-settings]"
     );
     expect(dialog?.open).toBe(true);
-    expect(dialog?.querySelectorAll("select")).toHaveLength(16);
+    expect(dialog?.querySelectorAll("select")).toHaveLength(17);
+    expect(
+      dialog?.querySelector<HTMLSelectElement>(
+        '[aria-label="Profile placement"]'
+      )?.value
+    ).toBe("main");
+    expect(
+      dialog?.querySelector<HTMLInputElement>(
+        "#chesscom-vinf-homepage-profile"
+      )?.checked
+    ).toBe(false);
     expect(
       dialog?.querySelector<HTMLSelectElement>(
         '[aria-label="Daily Games placement"]'
@@ -80,7 +90,7 @@ describe("Android userscript shell", () => {
     ).toBe(true);
     expect(
       dialog?.querySelectorAll(".chesscom-vinf-settings-preference-row")
-    ).toHaveLength(18);
+    ).toHaveLength(19);
     const enabled = dialog?.querySelector<HTMLInputElement>(
       "#chesscom-vinf-userscript-enabled"
     );
@@ -92,6 +102,9 @@ describe("Android userscript shell", () => {
     );
     const showNativePlayPanel = dialog?.querySelector<HTMLInputElement>(
       "#chesscom-vinf-userscript-native-play-panel"
+    );
+    expect(showNativePlayPanel?.closest("label")?.textContent?.trim()).toBe(
+      "Native play panel"
     );
     expect(
       dialog?.querySelector(
@@ -108,12 +121,16 @@ describe("Android userscript shell", () => {
       enabled
         ?.closest(".chesscom-vinf-settings-card")
         ?.querySelectorAll(".chesscom-vinf-settings-row")
-    ).toHaveLength(1);
+    ).toHaveLength(0);
+    expect(
+      dialog?.querySelector(".chesscom-vinf-settings-master-actions button")
+        ?.textContent
+    ).toBe("Reset");
     expect(
       dailyPlacement
         ?.closest(".chesscom-vinf-settings-card")
         ?.querySelector("h3")?.textContent
-    ).toBe("Homepage");
+    ).toBeUndefined();
     expect(showDailyGames?.checked).toBe(true);
     expect(dailyPlacement?.disabled).toBe(false);
     expect(

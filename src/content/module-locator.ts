@@ -61,13 +61,16 @@ function isStatsCardPath(path: string): boolean {
 function findAnchorByPath(
   root: ParentNode,
   predicate: (path: string) => boolean,
-  excludedRoot: Element | null = null
+  excludedRoots: Element | readonly (Element | null)[] | null = null
 ): HTMLAnchorElement | null {
+  const exclusions = Array.isArray(excludedRoots)
+    ? excludedRoots
+    : [excludedRoots];
   return (
     Array.from(root.querySelectorAll<HTMLAnchorElement>("a[href]")).find(
       (anchor) =>
         !anchor.closest("nav, header, [role='navigation']") &&
-        !excludedRoot?.contains(anchor) &&
+        !exclusions.some((excludedRoot) => excludedRoot?.contains(anchor)) &&
         hrefHasPath(anchor, predicate)
     ) ?? null
   );
@@ -100,25 +103,29 @@ function findModuleAncestor(
 function findModuleByPath(
   root: HTMLElement | null,
   predicate: (path: string) => boolean,
-  excludedRoot: Element | null = null
+  excludedRoots: Element | readonly (Element | null)[] | null = null
 ): HTMLElement | null {
   if (!root) {
     return null;
   }
   return findModuleAncestor(
     root,
-    findAnchorByPath(root, predicate, excludedRoot)
+    findAnchorByPath(root, predicate, excludedRoots)
   );
 }
 
 function findModuleByHeading(
   root: HTMLElement | null,
-  title: string
+  title: string,
+  excludedRoots: Element | readonly (Element | null)[] | null = null
 ): HTMLElement | null {
   if (!root) {
     return null;
   }
 
+  const exclusions = Array.isArray(excludedRoots)
+    ? excludedRoots
+    : [excludedRoots];
   const heading = Array.from(
     root.querySelectorAll<HTMLElement>(
       "h1, h2, h3, h4, [role='heading'], .cc-header-name, .promo-title"
@@ -126,6 +133,7 @@ function findModuleByHeading(
   ).find(
     (candidate) =>
       !candidate.closest("nav, header, [role='navigation']") &&
+      !exclusions.some((excludedRoot) => excludedRoot?.contains(candidate)) &&
       normalizedText(candidate) === title
   );
   return findModuleAncestor(root, heading ?? null);
@@ -175,14 +183,14 @@ export function locateHomepageModules(document: Document): HomepageModules {
     "#home-main.layout-column-one"
   );
   const modernRightShell = document.querySelector<HTMLElement>(
-    "#home-sidebar.layout-column-two"
+    "#home-sidebar.layout-column-two, #home-sidebar-container.layout-column-two"
   );
   const modernLeftColumn =
     modernLeftShell?.querySelector<HTMLElement>(":scope > .main-component") ??
     modernLeftShell;
   const modernRightColumn =
     modernRightShell?.querySelector<HTMLElement>(
-      ":scope > .sidebar-component"
+      ":scope > .sidebar-component, :scope > #home-sidebar > .sidebar-component"
     ) ?? modernRightShell;
   const desktopLeftColumn =
     legacyLeftColumn ??
@@ -204,12 +212,37 @@ export function locateHomepageModules(document: Document): HomepageModules {
       'a[href*="action=createLiveChallenge"]'
     ) ?? fallbackLaunchTemplate;
   const modernHomeHeader = document.querySelector<HTMLElement>("#home-header");
+  const homepageToolbar =
+    document.querySelector<HTMLElement>("#homepage-toolbar");
+  const promoUserInfos = Array.from(
+    document.querySelectorAll<HTMLElement>(".promo-toolbar-user-info")
+  );
+  const movedProfile = document.querySelector<HTMLElement>(
+    `[${MARKERS.module}="profile"]`
+  );
+  const modernProfile =
+    modernHomeHeader?.querySelector<HTMLElement>(
+      ":scope > .header-component > .header-hero"
+    ) ?? null;
+  const profile =
+    movedProfile ??
+    modernProfile ??
+    homepageToolbar ??
+    promoUserInfos.find((element) => normalizedText(element).length > 0) ??
+    null;
+  const modernPlayPanelCandidate =
+    nativeLaunchTemplate?.closest<HTMLElement>(".cc-section") ?? null;
+  const modernPlayPanel =
+    modernHomeHeader &&
+    modernPlayPanelCandidate &&
+    modernHomeHeader.contains(modernPlayPanelCandidate) &&
+    modernPlayPanelCandidate.querySelector(".header-play-header-grid")
+      ? modernPlayPanelCandidate
+      : null;
   const nativeActionColumn =
     promoActionColumn ??
-    (modernHomeHeader &&
-    nativeLaunchTemplate &&
-    modernHomeHeader.contains(nativeLaunchTemplate)
-      ? modernHomeHeader
+    (modernPlayPanel && nativeLaunchTemplate
+      ? modernPlayPanel
       : findModuleAncestor(contentRoot, nativeLaunchTemplate));
 
   const topLeagueLink = nativeActionColumn
@@ -344,20 +377,19 @@ export function locateHomepageModules(document: Document): HomepageModules {
     contentRoot;
   const gameReview =
     findDirectPromoChildByTitle(promo, "Game Review") ??
-    findModuleByHeading(contentRoot, "Game Review") ??
+    findModuleByHeading(contentRoot, "Game Review", nativeActionColumn) ??
     findModuleByPath(
       contentRoot,
       (path) => path.startsWith("/analysis/game/"),
-      gameHistory
+      [gameHistory, nativeActionColumn]
     );
 
   return {
     layoutMode,
-    homepageToolbar: document.querySelector<HTMLElement>("#homepage-toolbar"),
+    profile,
+    homepageToolbar,
     mainBanner: document.querySelector<HTMLElement>("#main-banner"),
-    promoUserInfos: Array.from(
-      document.querySelectorAll<HTMLElement>(".promo-toolbar-user-info")
-    ),
+    promoUserInfos,
     promo,
     nativeActionColumn,
     nativeLaunchTemplate,

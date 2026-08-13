@@ -103,6 +103,7 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
       const hiddenSidebarCards =
         currentSettings.homepageSidebarOrder.filter(
           (id) =>
+            id !== "profile" &&
             id !== "recommended-match" &&
             id !== "game-history" &&
             !currentSettings.homepageSidebarVisible.includes(id)

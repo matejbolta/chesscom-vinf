@@ -29,7 +29,7 @@
             <path d="M10 7v6"></path>
           </svg>
         </button>
-        <span class="version">v0.17.3</span>
+        <span class="version">v1.0.8</span>
         <button
           id="close-side-panel"
           class="side-panel-button side-panel-close-button"
@@ -48,27 +48,28 @@
 
     <form id="settings-form">
       <section class="settings-card settings-card--master" aria-label="VINF">
-        <label class="setting-row">
+        <label class="settings-master-copy" for="enabled">
           <span>
             <strong>Enable VINF</strong>
             <small>Apply all homepage enhancements</small>
           </span>
-          <input id="enabled" type="checkbox" role="switch">
         </label>
+        <div class="settings-master-actions">
+          <button
+            id="reset-homepage"
+            class="text-button"
+            type="button"
+            aria-label="Reset homepage settings"
+            title="Reset homepage settings"
+          >Reset</button>
+          <input id="enabled" type="checkbox" role="switch">
+        </div>
       </section>
 
-      <section class="settings-card" aria-labelledby="homepage-heading">
-        <div class="section-heading">
-          <div>
-            <h2 id="homepage-heading">Homepage</h2>
-            <p>Choose the native cards that complement Quick Play.</p>
-          </div>
-          <button id="reset-homepage" class="text-button" type="button">Reset</button>
-        </div>
+      <section class="settings-card" aria-label="Homepage settings">
         <label class="setting-row">
           <span>
             <strong>Native play panel</strong>
-            <small>Show Chess.com’s large play and recommendations panel</small>
           </span>
           <input id="show-native-play-panel" type="checkbox" role="switch">
         </label>

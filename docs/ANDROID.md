@@ -121,9 +121,9 @@ On the Chess.com homepage, open Firefox's Extensions menu, choose Violentmonkey,
 and run **VINF settings**. The command opens a touch-friendly modal with the
 master VINF toggle in its own top card. A separate `Homepage` card contains the
 Native play panel switch plus visibility and fixed-order controls for every
-known managed card. Daily Games, Recommended Match, and Game History use the
-same visibility checkbox plus a `Main` / `Right` selector that remembers their
-location while hidden. The one saved sequence determines their relative order
+known managed card. Profile, Daily Games, Recommended Match, and Game History
+use the same visibility checkbox plus a `Main` / `Right` selector that remembers
+their location while hidden. The one saved sequence determines their relative order
 within either placement. Quick Play can use 0, 1, 2, 3, 4, 6, or 8 presets from
 the same unified Bullet, Blitz, and Rapid groups as desktop. Zero removes Quick
 Play entirely, and the same time control may be selected more than once.
@@ -176,22 +176,25 @@ homepage, and changes only `base` and `timeIncrement`.
 VINF has two DOM modes:
 
 - **Two-column:** either the legacy `#vue-instance` /
-  `#vue-sidebar-instance` hosts or redesigned `#home-main` /
-  `#home-sidebar` hosts keep their existing behavior, with the saved card order
-  filtered independently within Main and Right.
+  `#vue-sidebar-instance` hosts or redesigned `#home-main` / `#home-sidebar`
+  hosts—including the current outer `#home-sidebar-container` shell—keep their
+  existing behavior, with the saved card order filtered independently within
+  Main and Right.
 - **Responsive/single-column:** VINF finds cards using semantic URLs, headings,
   and native component landmarks. Quick Play is inserted before the movable
   Main-card group; that group and the conceptual Right-card group each follow
-  the saved card order. Daily Games, Recommended Match, and Game History follow
+  the saved card order. Profile, Daily Games, Recommended Match, and Game History follow
   their visibility plus Main/Right placement, and every other known card follows
   its Show/Hide setting. Legacy native action, Puzzles, Next Lesson,
   Game Review, and the optional
   `#main-banner` campaign are hidden. Every optional
-  `.promo-toolbar-user-info` compatibility variant is also hidden. The exact
-  `#homepage-toolbar` containing the avatar/name strip is hidden when the
-  responsive page exposes that desktop toolbar; unrelated mobile profile
-  controls are not targeted. The redesigned exact `#home-header` hero follows
-  Native play panel while its native launch link remains available in the DOM.
+  `.promo-toolbar-user-info` compatibility variant is also hidden unless it is
+  the selected nonempty Profile fallback. The exact `#homepage-toolbar` or
+  redesigned `#home-header .header-hero` follows the Profile card's
+  Hidden/Main/Right setting; unrelated mobile profile controls are not
+  targeted. Only the sibling play-grid section follows Native play panel while
+  the launch link remains in the DOM. ChessTV embeds remain fully native; VINF
+  does not alter their loading, autoplay, permissions, or playback.
 
 At tablet widths Quick Play uses two columns. At narrow phone widths it becomes
 one column. Controls keep 7rem touch targets, no hover dependency, visible focus,

@@ -11,13 +11,14 @@
 - [x] Chrome Web Store copy contains no Markdown blockquote prefixes, reflects
   every current homepage control, and keeps the zero-collection disclosures.
 - [x] Public-safe store screenshots use only synthetic identities and reflect
-  the last explicitly prepared Store version, 0.17.3.
+  the currently prepared Store version, 1.0.8.
 - [x] All 17 catalog controls map to their exact native base/increment pairs.
 - [x] Popup uses a desktop-first union of Bullet, Blitz, and Rapid presets.
 - [x] Desktop and Android settings share one Blitz group ordered `3 min`,
   `3 + 2`, `5 min`, `5 + 2`, `5 + 3`, `5 + 5`.
-- [x] The master VINF switch is a standalone top card; Homepage contains the
-  native play-panel switch and the complete managed-card editor.
+- [x] The master VINF switch and Homepage Reset share the standalone top card;
+  the headerless homepage-settings card contains the native play-panel switch
+  and the complete managed-card editor.
 - [x] Quick Play counts 0, 1, 2, 3, 4, 6, and 8 normalize, autosave, migrate
   legacy arrays, and use complete defaults for the selected size; zero
   removes the complete Quick Play module.
@@ -49,8 +50,11 @@
 - [x] Game History visibility plus `Main` / `Right` placement normalize,
   autosave, preserve the selected location while hidden, and retain existing
   eight- and seven-card orders during migration.
-- [x] All nine known managed cards normalize, autosave, show/hide, and use one
+- [x] All ten known managed cards normalize, autosave, show/hide, and use one
   fixed relative order within both Main and Right placements.
+- [x] Profile visibility plus `Main` / `Right` placement normalize, autosave,
+  preserve the selected location while hidden, and migrate into previous saved
+  card orders without changing their relative order.
 - [x] Legacy ChessTV/Legend booleans migrate into the new visibility model.
 - [x] Per-rating initial `Expanded` or `Retracted` states normalize, autosave,
   migrate from the retired global state, and are available in both settings
@@ -82,9 +86,12 @@
 - [x] Missing native launch template disables every shortcut.
 - [x] Repeated and mutation-triggered reconciliation stays idempotent.
 - [x] A present or dynamically replaced `#main-banner` is hidden reversibly.
-- [x] A present or dynamically replaced `#homepage-toolbar` is hidden reversibly.
-- [x] The redesigned `#home-header`, `#home-main`, and `#home-sidebar` shell is
-  recognized without weakening the signed-in route guard.
+- [x] A present or dynamically replaced `#homepage-toolbar` is managed
+  reversibly as Profile.
+- [x] The redesigned `#home-header` and `#home-main` shell recognizes both the
+  previous direct `#home-sidebar.layout-column-two` generation and the current
+  `#home-sidebar-container.layout-column-two > #home-sidebar` generation
+  without weakening the signed-in route guard.
 - [x] Redesigned Game History analysis links cannot be mistaken for Game Review.
 - [x] Legacy expandable and redesigned link-only Stats rows both preserve native
   behavior while applying configured visibility and order.
@@ -108,9 +115,9 @@
 - [x] The native promo row remains pre-hidden when Chess.com replaces it after
   Quick Play has already rendered.
 - [x] The recurring top campaign banner is absent when VINF is enabled.
-- [x] The exact homepage avatar/username toolbar is absent when VINF is enabled.
-- [x] The redesigned `#home-header` hero is hidden by default and returns intact
-  when Native play panel is enabled.
+- [x] The exact homepage avatar/username toolbar and redesigned
+  `#home-header .header-hero` follow Profile Hidden/Main/Right independently of
+  Native play panel.
 - [x] Separate `.promo-toolbar-user-info` variants are absent when enabled.
 - [x] Stats and Quick Play begin at the same vertical position.
 - [x] Redesigned Quick Play and Game History remain `728px` wide, with one
@@ -118,7 +125,7 @@
   same top position.
 - [x] Game History leads the main column after Daily Games moves to the sidebar.
 - [x] Every captured right-column card follows its saved fixed order.
-- [x] Daily Games, Recommended Match, and Game History follow that same saved
+- [x] Profile, Daily Games, Recommended Match, and Game History follow that same saved
   relative order when two or more are placed in Main, below Quick Play.
 - [x] Default Stats content is Games, retracted Rapid, and retracted Blitz; an
   optional legacy Insights row remains last when Chess.com supplies it.
@@ -134,6 +141,8 @@
   can each be hidden without disturbing the remaining sidebar order.
 - [x] Online ChessTV streamer-title variants remain in their saved managed
   position.
+- [x] ChessTV iframe source, permission policy, hidden state, loading, autoplay,
+  and playback remain native and untouched while its card is shown.
 - [x] Every adjacent managed sidebar card retains the standard card gap.
 - [x] Bullet, Rapid, and Blitz presets use distinct Chess.com category colors.
 - [x] Eight-button mode retains the six-button gap and Game History width while
@@ -145,12 +154,15 @@
   native `#ead762` bolt color rather than ochre HSL or milky alpha blending.
 - [x] Starting or failing a launch never inserts a visible status row.
 - [x] Settings popup is usable at extension-popup dimensions.
+- [x] Toolbar popup root and body establish a deterministic 390px intrinsic
+  width before script initialization rather than collapsing or expanding from
+  a browser-dependent initial viewport; the side panel remains fluid.
 - [x] Eight-preset settings render as four columns by two rows without overflow
   in the dedicated 320px popup fixture.
 - [x] Shared settings UI is usable at Chromium side-panel dimensions.
 - [x] The in-panel `×` is visible beside the version badge without crowding the
   settings title at side-panel width.
-- [x] Homepage's nine-card visibility/order editor is readable and scrollable
+- [x] Homepage's ten-card visibility/order editor is readable and scrollable
   at extension-popup dimensions.
 - [x] Stats visibility/order controls remain readable and scrollable at popup
   dimensions.
@@ -177,10 +189,15 @@ Complete these before publishing a release beyond private use:
 - [ ] Reload repeatedly and confirm the native Play/Puzzles/Lesson/Review promo
   row never flashes above Quick Play.
 - [ ] Verify a served top campaign banner stays hidden and returns when VINF is disabled.
-- [ ] Verify `#homepage-toolbar` stays hidden and returns when VINF is disabled.
+- [ ] Verify Profile in Hidden, Main, and Right for both `#homepage-toolbar` and
+  redesigned `.header-hero`, then verify native position restoration on disable.
 - [ ] On the redesigned homepage, verify `#home-header` follows Native play
   panel and still returns during full VINF cleanup.
-- [ ] Verify `.promo-toolbar-user-info` variants stay hidden and restore on disable.
+- [ ] Verify empty `.promo-toolbar-user-info` variants stay hidden and restore
+  on disable; if a nonempty fallback is served without either primary Profile
+  landmark, verify it follows Profile settings.
+- [ ] With ChessTV shown, verify its native loading/autoplay/player behavior is
+  identical with VINF enabled and disabled.
 - [ ] Verify history, Stats, and navigation links remain usable.
 - [ ] If Chess.com serves expandable Stats rows, expand and retract Rapid and
   Blitz repeatedly with VINF enabled. On the redesigned link-only card, verify

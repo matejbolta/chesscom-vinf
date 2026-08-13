@@ -8,6 +8,8 @@ import type {
   HomepageSidebarCardId,
   MainColumnCardPlacement,
   MainColumnCardVisiblePlacement,
+  ProfilePlacement,
+  ProfileVisiblePlacement,
   QuickPlayPresetCount,
   RecommendedMatchPlacement,
   RecommendedMatchVisiblePlacement,
@@ -169,39 +171,33 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
 
   const homepage = document.createElement("section");
   homepage.className = "chesscom-vinf-settings-card";
-  const homepageHeader = document.createElement("div");
-  homepageHeader.className = "chesscom-vinf-settings-section-header";
-  const homepageCopy = document.createElement("div");
-  const homepageTitle = document.createElement("h3");
-  homepageTitle.textContent = "Homepage";
-  const homepageHelp = document.createElement("p");
-  homepageHelp.textContent =
-    "Choose the native cards that complement Quick Play.";
   const resetHomepage = document.createElement("button");
   resetHomepage.type = "button";
   resetHomepage.textContent = "Reset";
-  homepageCopy.append(homepageTitle, homepageHelp);
-  homepageHeader.append(homepageCopy, resetHomepage);
-  homepage.append(homepageHeader);
+  resetHomepage.setAttribute("aria-label", "Reset homepage settings");
+  resetHomepage.title = "Reset homepage settings";
 
   function createToggle(
     container: HTMLElement,
     id: string,
     labelText: string,
-    description: string
+    description?: string
   ): HTMLInputElement {
     const label = document.createElement("label");
     label.className = "chesscom-vinf-settings-row";
     const copy = document.createElement("span");
     const strong = document.createElement("strong");
     strong.textContent = labelText;
-    const small = document.createElement("small");
-    small.textContent = description;
     const input = document.createElement("input");
     input.id = id;
     input.type = "checkbox";
     input.setAttribute("role", "switch");
-    copy.append(strong, small);
+    copy.append(strong);
+    if (description) {
+      const small = document.createElement("small");
+      small.textContent = description;
+      copy.append(small);
+    }
     label.append(copy, input);
     container.append(label);
     return input;
@@ -239,17 +235,28 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     return select;
   }
 
-  const enabledInput = createToggle(
-    master,
-    "chesscom-vinf-userscript-enabled",
-    "Enable VINF",
-    "Apply homepage enhancements"
-  );
+  const enabledCopy = document.createElement("label");
+  enabledCopy.className = "chesscom-vinf-settings-master-copy";
+  enabledCopy.htmlFor = "chesscom-vinf-userscript-enabled";
+  const enabledCopyText = document.createElement("span");
+  const enabledStrong = document.createElement("strong");
+  enabledStrong.textContent = "Enable VINF";
+  const enabledSmall = document.createElement("small");
+  enabledSmall.textContent = "Apply homepage enhancements";
+  enabledCopyText.append(enabledStrong, enabledSmall);
+  enabledCopy.append(enabledCopyText);
+  const enabledInput = document.createElement("input");
+  enabledInput.id = "chesscom-vinf-userscript-enabled";
+  enabledInput.type = "checkbox";
+  enabledInput.setAttribute("role", "switch");
+  const masterActions = document.createElement("div");
+  masterActions.className = "chesscom-vinf-settings-master-actions";
+  masterActions.append(resetHomepage, enabledInput);
+  master.append(enabledCopy, masterActions);
   const showNativePlayPanelInput = createToggle(
     homepage,
     "chesscom-vinf-userscript-native-play-panel",
-    "Native play panel",
-    "Show Chess.com’s large play and recommendations panel"
+    "Native play panel"
   );
 
   const presets = document.createElement("section");
@@ -516,6 +523,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
 
   interface HomepageCardEditor {
     element: HTMLElement;
+    getProfilePlacement(): ProfilePlacement;
+    getProfileVisiblePlacement(): ProfileVisiblePlacement;
     getDailyGamesPlacement(): DailyGamesPlacement;
     getDailyGamesVisiblePlacement(): DailyGamesVisiblePlacement;
     getRecommendedMatchPlacement(): RecommendedMatchPlacement;
@@ -527,6 +536,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     render(
       order: readonly HomepageSidebarCardId[],
       visible: readonly HomepageSidebarCardId[],
+      profilePlacement: ProfilePlacement,
+      profileVisiblePlacement: ProfileVisiblePlacement,
       dailyGamesPlacement: DailyGamesPlacement,
       dailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
       recommendedMatchPlacement: RecommendedMatchPlacement,
@@ -540,6 +551,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     catalog: readonly HomepageSidebarCard[],
     initialOrder: readonly HomepageSidebarCardId[],
     initialVisible: readonly HomepageSidebarCardId[],
+    initialProfilePlacement: ProfilePlacement,
+    initialProfileVisiblePlacement: ProfileVisiblePlacement,
     initialDailyGamesPlacement: DailyGamesPlacement,
     initialDailyGamesVisiblePlacement: DailyGamesVisiblePlacement,
     initialRecommendedMatchPlacement: RecommendedMatchPlacement,
@@ -557,6 +570,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
 
     let order = [...initialOrder];
     let visible = new Set(initialVisible);
+    let profilePlacement = initialProfilePlacement;
+    let profileVisiblePlacement = initialProfileVisiblePlacement;
     let dailyGamesPlacement = initialDailyGamesPlacement;
     let dailyGamesVisiblePlacement = initialDailyGamesVisiblePlacement;
     let recommendedMatchPlacement = initialRecommendedMatchPlacement;
@@ -569,6 +584,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     const render = (
       nextOrder: readonly HomepageSidebarCardId[] = order,
       nextVisible: readonly HomepageSidebarCardId[] = [...visible],
+      nextProfilePlacement: ProfilePlacement = profilePlacement,
+      nextProfileVisiblePlacement: ProfileVisiblePlacement =
+        profileVisiblePlacement,
       nextDailyGamesPlacement: DailyGamesPlacement = dailyGamesPlacement,
       nextDailyGamesVisiblePlacement: DailyGamesVisiblePlacement =
         dailyGamesVisiblePlacement,
@@ -584,6 +602,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     ): void => {
       order = [...nextOrder];
       visible = new Set(nextVisible);
+      profilePlacement = nextProfilePlacement;
+      profileVisiblePlacement = nextProfileVisiblePlacement;
       dailyGamesPlacement = nextDailyGamesPlacement;
       dailyGamesVisiblePlacement = nextDailyGamesVisiblePlacement;
       recommendedMatchPlacement = nextRecommendedMatchPlacement;
@@ -594,26 +614,32 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       list.replaceChildren();
 
       const getPlacement = (
-        id: "daily-games" | "recommended-match" | "game-history"
+        id: "profile" | "daily-games" | "recommended-match" | "game-history"
       ): MainColumnCardPlacement =>
-        id === "daily-games"
+        id === "profile"
+          ? profilePlacement
+          : id === "daily-games"
           ? dailyGamesPlacement
           : id === "recommended-match"
             ? recommendedMatchPlacement
             : gameHistoryPlacement;
       const getVisiblePlacement = (
-        id: "daily-games" | "recommended-match" | "game-history"
+        id: "profile" | "daily-games" | "recommended-match" | "game-history"
       ): MainColumnCardVisiblePlacement =>
-        id === "daily-games"
+        id === "profile"
+          ? profileVisiblePlacement
+          : id === "daily-games"
           ? dailyGamesVisiblePlacement
           : id === "recommended-match"
             ? recommendedMatchVisiblePlacement
             : gameHistoryVisiblePlacement;
       const setPlacement = (
-        id: "daily-games" | "recommended-match" | "game-history",
+        id: "profile" | "daily-games" | "recommended-match" | "game-history",
         placement: MainColumnCardPlacement
       ): void => {
-        if (id === "daily-games") {
+        if (id === "profile") {
+          profilePlacement = placement;
+        } else if (id === "daily-games") {
           dailyGamesPlacement = placement;
         } else if (id === "recommended-match") {
           recommendedMatchPlacement = placement;
@@ -622,10 +648,12 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         }
       };
       const setVisiblePlacement = (
-        id: "daily-games" | "recommended-match" | "game-history",
+        id: "profile" | "daily-games" | "recommended-match" | "game-history",
         placement: MainColumnCardVisiblePlacement
       ): void => {
-        if (id === "daily-games") {
+        if (id === "profile") {
+          profileVisiblePlacement = placement;
+        } else if (id === "daily-games") {
           dailyGamesVisiblePlacement = placement;
         } else if (id === "recommended-match") {
           recommendedMatchVisiblePlacement = placement;
@@ -641,6 +669,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         const labelText = labels.get(id) ?? id;
 
         if (
+          id === "profile" ||
           id === "daily-games" ||
           id === "recommended-match" ||
           id === "game-history"
@@ -737,6 +766,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     render();
     return {
       element: fieldset,
+      getProfilePlacement: () => profilePlacement,
+      getProfileVisiblePlacement: () => profileVisiblePlacement,
       getDailyGamesPlacement: () => dailyGamesPlacement,
       getDailyGamesVisiblePlacement: () => dailyGamesVisiblePlacement,
       getRecommendedMatchPlacement: () => recommendedMatchPlacement,
@@ -747,6 +778,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       getOrder: () => [...order],
       getVisible: () =>
         order.filter((id) => {
+          if (id === "profile") {
+            return profilePlacement === "sidebar";
+          }
           if (id === "daily-games") {
             return dailyGamesPlacement === "sidebar";
           }
@@ -766,6 +800,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     HOMEPAGE_SIDEBAR_CARD_CATALOG,
     DEFAULT_SETTINGS.homepageSidebarOrder,
     DEFAULT_SETTINGS.homepageSidebarVisible,
+    DEFAULT_SETTINGS.profilePlacement,
+    DEFAULT_SETTINGS.profileVisiblePlacement,
     DEFAULT_SETTINGS.dailyGamesPlacement,
     DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
     DEFAULT_SETTINGS.recommendedMatchPlacement,
@@ -831,6 +867,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     homepageCardEditor.render(
       settings.homepageSidebarOrder,
       settings.homepageSidebarVisible,
+      settings.profilePlacement,
+      settings.profileVisiblePlacement,
       settings.dailyGamesPlacement,
       settings.dailyGamesVisiblePlacement,
       settings.recommendedMatchPlacement,
@@ -862,6 +900,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       await store.save({
         enabled: enabledInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,
+        profilePlacement: homepageCardEditor.getProfilePlacement(),
+        profileVisiblePlacement:
+          homepageCardEditor.getProfileVisiblePlacement(),
         dailyGamesPlacement: homepageCardEditor.getDailyGamesPlacement(),
         dailyGamesVisiblePlacement:
           homepageCardEditor.getDailyGamesVisiblePlacement(),
@@ -912,6 +953,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     homepageCardEditor.render(
       DEFAULT_SETTINGS.homepageSidebarOrder,
       DEFAULT_SETTINGS.homepageSidebarVisible,
+      DEFAULT_SETTINGS.profilePlacement,
+      DEFAULT_SETTINGS.profileVisiblePlacement,
       DEFAULT_SETTINGS.dailyGamesPlacement,
       DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
       DEFAULT_SETTINGS.recommendedMatchPlacement,

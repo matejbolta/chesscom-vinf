@@ -717,6 +717,13 @@ html[data-view="home8"] .tv-card {
   min-height: 52px;
 }
 
+.master-row > strong {
+  color: #a3d160;
+  font-size: 10px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
 .popup-row div,
 .master-row div {
   display: grid;
@@ -746,6 +753,11 @@ html[data-view="home8"] .tv-card {
   height: 15px;
   justify-content: center;
   width: 15px;
+}
+
+.homepage-choice > span.unchecked {
+  background: transparent;
+  border: 1px solid #77746f;
 }
 
 .homepage-choice i {

@@ -34,3 +34,17 @@ export function loadModernHomepageFixture(): Document {
   const parser = new DOMParser();
   return parser.parseFromString(modernHomepageFixture, "text/html");
 }
+
+export function loadPreviousModernHomepageFixture(): Document {
+  const document = loadModernHomepageFixture();
+  const container = document.querySelector<HTMLElement>(
+    "#home-sidebar-container.layout-column-two"
+  );
+  const sidebar = container?.querySelector<HTMLElement>(":scope > #home-sidebar");
+  if (!container || !sidebar) {
+    throw new Error("Modern homepage fixture is missing its sidebar shell");
+  }
+  sidebar.classList.add("layout-column-two");
+  container.replaceWith(sidebar);
+  return document;
+}

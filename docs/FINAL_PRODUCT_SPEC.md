@@ -1431,3 +1431,98 @@ reduced to functional controls only.
 - Prevent switch tracks from flex-shrinking beside wrapped setting labels so
   controls such as `Native play panel` retain their intended shape.
 - Preserve the already-correct wider side-panel layout.
+
+## 60. Version 1.0.0 Homepage Milestone
+
+- Declare the completed homepage-focused product generation stable as version
+  `1.0.0`; this milestone changes version identity, not homepage behavior.
+- Treat the first implemented in-game enhancement as the beginning of the next
+  product chapter and therefore version it `2.0.0` immediately.
+- Within the in-game chapter, increment the middle number for each subsequent
+  feature release and the final number for bug-fix releases.
+- Major versions identify VINF product chapters and surfaces, even when the new
+  chapter is additive rather than backward-incompatible.
+
+## 61. Version 1.0.1 Product Amendments
+
+- Support Chess.com's 2026-08-12 redesigned sidebar shell, which inserts
+  `#home-sidebar-container.layout-column-two` around the existing
+  `#home-sidebar > .sidebar-component` host.
+- Keep the prior direct `#home-sidebar.layout-column-two` generation supported
+  for rollout cohorts and rollbacks; accept only these two exact desktop shell
+  contracts rather than a generic column selector.
+- Apply ordering, visibility, and early pre-hide behavior to the unchanged
+  nested sidebar component in both generations.
+- Give the toolbar popup an explicit 390px width cap so a four-column preset
+  editor cannot make Chromium choose its approximately 800px intrinsic width;
+  keep the persistent side-panel surface fluid at the browser-provided width.
+
+## 62. Version 1.0.2 Product Amendments
+
+- Apply the toolbar popup's 390px width contract to the root document as well
+  as its body. Chromium sizes an extension action popup from the document root,
+  so constraining only the body can leave an approximately 800px blank viewport
+  to its right.
+- Keep both the root document and body fluid on the persistent side-panel
+  surface.
+
+## 63. Version 1.0.3 Product Amendments
+
+- Hide the toolbar popup's visible scrollbar and its right-side gutter while
+  preserving wheel, trackpad, keyboard, and programmatic scrolling.
+- Keep native scrollbar behavior in the persistent side-panel surface.
+
+## 64. Version 1.0.4 Product Amendments
+
+- Give both the toolbar popup root and body an explicit 390px width. A
+  percentage body width creates a cyclic intrinsic-size calculation in the
+  scrollbar-free Chromium action surface and can collapse the popup toward its
+  minimum content width.
+- Continue overriding both widths to 100% only in persistent side-panel mode.
+
+## 65. Version 1.0.5 Product Amendments
+
+- Treat the redesigned `#home-header > .header-component > .header-hero` as a
+  distinct profile strip and always hide it while VINF is enabled.
+- Make `Native play panel` control only the sibling `.cc-section` containing
+  `.header-play-header-grid` and the native immediate-match link.
+- Remove the redundant explanatory sentence below `Native play panel` in both
+  desktop and Android settings.
+
+## 66. Version 1.0.6 Product Amendments
+
+- Exclude the configured native play panel and Game History from both Game
+  Review heading and analysis-path fallbacks. The current play panel contains
+  its own Game Review tile, which previously caused the complete panel to be
+  hidden again regardless of its setting.
+- Keep the redesigned profile strip always hidden while `Native play panel`
+  now visibly switches only the large play/recommendations section.
+- Prevent ChessTV from loading or autoplaying until the user explicitly clicks
+  a local `Load ChessTV` control. Preserve and restore the native iframe source,
+  permission policy, and hidden state on disable.
+- Remove the Homepage heading/helper row from desktop and Android settings and
+  move Homepage Reset beside Enable VINF.
+
+## 67. Version 1.0.7 Product Amendments
+
+- Remove every VINF-owned ChessTV loading or autoplay intervention. When its
+  card is shown, preserve the native iframe `src`, permission policy, hidden
+  state, loading, and playback behavior exactly.
+- Promote the legacy `#homepage-toolbar` and redesigned
+  `#home-header .header-hero` into one configurable Profile card. Give it the
+  same Show/Hide, Main/Right placement, remembered visible location, and shared
+  ordering behavior as the other movable native cards.
+- Keep Profile hidden by default with Main remembered, preserving the focused
+  default layout while allowing users to restore it on their own terms.
+- Add Profile to existing saved card orders without changing the relative order
+  of any previously managed card. This explicitly supersedes the always-hidden
+  profile and click-to-load ChessTV decisions in versions 1.0.5–1.0.6.
+
+## 68. Version 1.0.8 Product Amendments
+
+- Establish the toolbar popup's 390px intrinsic width before its shared script
+  identifies the settings surface.
+- Do not cap that intrinsic width with `100vw`; Chromium/Brave can resolve the
+  cap against an initially tiny action-popup viewport and collapse the UI.
+- Keep the separately marked persistent side panel fluid at the width supplied
+  by the browser.

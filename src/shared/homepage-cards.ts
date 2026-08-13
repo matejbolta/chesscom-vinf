@@ -6,6 +6,7 @@ export interface HomepageSidebarCard {
 }
 
 export const HOMEPAGE_SIDEBAR_CARD_CATALOG: readonly HomepageSidebarCard[] = [
+  { id: "profile", label: "Profile" },
   { id: "stats", label: "Stats" },
   { id: "chess-tv", label: "ChessTV" },
   { id: "daily-games", label: "Daily Games" },
@@ -22,5 +23,8 @@ export const DEFAULT_HOMEPAGE_SIDEBAR_ORDER: HomepageSidebarCardId[] =
 
 export const DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE: HomepageSidebarCardId[] =
   DEFAULT_HOMEPAGE_SIDEBAR_ORDER.filter(
-    (id) => id !== "recommended-match" && id !== "game-history"
+    (id) =>
+      id !== "profile" &&
+      id !== "recommended-match" &&
+      id !== "game-history"
   );

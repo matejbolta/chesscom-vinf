@@ -8,6 +8,25 @@ const popupCss = readFileSync(
 );
 
 describe("popup layout contracts", () => {
+  it("establishes the toolbar popup width before script while keeping the side panel fluid", () => {
+    expect(popupCss).toMatch(
+      /html:not\(\[data-surface="side-panel"\]\),\s*html:not\(\[data-surface="side-panel"\]\) body\s*\{[^}]*min-width:\s*390px;[^}]*width:\s*390px;/s
+    );
+    expect(popupCss).not.toMatch(/max-width:\s*100vw/);
+    expect(popupCss).toMatch(
+      /html\[data-surface="side-panel"\]\s*\{[^}]*min-width:\s*0;[^}]*width:\s*100%;/s
+    );
+    expect(popupCss).toMatch(
+      /html\[data-surface="side-panel"\]\s+body\s*\{[^}]*width:\s*100%;/s
+    );
+    expect(popupCss).toMatch(
+      /html\[data-surface="popup"\]\s*\{[^}]*scrollbar-width:\s*none;/s
+    );
+    expect(popupCss).toMatch(
+      /html\[data-surface="popup"\]::\-webkit-scrollbar\s*\{[^}]*display:\s*none;/s
+    );
+  });
+
   it("keeps switches at their full track width beside wrapping copy", () => {
     expect(popupCss).toMatch(
       /input\[role="switch"\]\s*\{[^}]*flex:\s*0 0 38px;/s

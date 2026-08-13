@@ -13,7 +13,13 @@
         <div class="layout-hero">
           <section id="home-header" data-fixture-module="native-actions">
             <div class="header-component header-top-padding">
-              <section class="cc-section cc-section-content-slim">
+              <div class="header-hero" data-fixture-module="profile-strip">
+                Profile strip
+              </div>
+              <section
+                class="cc-section cc-section-content-slim"
+                data-fixture-module="native-play-panel"
+              >
                 <div class="header-play-header-grid">
                   <div class="play-online-quick-links-component">
                     <div class="play-online-quick-links-buttons">
@@ -37,6 +43,10 @@
                     class="recommended-activity-component"
                     href="https://www.chess.com/play/computer/example-bot"
                   >Play Bots</a>
+                  <a
+                    class="recommended-activity-component"
+                    href="https://www.chess.com/analysis/game/live/example-review"
+                  >Game Review</a>
                 </div>
               </section>
             </div>
@@ -87,8 +97,9 @@
           </div>
         </div>
 
-        <div id="home-sidebar" class="layout-column-two">
-          <div class="sidebar-component">
+        <div id="home-sidebar-container" class="layout-column-two">
+          <div id="home-sidebar">
+            <div class="sidebar-component">
             <section class="cc-section sidebar-section" data-fixture-module="daily-puzzle">
               <div class="daily-puzzle-content">
                 <div class="daily-puzzle-wrap">Daily Puzzle</div>
@@ -113,7 +124,14 @@
 
             <div class="cc-section sidebar-section" data-fixture-module="chess-tv">
               <button class="tv-player-sidebar-close-button" type="button"></button>
-              <div class="tv-player-component"></div>
+              <div class="tv-player-component">
+                <iframe
+                  class="tv-player-iframe"
+                  allow="autoplay; fullscreen"
+                  src="https://www.chess.com/tv/sanitized-player"
+                  title="Sanitized ChessTV player"
+                ></iframe>
+              </div>
             </div>
 
             <div
@@ -196,6 +214,7 @@
 
             <div class="cc-section sidebar-section" data-fixture-module="unknown-card">
               Future native card
+            </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,10 @@
-# Chrome Web Store update TL;DR — 0.17.2 to 0.17.3
+# Chrome Web Store update TL;DR — 0.17.3 to 1.0.8
 
-## Upload package `release/chesscom-vinf-0.17.3.zip`
+## Upload package `release/chesscom-vinf-1.0.8.zip`
+
+## Change Store Listing → Description
+
+Copy the replacement description from `SUBMISSION.md`.
 
 ## Change Store Listing → Screenshots
 
@@ -8,5 +12,5 @@
 
 ## You're all set!
 
-The complete field-by-field reference and all copy-ready text remain in
-`SUBMISSION.md`.
+Permissions, privacy answers, URLs, category, distribution, homepage
+screenshots, and promo graphics are unchanged.

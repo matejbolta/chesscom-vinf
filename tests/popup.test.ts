@@ -79,6 +79,12 @@ describe("settings popup", () => {
     const dailyGamesPlacement = document.querySelector<HTMLSelectElement>(
       "#homepage-daily-games-placement"
     )!;
+    const profilePlacement = document.querySelector<HTMLSelectElement>(
+      "#homepage-profile-placement"
+    )!;
+    const showProfile = document.querySelector<HTMLInputElement>(
+      "#homepage-sidebar-list-profile"
+    )!;
     const showDailyGames = document.querySelector<HTMLInputElement>(
       "#homepage-sidebar-list-daily-games"
     )!;
@@ -98,6 +104,9 @@ describe("settings popup", () => {
     const showNativePlayPanel = document.querySelector<HTMLInputElement>(
       "#show-native-play-panel"
     )!;
+    expect(
+      showNativePlayPanel.closest("label")?.textContent?.trim()
+    ).toBe("Native play panel");
     const showChessTv = document.querySelector<HTMLInputElement>(
       "#homepage-sidebar-list-chess-tv"
     )!;
@@ -118,7 +127,7 @@ describe("settings popup", () => {
     )!;
     const masterCard = enabled.closest(".settings-card");
     const homepageCard = document.querySelector<HTMLElement>(
-      '[aria-labelledby="homepage-heading"]'
+      '[aria-label="Homepage settings"]'
     );
 
     expect(document.documentElement.dataset.surface).toBe("popup");
@@ -138,6 +147,9 @@ describe("settings popup", () => {
       "Side panel is not available in this browser."
     );
     expect(enabled.checked).toBe(false);
+    expect(showProfile.checked).toBe(false);
+    expect(profilePlacement.value).toBe("main");
+    expect(profilePlacement.disabled).toBe(true);
     expect(showDailyGames.checked).toBe(true);
     expect(dailyGamesPlacement.value).toBe("main");
     expect(dailyGamesPlacement.disabled).toBe(false);
@@ -151,6 +163,10 @@ describe("settings popup", () => {
     expect(gameHistoryPlacement.value).toBe("main");
     expect(gameHistoryPlacement.disabled).toBe(false);
     expect(showNativePlayPanel.checked).toBe(false);
+    expect(document.querySelector("#homepage-heading")).toBeNull();
+    expect(document.querySelector("#reset-homepage")?.parentElement).toBe(
+      masterCard?.querySelector(".settings-master-actions")
+    );
     expect(showChessTv.checked).toBe(false);
     expect(
       document.querySelector(
@@ -163,7 +179,7 @@ describe("settings popup", () => {
       Array.from(presetCount.options).map((option) => option.value)
     ).toEqual(QUICK_PLAY_PRESET_COUNTS.map(String));
     expect(selects).toHaveLength(6);
-    expect(document.querySelectorAll("select")).toHaveLength(16);
+    expect(document.querySelectorAll("select")).toHaveLength(17);
     expect(rapidState.value).toBe("retracted");
     expect(rapidState.disabled).toBe(false);
     expect(bulletState.disabled).toBe(true);
@@ -191,10 +207,15 @@ describe("settings popup", () => {
     ).toBe(true);
     expect(masterCard).not.toBeNull();
     expect(masterCard).not.toBe(homepageCard);
-    expect(masterCard?.querySelectorAll(".setting-row")).toHaveLength(1);
+    expect(masterCard?.querySelectorAll(".setting-row")).toHaveLength(0);
+    expect(masterCard?.querySelector("#enabled")).not.toBeNull();
+    expect(masterCard?.querySelector("#reset-homepage")).not.toBeNull();
     expect(homepageCard?.querySelector("#enabled")).toBeNull();
     expect(
       homepageCard?.querySelector("#homepage-daily-games-placement")
+    ).not.toBeNull();
+    expect(
+      homepageCard?.querySelector("#homepage-profile-placement")
     ).not.toBeNull();
     expect(
       homepageCard?.querySelector("#homepage-recommended-match-placement")
@@ -204,7 +225,7 @@ describe("settings popup", () => {
     ).not.toBeNull();
     expect(
       homepageCard?.querySelectorAll(".homepage-card-row")
-    ).toHaveLength(9);
+    ).toHaveLength(10);
     expect(document.querySelector(".save-button")).toBeNull();
     expect(Array.from(selects[0].options).map((option) => option.value)).toEqual([
       "30s-0",
@@ -238,6 +259,20 @@ describe("settings popup", () => {
       selects[0].querySelector<HTMLOptionElement>('option[value="10-0"]')
         ?.disabled
     ).toBe(false);
+
+    showProfile.checked = true;
+    showProfile.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushAsyncWork();
+    expect(profilePlacement.disabled).toBe(false);
+    expect(set).toHaveBeenLastCalledWith({
+      [SETTINGS_STORAGE_KEY]: {
+        ...savedSettings,
+        profilePlacement: "main"
+      }
+    });
+    showProfile.checked = false;
+    showProfile.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushAsyncWork();
 
     recommendedMatchPlacement.value = "sidebar";
     recommendedMatchPlacement.dispatchEvent(
@@ -348,7 +383,7 @@ describe("settings popup", () => {
       expect(document.querySelector("#preset-list")?.hasAttribute("hidden")).toBe(
         count === 0
       );
-      expect(document.querySelectorAll("select")).toHaveLength(10 + count);
+      expect(document.querySelectorAll("select")).toHaveLength(11 + count);
       await flushAsyncWork();
     }
     expect(set).toHaveBeenLastCalledWith({

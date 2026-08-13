@@ -3,6 +3,7 @@ import { locateHomepageModules } from "../src/content/module-locator";
 import {
   loadHomepageFixture,
   loadModernHomepageFixture,
+  loadPreviousModernHomepageFixture,
   loadResponsiveHomepageFixture
 } from "./test-utils";
 
@@ -13,6 +14,7 @@ describe("locateHomepageModules", () => {
     expect(modules.homepageToolbar?.dataset.fixtureModule).toBe(
       "homepage-toolbar"
     );
+    expect(modules.profile?.dataset.fixtureModule).toBe("homepage-toolbar");
     expect(modules.mainBanner?.id).toBe("main-banner");
     expect(modules.promoUserInfos).toHaveLength(1);
     expect(modules.promoUserInfos[0]?.dataset.fixtureModule).toBe("promo-user-info");
@@ -133,7 +135,11 @@ describe("locateHomepageModules", () => {
     expect(modules.rightColumn?.classList.contains("sidebar-component")).toBe(
       true
     );
-    expect(modules.nativeActionColumn?.id).toBe("home-header");
+    expect(modules.nativeActionColumn?.dataset.fixtureModule).toBe(
+      "native-play-panel"
+    );
+    expect(modules.profile?.dataset.fixtureModule).toBe("profile-strip");
+    expect(modules.gameReview).toBeNull();
     expect(modules.nativeLaunchTemplate?.href).toContain(
       "action=createLiveChallenge"
     );
@@ -152,5 +158,20 @@ describe("locateHomepageModules", () => {
     expect(modules.friends?.dataset.fixtureModule).toBe("friends");
     expect(modules.streaks?.dataset.fixtureModule).toBe("streaks");
     expect(modules.badgesContainer?.dataset.fixtureModule).toBe("badges");
+  });
+
+  it("supports both redesigned sidebar shell generations as desktop", () => {
+    for (const document of [
+      loadModernHomepageFixture(),
+      loadPreviousModernHomepageFixture()
+    ]) {
+      const modules = locateHomepageModules(document);
+      expect(modules.layoutMode).toBe("desktop");
+      expect(modules.leftColumn?.classList.contains("main-component")).toBe(true);
+      expect(modules.rightColumn?.classList.contains("sidebar-component")).toBe(
+        true
+      );
+      expect(modules.stats?.dataset.fixtureModule).toBe("stats");
+    }
   });
 });

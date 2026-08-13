@@ -72,6 +72,7 @@ export class LayoutController {
     }
     const hiddenSidebarCards = settings.homepageSidebarOrder.filter(
       (id) =>
+        id !== "profile" &&
         id !== "recommended-match" &&
         id !== "game-history" &&
         !settings.homepageSidebarVisible.includes(id)
@@ -85,10 +86,11 @@ export class LayoutController {
       document.documentElement.removeAttribute(MARKERS.sidebarHidden);
     }
 
-    this.hide(modules.homepageToolbar, "homepage-toolbar");
     this.hide(modules.mainBanner, "main-banner");
     for (const promoUserInfo of modules.promoUserInfos) {
-      this.hide(promoUserInfo, "promo-user-info");
+      if (promoUserInfo !== modules.profile) {
+        this.hide(promoUserInfo, "promo-user-info");
+      }
     }
     if (settings.showNativePlayPanel) {
       this.show(modules.nativeActionColumn);
@@ -98,6 +100,27 @@ export class LayoutController {
     this.hide(modules.puzzles, "puzzles");
     this.hide(modules.nextLesson, "next-lesson");
     this.hide(modules.gameReview, "game-review");
+
+    if (modules.profile) {
+      if (settings.profilePlacement === "main") {
+        if (modules.profile.parentElement !== quickPlayHost) {
+          this.restorePosition(modules.profile);
+          this.rememberPosition(modules.profile);
+          quickPlayHost.prepend(modules.profile);
+        }
+      } else if (
+        settings.profilePlacement === "hidden" ||
+        modules.profile.parentElement === quickPlayHost
+      ) {
+        this.restorePosition(modules.profile);
+      }
+      modules.profile.setAttribute(MARKERS.module, "profile");
+      if (settings.profilePlacement === "hidden") {
+        this.hide(modules.profile, "profile");
+      } else {
+        this.show(modules.profile);
+      }
+    }
 
     if (
       settings.dailyGamesPlacement !== "sidebar" &&
@@ -157,6 +180,8 @@ export class LayoutController {
     const sidebarCards: Partial<
       Record<HomepageSidebarCardId, HTMLElement | null>
     > = {
+      profile:
+        settings.profilePlacement === "sidebar" ? modules.profile : null,
       stats: modules.stats,
       "daily-puzzle": modules.dailyPuzzle,
       streaks: modules.streaks,
@@ -209,6 +234,7 @@ export class LayoutController {
       card.setAttribute(MARKERS.module, id);
       if (
         id === "daily-games" ||
+        id === "profile" ||
         id === "recommended-match" ||
         id === "game-history" ||
         visibleSidebarCards.has(id)
@@ -222,6 +248,7 @@ export class LayoutController {
     const mainCards: Partial<
       Record<HomepageSidebarCardId, HTMLElement | null>
     > = {
+      profile: settings.profilePlacement === "main" ? modules.profile : null,
       "daily-games":
         settings.dailyGamesPlacement === "main" ? modules.dailyGames : null,
       "recommended-match":
@@ -243,6 +270,7 @@ export class LayoutController {
 
     if (modules.layoutMode === "responsive") {
       const allResponsiveModules = [
+        modules.profile,
         modules.recommendedMatch,
         modules.dailyGames,
         modules.gameHistory,
@@ -254,6 +282,7 @@ export class LayoutController {
         ...settings.homepageSidebarOrder.map((id) => {
           if (
             id !== "daily-games" &&
+            id !== "profile" &&
             id !== "recommended-match" &&
             id !== "game-history" &&
             !visibleSidebarCards.has(id)

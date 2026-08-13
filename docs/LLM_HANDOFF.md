@@ -2,9 +2,9 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-07-30.
-Current source version: 0.17.3.
-Latest Store-prepared desktop package: `release/chesscom-vinf-0.17.3.zip`.
+Last updated: 2026-08-13.
+Current source version: 1.0.8.
+Latest Store-prepared desktop package: `release/chesscom-vinf-1.0.8.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
 ## Start Here
@@ -22,7 +22,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 0.17.3. This handoff is the shortest
+chronological amendments through version 1.0.8. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current User Experience
@@ -42,28 +42,34 @@ The transformed desktop homepage has:
 - no transient Daily Games row above Quick Play when Chess.com inserts that
   native module late;
 - the right sidebar beginning at the same vertical position as Quick Play;
-- a configurable right sidebar containing Stats, ChessTV, Daily Games,
-  Recommended Match and Game History when placed there, Streaks, Legend
-  League, Daily Puzzle, and Friends;
+- a configurable right sidebar containing Profile when placed there, Stats,
+  ChessTV, Daily Games, Recommended Match and Game History when placed there,
+  Streaks, Legend League, Daily Puzzle, and Friends;
 - one fixed user-selected managed-card order, filtered independently within the
   Main and Right columns, with unknown future native cards preserved visibly
   after the managed cards;
 - minimal fixed Stats content by default: Games, Rapid, then Blitz; an optional
   legacy Insights row stays last if Chess.com supplies it.
 
-The extension hides:
+The extension hides by default:
 
 - the optional recurring top campaign at the exact `#main-banner` landmark;
-- the visible avatar, username, and flag header at exact `#homepage-toolbar`;
+- the native Profile card, represented by the visible avatar, username, and flag
+  header at exact `#homepage-toolbar` or the redesigned `.header-hero`; it can
+  instead be shown in Main or Right;
 - every separate `.promo-toolbar-user-info` compatibility variant;
-- Chess.com's legacy native quick-action column and, by default, redesigned
-  exact `#home-header` hero; the redesigned native play/recommendations panel
-  can be shown from Homepage settings;
+- Chess.com's legacy native quick-action column; the separate redesigned sibling
+  play/recommendations section is hidden by default and can be shown from
+  homepage settings;
 - the profile-adjacent top Legend League summary inside that column;
 - Puzzles;
 - Next Lesson;
 - Game Review;
 - the empty native promo row after Quick Play moves into the main column.
+
+ChessTV remains completely native when its card is shown. VINF does not alter
+its iframe source, permission policy, hidden state, loading, autoplay, or
+playback.
 
 The native quick-play link remains in the hidden DOM because VINF derives safe
 launch URLs from it.
@@ -110,14 +116,15 @@ launch URLs from it.
 The toolbar popup contains:
 
 - VINF branding and the current version;
-- a standalone top card containing only `Enable VINF`;
-- a `Homepage` card with a `Native play panel` switch and a managed-card editor
-  for Stats, ChessTV, Daily Games, Recommended Match, Game History, Streaks,
-  Legend League, Daily Puzzle, and Friends;
-- Show/Hide checkboxes and fixed-order arrows for every managed card; Daily
-  Games, Recommended Match, and Game History additionally have `Main` / `Right`
-  selectors that retain their choices while hidden. The arrows define relative
-  order in whichever column those movable cards use;
+- a standalone top card containing `Enable VINF` and Homepage Reset;
+- an intentionally headerless homepage-settings card with a `Native play panel`
+  switch and a managed-card editor
+  for Profile, Stats, ChessTV, Daily Games, Recommended Match, Game History,
+  Streaks, Legend League, Daily Puzzle, and Friends;
+- Show/Hide checkboxes and fixed-order arrows for every managed card; Profile,
+  Daily Games, Recommended Match, and Game History additionally have `Main` /
+  `Right` selectors that retain their choices while hidden. The arrows define
+  relative order in whichever column those movable cards use;
 - a 0/1/2/3/4/6/8 Quick Play count selector and the corresponding number of
   preset selectors, with the selector list absent at zero;
 - adaptive count changes that keep the leading selections when shrinking and
@@ -129,7 +136,8 @@ The toolbar popup contains:
 - summary and rating visibility/order controls for the native Stats card;
 - an independent `Expanded` / `Retracted` selector beside every Stats rating
   row;
-- separate Homepage, Quick Play, and Stats Reset actions;
+- separate Homepage, Quick Play, and Stats Reset actions, with Homepage Reset
+  placed in the top Enable VINF card;
 - a compact header button that opens the same settings UI in Chromium's
   persistent side panel when the browser supports it;
 - brief autosave status feedback.
@@ -168,10 +176,11 @@ rollout removed only the Stats-card shortcut, so VINF must not interpret its
 absence as a product shutdown or add a synthetic replacement.
 
 Disabling VINF removes extension-owned UI and restores hidden/moved native nodes.
-Daily Games defaults to the right sidebar; Recommended Match and Game History
-default to their native main column. All three can use Main, Right, or Hidden
-through the same checkbox-plus-placement model. Every known managed card can be
-shown, hidden, and reordered without rebuilding its content. Chess.com's redesigned combined
+Profile defaults hidden with Main remembered. Daily Games defaults to the right
+sidebar; Recommended Match and Game History default to their native main column.
+All four can use Main, Right, or Hidden through the same
+checkbox-plus-placement model. Every known managed card can be shown, hidden,
+and reordered without rebuilding its content. Chess.com's redesigned combined
 Streaks/League wrapper is reversibly separated into two native-content card
 hosts so the two items remain independently configurable. Unknown cards are not
 hidden or absorbed into this managed model.
@@ -195,10 +204,12 @@ the same saved managed-card order. Optional cards follow the same
 placement/visibility settings as desktop. Legacy native actions,
 Puzzles, Next Lesson, Game Review, and `#main-banner` remain hidden. The exact
 `#homepage-toolbar` and all
-`.promo-toolbar-user-info` variants are also hidden when present, without
-targeting `#mobile-toolbar` or generic responsive profile controls. The
-redesigned `#home-header` follows the Native play panel setting. The grid is two
-columns at tablet widths and one column below 450px.
+`.promo-toolbar-user-info` variants are also hidden when present unless a
+nonempty one is the Profile fallback, without targeting `#mobile-toolbar` or
+generic responsive profile controls. In the redesigned `#home-header`,
+`.header-hero` follows Profile Hidden/Main/Right and only the sibling play-grid
+section follows Native play panel. The grid is two columns at tablet widths and
+one column below 450px. ChessTV remains fully native on Android as well.
 
 Read `docs/ANDROID.md` for current platform evidence, installation steps, live
 tablet checks, and limitations.
@@ -312,17 +323,21 @@ The explicit Quick Play Reset action continues to use the per-count map above.
 11. Hide the optional `#main-banner` campaign by its exact ID while VINF is
     enabled, and restore it during cleanup.
 
-12. Hide every exact `.promo-toolbar-user-info` compatibility variant; never
-    assume it is unique or use account data or a generic profile landmark as
-    the selector.
+12. Hide every empty exact `.promo-toolbar-user-info` compatibility variant;
+    when neither exact modern nor legacy Profile landmark exists, a nonempty
+    exact variant may serve as the Profile card. Never use account data or a
+    generic profile landmark as the selector.
 
-13. Hide the exact `#homepage-toolbar` that owns the visible desktop
-    avatar/name/flag row. Keep it in the DOM so signed-in detection still works;
-    do not broadly hide `#mobile-toolbar` or generic headers.
+13. Treat the exact `#homepage-toolbar` that owns the visible desktop
+    avatar/name/flag row as the legacy Profile card. Keep it in the DOM so
+    signed-in detection still works; apply its Hidden/Main/Right setting and do
+    not broadly target `#mobile-toolbar` or generic headers.
 
-14. Keep the redesigned exact `#home-header` hero hidden by default while
-    preserving its native immediate-match link in the DOM; show the complete
-    native panel only when its explicit Homepage setting is enabled.
+14. Treat the redesigned exact `#home-header .header-hero` profile strip as the
+    current Profile card and apply its Hidden/Main/Right setting. Keep its
+    sibling play-grid section hidden by default while preserving the native
+    immediate-match link; show only that play panel when its explicit homepage
+    setting is enabled.
 
 15. Keep popup settings autosaving. Quick Play Reset is preset-only and Stats
     Reset is Stats-only.
@@ -385,24 +400,31 @@ The legacy contract additionally requires its signed-in profile landmark,
 `.promo-component`, `#vue-instance.layout-column-one`, and
 `#vue-sidebar-instance.layout-column-two`. The 2026-07-28 redesign removed the
 old profile data attributes and uses exact `#home-header`,
-`#home-main.layout-column-one`, `#home-sidebar.layout-column-two`, a native
-immediate-match link, and Game History. VINF recognizes only a complete legacy
-or redesigned contract; it does not weaken the fail-closed route guard.
+`#home-main.layout-column-one`, a native immediate-match link, and Game History.
+Its desktop right shell is either the previous
+`#home-sidebar.layout-column-two` or the 2026-08-12
+`#home-sidebar-container.layout-column-two` wrapper containing
+`#home-sidebar > .sidebar-component`. VINF recognizes only a complete legacy or
+redesigned contract; it does not weaken the fail-closed route guard.
 
 Important locators:
 
-- redesigned native hero: exact `#home-header`, containing
-  `.play-online-quick-links-component`;
+- redesigned native header: exact `#home-header`; its `.header-hero` is the
+  configurable Profile card, and its sibling `.cc-section` containing
+  `.header-play-header-grid` is the separately configurable native play panel;
 - recurring top campaign: exact optional `#main-banner`; never campaign text,
   `data-name`, assets, or generated classes;
-- visible desktop profile strip: exact optional `#homepage-toolbar`, whose
-  `.toolbar-user-info[data-cy="profile-section"]` descendant remains the
-  signed-in guard landmark;
-- empty/variant promo user strips: all exact optional
+- Profile: an existing VINF `profile` marker, redesigned exact
+  `#home-header > .header-component > .header-hero`, legacy exact optional
+  `#homepage-toolbar`, then a nonempty exact `.promo-toolbar-user-info`
+  fallback. The legacy `.toolbar-user-info[data-cy="profile-section"]`
+  descendant remains the signed-in guard landmark;
+- empty/extra promo user strips: all other exact optional
   `.promo-toolbar-user-info` instances; never username, member URL, avatar,
   flag, or generic profile selectors;
 - native action stack: legacy `.play-quick-links-component` promoted to its
-  direct promo child, or redesigned exact `#home-header`;
+  direct promo child, or the redesigned `.cc-section` containing
+  `.header-play-header-grid` inside exact `#home-header`;
 - native launch template: link containing `action=createLiveChallenge` inside
   that action stack;
 - Puzzles/Next Lesson/Game Review: exact English `.promo-title` within a direct
@@ -414,7 +436,9 @@ Important locators:
   `.home-current-games-loading-view-toggle-container` as desktop
   pre-hydration fallbacks;
 - redesigned main/sidebar hosts: `#home-main > .main-component` and
-  `#home-sidebar > .sidebar-component`;
+  `#home-sidebar > .sidebar-component`; the latter is under either the previous
+  direct `#home-sidebar.layout-column-two` shell or the current outer
+  `#home-sidebar-container.layout-column-two` shell;
 - redesigned Stats: direct sidebar card containing `/stats/<member>` or
   `.stat-item-stats-section`;
 - redesigned Daily Puzzle: direct sidebar section containing
@@ -503,10 +527,12 @@ skips panel creation and removes any existing owned Quick Play panel.
 After stored settings load, the runtime also sets
 `data-chesscom-vinf-active="true"` on the exact enabled `/home` document before
 complete homepage landmarks are required. Namespaced CSS uses that stable
-ancestor to pre-hide exact native `#homepage-toolbar`, `#main-banner`,
-`.promo-toolbar-user-info`, and `.promo-component` replacements. `#home-header`
-is pre-hidden unless `data-chesscom-vinf-native-play-panel="visible"` is
-present. This closes a
+ancestor to pre-hide unmanaged exact native Profile candidates,
+`#main-banner`, empty `.promo-toolbar-user-info`, and `.promo-component`
+replacements. Once the controller identifies and marks the Profile node, its
+Hidden/Main/Right setting takes over. Within the redesigned `#home-header`, only
+the sibling play-grid section follows
+`data-chesscom-vinf-native-play-panel="visible"`. This closes a
 roughly three-frame native promo repaint found by reviewing the 2026-07-27 12:51
 recording at 60fps. Element-level markers remain for inspection and cleanup; the
 document marker disappears immediately on disable or route departure.
@@ -523,13 +549,15 @@ Stored shape:
 interface ExtensionSettings {
   enabled: boolean;
   showNativePlayPanel: boolean;
+  profilePlacement: "main" | "sidebar" | "hidden";
+  profileVisiblePlacement: "main" | "sidebar";
   dailyGamesPlacement: "main" | "sidebar" | "hidden";
   dailyGamesVisiblePlacement: "main" | "sidebar";
   recommendedMatchPlacement: "main" | "sidebar" | "hidden";
   recommendedMatchVisiblePlacement: "main" | "sidebar";
   gameHistoryPlacement: "main" | "sidebar" | "hidden";
   gameHistoryVisiblePlacement: "main" | "sidebar";
-  homepageSidebarOrder: HomepageSidebarCardId[]; // shared Main/Right order; all nine IDs exactly once
+  homepageSidebarOrder: HomepageSidebarCardId[]; // shared Main/Right order; all ten IDs exactly once
   homepageSidebarVisible: HomepageSidebarCardId[]; // visible known cards
   quickPlayPresetCount: 0 | 1 | 2 | 3 | 4 | 6 | 8;
   timeControlIds: TimeControlId[]; // exactly the selected count; repeats valid
@@ -544,23 +572,25 @@ interface ExtensionSettings {
 }
 ```
 
-Defaults are enabled, the native play panel hidden, every known card visible,
-Daily Games shown in the sidebar with its remembered visible placement also set
-to sidebar, Recommended Match and Game History shown in Main with their
+Defaults are enabled, the native play panel hidden, Profile hidden with Main
+remembered, every other known card visible except the two separately Main-placed
+cards, Daily Games shown in the sidebar with its remembered visible placement
+also set to sidebar, Recommended Match and Game History shown in Main with their
 remembered visible placements set to Main, six-button mode, and the original
-six IDs documented above. The default managed card order is Stats, ChessTV,
-Daily Games, Recommended Match, Game History, Streaks, Legend League, Daily
-Puzzle, Friends. Stats defaults are
+six IDs documented above. The default managed card order is Profile, Stats,
+ChessTV, Daily Games, Recommended Match, Game History, Streaks, Legend League,
+Daily Puzzle, Friends. Stats defaults are
 Games only plus Rapid/Blitz, in the fixed orders described in Current User
 Experience, with all six rating-state values initially retracted.
 `normalizeSettings` is the persistence boundary; old saved objects infer
 their button count from any complete valid 1/2/3/4/6/8-ID array and automatically
 gain all Stats defaults. Existing valid six- and eight-ID arrays therefore keep
 their previous modes. Zero requires an explicit saved count so an old missing or
-empty preset array cannot accidentally disable Quick Play. A complete old
-eight-card order receives Game History immediately after Recommended Match. A
-complete older seven-card order receives Recommended Match after Daily Games
-and Game History immediately after it. The retired
+empty preset array cannot accidentally disable Quick Play. A complete 1.0.6
+nine-card order receives Profile first without changing any existing relative
+order. A complete older eight-card order additionally receives Game History
+immediately after Recommended Match. A complete older seven-card order receives
+Recommended Match after Daily Games and Game History immediately after it. The retired
 global `statsDefaultState` value is copied to all six per-rating entries during
 migration.
 
@@ -574,11 +604,14 @@ Preserve these migrations:
   location follows any valid visible placement;
 - missing Game History settings default to visible Main; its remembered
   location follows any valid visible placement;
-- a complete previous eight-card order gains Game History immediately after
+- missing Profile settings default to Hidden with Main remembered;
+- a complete previous nine-card order gains Profile first without changing the
+  relative order of its existing cards;
+- a complete previous eight-card order gains Profile first and Game History immediately after
   Recommended Match without changing the relative order of existing cards;
-- a complete retired seven-card order gains Recommended Match immediately after
-  Daily Games and Game History immediately after Recommended Match without
-  changing the relative order of existing cards;
+- a complete retired seven-card order gains Profile first, Recommended Match
+  immediately after Daily Games, and Game History immediately after Recommended
+  Match without changing the relative order of existing cards;
 - retired `showChessTv` and `showLegendLeague` seed the corresponding new card
   visibility entries when the new visibility array is absent;
 - retired `15-0` becomes `20-0`.
@@ -643,6 +676,7 @@ The extension stores only:
 
 - enabled state;
 - native play-panel visibility;
+- Profile visibility and remembered Main/Right placement;
 - Daily Games placement;
 - Daily Games' remembered Main/Right location while hidden;
 - known homepage sidebar card order and visibility;
@@ -677,7 +711,7 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 0.17.3, the suite has 95 passing tests across thirteen files. Important
+As of version 1.0.8, the suite has 101 passing tests across thirteen files. Important
 coverage includes:
 
 - exact legacy/redesigned signed-in homepage detection and route rejection;
@@ -697,11 +731,11 @@ coverage includes:
 - independent one-time native initial expansion or retraction for every visible
   known rating row, preserving later manual state changes;
 - dynamic content replacement, route departure, and settings changes;
-- Daily Games, Recommended Match, and Game History visibility with remembered
-  Main/Right placement plus visibility and fixed ordering for all nine known
+- Profile, Daily Games, Recommended Match, and Game History visibility with remembered
+  Main/Right placement plus visibility and fixed ordering for all ten known
   managed cards on desktop and responsive layouts, including custom ordering
   within Main, early hidden-card pre-arming, and retired
-  eight-/seven-card-order migration;
+  nine-/eight-/seven-card-order migration;
 - late and pre-hydration Daily Games insertion with a pre-armed native-slot
   marker, both native loading-shell fallbacks, and Quick Play-first loading
   placement even before Game History receives its final component class;
@@ -710,12 +744,16 @@ coverage includes:
   mutation reconciliation without desktop column IDs;
 - optional and dynamically replaced `#main-banner` campaign hiding plus cleanup;
 - multiple optional and dynamically replaced `.promo-toolbar-user-info`
-  instances hiding plus cleanup, without account-specific selectors;
-- exact and dynamically replaced `#homepage-toolbar` hiding plus cleanup while
-  its signed-in descendant remains available to the page guard;
+  instances handled as empty compatibility strips or an exact nonempty Profile
+  fallback, without account-specific selectors;
+- exact legacy `#homepage-toolbar` and redesigned `.header-hero` Profile
+  Hidden/Main/Right placement, ordering, and cleanup while the signed-in
+  descendant remains available to the page guard;
 - redesigned `#home-header`, column-host, Game History, Stats, Daily Puzzle,
   Streaks, League, Friends, ChessTV, and unknown-card compatibility without
-  mistaking history analysis links for Game Review;
+  mistaking history or native-panel analysis links for standalone Game Review;
+- proof that VINF leaves the native ChessTV iframe source, permissions, hidden
+  state, loading, autoplay, and playback untouched;
 - legacy button-based, redesigned link-only, and redesigned anchor/chevron
   expandable Stats schema handling;
 - enabled-document pre-hiding of exact native toolbar/hero/banner/promo
@@ -802,11 +840,15 @@ needed.
 
 ## Release Procedure
 
-Use semantic versioning:
+Use VINF's product-era versioning:
 
-- patch for fixes and small visual/order adjustments;
-- minor for meaningful user-visible capabilities;
-- major only for a stable public milestone.
+- `1.0.0` identifies the completed homepage-only generation;
+- the first implemented in-game enhancement begins the next chapter at
+  `2.0.0`, without waiting for the complete planned in-game feature set;
+- within a product chapter, increment the middle number for each subsequent
+  feature release and the final number for bug-fix releases;
+- a new major identifies a new VINF product surface or chapter and does not
+  require a backward-incompatible change.
 
 Every internal behavior or UI change receives a version bump immediately so the
 popup, manifest, and locally loaded unpacked build identify the exact code under
@@ -838,11 +880,11 @@ dependency or request directive.
 
 Latest explicitly prepared Store artifact:
 
-    release/chesscom-vinf-0.17.3.zip
+    release/chesscom-vinf-1.0.8.zip
 
 SHA-256:
 
-    b86d0a876ba0408f64821996c303012b228e0112c3268293742ef1e7b1d107b7
+    22bfb07bb62156c07dd0a8e839d2cc53000b5e304761aa808c37e4bdb2b57c31
 
 Android artifact:
 
@@ -850,11 +892,11 @@ Android artifact:
 
 Latest convenience Chrome Web Store handoff:
 
-    release/chesscom-vinf-0.17.3-store-submission.zip
+    release/chesscom-vinf-1.0.8-store-submission.zip
 
 SHA-256:
 
-    04f3ebeea91b952564e6552bf29653216d6d2e63826e914c579c740a8a328111
+    544a82a99c2ab635d0b38ba7e15fe37916998e4086d3fb6fc93d7883ec418e9c
 
 The project is an independent public Git repository:
 
@@ -872,9 +914,9 @@ Public-safe Chrome Web Store copy and synthetic graphic assets live under
 Version 0.17.2 was the current Chrome Web Store build tested by the user on
 2026-07-30. Treat it as the uploaded Store baseline unless a later handoff
 records a newer upload. `store-listing/SUBMISSION.md` contains the complete
-field-by-field 0.17.3 update record using copy-safe fenced text blocks instead
+field-by-field 1.0.8 update record using copy-safe fenced text blocks instead
 of Markdown blockquotes. The refreshed settings screenshot is public-safe and
-shows version 0.17.3; the two homepage screenshots and promo artwork remain
+shows version 1.0.8; the two homepage screenshots and promo artwork remain
 unchanged.
 
 `store-listing/UPDATE_TLDR.md` is the preferred dashboard workflow for each
@@ -893,6 +935,62 @@ released on GitHub. Its local `dist/`, `dist-android/`, Store ZIP, and
 convenience submission archive are rebuilt and validated. The local release
 directory remains ignored by Git.
 
+Version `1.0.0` is the homepage milestone declaring the existing homepage
+generation complete. It intentionally changed no homepage behavior. The first
+actual in-game enhancement must be versioned `2.0.0`, followed by `2.x.0`
+feature increments and `2.x.y` bug-fix increments.
+
+Version `1.0.1` restores the
+desktop contract after Chess.com wrapped `#home-sidebar` in
+`#home-sidebar-container.layout-column-two`, and caps the toolbar popup at its
+intended 390px width after Chromium's intrinsic sizing expanded it to roughly
+800px.
+
+Version `1.0.2` moves that width
+contract to the popup document root after live Chromium testing showed that a
+body-only width still left a wide blank viewport. The persistent side panel
+remains fluid.
+
+Version `1.0.3` hides the temporary
+toolbar popup's visible scrollbar and reserved gutter without disabling wheel,
+trackpad, keyboard, or programmatic scrolling; the persistent side panel keeps
+native scrollbar behavior.
+
+Version `1.0.4` explicitly fixes both
+the root and body of the toolbar popup at 390px after live Chromium showed that
+a percentage body width could collapse the scrollbar-free action surface toward
+its minimum content width. Both remain fluid in side-panel mode.
+
+Version `1.0.5` separates the current
+redesigned `#home-header` children: the `.header-hero` username strip is always
+hidden while VINF is active, while only the sibling section containing
+`.header-play-header-grid` follows Native play panel. The redundant explanatory
+sentence under that setting was removed on desktop and Android.
+
+Version `1.0.6` excludes the current
+play panel's own Game Review tile from standalone Game Review fallback, making
+Native play panel functional while keeping the sibling profile strip hidden.
+It also makes ChessTV explicitly click-to-load with autoplay denied, removes
+the redundant Homepage heading/helper row, and moves Homepage Reset beside
+Enable VINF on desktop and Android.
+
+Version `1.0.7` superseded 1.0.6's
+ChessTV decision by removing every loading/autoplay intervention and leaving the
+native player untouched. It also turns the legacy `#homepage-toolbar` and
+redesigned `.header-hero` into one managed Profile card with Show/Hide,
+Main/Right placement, remembered location, and shared ordering on desktop and
+Android. Existing nine-/eight-/seven-card orders migrate without reshuffling
+their previous relative order. The existing `0.17.3` Store artifact remains
+the latest prepared package.
+
+Version `1.0.8` fixes a cross-device Chromium/Brave toolbar-popup collapse.
+The popup establishes its intrinsic 390px root/body width before JavaScript
+marks the settings surface, without using a `100vw` cap that can resolve
+against an initially tiny popup viewport. The separately marked persistent
+side panel remains fluid at the browser-provided width. It is the current
+Store-prepared version, with updated public-safe listing copy and settings
+screenshot; its source is pushed only as part of this explicit release task.
+
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
 secret-shaped credentials, and weakened raw-capture ignore rules.
@@ -909,17 +1007,19 @@ should verify:
 4. Confirm popup settings, including Stats visibility/order and independent
    per-rating initial states, survive popup close/reopen and browser restart.
 5. Confirm extension disable/enable restores and reapplies the native page.
-6. Confirm Daily Games, Recommended Match, and Game History Show/Hide and
-   Main/Right placement plus every known managed card's visibility/order apply
-   within both columns without a reload.
+6. Confirm Profile, Daily Games, Recommended Match, and Game History Show/Hide
+   and Main/Right placement plus every known managed card's visibility/order
+   apply within both columns without a reload.
 7. Confirm Recommended Match in Main, Right, and Hidden. At sidebar width its
    native challenge tile must use one column.
 8. Confirm Game History in Main, Right, and Hidden; when Right, verify native
    history rows and links remain usable.
-9. Confirm refresh, SPA departure/return, and narrow-window behavior.
-10. Confirm Game History, Stats, navigation, and every enabled optional card
+9. Confirm Profile in Main, Right, and Hidden, with its native link still usable.
+10. Confirm ChessTV retains native loading/autoplay behavior when shown.
+11. Confirm refresh, SPA departure/return, and narrow-window behavior.
+12. Confirm Game History, Stats, navigation, and every enabled optional card
    remain usable.
-11. Install the Android userscript in current Firefox/Violentmonkey and verify
+13. Install the Android userscript in current Firefox/Violentmonkey and verify
    portrait, landscape, settings persistence, SPA return, and disable/restore.
 
 Do not mark these complete based only on fixtures or URL-construction tests.
@@ -939,16 +1039,21 @@ reverse them while “cleaning up” code:
 - Clock icons were intentionally removed.
 - Quick Play intentionally matches the full Game History width and aligns left.
 - The complete sidebar intentionally starts alongside Quick Play.
-- The default managed card order is intentionally Stats, ChessTV, Daily Games,
-  Recommended Match, Game History, Streaks, Legend League, Daily Puzzle,
-  Friends. Every known card has explicit presentation settings. Daily Games,
-  Recommended Match, and Game History use the same checkbox plus a Main/Right
-  selector that preserves location while hidden. Recommended Match and Game
-  History intentionally default to Main. The one saved sequence applies
+- The default managed card order is intentionally Profile, Stats, ChessTV,
+  Daily Games, Recommended Match, Game History, Streaks, Legend League, Daily
+  Puzzle, Friends. Every known card has explicit presentation settings. Profile,
+  Daily Games, Recommended Match, and Game History use the same checkbox plus a
+  Main/Right selector that preserves location while hidden. Profile intentionally
+  defaults hidden with Main remembered; Recommended Match and Game History
+  intentionally default visible in Main. The one saved sequence applies
   independently within Main and Right; Quick Play remains pinned above Main.
 - The right-column label is intentionally `ChessTV`, not `ChessTV & events`.
   Separate event banners are different native homepage modules even when
   Chess.com's own settings group both features under one toggle.
+- ChessTV is intentionally native. Do not remove or replace its iframe source,
+  change its permission policy or hidden state, add click-to-load UI, or impose
+  any loading/autoplay/playback restriction. Its card setting controls only
+  presentation and order.
 - A late or pre-hydration native Daily Games row must never flash above or shift
   Quick Play; both native loading-shell fallbacks and the temporary left-slot
   CSS guard are intentional.
@@ -1002,14 +1107,18 @@ reverse them while “cleaning up” code:
   synchronous reconcile. Do not split it into separately painted stages.
 - The recurring `#main-banner` campaign is intentionally hidden without a
   separate setting; disabling VINF restores it.
-- The visible desktop avatar/name/flag strip is `#homepage-toolbar`; it is
-  intentionally hidden without targeting `#mobile-toolbar` or generic headers.
-- Every `.promo-toolbar-user-info` compatibility variant remains hidden; the
-  live marked instance was empty and the class is not assumed to be unique.
-- The 2026-07-28 redesign is a separate explicit contract: `#home-header`,
-  `#home-main > .main-component`, and
-  `#home-sidebar > .sidebar-component`. Preserve the legacy contract alongside
-  it for A/B cohorts and rollbacks.
+- The visible desktop avatar/name/flag strip is `#homepage-toolbar`; together
+  with redesigned `.header-hero`, it is the configurable Profile card. Never
+  target `#mobile-toolbar` or generic headers.
+- Empty `.promo-toolbar-user-info` compatibility variants remain hidden; the
+  class is not assumed unique. A nonempty exact variant is only a Profile
+  fallback when neither primary Profile landmark exists.
+- The redesigned homepage is a separate explicit contract: `#home-header`,
+  `#home-main > .main-component`, and `#home-sidebar > .sidebar-component`.
+  The right host may receive its desktop-column identity directly from
+  `#home-sidebar.layout-column-two` or through the current outer
+  `#home-sidebar-container.layout-column-two`; preserve both generations and
+  the legacy homepage for A/B cohorts and rollbacks.
 - Redesigned Game History contains `/analysis/game/...` links. Always exclude
   the located history card from Game Review path fallback.
 - Redesigned Stats rows may be link-only or natively expandable anchor rows.
@@ -1028,8 +1137,8 @@ reverse them while “cleaning up” code:
   re-audit the exact semantic modules; do not replace them with account-specific
   or broad profile selectors.
 - Private complete-page captures and sanitized desktop fixtures cover the
-  2026-07-16 legacy shell, 2026-07-28 redesign, and 2026-07-29 native
-  Recommended Match card.
+  2026-07-16 legacy shell, 2026-07-28 redesign, 2026-07-29 native Recommended
+  Match card, and 2026-08-12 nested redesigned sidebar shell.
 - Promo-card detection uses exact English titles and may not work in other
   locales.
 - Known Stats row recognition uses exact English native labels. Semantic paths
@@ -1104,15 +1213,16 @@ native Insights row must remain unmarked and last. Do not hide an unknown row
 to make the card look tidy; capture the smallest sanitized new structure and
 update the catalog/audit deliberately.
 
-### The top avatar/name strip remains visible
+### The Profile card is missing or in the wrong column
 
 First confirm the popup and `brave://extensions` card show the current source
-version; otherwise Brave is reloading a stale unpacked directory. In version
-0.8.4 and later, the visible `#homepage-toolbar` must carry
-`data-chesscom-vinf-hidden="homepage-toolbar"`. Separate
-`.promo-toolbar-user-info` instances must carry the `promo-user-info` marker,
-but the live marked instance was empty. Do not replace either exact selector
-with a broad profile selector.
+version; otherwise Brave is reloading a stale unpacked directory. The selected
+native node must carry `data-chesscom-vinf-module="profile"`; Hidden adds
+`data-chesscom-vinf-hidden="profile"`, while Main/Right moves that exact node
+into the selected managed prefix. Prefer redesigned `.header-hero`, then legacy
+`#homepage-toolbar`; only a nonempty exact `.promo-toolbar-user-info` can be the
+fallback. Empty extras carry `promo-user-info`. Do not replace these exact
+selectors with a broad or account-specific profile selector.
 
 ### Popup choice resets after closing
 

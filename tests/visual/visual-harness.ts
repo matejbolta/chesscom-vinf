@@ -64,7 +64,10 @@ let previewSettings: ExtensionSettings = isQuickPlayPresetCount(
       }
     : DEFAULT_SETTINGS;
 
-if (searchParams.has("native-panel")) {
+if (
+  searchParams.has("native-panel") ||
+  document.documentElement.dataset.fixtureNativePanel === "true"
+) {
   previewSettings = {
     ...previewSettings,
     showNativePlayPanel: true
@@ -76,6 +79,7 @@ if (searchParams.has("sidebar-preview")) {
     ...previewSettings,
     dailyGamesPlacement: "hidden",
     homepageSidebarOrder: [
+      "profile",
       "daily-puzzle",
       "stats",
       "legend-league",
@@ -137,6 +141,7 @@ if (searchParams.has("main-order-preview")) {
   previewSettings = {
     ...previewSettings,
     homepageSidebarOrder: [
+      "profile",
       "stats",
       "chess-tv",
       "daily-games",

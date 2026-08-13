@@ -3,8 +3,8 @@
 ChessComVINF (Version Infinity) turns the signed-in Chess.com homepage into a
 focused dashboard. It provides configurable one-click matchmaking, promotes
 Game History and Stats, and removes homepage modules that interrupt the normal
-play workflow, including Chess.com's recurring top campaign banner and redundant
-homepage avatar/username toolbar. The current redesigned homepage and the
+play workflow, including Chess.com's recurring top campaign banner. The native
+profile strip is configurable like the other homepage cards. The current redesigned homepage and the
 preceding desktop layout are both supported.
 
 ![Sanitized ChessComVINF homepage](docs/reference-homepage.png)
@@ -13,12 +13,13 @@ ChessComVINF is an independent, unofficial extension and is not affiliated with,
 endorsed by, or sponsored by Chess.com.
 
 The extension toolbar popup keeps its master `Enable VINF` switch in a standalone
-top card. Its `Homepage` section can show or hide Chess.com's large native play
+top card. Its homepage settings can show or hide Chess.com's large native play
 panel, independently show or hide every known managed card, and apply one
 user-selected relative order within both the Main and Right columns. Daily
-Games, Recommended Match, and Game History each have a visibility checkbox plus
-a Main/Right placement selector that remembers the selected location while
-hidden.
+Games, Recommended Match, Game History, and Profile each have a visibility
+checkbox plus a Main/Right placement selector that remembers the selected
+location while hidden. ChessTV remains fully native; VINF does not alter its
+loading, autoplay, or player permissions.
 On supported Chromium browsers, the header button can move the same autosaving
 settings UI into the browser's persistent side panel. A close button beside the
 version badge closes that panel without reaching for the browser toolbar.

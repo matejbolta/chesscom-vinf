@@ -51,6 +51,9 @@ describe("LayoutController", () => {
     const sidebar = document.querySelector<HTMLElement>(
       "#home-sidebar > .sidebar-component"
     )!;
+    expect(
+      document.querySelector("#home-sidebar-container.layout-column-two")
+    ).not.toBeNull();
     const quickPlay = document.querySelector<HTMLElement>(
       `[${MARKERS.owned}="quick-play"]`
     )!;
@@ -61,8 +64,13 @@ describe("LayoutController", () => {
       "recommended-match"
     );
     expect(
-      document.querySelector("#home-header")?.getAttribute(MARKERS.hidden)
+      document
+        .querySelector('[data-fixture-module="native-play-panel"]')
+        ?.getAttribute(MARKERS.hidden)
     ).toBe("native-actions");
+    expect(document.querySelector("#home-header")?.hasAttribute(MARKERS.hidden)).toBe(
+      false
+    );
     expect(
       document
         .querySelector('[data-fixture-module="game-history"]')
@@ -91,6 +99,11 @@ describe("LayoutController", () => {
     expect(document.querySelector("#home-header")?.hasAttribute(MARKERS.hidden)).toBe(
       false
     );
+    expect(
+      document
+        .querySelector('[data-fixture-module="native-play-panel"]')
+        ?.hasAttribute(MARKERS.hidden)
+    ).toBe(false);
     expect(moduleOrder(sidebar)).toEqual([
       "daily-puzzle",
       "badges",
@@ -114,6 +127,7 @@ describe("LayoutController", () => {
       ...DEFAULT_SETTINGS,
       showNativePlayPanel: true,
       homepageSidebarOrder: [
+        "profile",
         "friends",
         "daily-puzzle",
         "legend-league",
@@ -132,7 +146,9 @@ describe("LayoutController", () => {
     });
 
     expect(
-      document.querySelector("#home-header")?.hasAttribute(MARKERS.hidden)
+      document
+        .querySelector('[data-fixture-module="native-play-panel"]')
+        ?.hasAttribute(MARKERS.hidden)
     ).toBe(false);
     expect(document.documentElement.getAttribute(MARKERS.nativePlayPanel)).toBe(
       "visible"
@@ -174,6 +190,96 @@ describe("LayoutController", () => {
     ]);
   });
 
+  it("leaves the native ChessTV iframe completely untouched", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const iframe = document.querySelector<HTMLIFrameElement>(
+      '[data-fixture-module="chess-tv"] iframe'
+    )!;
+
+    expect(iframe.getAttribute("allow")).toBe("autoplay; fullscreen");
+    expect(iframe.getAttribute("src")).toBe(
+      "https://www.chess.com/tv/sanitized-player"
+    );
+    controller.reconcile(document, HOME_LOCATION);
+    expect(iframe.getAttribute("allow")).toBe("autoplay; fullscreen");
+    expect(iframe.getAttribute("src")).toBe(
+      "https://www.chess.com/tv/sanitized-player"
+    );
+    expect(iframe.hidden).toBe(false);
+    expect(document.querySelector(".chesscom-vinf-chess-tv-load")).toBeNull();
+
+    controller.cleanup(document);
+    expect(iframe.getAttribute("allow")).toBe("autoplay; fullscreen");
+    expect(iframe.getAttribute("src")).toBe(
+      "https://www.chess.com/tv/sanitized-player"
+    );
+  });
+
+  it("moves, orders, hides, and restores the native Profile card", () => {
+    const document = loadModernHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const profile = document.querySelector<HTMLElement>(
+      '[data-fixture-module="profile-strip"]'
+    )!;
+    const originalParent = profile.parentElement;
+    const main = document.querySelector<HTMLElement>(
+      "#home-main > .main-component"
+    )!;
+    const sidebar = document.querySelector<HTMLElement>(
+      "#home-sidebar > .sidebar-component"
+    )!;
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      profilePlacement: "main",
+      profileVisiblePlacement: "main"
+    });
+    const quickPlay = document.querySelector<HTMLElement>(
+      `[${MARKERS.owned}="quick-play"]`
+    )!;
+    expect(profile.parentElement).toBe(main);
+    expect(Array.from(main.children).slice(0, 3)).toEqual([
+      quickPlay,
+      profile,
+      document.querySelector('[data-fixture-module="recommended-match"]')
+    ]);
+    expect(profile.hasAttribute(MARKERS.hidden)).toBe(false);
+    expect(
+      controller.reconcile(document, HOME_LOCATION, {
+        ...DEFAULT_SETTINGS,
+        profilePlacement: "main",
+        profileVisiblePlacement: "main"
+      })
+    ).toBe(true);
+    expect(profile.parentElement).toBe(main);
+    expect(document.querySelectorAll(`[${MARKERS.module}="profile"]`)).toHaveLength(
+      1
+    );
+
+    controller.cleanup(document);
+    expect(profile.parentElement).toBe(originalParent);
+    expect(profile.hasAttribute(MARKERS.module)).toBe(false);
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      profilePlacement: "sidebar",
+      profileVisiblePlacement: "sidebar",
+      homepageSidebarVisible: [
+        "profile",
+        ...DEFAULT_SETTINGS.homepageSidebarVisible
+      ]
+    });
+    expect(profile.parentElement).toBe(sidebar);
+    expect(sidebar.firstElementChild).toBe(profile);
+
+    controller.cleanup(document);
+    expect(profile.parentElement).toBe(originalParent);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
+    expect(profile.parentElement).toBe(originalParent);
+    expect(profile.getAttribute(MARKERS.hidden)).toBe("profile");
+  });
+
   it("applies the saved managed-card order within the desktop main column", () => {
     const document = loadModernHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
@@ -190,6 +296,7 @@ describe("LayoutController", () => {
       '[data-fixture-module="main-placeholder"]'
     )!;
     const historyFirstOrder = [
+      "profile",
       "stats",
       "chess-tv",
       "daily-games",
@@ -261,7 +368,7 @@ describe("LayoutController", () => {
 
     expect(
       document.querySelector("#homepage-toolbar")?.getAttribute(MARKERS.hidden)
-    ).toBe("homepage-toolbar");
+    ).toBe("profile");
     expect(document.querySelector("#main-banner")?.getAttribute(MARKERS.hidden)).toBe(
       "main-banner"
     );
@@ -912,7 +1019,7 @@ describe("LayoutController", () => {
     controller.reconcile(document, HOME_LOCATION);
 
     expect(newPuzzles.getAttribute(MARKERS.hidden)).toBe("puzzles");
-    expect(newHomepageToolbar.getAttribute(MARKERS.hidden)).toBe("homepage-toolbar");
+    expect(newHomepageToolbar.getAttribute(MARKERS.hidden)).toBe("profile");
     expect(newMainBanner.getAttribute(MARKERS.hidden)).toBe("main-banner");
     expect(newPromoUserInfo.getAttribute(MARKERS.hidden)).toBe("promo-user-info");
     expect(moduleOrder(rightColumn)).toEqual([
@@ -1028,6 +1135,7 @@ describe("LayoutController", () => {
     const settings = {
       ...DEFAULT_SETTINGS,
       homepageSidebarOrder: [
+        "profile",
         "stats",
         "chess-tv",
         "daily-games",

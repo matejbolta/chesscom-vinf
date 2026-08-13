@@ -3,6 +3,8 @@ import type {
   HomepageSidebarCardId,
   MainColumnCardPlacement,
   MainColumnCardVisiblePlacement,
+  ProfilePlacement,
+  ProfileVisiblePlacement,
   StatsDefaultState,
   StatsRatingId,
   StatsRatingStates,
@@ -35,6 +37,8 @@ export const SETTINGS_STORAGE_KEY = "vinfSettings";
 export const DEFAULT_SETTINGS: ExtensionSettings = {
   enabled: true,
   showNativePlayPanel: false,
+  profilePlacement: "hidden",
+  profileVisiblePlacement: "main",
   dailyGamesPlacement: "sidebar",
   dailyGamesVisiblePlacement: "sidebar",
   recommendedMatchPlacement: "main",
@@ -135,27 +139,46 @@ function normalizeHomepageSidebarOrder(
   }
 
   const previousCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
-    (id) => id !== "game-history"
+    (id) => id !== "profile"
   );
   if (
     unique.length === previousCardIds.length &&
-    !unique.includes("game-history") &&
+    !unique.includes("profile") &&
     previousCardIds.every((id) => unique.includes(id))
   ) {
+    unique.unshift("profile");
+    return unique;
+  }
+
+  const previousEightCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
+    (id) => id !== "profile" && id !== "game-history"
+  );
+  if (
+    unique.length === previousEightCardIds.length &&
+    !unique.includes("profile") &&
+    !unique.includes("game-history") &&
+    previousEightCardIds.every((id) => unique.includes(id))
+  ) {
+    unique.unshift("profile");
     const recommendedMatchIndex = unique.indexOf("recommended-match");
     unique.splice(recommendedMatchIndex + 1, 0, "game-history");
     return unique;
   }
 
   const earlierCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
-    (id) => id !== "recommended-match" && id !== "game-history"
+    (id) =>
+      id !== "profile" &&
+      id !== "recommended-match" &&
+      id !== "game-history"
   );
   if (
     unique.length === earlierCardIds.length &&
     !unique.includes("recommended-match") &&
     !unique.includes("game-history") &&
+    !unique.includes("profile") &&
     earlierCardIds.every((id) => unique.includes(id))
   ) {
+    unique.unshift("profile");
     const dailyGamesIndex = unique.indexOf("daily-games");
     unique.splice(dailyGamesIndex + 1, 0, "recommended-match");
     unique.splice(dailyGamesIndex + 2, 0, "game-history");
@@ -211,6 +234,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   const candidate = value as {
     enabled?: unknown;
     showNativePlayPanel?: unknown;
+    profilePlacement?: unknown;
+    profileVisiblePlacement?: unknown;
     dailyGamesPlacement?: unknown;
     dailyGamesVisiblePlacement?: unknown;
     recommendedMatchPlacement?: unknown;
@@ -258,6 +283,18 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   const hasCompletePresetSelection =
     rawIds.length === quickPlayPresetCount &&
     ids.length === quickPlayPresetCount;
+  const profilePlacement = isMainColumnCardPlacement(
+    candidate.profilePlacement
+  )
+    ? (candidate.profilePlacement as ProfilePlacement)
+    : DEFAULT_SETTINGS.profilePlacement;
+  const profileVisiblePlacement = isMainColumnCardVisiblePlacement(
+    candidate.profileVisiblePlacement
+  )
+    ? (candidate.profileVisiblePlacement as ProfileVisiblePlacement)
+    : isMainColumnCardVisiblePlacement(profilePlacement)
+      ? profilePlacement
+      : DEFAULT_SETTINGS.profileVisiblePlacement;
   const dailyGamesPlacement = isMainColumnCardPlacement(
     candidate.dailyGamesPlacement
   )
@@ -321,11 +358,15 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       return candidate.showLegendLeague !== false;
     }
     return (
+      id !== "profile" &&
       id !== "daily-games" &&
       id !== "recommended-match" &&
       id !== "game-history"
     );
   });
+  if (profilePlacement === "sidebar") {
+    normalizedHomepageSidebarVisible.push("profile");
+  }
   if (dailyGamesPlacement === "sidebar") {
     normalizedHomepageSidebarVisible.push("daily-games");
   }
@@ -351,6 +392,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       typeof candidate.showNativePlayPanel === "boolean"
         ? candidate.showNativePlayPanel
         : DEFAULT_SETTINGS.showNativePlayPanel,
+    profilePlacement,
+    profileVisiblePlacement,
     dailyGamesPlacement,
     dailyGamesVisiblePlacement,
     recommendedMatchPlacement,
