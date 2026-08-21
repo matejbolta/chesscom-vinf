@@ -1,7 +1,7 @@
 # Chess.com Homepage Extension — Product Brief
 
 Status: historical initial requirements. The extension is implemented and has
-evolved through version 0.7.0. Read `LLM_HANDOFF.md` for current behavior and
+evolved through version 0.7.0. Read `HANDOFF.md` for current behavior and
 `FINAL_PRODUCT_SPEC.md` for the original specification plus later amendments.
 
 ## Product Goal

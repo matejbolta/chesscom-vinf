@@ -630,7 +630,7 @@ Visibility arrays filter unknown and duplicate IDs; an empty array is valid.
 
     AGENTS.md                         Short mandatory agent instructions
     README.md                         User/developer overview
-    docs/LLM_HANDOFF.md               Canonical current-state project memory
+    docs/HANDOFF.md               Canonical current-state project memory
     docs/FINAL_PRODUCT_SPEC.md        Original full spec plus version amendments
     docs/DOM_AUDIT.md                 Verified selectors and launch contract
     docs/ANDROID.md                   Android platform, install, and test guide

@@ -76,7 +76,7 @@ desktop package.
 
 ## Product documentation
 
-- `docs/LLM_HANDOFF.md` is the canonical current-state memory for future agents.
+- `docs/HANDOFF.md` is the canonical current-state memory for future agents.
 - `docs/PRODUCT_BRIEF.md` records the original requirements.
 - `docs/FINAL_PRODUCT_SPEC.md` is the detailed product specification.
 - `docs/DOM_AUDIT.md` records the verified selectors and native launch method.

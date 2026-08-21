@@ -6,12 +6,12 @@ directory.
 
 ## Required project context
 
-- Before changing this project, read `docs/LLM_HANDOFF.md` completely. It is the
+- Before changing this project, read `docs/HANDOFF.md` completely. It is the
   canonical current-state summary and routes to deeper documentation.
 - Treat `docs/PRODUCT_BRIEF.md` as historical input, not current implementation
   status. Later decisions in the handoff and `docs/FINAL_PRODUCT_SPEC.md`
   supersede it.
-- Update `docs/LLM_HANDOFF.md` whenever behavior, architecture, selectors,
+- Update `docs/HANDOFF.md` whenever behavior, architecture, selectors,
   settings, release procedure, known limitations, or the current version changes.
 
 ## Product invariants
