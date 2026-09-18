@@ -11,7 +11,7 @@
 - [x] Chrome Web Store copy contains no Markdown blockquote prefixes, reflects
   every current homepage control, and keeps the zero-collection disclosures.
 - [x] Public-safe store screenshots use only synthetic identities and reflect
-  the currently prepared Store version, 1.0.8.
+  the currently prepared Store version, 2.2.0.
 - [x] All 17 catalog controls map to their exact native base/increment pairs.
 - [x] Popup uses a desktop-first union of Bullet, Blitz, and Rapid presets.
 - [x] Desktop and Android settings share one Blitz group ordered `3 min`,
@@ -50,7 +50,7 @@
 - [x] Game History visibility plus `Main` / `Right` placement normalize,
   autosave, preserve the selected location while hidden, and retain existing
   eight- and seven-card orders during migration.
-- [x] All ten known managed cards normalize, autosave, show/hide, and use one
+- [x] All eleven known managed cards normalize, autosave, show/hide, and use one
   fixed relative order within both Main and Right placements.
 - [x] Profile visibility plus `Main` / `Right` placement normalize, autosave,
   preserve the selected location while hidden, and migrate into previous saved
@@ -62,6 +62,8 @@
 - [x] Stats Reset is scoped to Stats preferences; Quick Play Reset remains
   preset-only.
 - [x] Native Stats rows restore their exact original order during cleanup.
+- [x] Responsive `.stats-mobile-card` ratings obey the same saved visibility
+  and order, collapse to the selected native grid rows, and restore on cleanup.
 - [x] Unknown future Stats rows remain visible, and any native Insights row
   remains visible last.
 - [x] Expanding a native Stats row does not cause VINF to move rating rows or
@@ -106,6 +108,21 @@
   landmarks that arrive after startup.
 - [x] Android userscript bundles only local code, CSS, and four local GM grants.
 - [x] Android build remains separate from the Chrome/Brave `dist/` package.
+- [x] Desktop and Android metadata include only the homepage, live-game, and
+  exact live-game review path shapes, with no added permissions or network capability.
+- [x] Phone move-by-move review moves the one native evaluation graph into the
+  post-board chart slot idempotently and restores it on disable, widening, route
+  departure, state change, or native rerender.
+- [x] The initial review report and widths of 600 CSS pixels or more remain
+  untouched.
+- [x] OLED black normalizes and autosaves in both settings surfaces and adds no
+  permissions, remote resources, or stored account/game data.
+- [x] OLED button colors normalize and autosave independently, apply only to
+  Quick Play and Open Game, and preserve their layout and full click targets.
+- [x] The continuation detector accepts only exact current or legacy native
+  Chess.com game paths, allows Game History as the deliberate fallback, rejects
+  analysis and off-origin links, remains idempotent, and removes its card when
+  native evidence disappears.
 
 ## Visual fixture gate
 
@@ -162,7 +179,7 @@
 - [x] Shared settings UI is usable at Chromium side-panel dimensions.
 - [x] The in-panel `×` is visible beside the version badge without crowding the
   settings title at side-panel width.
-- [x] Homepage's ten-card visibility/order editor is readable and scrollable
+- [x] Homepage's eleven-card visibility/order editor is readable and scrollable
   at extension-popup dimensions.
 - [x] Stats visibility/order controls remain readable and scrollable at popup
   dimensions.
@@ -174,6 +191,13 @@
 - [x] Stacked width: Quick Play remains usable above the main modules.
 - [x] Responsive single-column fixture keeps Quick Play first, then applies the
   saved order within its Main and conceptual Right groups without duplication.
+- [x] At 390×844, the move-review evaluation graph renders below the lower
+  player/clock and above the Game Review toolbar without horizontal overflow.
+- [x] At tablet and desktop fixture widths, VINF leaves the native graph parent
+  and surrounding layout unchanged.
+- [x] OLED fixture previews use a true-black page canvas and stable navigation,
+  player, sidebar, and control surfaces at desktop and phone widths; the
+  continuation card stays inside its managed column without overflow.
 
 ## Live browser gate
 
@@ -222,6 +246,16 @@ Complete these before publishing a release beyond private use:
 - [ ] Verify portrait and landscape layout on the signed-in tablet homepage.
 - [ ] Verify all grid sizes, their real clocks, and Android settings persistence.
 - [ ] Verify disable/enable and responsive rerender restoration on the tablet.
+- [ ] Install the userscript in Firefox/Violentmonkey on the Android phone and
+  confirm the evaluation graph moves below the board only after entering
+  move-by-move Game Review.
+- [ ] On the phone, confirm graph taps still select moves, leaving move review
+  restores the initial report layout, and rotation/widening restores the native
+  placement without duplication.
+- [ ] Enable OLED black on desktop, tablet, and phone; verify the homepage, a
+  live game, and Game Review use a true-black canvas without obscuring native UI.
+- [ ] While a live game is unfinished, open `/home` on desktop and responsive
+  layouts; confirm one continuation card appears and returns to that exact game.
 
 The live clock checks intentionally require a human-controlled signed-in session
 because starting matchmaking creates a real external side effect.

@@ -2,18 +2,24 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-08-13.
-Current source version: 1.0.8.
-Latest Store-prepared desktop package: `release/chesscom-vinf-1.0.8.zip`.
+Last updated: 2026-09-18.
+Current source version: 2.2.0.
+Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.0.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
 ## Start Here
 
 ChessComVINF means Chess.com Version Infinity. The short product name is VINF,
 not WINF. It is an independent Manifest V3 Chrome/Brave extension that improves
-only the signed-in Chess.com homepage:
+the signed-in Chess.com homepage, adds OLED presentation to live games, and
+improves phone move-by-move Game Review:
 
     https://www.chess.com/home
+    https://www.chess.com/game/<numeric-game-id>
+    https://www.chess.com/game/live/<numeric-game-id> (legacy-compatible)
+    https://www.chess.com/live/game/<numeric-game-id>
+    https://www.chess.com/analysis/game/live/<game-id>/review
+    https://www.chess.com/analysis/game/<game-id>/review
 
 It replaces the visually dominant homepage promo area with a focused configurable
 Quick Play grid, promotes Game History and Stats, moves Daily Games into the
@@ -22,7 +28,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 1.0.8. This handoff is the shortest
+chronological amendments through version 2.2.0. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current User Experience
@@ -120,9 +126,10 @@ The toolbar popup contains:
 - an intentionally headerless homepage-settings card with a `Native play panel`
   switch and a managed-card editor
   for Profile, Stats, ChessTV, Daily Games, Recommended Match, Game History,
-  Streaks, Legend League, Daily Puzzle, and Friends;
+  Streaks, Legend League, Daily Puzzle, Friends, and Open Game Shortcut;
 - Show/Hide checkboxes and fixed-order arrows for every managed card; Profile,
-  Daily Games, Recommended Match, and Game History additionally have `Main` /
+  Daily Games, Recommended Match, Game History, and Open Game Shortcut
+  additionally have `Main` /
   `Right` selectors that retain their choices while hidden. The arrows define
   relative order in whichever column those movable cards use;
 - a 0/1/2/3/4/6/8 Quick Play count selector and the corresponding number of
@@ -184,6 +191,46 @@ and reordered without rebuilding its content. Chess.com's redesigned combined
 Streaks/League wrapper is reversibly separated into two native-content card
 hosts so the two items remain independently configurable. Unknown cards are not
 hidden or absorbed into this managed model.
+
+### Phone Game Review
+
+Version 2.0.0 begins VINF's in-game chapter with one focused responsive change.
+On exact live-game review routes below 600 CSS pixels, entering Chess.com's
+redesigned move-by-move view moves the existing native evaluation graph into
+`#board-layout-main > #board-layout-analysis > #charts`. That native slot sits
+after the lower player/clock row and before the Game Review sidebar toolbar in
+the phone flow.
+
+The controller recognizes only the exact semantic
+`.sidebar-view-content > .move-by-move-container > .move-by-move-component`
+state and its direct
+`.move-by-move-bottom-section > .game-arc-component`. It moves the native graph
+without cloning or rebuilding its Highcharts content. The initial overview
+report, widths of 600 CSS pixels or more, non-live analysis routes, and all
+homepage behavior remain unchanged. Original parent/sibling tracking restores
+the graph on widening, VINF disable, route or state departure, and handles a
+Chess.com rerender without leaving a duplicate graph.
+
+### OLED appearance and game continuity
+
+Version 2.1.0 adds an opt-in `OLED black` setting shared by the Chromium popup,
+side panel, and Android dialog. Version 2.1.1 extends true black from the page
+canvas to stable Chess.com chrome: the mobile toolbar, retractable navigation,
+player rows, analysis/sidebar surfaces, and fixed review controls. It remains
+scoped to exact homepage, live-game, and supported Game Review routes at
+desktop, tablet, and phone widths, without recoloring the board or content
+cards.
+
+On `/home`, VINF shows one owned, configurable `Jump to open game` managed card
+when the rendered page contains an exact HTTPS Chess.com `/game/<numeric-id>`
+or legacy `/game/live/<numeric-id>` anchor. The first exact link wins, so native
+unfinished-game UI can take precedence while Game History deliberately supplies
+the latest finished-game fallback. The card defaults last in Right on desktop
+and therefore last in the single responsive column. It reuses the native URL
+unchanged, including query parameters, and has the same Show/Hide, Main/Right,
+and order controls as the other movable cards. Analysis and off-origin links
+are rejected. There are no game-state requests, guessed IDs, or stored game
+records.
 
 ### Android tablet
 
@@ -290,7 +337,9 @@ The explicit Quick Play Reset action continues to use the per-count map above.
 
 ## Non-Negotiable Product Rules
 
-1. Run only on the exact signed-in Chess.com `/home` or `/home/` route.
+1. Run homepage behavior only on the exact signed-in Chess.com `/home` or
+   `/home/` route. Run the phone review enhancement only on exact HTTPS
+   `/analysis/game/live/<game-id>/review` routes.
 
 2. Leave the main Chess.com navigation intact.
 
@@ -358,6 +407,10 @@ The explicit Quick Play Reset action continues to use the per-count map above.
 20. Keep the toolbar popup as the default settings entry point. The optional
     persistent Side Panel UI must reuse the same packaged local settings page,
     open only from a user gesture, and degrade without affecting settings.
+
+21. During move-by-move Game Review, move the native evaluation graph only below
+    600 CSS pixels. Never change the initial report or tablet/desktop placement,
+    and always restore the original native position during cleanup.
 
 ## Native Launch Contract
 
@@ -455,6 +508,9 @@ Important locators:
 - Stats rating rows: direct `.stat-section-stats-section` legacy children or
   `.stat-item-stats-section` redesigned children, recognized by exact native
   label text or a semantic Stats path;
+- responsive Stats rating cards: direct `.stats-mobile-card` links inside
+  `.stats-mobile-content`, recognized primarily by semantic Stats paths, with
+  `/play/online/daily` for Daily;
 - Stats expansion controls: legacy direct `button.stat-section-button`, or a
   redesigned direct `.cc-aside-item-component` anchor/button containing a
   `.cc-aside-item-chevron` native arrow glyph;
@@ -548,6 +604,8 @@ Stored shape:
 ```ts
 interface ExtensionSettings {
   enabled: boolean;
+  oledMode: boolean;
+  oledButtonColors: boolean;
   showNativePlayPanel: boolean;
   profilePlacement: "main" | "sidebar" | "hidden";
   profileVisiblePlacement: "main" | "sidebar";
@@ -557,7 +615,9 @@ interface ExtensionSettings {
   recommendedMatchVisiblePlacement: "main" | "sidebar";
   gameHistoryPlacement: "main" | "sidebar" | "hidden";
   gameHistoryVisiblePlacement: "main" | "sidebar";
-  homepageSidebarOrder: HomepageSidebarCardId[]; // shared Main/Right order; all ten IDs exactly once
+  openGamePlacement: "main" | "sidebar" | "hidden";
+  openGameVisiblePlacement: "main" | "sidebar";
+  homepageSidebarOrder: HomepageSidebarCardId[]; // shared Main/Right order; all eleven IDs exactly once
   homepageSidebarVisible: HomepageSidebarCardId[]; // visible known cards
   quickPlayPresetCount: 0 | 1 | 2 | 3 | 4 | 6 | 8;
   timeControlIds: TimeControlId[]; // exactly the selected count; repeats valid
@@ -572,7 +632,7 @@ interface ExtensionSettings {
 }
 ```
 
-Defaults are enabled, the native play panel hidden, Profile hidden with Main
+Defaults are enabled, OLED black off, OLED button colors off, the native play panel hidden, Profile hidden with Main
 remembered, every other known card visible except the two separately Main-placed
 cards, Daily Games shown in the sidebar with its remembered visible placement
 also set to sidebar, Recommended Match and Game History shown in Main with their
@@ -639,6 +699,8 @@ Visibility arrays filter unknown and duplicate IDs; an empty array is valid.
     docs/RELEASE_CHECKLIST.md          Automated, visual, and live gates
     public/manifest.json               MV3 permissions, matches, and version
     src/content/content-script.ts      Runtime lifecycle and settings listener
+    src/content/game-continuation.ts   Exact native game links and owned homepage card
+    src/content/game-review-layout-controller.ts  Phone-only native review-graph placement
     src/content/homepage-detector.ts   Exact signed-in homepage guard
     src/content/module-locator.ts      Semantic/native module discovery
     src/content/layout-controller.ts   Idempotent hide/move/order/cleanup logic
@@ -656,6 +718,7 @@ Visibility arrays filter unknown and duplicate IDs; an empty array is valid.
     tests/fixtures/homepage.html        Small sanitized DOM fixture
     tests/fixtures/homepage-modern.html Redesigned desktop regression fixture
     tests/fixtures/homepage-responsive.html  Responsive semantic fixture
+    tests/fixtures/game-review-narrow.html  Sanitized phone Game Review fixture
     tests/visual/                       Local full-page visual harness
     scripts/build.mjs                   Production dist builder
     scripts/build-android.mjs           Android userscript builder
@@ -670,11 +733,13 @@ The manifest has only the `storage` and `sidePanel` permissions. `storage`
 persists local preferences; `sidePanel` displays the same packaged settings UI
 in Chromium's persistent panel and grants no page/account access. The manifest
 has no host permission entry; the content script itself is narrowly matched to
-`https://www.chess.com/home*`.
+`https://www.chess.com/home*`, exact live-game paths, and the live-game `/review`
+path shape.
 
 The extension stores only:
 
 - enabled state;
+- OLED-black appearance;
 - native play-panel visibility;
 - Profile visibility and remembered Main/Right placement;
 - Daily Games placement;
@@ -711,8 +776,18 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 1.0.8, the suite has 101 passing tests across thirteen files. Important
-coverage includes:
+As of version 2.2.0, the suite has 119 passing tests across sixteen files and
+covers the homepage plus focused phone Game Review behavior. Important coverage
+includes:
+
+- OLED background/button setting normalization, autosave, route scoping, and cleanup;
+- exact current/legacy/alternate native game URL recognition, card idempotence/removal, and
+  late evidence outside the main observer root;
+
+- exact Game Review route variants and sub-600px guards;
+- native evaluation-graph movement, idempotence, rerender replacement, and
+  restoration on disable or viewport change;
+- proof that the initial report and tablet/desktop widths remain untouched;
 
 - exact legacy/redesigned signed-in homepage detection and route rejection;
 - semantic module location and missing optional modules;
@@ -727,12 +802,13 @@ coverage includes:
   changes on desktop and Android;
 - Stats defaults, custom order/visibility, scoped resets, cleanup restoration,
   unknown-row preservation, optional legacy Insights placement, and
-  expansion-safe idempotence;
+  expansion-safe idempotence across desktop rows and the responsive native
+  `.stats-mobile-card` grid;
 - independent one-time native initial expansion or retraction for every visible
   known rating row, preserving later manual state changes;
 - dynamic content replacement, route departure, and settings changes;
 - Profile, Daily Games, Recommended Match, and Game History visibility with remembered
-  Main/Right placement plus visibility and fixed ordering for all ten known
+  Main/Right placement plus visibility and fixed ordering for all eleven known
   managed cards on desktop and responsive layouts, including custom ordering
   within Main, early hidden-card pre-arming, and retired
   nine-/eight-/seven-card-order migration;
@@ -755,7 +831,7 @@ coverage includes:
 - proof that VINF leaves the native ChessTV iframe source, permissions, hidden
   state, loading, autoplay, and playback untouched;
 - legacy button-based, redesigned link-only, and redesigned anchor/chevron
-  expandable Stats schema handling;
+  expandable Stats schema handling, plus non-expandable mobile Stats cards;
 - enabled-document pre-hiding of exact native toolbar/hero/banner/promo
   replacements before delayed mutation reconciliation;
 - document-start observation, settings-load gating, and landmarks arriving after
@@ -786,17 +862,21 @@ Useful routes:
     http://127.0.0.1:4173/home?sidebar-preview=1
     http://127.0.0.1:4173/home-online-tv
     http://127.0.0.1:4173/home-responsive
+    http://127.0.0.1:4173/home-mobile-stats
     http://127.0.0.1:4173/home-modern
     http://127.0.0.1:4173/home-modern?recommended-right=1
     http://127.0.0.1:4173/home-modern?recommended-hidden=1
     http://127.0.0.1:4173/home-modern?main-order-preview=1
     http://127.0.0.1:4173/home-modern?preset-count=0
     http://127.0.0.1:4173/home-narrow-preview
+    http://127.0.0.1:4173/home-phone-preview
     http://127.0.0.1:4173/popup-preview
     http://127.0.0.1:4173/popup-narrow-preview
     http://127.0.0.1:4173/popup
     http://127.0.0.1:4173/sidepanel-preview
     http://127.0.0.1:4173/sidepanel.html
+    http://127.0.0.1:4173/game-review-mobile
+    http://127.0.0.1:4173/game-review-phone-preview
 
 `union-preview=1` renders Bullet, mobile Blitz, and Rapid examples without
 starting a game. At the 1600px verification viewport, Quick Play and Game History
@@ -880,11 +960,11 @@ dependency or request directive.
 
 Latest explicitly prepared Store artifact:
 
-    release/chesscom-vinf-1.0.8.zip
+    release/chesscom-vinf-2.2.0.zip
 
 SHA-256:
 
-    22bfb07bb62156c07dd0a8e839d2cc53000b5e304761aa808c37e4bdb2b57c31
+    c2155f2b879bea3baa6409644ba9ddd6825226e82c2043fbffcaacb337e268bc
 
 Android artifact:
 
@@ -892,11 +972,11 @@ Android artifact:
 
 Latest convenience Chrome Web Store handoff:
 
-    release/chesscom-vinf-1.0.8-store-submission.zip
+    release/chesscom-vinf-2.2.0-store-submission.zip
 
 SHA-256:
 
-    544a82a99c2ab635d0b38ba7e15fe37916998e4086d3fb6fc93d7883ec418e9c
+    3aeca6c82fde38a1f11054a5eb3e5883238d3973d1956ad50757e9781df4b781
 
 The project is an independent public Git repository:
 
@@ -911,12 +991,11 @@ Public-safe Chrome Web Store copy and synthetic graphic assets live under
 
     https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md
 
-Version 0.17.2 was the current Chrome Web Store build tested by the user on
-2026-07-30. Treat it as the uploaded Store baseline unless a later handoff
-records a newer upload. `store-listing/SUBMISSION.md` contains the complete
-field-by-field 1.0.8 update record using copy-safe fenced text blocks instead
+Version 1.0.8 is the published Chrome Web Store build verified on 2026-09-18.
+`store-listing/SUBMISSION.md` contains the complete
+field-by-field 2.2.0 update record using copy-safe fenced text blocks instead
 of Markdown blockquotes. The refreshed settings screenshot is public-safe and
-shows version 1.0.8; the two homepage screenshots and promo artwork remain
+shows version 2.2.0; the two homepage screenshots and promo artwork remain
 unchanged.
 
 `store-listing/UPDATE_TLDR.md` is the preferred dashboard workflow for each
@@ -991,6 +1070,52 @@ side panel remains fluid at the browser-provided width. It is the current
 Store-prepared version, with updated public-safe listing copy and settings
 screenshot; its source is pushed only as part of this explicit release task.
 
+Version `2.0.0` begins the in-game product chapter. At phone widths only, the
+native evaluation graph moves directly below the board while the redesigned
+move-by-move Game Review view is active. The initial report, tablet, and desktop
+layouts stay native. The source version and internal desktop/Android builds are
+updated, while 1.0.8 remains the latest explicitly Store-prepared package.
+
+Version `2.1.0` adds the opt-in OLED-black page canvas on supported homepage,
+live-game, and review routes, plus a responsive homepage continuation card that
+reuses an exact native live-game link. The feature adds one local boolean but no
+network call, game record, host permission, or Store package; 1.0.8 remains the
+latest explicitly Store-prepared package.
+
+Version `2.1.1` fixes the continuation false positive caused by completed
+Game History `/game/live/<id>` links, replaces the in-flow card with a
+dismissible floating `Jump to open game` action, and extends OLED black to
+stable navigation/player/sidebar/control chrome. The current live Android
+Game Review screenshot also reports that the evaluation graph remains at the
+bottom; the 2026-09-10 saved DOM still passes the existing selector contract,
+so a fresh complete saved move-by-move page is required before changing that
+selector without guessing. No Store package is prepared.
+
+Version `2.1.2` replaces active-state inference and the floating prompt with a
+normal configurable `Jump to open game` managed card. It defaults last in Right
+on desktop and last in the shared single phone column, accepts current
+`/game/<numeric-id>` and legacy `/game/live/<numeric-id>` links, and deliberately
+uses Game History as a finished-game fallback. The same current live-game route
+coverage fixes OLED injection. Android settings now show the source version.
+The fresh 2026-09-18 narrow saved page verifies that Chess.com removed
+`move-by-move-redesign`; VINF now keys on the stable semantic parent hierarchy
+while retaining the direct graph child and below-600px guards. No Store package
+is prepared.
+
+Version `2.1.3` makes the continuation card a full-width centered link target,
+adds the observed `/live/game/<numeric-id>` route and non-`live` Game Review
+route to OLED coverage, and OLED-styles the native post-game result shell and
+secondary stat/action surfaces. Runtime route checks remain exact; manifest
+and userscript patterns are broader only where the platform requires it. No
+Store package is prepared.
+
+Version `2.2.0` adds an independent saved `OLED button colors` switch to the
+desktop and Android settings. It applies near-black Quick Play and Open Game
+surfaces, `#ededed` labels, and restrained accent/interaction states without
+changing control geometry or requiring OLED page black. It is the current
+Store-prepared version; the published Chrome Web Store version remains 1.0.8
+until the prepared package is submitted and approved.
+
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
 secret-shaped credentials, and weakened raw-capture ignore rules.
@@ -1021,6 +1146,10 @@ should verify:
    remain usable.
 13. Install the Android userscript in current Firefox/Violentmonkey and verify
    portrait, landscape, settings persistence, SPA return, and disable/restore.
+14. On the Android phone, enter move-by-move Game Review and confirm the native
+   evaluation graph appears below the lower player/clock and above the review
+   toolbar. Confirm the initial report and tablet layout remain unchanged, graph
+   taps work, and widening or disabling VINF restores the native placement.
 
 Do not mark these complete based only on fixtures or URL-construction tests.
 
@@ -1030,7 +1159,8 @@ These decisions came from repeated live visual review. Do not accidentally
 reverse them while “cleaning up” code:
 
 - The name is VINF, not WINF.
-- Game Review is intentionally removed.
+- The Game Review promo card is intentionally removed from the homepage; the
+  version 2 phone review-page enhancement is a separate product surface.
 - The Quick Play title and `Choose time control` subtitle were intentionally
   removed for minimalism.
 - Visible `Starting…`/failure rows were intentionally removed because they caused
@@ -1041,8 +1171,8 @@ reverse them while “cleaning up” code:
 - The complete sidebar intentionally starts alongside Quick Play.
 - The default managed card order is intentionally Profile, Stats, ChessTV,
   Daily Games, Recommended Match, Game History, Streaks, Legend League, Daily
-  Puzzle, Friends. Every known card has explicit presentation settings. Profile,
-  Daily Games, Recommended Match, and Game History use the same checkbox plus a
+  Puzzle, Friends, Open Game Shortcut. Every known card has explicit presentation settings. Profile,
+  Daily Games, Recommended Match, Game History, and Open Game Shortcut use the same checkbox plus a
   Main/Right selector that preserves location while hidden. Profile intentionally
   defaults hidden with Main remembered; Recommended Match and Game History
   intentionally default visible in Main. The one saved sequence applies
@@ -1141,9 +1271,9 @@ reverse them while “cleaning up” code:
   Match card, and 2026-08-12 nested redesigned sidebar shell.
 - Promo-card detection uses exact English titles and may not work in other
   locales.
-- Known Stats row recognition uses exact English native labels. Semantic paths
-  are preferred where available, but a non-English Stats rollout may require a
-  sanitized audit update.
+- Known Stats row recognition uses semantic paths where available, including
+  the native mobile card grid. Exact English native labels remain fallbacks, so
+  a pathless non-English Stats rollout may require a sanitized audit update.
 - The popup catalog is intentionally static. Reading native controls dynamically
   would require additional active-tab communication/permissions and still would
   not solve mobile/desktop rollout differences.
@@ -1158,6 +1288,12 @@ reverse them while “cleaning up” code:
 - The responsive DOM contract is tested with a sanitized semantic fixture, not
   a private signed-in Android capture. A Chess.com experiment or locale variant
   may need a small sanitized locator update after live tablet testing.
+- The Game Review DOM was captured from a signed-in desktop browser narrowed to
+  Chess.com's phone layout. Real Firefox-for-Android phone verification remains
+  outstanding.
+- The continuation card intentionally does not determine active game state. It
+  uses the first exact native current/legacy game link, which should still be
+  confirmed in each live homepage layout because Chess.com controls DOM order.
 - Android settings are intentionally separate from desktop extension settings.
 - Generated `dist/` and `release/` are ignored; rebuilding can replace them.
 - Generated `dist-android/` is ignored and can be replaced by `build:android`.
@@ -1207,7 +1343,8 @@ find it.
 Confirm the Stats card still has either legacy direct
 `ul.sidebar-ratings-general` summary rows and `.stat-section-stats-section`
 rating wrappers, or redesigned direct `.cc-aside-item-component` summaries and
-`.stat-item-stats-section` ratings matching `DOM_AUDIT.md`. Known rows should
+`.stat-item-stats-section` ratings, or responsive `.stats-mobile-content` with
+direct `.stats-mobile-card` links matching `DOM_AUDIT.md`. Known rows should
 carry `stats-summary-*` or `stats-rating-*` hidden reasons when disabled. Any
 native Insights row must remain unmarked and last. Do not hide an unknown row
 to make the card look tidy; capture the smallest sanitized new structure and
