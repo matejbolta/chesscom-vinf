@@ -44,6 +44,8 @@ export type GameHistoryVisiblePlacement = Exclude<
 >;
 export type ProfilePlacement = MainColumnCardPlacement;
 export type ProfileVisiblePlacement = Exclude<ProfilePlacement, "hidden">;
+export type OpenGamePlacement = MainColumnCardPlacement;
+export type OpenGameVisiblePlacement = Exclude<OpenGamePlacement, "hidden">;
 export type HomepageSidebarCardId =
   | "profile"
   | "stats"
@@ -54,7 +56,8 @@ export type HomepageSidebarCardId =
   | "chess-tv"
   | "daily-games"
   | "recommended-match"
-  | "game-history";
+  | "game-history"
+  | "open-game";
 export type StatsRatingId =
   | "rapid"
   | "bullet"
@@ -75,6 +78,8 @@ export interface TimeControl {
 
 export interface ExtensionSettings {
   enabled: boolean;
+  oledMode: boolean;
+  oledButtonColors: boolean;
   showNativePlayPanel: boolean;
   profilePlacement: ProfilePlacement;
   profileVisiblePlacement: ProfileVisiblePlacement;
@@ -84,6 +89,8 @@ export interface ExtensionSettings {
   recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement;
   gameHistoryPlacement: GameHistoryPlacement;
   gameHistoryVisiblePlacement: GameHistoryVisiblePlacement;
+  openGamePlacement: OpenGamePlacement;
+  openGameVisiblePlacement: OpenGameVisiblePlacement;
   homepageSidebarOrder: HomepageSidebarCardId[];
   homepageSidebarVisible: HomepageSidebarCardId[];
   quickPlayPresetCount: QuickPlayPresetCount;
@@ -110,6 +117,7 @@ export interface HomepageModules {
   promo: HTMLElement | null;
   nativeActionColumn: HTMLElement | null;
   nativeLaunchTemplate: HTMLAnchorElement | null;
+  activeGameLink: HTMLAnchorElement | null;
   topLeagueSummary: HTMLElement | null;
   puzzles: HTMLElement | null;
   nextLesson: HTMLElement | null;

@@ -10,8 +10,11 @@ const metadata = `// ==UserScript==
 // @name         ChessComVINF for Android
 // @namespace    https://www.chess.com/vinf
 // @version      ${packageJson.version}
-// @description  A focused Chess.com homepage with configurable one-tap time controls.
+// @description  A focused Chess.com homepage and improved phone Game Review layout.
 // @match        https://www.chess.com/home*
+// @match        https://www.chess.com/game/*
+// @match        https://www.chess.com/live/game/*
+// @match        https://www.chess.com/analysis/game/*
 // @run-at       document-start
 // @noframes
 // @grant        GM_getValue
@@ -33,7 +36,8 @@ await build({
   legalComments: "none",
   banner: { js: metadata },
   define: {
-    __VINF_USERSCRIPT_CSS__: JSON.stringify(`${pageCss}\n${settingsCss}`)
+    __VINF_USERSCRIPT_CSS__: JSON.stringify(`${pageCss}\n${settingsCss}`),
+    __VINF_VERSION__: JSON.stringify(packageJson.version)
   }
 });
 

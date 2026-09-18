@@ -86,9 +86,18 @@ function ratingIdFromPath(row: HTMLElement): StatsRatingId | null {
     "live-960": "live-960"
   };
 
-  for (const anchor of row.querySelectorAll<HTMLAnchorElement>("a[href]")) {
+  const anchors = [
+    ...(row instanceof HTMLAnchorElement && row.hasAttribute("href")
+      ? [row]
+      : []),
+    ...row.querySelectorAll<HTMLAnchorElement>("a[href]")
+  ];
+  for (const anchor of anchors) {
     try {
       const path = new URL(anchor.href).pathname.split("/").filter(Boolean);
+      if (path.join("/").toLowerCase() === "play/online/daily") {
+        return "daily";
+      }
       const statsIndex = path.lastIndexOf("stats");
       if (statsIndex >= 0 && path[statsIndex + 1]) {
         const id = pathMap[path[statsIndex + 1].toLowerCase()];
@@ -106,6 +115,7 @@ function ratingIdFromPath(row: HTMLElement): StatsRatingId | null {
 function findRatingRows(
   stats: HTMLElement
 ): {
+  parent: HTMLElement;
   known: Map<StatsRatingId, HTMLElement>;
   insights: HTMLElement | null;
   unknown: HTMLElement[];
@@ -113,11 +123,15 @@ function findRatingRows(
   const known = new Map<StatsRatingId, HTMLElement>();
   const unknown: HTMLElement[] = [];
   let insights: HTMLElement | null = null;
-  const rows = Array.from(stats.children).filter(
+  const mobileContainer = stats.querySelector<HTMLElement>(
+    ":scope > .stats-mobile-content"
+  );
+  const parent = mobileContainer ?? stats;
+  const rows = Array.from(parent.children).filter(
     (element): element is HTMLElement =>
       element instanceof HTMLElement &&
       element.matches(
-        ".stat-section-stats-section, .stat-item-stats-section"
+        ".stat-section-stats-section, .stat-item-stats-section, .stats-mobile-card"
       )
   );
 
@@ -127,7 +141,7 @@ function findRatingRows(
     );
     const label = normalizedText(
       row.querySelector<HTMLElement>(
-        ".stat-section-section-link-name, .cc-aside-item-label"
+        ".stat-section-section-link-name, .cc-aside-item-label, .cc-card-body, .cc-card-header"
       )?.textContent ?? null
     );
     if ((insightsLink || label === "Insights") && !insights) {
@@ -145,7 +159,7 @@ function findRatingRows(
       unknown.push(row);
     }
   }
-  return { known, insights, unknown };
+  return { parent, known, insights, unknown };
 }
 
 function setVisible(
@@ -300,7 +314,7 @@ export function applyStatsPreferences(
     ...(ratings.insights ? [ratings.insights] : [])
   ];
   const managedRatings = new Set(finalOrder);
-  const currentRatingOrder = Array.from(stats.children).filter(
+  const currentRatingOrder = Array.from(ratings.parent.children).filter(
     (element): element is HTMLElement =>
       element instanceof HTMLElement &&
       managedRatings.has(element)
@@ -324,10 +338,10 @@ export function applyStatsPreferences(
         ) ?? null;
     for (const row of finalOrder) {
       rememberPosition(row);
-      if (insertionPoint?.parentElement === stats) {
-        stats.insertBefore(row, insertionPoint);
+      if (insertionPoint?.parentElement === ratings.parent) {
+        ratings.parent.insertBefore(row, insertionPoint);
       } else {
-        stats.append(row);
+        ratings.parent.append(row);
       }
     }
   }

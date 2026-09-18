@@ -53,6 +53,10 @@ const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
   "#close-side-panel"
 )!;
 const enabledInput = document.querySelector<HTMLInputElement>("#enabled")!;
+const oledModeInput = document.querySelector<HTMLInputElement>("#oled-mode")!;
+const oledButtonColorsInput = document.querySelector<HTMLInputElement>(
+  "#oled-button-colors"
+)!;
 const showNativePlayPanelInput = document.querySelector<HTMLInputElement>(
   "#show-native-play-panel"
 )!;
@@ -128,6 +132,8 @@ class HomepageCardEditor {
   private recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement;
   private gameHistoryPlacement: GameHistoryPlacement;
   private gameHistoryVisiblePlacement: GameHistoryVisiblePlacement;
+  private openGamePlacement: MainColumnCardPlacement;
+  private openGameVisiblePlacement: MainColumnCardVisiblePlacement;
 
   constructor(
     private readonly container: HTMLElement,
@@ -141,7 +147,9 @@ class HomepageCardEditor {
     recommendedMatchPlacement: RecommendedMatchPlacement,
     recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
     gameHistoryPlacement: GameHistoryPlacement,
-    gameHistoryVisiblePlacement: GameHistoryVisiblePlacement
+    gameHistoryVisiblePlacement: GameHistoryVisiblePlacement,
+    openGamePlacement: MainColumnCardPlacement,
+    openGameVisiblePlacement: MainColumnCardVisiblePlacement
   ) {
     this.order = [...order];
     this.visible = new Set(visible);
@@ -154,6 +162,8 @@ class HomepageCardEditor {
       recommendedMatchVisiblePlacement;
     this.gameHistoryPlacement = gameHistoryPlacement;
     this.gameHistoryVisiblePlacement = gameHistoryVisiblePlacement;
+    this.openGamePlacement = openGamePlacement;
+    this.openGameVisiblePlacement = openGameVisiblePlacement;
     this.render();
   }
 
@@ -167,7 +177,9 @@ class HomepageCardEditor {
     recommendedMatchPlacement: RecommendedMatchPlacement,
     recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
     gameHistoryPlacement: GameHistoryPlacement,
-    gameHistoryVisiblePlacement: GameHistoryVisiblePlacement
+    gameHistoryVisiblePlacement: GameHistoryVisiblePlacement,
+    openGamePlacement: MainColumnCardPlacement,
+    openGameVisiblePlacement: MainColumnCardVisiblePlacement
   ): void {
     this.order = [...order];
     this.visible = new Set(visible);
@@ -180,6 +192,8 @@ class HomepageCardEditor {
       recommendedMatchVisiblePlacement;
     this.gameHistoryPlacement = gameHistoryPlacement;
     this.gameHistoryVisiblePlacement = gameHistoryVisiblePlacement;
+    this.openGamePlacement = openGamePlacement;
+    this.openGameVisiblePlacement = openGameVisiblePlacement;
     this.render();
   }
 
@@ -200,6 +214,9 @@ class HomepageCardEditor {
       }
       if (id === "game-history") {
         return this.gameHistoryPlacement === "sidebar";
+      }
+      if (id === "open-game") {
+        return this.openGamePlacement === "sidebar";
       }
       return this.visible.has(id);
     });
@@ -237,8 +254,16 @@ class HomepageCardEditor {
     return this.gameHistoryVisiblePlacement;
   }
 
+  getOpenGamePlacement(): MainColumnCardPlacement {
+    return this.openGamePlacement;
+  }
+
+  getOpenGameVisiblePlacement(): MainColumnCardVisiblePlacement {
+    return this.openGameVisiblePlacement;
+  }
+
   private getPlacement(
-    id: "profile" | "daily-games" | "recommended-match" | "game-history"
+    id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game"
   ): MainColumnCardPlacement {
     if (id === "profile") {
       return this.profilePlacement;
@@ -246,13 +271,16 @@ class HomepageCardEditor {
     if (id === "daily-games") {
       return this.dailyGamesPlacement;
     }
-    return id === "recommended-match"
-      ? this.recommendedMatchPlacement
-      : this.gameHistoryPlacement;
+    if (id === "recommended-match") {
+      return this.recommendedMatchPlacement;
+    }
+    return id === "game-history"
+      ? this.gameHistoryPlacement
+      : this.openGamePlacement;
   }
 
   private getVisiblePlacement(
-    id: "profile" | "daily-games" | "recommended-match" | "game-history"
+    id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game"
   ): MainColumnCardVisiblePlacement {
     if (id === "profile") {
       return this.profileVisiblePlacement;
@@ -260,13 +288,16 @@ class HomepageCardEditor {
     if (id === "daily-games") {
       return this.dailyGamesVisiblePlacement;
     }
-    return id === "recommended-match"
-      ? this.recommendedMatchVisiblePlacement
-      : this.gameHistoryVisiblePlacement;
+    if (id === "recommended-match") {
+      return this.recommendedMatchVisiblePlacement;
+    }
+    return id === "game-history"
+      ? this.gameHistoryVisiblePlacement
+      : this.openGameVisiblePlacement;
   }
 
   private setPlacement(
-    id: "profile" | "daily-games" | "recommended-match" | "game-history",
+    id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game",
     placement: MainColumnCardPlacement
   ): void {
     if (id === "profile") {
@@ -275,13 +306,15 @@ class HomepageCardEditor {
       this.dailyGamesPlacement = placement;
     } else if (id === "recommended-match") {
       this.recommendedMatchPlacement = placement;
-    } else {
+    } else if (id === "game-history") {
       this.gameHistoryPlacement = placement;
+    } else {
+      this.openGamePlacement = placement;
     }
   }
 
   private setVisiblePlacement(
-    id: "profile" | "daily-games" | "recommended-match" | "game-history",
+    id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game",
     placement: MainColumnCardVisiblePlacement
   ): void {
     if (id === "profile") {
@@ -290,8 +323,10 @@ class HomepageCardEditor {
       this.dailyGamesVisiblePlacement = placement;
     } else if (id === "recommended-match") {
       this.recommendedMatchVisiblePlacement = placement;
-    } else {
+    } else if (id === "game-history") {
       this.gameHistoryVisiblePlacement = placement;
+    } else {
+      this.openGameVisiblePlacement = placement;
     }
   }
 
@@ -323,7 +358,8 @@ class HomepageCardEditor {
         id === "profile" ||
         id === "daily-games" ||
         id === "recommended-match" ||
-        id === "game-history"
+        id === "game-history" ||
+        id === "open-game"
       ) {
         const checkbox = document.createElement("input");
         checkbox.id = `${this.container.id}-${id}`;
@@ -580,7 +616,9 @@ const homepageCardEditor = new HomepageCardEditor(
   DEFAULT_SETTINGS.recommendedMatchPlacement,
   DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
   DEFAULT_SETTINGS.gameHistoryPlacement,
-  DEFAULT_SETTINGS.gameHistoryVisiblePlacement
+  DEFAULT_SETTINGS.gameHistoryVisiblePlacement,
+  DEFAULT_SETTINGS.openGamePlacement,
+  DEFAULT_SETTINGS.openGameVisiblePlacement
 );
 const statsSummaryEditor = new StatsPreferenceEditor<StatsSummaryId>(
   statsSummaryList,
@@ -659,6 +697,8 @@ function renderPresetSelects(
 
 function renderSettings(settings: ExtensionSettings): void {
   enabledInput.checked = settings.enabled;
+  oledModeInput.checked = settings.oledMode;
+  oledButtonColorsInput.checked = settings.oledButtonColors;
   showNativePlayPanelInput.checked = settings.showNativePlayPanel;
   homepageCardEditor.set(
     settings.homepageSidebarOrder,
@@ -670,7 +710,9 @@ function renderSettings(settings: ExtensionSettings): void {
     settings.recommendedMatchPlacement,
     settings.recommendedMatchVisiblePlacement,
     settings.gameHistoryPlacement,
-    settings.gameHistoryVisiblePlacement
+    settings.gameHistoryVisiblePlacement,
+    settings.openGamePlacement,
+    settings.openGameVisiblePlacement
   );
   presetCountSelect.value = String(settings.quickPlayPresetCount);
   renderPresetSelects(
@@ -735,6 +777,8 @@ function readSettings(): ExtensionSettings {
 
   return {
     enabled: enabledInput.checked,
+    oledMode: oledModeInput.checked,
+    oledButtonColors: oledButtonColorsInput.checked,
     showNativePlayPanel: showNativePlayPanelInput.checked,
     profilePlacement: homepageCardEditor.getProfilePlacement(),
     profileVisiblePlacement:
@@ -749,6 +793,9 @@ function readSettings(): ExtensionSettings {
     gameHistoryPlacement: homepageCardEditor.getGameHistoryPlacement(),
     gameHistoryVisiblePlacement:
       homepageCardEditor.getGameHistoryVisiblePlacement(),
+    openGamePlacement: homepageCardEditor.getOpenGamePlacement(),
+    openGameVisiblePlacement:
+      homepageCardEditor.getOpenGameVisiblePlacement(),
     homepageSidebarOrder: homepageCardEditor.getOrder(),
     homepageSidebarVisible: homepageCardEditor.getVisible(),
     quickPlayPresetCount: getPresetCount(),
@@ -829,7 +876,9 @@ resetHomepageButton.addEventListener("click", () => {
     DEFAULT_SETTINGS.recommendedMatchPlacement,
     DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
     DEFAULT_SETTINGS.gameHistoryPlacement,
-    DEFAULT_SETTINGS.gameHistoryVisiblePlacement
+    DEFAULT_SETTINGS.gameHistoryVisiblePlacement,
+    DEFAULT_SETTINGS.openGamePlacement,
+    DEFAULT_SETTINGS.openGameVisiblePlacement
   );
   if (initialized) {
     queueSave("Homepage defaults restored.");

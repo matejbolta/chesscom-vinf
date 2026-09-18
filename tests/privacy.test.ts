@@ -46,7 +46,8 @@ describe("privacy boundaries", () => {
     const fixture = [
       "homepage.html",
       "homepage-modern.html",
-      "homepage-responsive.html"
+      "homepage-responsive.html",
+      "game-review-narrow.html"
     ]
       .map((name) =>
         readFileSync(resolve(process.cwd(), "tests/fixtures", name), "utf8")
@@ -69,7 +70,10 @@ describe("privacy boundaries", () => {
     expect(manifest.permissions).toEqual(["storage", "sidePanel"]);
     expect(manifest.host_permissions).toBeUndefined();
     expect(manifest.content_scripts[0].matches).toEqual([
-      "https://www.chess.com/home*"
+      "https://www.chess.com/home*",
+      "https://www.chess.com/game/*",
+      "https://www.chess.com/live/game/*",
+      "https://www.chess.com/analysis/game/*"
     ]);
     expect(manifest.content_scripts[0].run_at).toBe("document_start");
     expect(manifest.action.default_popup).toBe("popup.html");
@@ -88,6 +92,15 @@ describe("privacy boundaries", () => {
     );
 
     expect(builder).toContain("@match        https://www.chess.com/home*");
+    expect(builder).toContain(
+      "@match        https://www.chess.com/game/*"
+    );
+    expect(builder).toContain(
+      "@match        https://www.chess.com/live/game/*"
+    );
+    expect(builder).toContain(
+      "@match        https://www.chess.com/analysis/game/*"
+    );
     expect(builder).toContain("@run-at       document-start");
     expect(builder.match(/@grant/g)).toHaveLength(4);
     expect(builder).not.toMatch(/@require|@connect|GM_xmlhttpRequest|GM\.xmlHttpRequest/);

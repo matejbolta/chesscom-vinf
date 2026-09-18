@@ -76,6 +76,10 @@ describe("settings popup", () => {
       "#close-side-panel"
     )!;
     const enabled = document.querySelector<HTMLInputElement>("#enabled")!;
+    const oledMode = document.querySelector<HTMLInputElement>("#oled-mode")!;
+    const oledButtonColors = document.querySelector<HTMLInputElement>(
+      "#oled-button-colors"
+    )!;
     const dailyGamesPlacement = document.querySelector<HTMLSelectElement>(
       "#homepage-daily-games-placement"
     )!;
@@ -147,6 +151,24 @@ describe("settings popup", () => {
       "Side panel is not available in this browser."
     );
     expect(enabled.checked).toBe(false);
+    expect(oledMode.checked).toBe(false);
+    expect(oledMode.closest("label")?.textContent).toContain("OLED black");
+    expect(oledButtonColors.checked).toBe(false);
+    expect(oledButtonColors.closest("label")?.textContent).toContain(
+      "OLED button colors"
+    );
+    oledButtonColors.checked = true;
+    oledButtonColors.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushAsyncWork();
+    expect(set).toHaveBeenLastCalledWith({
+      [SETTINGS_STORAGE_KEY]: {
+        ...savedSettings,
+        oledButtonColors: true
+      }
+    });
+    oledButtonColors.checked = false;
+    oledButtonColors.dispatchEvent(new Event("change", { bubbles: true }));
+    await flushAsyncWork();
     expect(showProfile.checked).toBe(false);
     expect(profilePlacement.value).toBe("main");
     expect(profilePlacement.disabled).toBe(true);
@@ -179,7 +201,7 @@ describe("settings popup", () => {
       Array.from(presetCount.options).map((option) => option.value)
     ).toEqual(QUICK_PLAY_PRESET_COUNTS.map(String));
     expect(selects).toHaveLength(6);
-    expect(document.querySelectorAll("select")).toHaveLength(17);
+    expect(document.querySelectorAll("select")).toHaveLength(18);
     expect(rapidState.value).toBe("retracted");
     expect(rapidState.disabled).toBe(false);
     expect(bulletState.disabled).toBe(true);
@@ -225,7 +247,7 @@ describe("settings popup", () => {
     ).not.toBeNull();
     expect(
       homepageCard?.querySelectorAll(".homepage-card-row")
-    ).toHaveLength(10);
+    ).toHaveLength(11);
     expect(document.querySelector(".save-button")).toBeNull();
     expect(Array.from(selects[0].options).map((option) => option.value)).toEqual([
       "30s-0",
@@ -289,7 +311,8 @@ describe("settings popup", () => {
           "recommended-match",
           "streaks",
           "daily-puzzle",
-          "friends"
+          "friends",
+          "open-game"
         ]
       }
     });
@@ -312,7 +335,8 @@ describe("settings popup", () => {
           "game-history",
           "streaks",
           "daily-puzzle",
-          "friends"
+          "friends",
+          "open-game"
         ]
       }
     });
@@ -331,7 +355,8 @@ describe("settings popup", () => {
           "recommended-match",
           "streaks",
           "daily-puzzle",
-          "friends"
+          "friends",
+          "open-game"
         ]
       }
     });
@@ -383,7 +408,7 @@ describe("settings popup", () => {
       expect(document.querySelector("#preset-list")?.hasAttribute("hidden")).toBe(
         count === 0
       );
-      expect(document.querySelectorAll("select")).toHaveLength(11 + count);
+      expect(document.querySelectorAll("select")).toHaveLength(12 + count);
       await flushAsyncWork();
     }
     expect(set).toHaveBeenLastCalledWith({

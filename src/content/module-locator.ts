@@ -1,5 +1,6 @@
 import { MARKERS } from "../shared/constants";
 import type { HomepageModules } from "../shared/models";
+import { findGameContinuationLink } from "./game-continuation";
 
 function normalizedText(element: Element | null): string {
   return element?.textContent?.replace(/\s+/g, " ").trim() ?? "";
@@ -393,6 +394,7 @@ export function locateHomepageModules(document: Document): HomepageModules {
     promo,
     nativeActionColumn,
     nativeLaunchTemplate,
+    activeGameLink: findGameContinuationLink(document),
     topLeagueSummary,
     puzzles:
       findDirectPromoChildByTitle(promo, "Puzzles") ??

@@ -1,11 +1,20 @@
 import {
   HOME_PATHS,
   MARKERS,
+  PHONE_GAME_REVIEW_MEDIA_QUERY,
   RECONCILE_DELAY_MS,
   ROUTE_CHECK_INTERVAL_MS
 } from "../shared/constants";
 import type { ExtensionSettings } from "../shared/models";
 import { normalizeSettings } from "../shared/settings";
+import {
+  GameReviewLayoutController,
+  isChessComLiveGameReview
+} from "./game-review-layout-controller";
+import {
+  findGameContinuationLink,
+  isChessComGame
+} from "./game-continuation";
 import { LayoutController } from "./layout-controller";
 import { NativeLaunchAdapter } from "./launch-adapter";
 
@@ -16,11 +25,16 @@ export interface SettingsSource {
 
 export function startVinfRuntime(settingsSource: SettingsSource): void {
   const controller = new LayoutController(new NativeLaunchAdapter());
+  const gameReviewController = new GameReviewLayoutController();
+  const phoneGameReviewMedia = window.matchMedia?.(
+    PHONE_GAME_REVIEW_MEDIA_QUERY
+  );
 
   let observer: MutationObserver | null = null;
   let observedRoot: HTMLElement | null = null;
   let reconcileTimer: number | null = null;
   let lastUrl = window.location.href;
+  let lastActiveGameHref: string | null = null;
   let settings: ExtensionSettings | null = null;
   let hasAppliedLayout = false;
 
@@ -35,6 +49,9 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
   }
 
   function findObservationRoot(): HTMLElement | null {
+    if (isChessComLiveGameReview(window.location)) {
+      return document.body ?? document.documentElement;
+    }
     return (
       document.querySelector<HTMLElement>(".base-container") ??
       document.querySelector<HTMLElement>("main, [role='main']") ??
@@ -59,6 +76,26 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
     const currentSettings = settings;
     if (!currentSettings) {
       return;
+    }
+    const shouldUseOled =
+      currentSettings.enabled &&
+      currentSettings.oledMode &&
+      (isTargetRoute() ||
+        isChessComLiveGameReview(window.location) ||
+        isChessComGame(window.location));
+    if (shouldUseOled) {
+      document.documentElement.setAttribute(MARKERS.oled, "true");
+    } else {
+      document.documentElement.removeAttribute(MARKERS.oled);
+    }
+    if (
+      currentSettings.enabled &&
+      currentSettings.oledButtonColors &&
+      isTargetRoute()
+    ) {
+      document.documentElement.setAttribute(MARKERS.oledButtons, "true");
+    } else {
+      document.documentElement.removeAttribute(MARKERS.oledButtons);
     }
     const shouldPrehideNativeChrome =
       currentSettings.enabled && isTargetRoute();
@@ -106,6 +143,7 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
             id !== "profile" &&
             id !== "recommended-match" &&
             id !== "game-history" &&
+            id !== "open-game" &&
             !currentSettings.homepageSidebarVisible.includes(id)
         );
       if (hiddenSidebarCards.length > 0) {
@@ -136,16 +174,28 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
 
     syncDocumentSettingsMarkers();
 
-    hasAppliedLayout = controller.reconcile(
+    const homepageApplied = controller.reconcile(
       document,
       window.location,
       settings
     );
+    const gameReviewApplied = gameReviewController.reconcile(
+      document,
+      window.location,
+      settings.enabled,
+      phoneGameReviewMedia?.matches ?? window.innerWidth <= 599
+    );
+    hasAppliedLayout = homepageApplied || gameReviewApplied;
     // An incomplete target document asks the controller to clean up. Re-arm
     // setting-specific pre-hide markers immediately so late native cards cannot
     // paint before the next successful reconciliation.
     syncDocumentSettingsMarkers();
-    if (settings.enabled && isTargetRoute()) {
+    if (
+      settings.enabled &&
+      (isTargetRoute() ||
+        (isChessComLiveGameReview(window.location) &&
+          (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)))
+    ) {
       attachObserver();
     } else {
       observer?.disconnect();
@@ -155,6 +205,10 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
   }
 
   function scheduleReconcile(): void {
+    // A queued observer callback can outlive a torn-down test/page realm.
+    if (typeof window === "undefined") {
+      return;
+    }
     if (reconcileTimer === null) {
       reconcileTimer = window.setTimeout(
         reconcile,
@@ -173,8 +227,17 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
 
   function checkRoute(): void {
     const rootWasDetached = Boolean(observedRoot && !observedRoot.isConnected);
-    if (window.location.href !== lastUrl || rootWasDetached) {
+    const activeGameHref = isTargetRoute()
+      ? (findGameContinuationLink(document)?.href ?? null)
+      : null;
+    const activeGameChanged = activeGameHref !== lastActiveGameHref;
+    if (
+      window.location.href !== lastUrl ||
+      rootWasDetached ||
+      activeGameChanged
+    ) {
       lastUrl = window.location.href;
+      lastActiveGameHref = activeGameHref;
       hasAppliedLayout = false;
       reconcileImmediately();
     }
@@ -183,12 +246,14 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
   settingsSource.subscribe((nextSettings) => {
     settings = normalizeSettings(nextSettings);
     controller.cleanup(document);
+    gameReviewController.cleanup(document);
     hasAppliedLayout = false;
     reconcileImmediately();
   });
 
   window.addEventListener("popstate", reconcileImmediately);
   window.addEventListener("hashchange", reconcileImmediately);
+  phoneGameReviewMedia?.addEventListener("change", reconcileImmediately);
   window.setInterval(checkRoute, ROUTE_CHECK_INTERVAL_MS);
   attachObserver();
 

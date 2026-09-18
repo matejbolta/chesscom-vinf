@@ -24,6 +24,7 @@ describe("Android userscript shell", () => {
     let menuCommand: (() => void) | undefined;
     const setValue = vi.fn();
     vi.stubGlobal("__VINF_USERSCRIPT_CSS__", "");
+    vi.stubGlobal("__VINF_VERSION__", "2.1.2");
     vi.stubGlobal("GM_getValue", vi.fn(() => DEFAULT_SETTINGS));
     vi.stubGlobal("GM_setValue", setValue);
     vi.stubGlobal("GM_addValueChangeListener", vi.fn(() => 1));
@@ -52,7 +53,8 @@ describe("Android userscript shell", () => {
       "[data-chesscom-vinf-userscript-settings]"
     );
     expect(dialog?.open).toBe(true);
-    expect(dialog?.querySelectorAll("select")).toHaveLength(17);
+    expect(dialog?.querySelectorAll("select")).toHaveLength(18);
+    expect(dialog?.textContent).toContain("Android settings · v2.1.2");
     expect(
       dialog?.querySelector<HTMLSelectElement>(
         '[aria-label="Profile placement"]'
@@ -80,6 +82,11 @@ describe("Android userscript shell", () => {
     ).toBe("main");
     expect(
       dialog?.querySelector<HTMLSelectElement>(
+        '[aria-label="Open Game Shortcut placement"]'
+      )?.value
+    ).toBe("sidebar");
+    expect(
+      dialog?.querySelector<HTMLSelectElement>(
         '[aria-label="Rapid initial state"]'
       )?.value
     ).toBe("retracted");
@@ -90,9 +97,21 @@ describe("Android userscript shell", () => {
     ).toBe(true);
     expect(
       dialog?.querySelectorAll(".chesscom-vinf-settings-preference-row")
-    ).toHaveLength(19);
+    ).toHaveLength(20);
     const enabled = dialog?.querySelector<HTMLInputElement>(
       "#chesscom-vinf-userscript-enabled"
+    );
+    const oledMode = dialog?.querySelector<HTMLInputElement>(
+      "#chesscom-vinf-userscript-oled-mode"
+    );
+    const oledButtonColors = dialog?.querySelector<HTMLInputElement>(
+      "#chesscom-vinf-userscript-oled-button-colors"
+    );
+    expect(oledMode?.checked).toBe(false);
+    expect(oledMode?.closest("label")?.textContent).toContain("OLED black");
+    expect(oledButtonColors?.checked).toBe(false);
+    expect(oledButtonColors?.closest("label")?.textContent).toContain(
+      "OLED button colors"
     );
     const dailyPlacement = dialog?.querySelector<HTMLSelectElement>(
       '[aria-label="Daily Games placement"]'

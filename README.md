@@ -1,22 +1,37 @@
 # ChessComVINF
 
 ChessComVINF (Version Infinity) turns the signed-in Chess.com homepage into a
-focused dashboard. It provides configurable one-click matchmaking, promotes
-Game History and Stats, and removes homepage modules that interrupt the normal
-play workflow, including Chess.com's recurring top campaign banner. The native
-profile strip is configurable like the other homepage cards. The current redesigned homepage and the
-preceding desktop layout are both supported.
+focused dashboard and improves move-by-move Game Review on phones. It provides
+configurable one-click matchmaking, promotes Game History and Stats, and removes
+homepage modules that interrupt the normal play workflow, including Chess.com's
+recurring top campaign banner. The native profile strip is configurable like the
+other homepage cards. The current redesigned homepage and the preceding desktop
+layout are both supported.
+
+An optional OLED-black appearance replaces the page canvas with true black on
+the homepage, live games, and Game Review at desktop, tablet, and phone widths.
+An independent `OLED button colors` switch applies a low-glare near-black
+palette to Quick Play and the Open Game shortcut without changing their layout.
+When the homepage contains an exact native game link, VINF presents a managed
+`Jump to open game` card without fetching account or game data. It does not
+infer active state: an unfinished-game link can win when present, otherwise the
+latest Game History link is the fallback.
 
 ![Sanitized ChessComVINF homepage](docs/reference-homepage.png)
 
 ChessComVINF is an independent, unofficial extension and is not affiliated with,
 endorsed by, or sponsored by Chess.com.
 
+On live-game review routes narrower than 600 CSS pixels, VINF keeps Chess.com's
+native evaluation graph directly below the board and player clocks while the
+move-by-move view is active. The initial report, tablets, and desktop layouts
+remain native and unchanged.
+
 The extension toolbar popup keeps its master `Enable VINF` switch in a standalone
 top card. Its homepage settings can show or hide Chess.com's large native play
 panel, independently show or hide every known managed card, and apply one
 user-selected relative order within both the Main and Right columns. Daily
-Games, Recommended Match, Game History, and Profile each have a visibility
+Games, Recommended Match, Game History, Profile, and Open Game Shortcut each have a visibility
 checkbox plus a Main/Right placement selector that remembers the selected
 location while hidden. ChessTV remains fully native; VINF does not alter its
 loading, autoplay, or player permissions.

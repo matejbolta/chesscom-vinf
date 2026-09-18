@@ -1,0 +1,161 @@
+<!doctype html>
+<html class="user-logged-in dark-mode" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Player One vs. Player Two | Game Review fixture</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-size: 62.5%;
+        --gutterSmall: 1rem;
+        --layoutPlayerWidth: min(31rem, 100vw - 2.8rem);
+      }
+      * { box-sizing: border-box; }
+      body {
+        background: #302e2b;
+        color: #e8e8e8;
+        font: 1.4rem/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 0;
+      }
+      .fixture-nav {
+        align-items: center;
+        display: flex;
+        font-size: 2rem;
+        font-weight: 700;
+        height: 4.8rem;
+        padding: 0 1.4rem;
+      }
+      .board-layout-main {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        position: relative;
+        width: min-content;
+      }
+      .board-layout-player {
+        align-items: center;
+        display: flex;
+        height: 4rem;
+        justify-content: space-between;
+        margin: 0 auto;
+        width: var(--layoutPlayerWidth);
+      }
+      .fixture-clock {
+        background: #464541;
+        border-radius: .3rem;
+        font-size: 2.4rem;
+        padding: .3rem 1rem;
+      }
+      .board-layout-chessboard {
+        background:
+          conic-gradient(from 90deg, #b58863 25%, #f0d9b5 0 50%, #b58863 0 75%, #f0d9b5 0)
+          0 0 / 8rem 8rem;
+        height: min(34.8rem, 100vw);
+        width: min(34.8rem, 100vw);
+      }
+      .board-layout-analysis {
+        height: 0;
+        overflow: hidden;
+      }
+      .board-layout-sidebar {
+        background: #262522;
+        margin: 1.6rem auto 0;
+        width: min(34.8rem, 100vw);
+      }
+      .sidebar-header-header,
+      .game-controls-view-component {
+        align-items: center;
+        display: flex;
+        font-size: 1.8rem;
+        font-weight: 700;
+        height: 5rem;
+        justify-content: space-around;
+      }
+      .move-by-move-move-list-container { padding: .8rem 1.6rem; }
+      .fixture-move {
+        display: grid;
+        grid-template-columns: 3rem 1fr 1fr;
+        padding: .7rem 0;
+      }
+      .move-by-move-bottom-section { padding: 1.2rem; }
+      .game-arc-component { width: 100%; }
+      .game-arc-chart {
+        background: #3a3936;
+        border-radius: .5rem;
+        height: 8rem;
+        overflow: hidden;
+        width: 100%;
+      }
+      .game-arc-chart svg { display: block; height: 100%; width: 100%; }
+      .move-by-move-skills-row-anchor {
+        border-top: .1rem solid #464541;
+        margin-top: 1.2rem;
+        padding: 1.4rem 0;
+      }
+      @media (min-width: 960px) {
+        body {
+          display: grid;
+          gap: 1.6rem;
+          grid-template-columns: min-content 46rem;
+          justify-content: center;
+          padding: 1.6rem;
+          --layoutPlayerWidth: 52.8rem;
+        }
+        .fixture-nav { display: none; }
+        .board-layout-chessboard { height: 52.8rem; width: 52.8rem; }
+        .board-layout-sidebar { margin: 0; width: 46rem; }
+      }
+    </style>
+  </head>
+  <body class="board-layout with-players with-controls">
+    <nav class="fixture-nav">♟ Chess.com</nav>
+    <main id="board-layout-main" class="board-layout-main">
+      <div id="board-layout-player-top" class="board-layout-player board-layout-top">
+        <strong>Player Two</strong><span class="fixture-clock">8:54</span>
+      </div>
+      <div id="board-layout-chessboard" class="board-layout-chessboard board-board" aria-label="Chess board"></div>
+      <div id="board-layout-player-bottom" class="board-layout-player board-layout-bottom">
+        <strong>Player One</strong><span class="fixture-clock">8:43</span>
+      </div>
+      <div id="board-layout-analysis" class="board-layout-analysis"><div id="charts"></div></div>
+    </main>
+    <aside id="board-layout-sidebar" class="board-layout-sidebar">
+      <div class="sidebar-component">
+        <div class="sidebar-view-component">
+          <div class="cc-sidebar-header-component sidebar-header-header">
+            <span aria-label="Back">←</span><span>♡</span><span>⭐ Game Review</span><span>🔇</span>
+          </div>
+          <div class="sidebar-tab-content-component sidebar-view-content">
+            <div class="move-by-move-container">
+              <div class="move-by-move-component">
+                <section class="move-by-move-move-list-container">
+                  <div class="fixture-move"><span>1.</span><strong>d4</strong><strong>d5</strong></div>
+                  <div class="fixture-move"><span>2.</span><strong>Bf4</strong><strong>Nf6</strong></div>
+                  <div class="fixture-move"><span>3.</span><strong>e3</strong><strong>e6</strong></div>
+                  <div class="fixture-move"><span>4.</span><strong>Nf3</strong><strong>Be7</strong></div>
+                  <div class="fixture-move"><span>5.</span><strong>Bd3</strong><strong>Nc6</strong></div>
+                </section>
+                <section class="move-by-move-bottom-section">
+                  <div class="game-arc-component">
+                    <div class="game-arc-chart" aria-label="Game evaluation graph">
+                      <svg viewBox="0 0 310 80" role="img" aria-label="Sanitized game evaluation">
+                        <path d="M0 42 L30 39 L58 20 L74 57 L103 44 L130 65 L158 51 L190 58 L220 29 L248 63 L280 49 L310 16 L310 80 L0 80Z" fill="#eee" opacity=".9"></path>
+                        <path d="M0 42 L30 39 L58 20 L74 57 L103 44 L130 65 L158 51 L190 58 L220 29 L248 63 L280 49 L310 16" fill="none" stroke="#d8d8d8" stroke-width="2"></path>
+                        <circle cx="58" cy="20" r="4" fill="#f66"></circle>
+                        <circle cx="130" cy="65" r="4" fill="#f90"></circle>
+                        <circle cx="220" cy="29" r="4" fill="#2bbbad"></circle>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="move-by-move-skills-row-anchor">Openings · Tactics · Strategy</div>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div class="game-controls-view-component"><span>💡</span><span>★</span><span>Next →</span><span>‹</span><span>›</span></div>
+        </div>
+      </div>
+    </aside>
+  </body>
+</html>

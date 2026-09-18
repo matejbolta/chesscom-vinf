@@ -16,7 +16,9 @@ directory.
 
 ## Product invariants
 
-- Run only on the signed-in Chess.com homepage.
+- Run homepage transformations only on the signed-in Chess.com homepage. Run
+  the phone Game Review enhancement only on exact signed-in live-game review
+  routes while the move-by-move view is present.
 - Keep Chess.com's main navigation; hide the native Game Review homepage card.
 - Expose 0, 1, 2, 3, 4, 6, or 8 user-selected time controls. Zero removes the
   Quick Play module entirely. Default to the original six recorded in
@@ -30,10 +32,17 @@ directory.
   private matchmaking endpoint or reuse account credentials.
 - Prefer semantic landmarks and URLs over generated class names.
 - Keep DOM reconciliation idempotent and safe when optional modules are absent.
+- Below 600 CSS pixels, keep the native move-review evaluation graph immediately
+  below the board; leave the initial report and tablet/desktop layouts native.
 - Keep the toolbar popup as the default settings entry point. The optional
   Chromium side panel must reuse the same local autosaving UI and fail safely
   when a browser does not expose `chrome.sidePanel`.
 - Do not add telemetry, analytics, remote code, or extension-owned network calls.
+- Keep OLED black opt-in and scoped to exact supported homepage, current
+  `/game/<id>`, legacy `/game/live/<id>`, and review routes. The configurable
+  homepage `Jump to open game` card reuses the first exact native game link,
+  including Game History as its deliberate fallback; never query or guess game
+  state.
 - Never commit raw signed-in page captures or account-specific data.
 
 ## Required checks

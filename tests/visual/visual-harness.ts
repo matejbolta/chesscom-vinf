@@ -1,6 +1,8 @@
+import { GameReviewLayoutController } from "../../src/content/game-review-layout-controller";
 import { LayoutController } from "../../src/content/layout-controller";
 import { NativeLaunchAdapter } from "../../src/content/launch-adapter";
 import type { ExtensionSettings } from "../../src/shared/models";
+import { MARKERS } from "../../src/shared/constants";
 import { DEFAULT_SETTINGS } from "../../src/shared/settings";
 import {
   getDefaultTimeControlIds,
@@ -18,8 +20,29 @@ const controller = new LayoutController(
     document.body.dataset.chesscomVinfLastLaunch = url;
   })
 );
+const gameReviewController = new GameReviewLayoutController();
 
 const searchParams = new URL(window.location.href).searchParams;
+
+if (searchParams.has("active-game")) {
+  const activeGameLink = document.createElement("a");
+  activeGameLink.href = "https://www.chess.com/game/live/123456";
+  activeGameLink.hidden = true;
+  activeGameLink.textContent = "Native active game";
+  document.body.append(activeGameLink);
+}
+
+if (searchParams.has("oled")) {
+  document.documentElement.setAttribute(MARKERS.oled, "true");
+}
+
+if (searchParams.has("oled-buttons")) {
+  document.documentElement.setAttribute(MARKERS.oledButtons, "true");
+}
+
+if (searchParams.has("expanded-sidebar")) {
+  document.querySelector("#sidebar-main-menu")?.setAttribute("data-expanded", "");
+}
 
 if (searchParams.has("pre-hydration")) {
   const dailyLink = document.querySelector<HTMLAnchorElement>(
@@ -170,7 +193,20 @@ if (searchParams.has("duplicate-preview")) {
   };
 }
 
-controller.reconcile(document, fixtureLocation, {
-  ...previewSettings,
-  timeControlIds: [...previewSettings.timeControlIds]
-});
+if (window.location.pathname === "/game-review-mobile") {
+  gameReviewController.reconcile(
+    document,
+    {
+      protocol: "https:",
+      hostname: "www.chess.com",
+      pathname: "/analysis/game/live/123456/review"
+    },
+    true,
+    window.innerWidth <= 599
+  );
+} else {
+  controller.reconcile(document, fixtureLocation, {
+    ...previewSettings,
+    timeControlIds: [...previewSettings.timeControlIds]
+  });
+}

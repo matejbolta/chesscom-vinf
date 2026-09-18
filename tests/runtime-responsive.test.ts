@@ -5,7 +5,10 @@ import { DEFAULT_SETTINGS } from "../src/shared/settings";
 import { loadResponsiveHomepageFixture } from "./test-utils";
 
 afterEach(() => {
+  window.history.replaceState({}, "", "/home");
   document.documentElement.removeAttribute(MARKERS.active);
+  document.documentElement.removeAttribute(MARKERS.oled);
+  document.documentElement.removeAttribute(MARKERS.oledButtons);
   document.documentElement.removeAttribute(MARKERS.dailyPlacement);
   document.documentElement.removeAttribute(MARKERS.recommendedPlacement);
   document.documentElement.removeAttribute(MARKERS.gameHistoryPlacement);
@@ -16,6 +19,85 @@ afterEach(() => {
 });
 
 describe("responsive runtime lifecycle", () => {
+  it("applies and removes the OLED marker from saved settings", async () => {
+    vi.useFakeTimers();
+    const fixture = loadResponsiveHomepageFixture();
+    document.documentElement.className = fixture.documentElement.className;
+    document.documentElement.innerHTML = fixture.documentElement.innerHTML;
+    let settingsListener:
+      | ((settings: typeof DEFAULT_SETTINGS) => void)
+      | undefined;
+
+    startVinfRuntime({
+      load: async () => ({ ...DEFAULT_SETTINGS, oledMode: true }),
+      subscribe: (listener) => {
+        settingsListener = listener;
+      }
+    });
+    await Promise.resolve();
+
+    expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
+    settingsListener?.({ ...DEFAULT_SETTINGS, oledMode: false });
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
+  });
+
+  it("applies the independent OLED button palette marker", async () => {
+    vi.useFakeTimers();
+    const fixture = loadResponsiveHomepageFixture();
+    document.documentElement.className = fixture.documentElement.className;
+    document.documentElement.innerHTML = fixture.documentElement.innerHTML;
+    let settingsListener:
+      | ((settings: typeof DEFAULT_SETTINGS) => void)
+      | undefined;
+
+    startVinfRuntime({
+      load: async () => ({ ...DEFAULT_SETTINGS, oledButtonColors: true }),
+      subscribe: (listener) => {
+        settingsListener = listener;
+      }
+    });
+    await Promise.resolve();
+
+    expect(document.documentElement.getAttribute(MARKERS.oledButtons)).toBe(
+      "true"
+    );
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
+    settingsListener?.({ ...DEFAULT_SETTINGS, oledButtonColors: false });
+    expect(document.documentElement.hasAttribute(MARKERS.oledButtons)).toBe(
+      false
+    );
+  });
+
+  it("applies OLED on Chess.com's current numeric live-game route", async () => {
+    vi.useFakeTimers();
+    window.history.replaceState({}, "", "/game/183987646934");
+    document.documentElement.className = "user-logged-in";
+    document.body.replaceChildren();
+
+    startVinfRuntime({
+      load: async () => ({ ...DEFAULT_SETTINGS, oledMode: true }),
+      subscribe: () => undefined
+    });
+    await Promise.resolve();
+
+    expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
+  });
+
+  it("applies OLED on Chess.com's alternate live-game route", async () => {
+    vi.useFakeTimers();
+    window.history.replaceState({}, "", "/live/game/183987646934");
+    document.documentElement.className = "user-logged-in";
+    document.body.replaceChildren();
+
+    startVinfRuntime({
+      load: async () => ({ ...DEFAULT_SETTINGS, oledMode: true }),
+      subscribe: () => undefined
+    });
+    await Promise.resolve();
+
+    expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
+  });
+
   it("observes a main element when the desktop base container is absent", async () => {
     vi.useFakeTimers();
     const fixture = loadResponsiveHomepageFixture();
@@ -42,6 +124,31 @@ describe("responsive runtime lifecycle", () => {
     expect(
       document.querySelectorAll(`[${MARKERS.owned}="quick-play"]`)
     ).toHaveLength(1);
+  });
+
+  it("notices a native active-game link that appears outside the observed root", async () => {
+    vi.useFakeTimers();
+    const fixture = loadResponsiveHomepageFixture();
+    document.documentElement.className = fixture.documentElement.className;
+    document.documentElement.innerHTML = fixture.documentElement.innerHTML;
+
+    startVinfRuntime({
+      load: async () => DEFAULT_SETTINGS,
+      subscribe: () => undefined
+    });
+    await Promise.resolve();
+
+    const activeGameLink = document.createElement("a");
+    activeGameLink.href = "https://www.chess.com/game/live/654321";
+    activeGameLink.hidden = true;
+    document.body.prepend(activeGameLink);
+    await vi.advanceTimersByTimeAsync(750);
+
+    expect(
+      document
+        .querySelector(".chesscom-vinf-game-continuation a")
+        ?.getAttribute("href")
+    ).toBe("https://www.chess.com/game/live/654321");
   });
 
   it("observes from startup and transforms as soon as late homepage landmarks arrive", async () => {

@@ -15,7 +15,8 @@ export const HOMEPAGE_SIDEBAR_CARD_CATALOG: readonly HomepageSidebarCard[] = [
   { id: "streaks", label: "Streaks" },
   { id: "legend-league", label: "Legend League" },
   { id: "daily-puzzle", label: "Daily Puzzle" },
-  { id: "friends", label: "Friends" }
+  { id: "friends", label: "Friends" },
+  { id: "open-game", label: "Open Game Shortcut" }
 ] as const;
 
 export const DEFAULT_HOMEPAGE_SIDEBAR_ORDER: HomepageSidebarCardId[] =

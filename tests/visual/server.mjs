@@ -12,6 +12,14 @@ const rawDirectory = new URL(
 const rawHtmlUrl = new URL("Home - Chess.com.html", rawDirectory);
 const assetRoot = new URL("Home - Chess.com_files/", rawDirectory);
 const assetRootPath = fileURLToPath(assetRoot);
+const narrowStatsRawDirectory = new URL(
+  "../../fixtures/raw/homepage-narrow-stats-2026-09-10/",
+  import.meta.url
+);
+const narrowStatsRawHtmlUrl = new URL("Home - Chess.com.html", narrowStatsRawDirectory);
+const narrowStatsAssetRootPath = fileURLToPath(
+  new URL("Home - Chess.com_files/", narrowStatsRawDirectory)
+);
 const iconRootPath = fileURLToPath(new URL("../../dist/icons/", import.meta.url));
 
 const harness = await build({
@@ -62,6 +70,7 @@ const showcaseHtml = showcaseSourceHtml
   .replace('href="showcase.css"', 'href="/showcase.css"')
   .replaceAll("../../public/icons/icon-128.png", "/icons/icon-128.png");
 const rawHtml = await readFile(rawHtmlUrl, "utf8");
+const narrowStatsRawHtml = await readFile(narrowStatsRawHtmlUrl, "utf8");
 const responsiveFixtureHtml = await readFile(
   new URL("../fixtures/homepage-responsive.html", import.meta.url),
   "utf8"
@@ -70,10 +79,26 @@ const modernFixtureHtml = await readFile(
   new URL("../fixtures/homepage-modern.html", import.meta.url),
   "utf8"
 );
+const gameReviewFixtureHtml = await readFile(
+  new URL("../fixtures/game-review-narrow.html", import.meta.url),
+  "utf8"
+);
 
 const safeHtml = rawHtml
   .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
   .replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe>/gi, "")
+  .replace(
+    "</head>",
+    '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>'
+  )
+  .replace(
+    "</body>",
+    '<script src="/chesscom-vinf-visual-harness.js"></script></body>'
+  );
+const narrowStatsHtml = narrowStatsRawHtml
+  .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+  .replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe>/gi, "")
+  .replaceAll("./Home - Chess.com_files/", "/home-mobile-stats-assets/")
   .replace(
     "</head>",
     '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>'
@@ -153,6 +178,15 @@ const modernHtml = modernFixtureHtml
     "</body>",
     '<script src="/chesscom-vinf-visual-harness.js"></script></body>'
   );
+const gameReviewHtml = gameReviewFixtureHtml
+  .replace(
+    "</head>",
+    '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>'
+  )
+  .replace(
+    "</body>",
+    '<script src="/chesscom-vinf-visual-harness.js"></script></body>'
+  );
 
 const mimeTypes = {
   ".css": "text/css",
@@ -179,6 +213,20 @@ const server = createServer(async (request, response) => {
     );
     return;
   }
+  if (pathname === "/home-phone-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF phone homepage preview" src="/home?oled=1&oled-buttons=1&active-game=1&expanded-sidebar=1" style="border:0;height:844px;width:390px"></iframe></body></html>'
+    );
+    return;
+  }
+  if (pathname === "/home-phone-buttons-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF phone OLED buttons preview" src="/home?oled=1&oled-buttons=1&active-game=1" style="border:0;height:844px;width:390px"></iframe></body></html>'
+    );
+    return;
+  }
   if (pathname === "/home-online-tv") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(onlineTvHtml);
@@ -189,9 +237,26 @@ const server = createServer(async (request, response) => {
     response.end(responsiveHtml);
     return;
   }
+  if (pathname === "/home-mobile-stats") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(narrowStatsHtml);
+    return;
+  }
   if (pathname === "/home-modern") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(modernHtml);
+    return;
+  }
+  if (pathname === "/game-review-mobile") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(gameReviewHtml);
+    return;
+  }
+  if (pathname === "/game-review-phone-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF phone Game Review preview" src="/game-review-mobile?oled=1" style="border:0;height:844px;width:390px"></iframe></body></html>'
+    );
     return;
   }
   if (pathname === "/popup-preview") {
@@ -285,6 +350,28 @@ const server = createServer(async (request, response) => {
     const relativePath = normalize(pathname.slice(assetPrefix.length));
     const assetPath = join(assetRootPath, relativePath);
     if (!assetPath.startsWith(assetRootPath)) {
+      response.writeHead(403).end();
+      return;
+    }
+
+    try {
+      await stat(assetPath);
+      response.writeHead(200, {
+        "content-type": mimeTypes[extname(assetPath)] ?? "application/octet-stream"
+      });
+      createReadStream(assetPath).pipe(response);
+      return;
+    } catch {
+      response.writeHead(404).end();
+      return;
+    }
+  }
+
+  const narrowStatsAssetPrefix = "/home-mobile-stats-assets/";
+  if (pathname.startsWith(narrowStatsAssetPrefix)) {
+    const relativePath = normalize(pathname.slice(narrowStatsAssetPrefix.length));
+    const assetPath = join(narrowStatsAssetRootPath, relativePath);
+    if (!assetPath.startsWith(narrowStatsAssetRootPath)) {
       response.writeHead(403).end();
       return;
     }

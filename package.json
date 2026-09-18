@@ -1,8 +1,8 @@
 {
   "name": "chesscom-vinf",
-  "version": "1.0.8",
+  "version": "2.2.0",
   "private": true,
-  "description": "A focused, infinitely improving Chess.com homepage.",
+  "description": "A focused Chess.com experience for the homepage and phone Game Review.",
   "type": "module",
   "packageManager": "pnpm@11.9.0",
   "scripts": {

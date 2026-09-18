@@ -1,4 +1,5 @@
 import {
+  GAME_CONTINUATION_OWNER,
   MARKERS,
   QUICK_PLAY_OWNER,
   SIDEBAR_CARD_OWNER
@@ -14,6 +15,7 @@ import type { NativeLaunchAdapter } from "./launch-adapter";
 import { locateHomepageModules } from "./module-locator";
 import { destroyQuickPlayPanel, ensureQuickPlayPanel } from "./quick-play-renderer";
 import { applyStatsPreferences } from "./stats-controller";
+import { ensureGameContinuation } from "./game-continuation";
 
 interface OriginalPosition {
   parent: HTMLElement;
@@ -75,6 +77,7 @@ export class LayoutController {
         id !== "profile" &&
         id !== "recommended-match" &&
         id !== "game-history" &&
+        id !== "open-game" &&
         !settings.homepageSidebarVisible.includes(id)
     );
     if (hiddenSidebarCards.length > 0) {
@@ -176,6 +179,28 @@ export class LayoutController {
         "recommended-match"
       );
     }
+    const gameContinuation = ensureGameContinuation(
+      document,
+      modules.activeGameLink
+    );
+    if (gameContinuation) {
+      if (settings.openGamePlacement === "hidden") {
+        this.hide(gameContinuation, "open-game");
+      } else {
+        this.show(gameContinuation);
+        const continuationHost =
+          modules.layoutMode === "desktop" &&
+          settings.openGamePlacement === "sidebar"
+            ? modules.rightColumn
+            : quickPlayHost;
+        if (
+          continuationHost &&
+          gameContinuation.parentElement !== continuationHost
+        ) {
+          continuationHost.append(gameContinuation);
+        }
+      }
+    }
 
     const sidebarCards: Partial<
       Record<HomepageSidebarCardId, HTMLElement | null>
@@ -199,7 +224,9 @@ export class LayoutController {
       "game-history":
         settings.gameHistoryPlacement === "sidebar"
           ? modules.gameHistory
-          : null
+          : null,
+      "open-game":
+        settings.openGamePlacement === "sidebar" ? gameContinuation : null
     };
 
     if (modules.layoutMode === "desktop" && modules.rightColumn) {
@@ -237,6 +264,7 @@ export class LayoutController {
         id === "profile" ||
         id === "recommended-match" ||
         id === "game-history" ||
+        id === "open-game" ||
         visibleSidebarCards.has(id)
       ) {
         this.show(card);
@@ -258,7 +286,9 @@ export class LayoutController {
       "game-history":
         settings.gameHistoryPlacement === "main"
           ? modules.gameHistory
-          : null
+          : null,
+      "open-game":
+        settings.openGamePlacement === "main" ? gameContinuation : null
     };
     const desiredMainOrder = [
       ...new Set(
@@ -274,6 +304,7 @@ export class LayoutController {
         modules.recommendedMatch,
         modules.dailyGames,
         modules.gameHistory,
+        gameContinuation,
         ...settings.homepageSidebarOrder.map((id) => sidebarCards[id] ?? null)
       ].filter((element): element is HTMLElement => Boolean(element));
 
@@ -285,6 +316,7 @@ export class LayoutController {
             id !== "profile" &&
             id !== "recommended-match" &&
             id !== "game-history" &&
+            id !== "open-game" &&
             !visibleSidebarCards.has(id)
           ) {
             return null;
@@ -301,6 +333,7 @@ export class LayoutController {
           (element): element is HTMLElement =>
             element instanceof HTMLElement &&
             element.getAttribute(MARKERS.owned) !== QUICK_PLAY_OWNER &&
+            element.getAttribute(MARKERS.owned) !== GAME_CONTINUATION_OWNER &&
             !element.hasAttribute(MARKERS.hidden)
         )
         .slice(0, uniqueResponsiveModules.length);
@@ -332,6 +365,7 @@ export class LayoutController {
           (element): element is HTMLElement =>
             element instanceof HTMLElement &&
             element.getAttribute(MARKERS.owned) !== QUICK_PLAY_OWNER &&
+            element.getAttribute(MARKERS.owned) !== GAME_CONTINUATION_OWNER &&
             !element.hasAttribute(MARKERS.hidden)
         )
         .slice(0, desiredMainOrder.length);
@@ -411,7 +445,8 @@ export class LayoutController {
       if (!alreadyOrdered) {
         for (const element of desiredOrder) {
           if (
-            element.getAttribute(MARKERS.owned) !== SIDEBAR_CARD_OWNER
+            element.getAttribute(MARKERS.owned) !== SIDEBAR_CARD_OWNER &&
+            element.getAttribute(MARKERS.owned) !== GAME_CONTINUATION_OWNER
           ) {
             this.rememberPosition(element);
           }
@@ -442,6 +477,11 @@ export class LayoutController {
       `[${MARKERS.owned}="${QUICK_PLAY_OWNER}"]`
     )) {
       destroyQuickPlayPanel(panel);
+    }
+    for (const prompt of document.querySelectorAll<HTMLElement>(
+      `[${MARKERS.owned}="${GAME_CONTINUATION_OWNER}"]`
+    )) {
+      prompt.remove();
     }
 
     for (const element of document.querySelectorAll<HTMLElement>(

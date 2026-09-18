@@ -13,6 +13,10 @@ const modernHomepageFixture = readFileSync(
   resolve(process.cwd(), "tests/fixtures/homepage-modern.html"),
   "utf8"
 );
+const narrowGameReviewFixture = readFileSync(
+  resolve(process.cwd(), "tests/fixtures/game-review-narrow.html"),
+  "utf8"
+);
 
 export const HOME_LOCATION = {
   protocol: "https:",
@@ -33,6 +37,11 @@ export function loadResponsiveHomepageFixture(): Document {
 export function loadModernHomepageFixture(): Document {
   const parser = new DOMParser();
   return parser.parseFromString(modernHomepageFixture, "text/html");
+}
+
+export function loadNarrowGameReviewFixture(): Document {
+  const parser = new DOMParser();
+  return parser.parseFromString(narrowGameReviewFixture, "text/html");
 }
 
 export function loadPreviousModernHomepageFixture(): Document {

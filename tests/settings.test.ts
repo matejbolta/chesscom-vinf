@@ -13,6 +13,8 @@ import {
 describe("settings", () => {
   it("uses the requested defaults", () => {
     expect(normalizeSettings(undefined)).toEqual(DEFAULT_SETTINGS);
+    expect(DEFAULT_SETTINGS.oledMode).toBe(false);
+    expect(DEFAULT_SETTINGS.oledButtonColors).toBe(false);
     expect(Object.values(DEFAULT_SETTINGS.statsRatingStates)).toEqual([
       "retracted",
       "retracted",
@@ -21,6 +23,17 @@ describe("settings", () => {
       "retracted",
       "retracted"
     ]);
+  });
+
+  it("preserves the OLED appearance preference", () => {
+    expect(normalizeSettings({ oledMode: true }).oledMode).toBe(true);
+    expect(normalizeSettings({ oledMode: "yes" }).oledMode).toBe(false);
+    expect(
+      normalizeSettings({ oledButtonColors: true }).oledButtonColors
+    ).toBe(true);
+    expect(
+      normalizeSettings({ oledButtonColors: "yes" }).oledButtonColors
+    ).toBe(false);
   });
 
   it("accepts six supported presets", () => {
@@ -206,7 +219,8 @@ describe("settings", () => {
       "recommended-match",
       "streaks",
       "daily-puzzle",
-      "friends"
+      "friends",
+      "open-game"
     ]);
     expect(
       normalizeSettings({
@@ -259,12 +273,14 @@ describe("settings", () => {
       "streaks",
       "legend-league",
       "chess-tv",
-      "daily-games"
+      "daily-games",
+      "open-game"
     ]);
     expect(normalized.homepageSidebarVisible).toEqual([
       "friends",
       "stats",
-      "daily-games"
+      "daily-games",
+      "open-game"
     ]);
   });
 
@@ -294,7 +310,8 @@ describe("settings", () => {
       "daily-puzzle",
       "legend-league",
       "streaks",
-      "chess-tv"
+      "chess-tv",
+      "open-game"
     ]);
   });
 
@@ -323,7 +340,8 @@ describe("settings", () => {
       "daily-puzzle",
       "legend-league",
       "streaks",
-      "chess-tv"
+      "chess-tv",
+      "open-game"
     ]);
   });
 
@@ -351,7 +369,8 @@ describe("settings", () => {
       "daily-puzzle",
       "legend-league",
       "streaks",
-      "chess-tv"
+      "chess-tv",
+      "open-game"
     ]);
   });
 

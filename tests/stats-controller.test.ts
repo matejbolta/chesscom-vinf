@@ -6,7 +6,8 @@ import { DEFAULT_SETTINGS } from "../src/shared/settings";
 import {
   HOME_LOCATION,
   loadHomepageFixture,
-  loadModernHomepageFixture
+  loadModernHomepageFixture,
+  loadResponsiveHomepageFixture
 } from "./test-utils";
 
 function statsModule(document: Document): HTMLElement {
@@ -32,6 +33,57 @@ function ratingOrder(document: Document): string[] {
 }
 
 describe("Stats preferences", () => {
+  it("filters and orders the native mobile Stats cards", () => {
+    const document = loadResponsiveHomepageFixture();
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+
+    controller.reconcile(document, HOME_LOCATION, {
+      ...DEFAULT_SETTINGS,
+      statsRatingOrder: [
+        "blitz",
+        "rapid",
+        "bullet",
+        "daily",
+        "puzzles",
+        "live-960"
+      ],
+      statsRatingVisible: ["rapid", "blitz"]
+    });
+
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        '[data-fixture-module="stats"] > .stats-mobile-content > .stats-mobile-card'
+      )
+    );
+    expect(cards.map((card) => new URL((card as HTMLAnchorElement).href).pathname))
+      .toEqual([
+        "/member/example-player/stats/blitz",
+        "/member/example-player/stats/rapid",
+        "/member/example-player/stats/bullet",
+        "/play/online/daily",
+        "/member/example-player/stats/puzzles"
+      ]);
+    expect(
+      cards.map((card) => card.hasAttribute(MARKERS.hidden))
+    ).toEqual([false, false, true, true, true]);
+
+    controller.cleanup(document);
+    expect(
+      Array.from(
+        document.querySelectorAll<HTMLAnchorElement>(
+          '[data-fixture-module="stats"] > .stats-mobile-content > .stats-mobile-card'
+        )
+      ).map((card) => new URL(card.href).pathname)
+    ).toEqual([
+      "/member/example-player/stats/rapid",
+      "/member/example-player/stats/blitz",
+      "/member/example-player/stats/bullet",
+      "/play/online/daily",
+      "/member/example-player/stats/puzzles"
+    ]);
+    expect(document.querySelector(`[${MARKERS.hidden}]`)).toBeNull();
+  });
+
   it("orders and filters the redesigned expandable Stats rows without Insights", () => {
     const document = loadModernHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));

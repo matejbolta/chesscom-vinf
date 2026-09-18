@@ -36,6 +36,8 @@ export const SETTINGS_STORAGE_KEY = "vinfSettings";
 
 export const DEFAULT_SETTINGS: ExtensionSettings = {
   enabled: true,
+  oledMode: false,
+  oledButtonColors: false,
   showNativePlayPanel: false,
   profilePlacement: "hidden",
   profileVisiblePlacement: "main",
@@ -45,6 +47,8 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   recommendedMatchVisiblePlacement: "main",
   gameHistoryPlacement: "main",
   gameHistoryVisiblePlacement: "main",
+  openGamePlacement: "sidebar",
+  openGameVisiblePlacement: "sidebar",
   homepageSidebarOrder: [...DEFAULT_HOMEPAGE_SIDEBAR_ORDER],
   homepageSidebarVisible: [...DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE],
   quickPlayPresetCount: 6,
@@ -139,49 +143,63 @@ function normalizeHomepageSidebarOrder(
   }
 
   const previousCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
-    (id) => id !== "profile"
+    (id) => id !== "open-game"
   );
   if (
     unique.length === previousCardIds.length &&
-    !unique.includes("profile") &&
+    !unique.includes("open-game") &&
     previousCardIds.every((id) => unique.includes(id))
   ) {
-    unique.unshift("profile");
+    unique.push("open-game");
     return unique;
   }
 
-  const previousEightCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
-    (id) => id !== "profile" && id !== "game-history"
+  const previousTenCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
+    (id) => id !== "open-game" && id !== "profile"
   );
   if (
-    unique.length === previousEightCardIds.length &&
+    unique.length === previousTenCardIds.length &&
     !unique.includes("profile") &&
+    !unique.includes("open-game") &&
+    previousTenCardIds.every((id) => unique.includes(id))
+  ) {
+    unique.unshift("profile");
+    unique.push("open-game");
+    return unique;
+  }
+
+  const previousNineCardIds = previousTenCardIds.filter(
+    (id) => id !== "game-history"
+  );
+  if (
+    unique.length === previousNineCardIds.length &&
     !unique.includes("game-history") &&
-    previousEightCardIds.every((id) => unique.includes(id))
+    !unique.includes("profile") &&
+    !unique.includes("open-game") &&
+    previousNineCardIds.every((id) => unique.includes(id))
   ) {
     unique.unshift("profile");
     const recommendedMatchIndex = unique.indexOf("recommended-match");
     unique.splice(recommendedMatchIndex + 1, 0, "game-history");
+    unique.push("open-game");
     return unique;
   }
 
-  const earlierCardIds = DEFAULT_SETTINGS.homepageSidebarOrder.filter(
-    (id) =>
-      id !== "profile" &&
-      id !== "recommended-match" &&
-      id !== "game-history"
+  const previousSevenCardIds = previousNineCardIds.filter(
+    (id) => id !== "recommended-match"
   );
   if (
-    unique.length === earlierCardIds.length &&
+    unique.length === previousSevenCardIds.length &&
     !unique.includes("recommended-match") &&
     !unique.includes("game-history") &&
     !unique.includes("profile") &&
-    earlierCardIds.every((id) => unique.includes(id))
+    !unique.includes("open-game") &&
+    previousSevenCardIds.every((id) => unique.includes(id))
   ) {
     unique.unshift("profile");
     const dailyGamesIndex = unique.indexOf("daily-games");
-    unique.splice(dailyGamesIndex + 1, 0, "recommended-match");
-    unique.splice(dailyGamesIndex + 2, 0, "game-history");
+    unique.splice(dailyGamesIndex + 1, 0, "recommended-match", "game-history");
+    unique.push("open-game");
     return unique;
   }
 
@@ -233,6 +251,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
 
   const candidate = value as {
     enabled?: unknown;
+    oledMode?: unknown;
+    oledButtonColors?: unknown;
     showNativePlayPanel?: unknown;
     profilePlacement?: unknown;
     profileVisiblePlacement?: unknown;
@@ -242,6 +262,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     recommendedMatchVisiblePlacement?: unknown;
     gameHistoryPlacement?: unknown;
     gameHistoryVisiblePlacement?: unknown;
+    openGamePlacement?: unknown;
+    openGameVisiblePlacement?: unknown;
     homepageSidebarOrder?: unknown;
     homepageSidebarVisible?: unknown;
     showChessTv?: unknown;
@@ -340,6 +362,18 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     : isMainColumnCardVisiblePlacement(gameHistoryPlacement)
       ? gameHistoryPlacement
       : DEFAULT_SETTINGS.gameHistoryVisiblePlacement;
+  const openGamePlacement = isMainColumnCardPlacement(
+    candidate.openGamePlacement
+  )
+    ? candidate.openGamePlacement
+    : DEFAULT_SETTINGS.openGamePlacement;
+  const openGameVisiblePlacement = isMainColumnCardVisiblePlacement(
+    candidate.openGameVisiblePlacement
+  )
+    ? candidate.openGameVisiblePlacement
+    : isMainColumnCardVisiblePlacement(openGamePlacement)
+      ? openGamePlacement
+      : DEFAULT_SETTINGS.openGameVisiblePlacement;
   const hasSidebarVisibility = Array.isArray(
     candidate.homepageSidebarVisible
   );
@@ -361,7 +395,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       id !== "profile" &&
       id !== "daily-games" &&
       id !== "recommended-match" &&
-      id !== "game-history"
+      id !== "game-history" &&
+      id !== "open-game"
     );
   });
   if (profilePlacement === "sidebar") {
@@ -376,6 +411,9 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   if (gameHistoryPlacement === "sidebar") {
     normalizedHomepageSidebarVisible.push("game-history");
   }
+  if (openGamePlacement === "sidebar") {
+    normalizedHomepageSidebarVisible.push("open-game");
+  }
   const homepageSidebarVisibleSet = new Set(
     normalizedHomepageSidebarVisible
   );
@@ -388,6 +426,14 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       typeof candidate.enabled === "boolean"
         ? candidate.enabled
         : DEFAULT_SETTINGS.enabled,
+    oledMode:
+      typeof candidate.oledMode === "boolean"
+        ? candidate.oledMode
+        : DEFAULT_SETTINGS.oledMode,
+    oledButtonColors:
+      typeof candidate.oledButtonColors === "boolean"
+        ? candidate.oledButtonColors
+        : DEFAULT_SETTINGS.oledButtonColors,
     showNativePlayPanel:
       typeof candidate.showNativePlayPanel === "boolean"
         ? candidate.showNativePlayPanel
@@ -400,6 +446,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     recommendedMatchVisiblePlacement,
     gameHistoryPlacement,
     gameHistoryVisiblePlacement,
+    openGamePlacement,
+    openGameVisiblePlacement,
     homepageSidebarOrder,
     homepageSidebarVisible,
     quickPlayPresetCount,

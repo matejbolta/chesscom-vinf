@@ -1,15 +1,18 @@
 # ChessComVINF DOM Audit
 
-Audit date: 2026-08-12
+Audit date: 2026-09-10
 Source: private complete-page captures in `fixtures/raw/2026-07-16/` and
 the reduced/all-cards 2026-07-28, Recommended Match 2026-07-29, and complete
-2026-08-12 captures under `fixtures/raw/` plus
+2026-08-12 homepage captures, plus narrow before-move and in-move Game Review
+captures and a narrow responsive homepage Stats capture from 2026-09-10 under
+`fixtures/raw/`, plus
 user-provided live Inspector samples of the recurring campaign banner and exact
 homepage toolbar hierarchy
-Observed locale and variants: signed-in English legacy and redesigned desktop
-homepages
-Responsive coverage: sanitized semantic fixture; live signed-in Android capture
-was unavailable in this session
+Observed locale and variants: signed-in English legacy, redesigned desktop, and
+responsive mobile-card homepages, plus signed-in English live-game review in a
+desktop window narrow enough to activate Chess.com's phone layout
+Responsive coverage: sanitized homepage and Game Review fixtures; live signed-in
+Android capture was unavailable in this session
 
 ## Route and homepage guard
 
@@ -36,6 +39,63 @@ was unavailable in this session
 - The responsive guard keeps the same protocol, host, route, signed-in marker,
   and profile requirements, then requires a native launch link, a main content
   host, and at least one of Game History, Daily Games, or Stats.
+
+## Phone Game Review contract
+
+- Verified route shapes:
+  `https://www.chess.com/analysis/game/live/<game-id>/review?move=<ply>` and
+  `https://www.chess.com/analysis/game/<game-id>/review?move=<ply>`.
+- VINF accepts only HTTPS, `chess.com` or `www.chess.com`, and the exact pathname
+  shapes above with an optional trailing slash and numeric game ID.
+- The page must retain `html.user-logged-in`; signed-out public analysis views
+  remain untouched.
+- The phone enhancement is width-gated at `max-width: 599px`; it does not run on
+  tablet or desktop widths.
+- The move-review state is the exact semantic descendant
+  `.sidebar-view-content > .move-by-move-container > .move-by-move-component`.
+  Chess.com's 2026-09-18 capture no longer includes the former
+  `move-by-move-redesign` class. Its native
+  `.move-by-move-bottom-section > .game-arc-component` owns the evaluation graph.
+- The initial report instead owns its graph through
+  `.overview-view-section.overview-view-arc`; VINF deliberately leaves that
+  state untouched.
+- The board's native post-player chart slot is exact
+  `#board-layout-main > #board-layout-analysis > #charts`. VINF moves the native
+  `.game-arc-component` into that slot, preserving its Highcharts subtree and
+  event handlers rather than recreating the graph.
+- Namespaced graph/host markers make the placement idempotent and allow the
+  original parent/sibling position to be restored on widening, disable, route
+  departure, or state change. Mutation reconciliation replaces a stale moved
+  graph if Chess.com rerenders the move-review subtree.
+
+## Live-game continuity and OLED contracts
+
+- OLED mode is presentation-only and is scoped by the runtime to exact HTTPS
+  Chess.com `/home`, current `/game/<numeric-id>`, legacy
+  `/game/live/<numeric-id>`, alternate `/live/game/<numeric-id>`, and both
+  observed Game Review route forms.
+- The homepage continuation detector accepts only an already-rendered anchor
+  whose parsed URL is HTTPS, uses `chess.com` or `www.chess.com`, and has the
+  exact pathname `/game/<numeric-id>`, `/game/live/<numeric-id>`, or
+  `/live/game/<numeric-id>` with an optional trailing slash.
+- The first exact link wins. This deliberately allows an unfinished-game link
+  elsewhere on the homepage to win, while Game History supplies the latest
+  finished-game fallback when no such link precedes it.
+- Analysis/history links such as `/analysis/game/live/<game-id>` are rejected.
+  Query parameters on a valid native live-game URL are preserved unchanged.
+- VINF creates one owned full-width `Jump to open game` managed card and removes
+  it when no exact native game link exists. It defaults last in Right on desktop
+  and therefore last in the shared single-column order on narrow layouts.
+  The runtime also compares this semantic link during its existing 750ms
+  route/root check so late evidence outside the observed content root is not
+  missed.
+- VINF intentionally makes no active-versus-finished claim; the native link is
+  only a safe navigation target.
+
+OLED black explicitly covers the page canvas, `#mobile-toolbar`,
+`#sidebar-main-menu.sidebar-container`, player rows, board analysis/sidebar
+surfaces, and fixed Game Review controls. Boards and content cards keep their
+native surfaces.
 
 ## Top dashboard
 
@@ -170,12 +230,12 @@ When the saved count is zero, the controller removes every extension-owned
 Quick Play panel and leaves the native main-card sequence as the column start.
 
 The default managed card order is Profile, Stats, ChessTV, Daily Games,
-Recommended Match, Game History, Streaks, Legend League, Daily Puzzle, then
-Friends. All ten known positions are orderable. The controller filters that one
+Recommended Match, Game History, Streaks, Legend League, Daily Puzzle, Friends,
+then Open Game Shortcut. All eleven known positions are orderable. The controller filters that one
 saved sequence per column: visible movable cards assigned to Main form the
 managed prefix below Quick Play, while cards assigned to Right form the managed
 sidebar prefix. Every card has independent Show/Hide; Profile, Daily Games,
-Recommended Match, and Game History additionally retain their Main/Right
+Recommended Match, Game History, and Open Game Shortcut additionally retain their Main/Right
 placement while hidden. Profile defaults hidden with Main remembered;
 Recommended Match and Game History default visible in Main. Unknown native
 cards are preserved visibly after the managed cards in their native column.
@@ -277,7 +337,7 @@ generic layout-column fallback. Exact early-hide rules target
 
 ### Stats card internals
 
-The saved signed-in homepages confirm two Stats schemas inside the native
+The saved signed-in homepages confirm three Stats schemas inside the native
 `.cc-section`:
 
 | Group | Native structure | Recognition |
@@ -287,10 +347,13 @@ The saved signed-in homepages confirm two Stats schemas inside the native
 | Legacy Insights | An optional rating-shaped direct `.stat-section-stats-section` child | Descendant link beginning `/insights/`; exact `Insights` label is a fallback |
 | Redesigned summary | Direct `.cc-aside-item-component` children | The same exact Games/Puzzles/Lessons text contract |
 | Redesigned ratings | Direct `.stat-item-stats-section` children | Exact `.cc-aside-item-label` text or the semantic `/member/<member>/stats/<category>` path |
+| Mobile ratings | Direct `.stats-mobile-card` links inside `.stats-mobile-content` | Semantic `/member/<member>/stats/<category>` paths; Daily uses `/play/online/daily`, with exact native labels as fallbacks |
 
 VINF moves the complete native wrappers rather than rebuilding their icons,
 ratings, links, buttons, or expansion behavior. Known rows follow the saved fixed
 order and carry the standard hidden marker when disabled in settings. The
+mobile cards use the same order and visibility settings but have no expandable
+content, so their Expanded/Retracted preference is intentionally a no-op. The
 2026-07-28 redesigned capture has no Insights row. If a legacy cohort supplies
 one, it is not configurable: VINF keeps that native row visible and appends it
 after every other rating row. VINF does not synthesize an Insights shortcut.

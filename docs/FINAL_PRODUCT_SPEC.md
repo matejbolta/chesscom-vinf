@@ -1526,3 +1526,79 @@ reduced to functional controls only.
   cap against an initially tiny action-popup viewport and collapse the UI.
 - Keep the separately marked persistent side panel fluid at the width supplied
   by the browser.
+
+## 69. Version 2.0.0 Product Amendments
+
+- Begin VINF's in-game product chapter with a focused phone Game Review layout
+  improvement while preserving all version 1 homepage behavior.
+- On signed-in live-game review routes below 600 CSS pixels, move Chess.com's
+  native evaluation graph from the bottom of the move-by-move report into the
+  native chart slot directly below the lower player and clock.
+- Apply the change only while the redesigned move-by-move view exists. Leave the
+  initial Game Review report and all tablet and desktop widths untouched.
+- Keep the move idempotent and reversible across Chess.com rerenders, viewport
+  changes, VINF disable, and SPA route changes. Never clone or reconstruct the
+  native graph.
+- Include the review route in both desktop-extension and Android-userscript
+  metadata without adding permissions, network calls, telemetry, or stored data.
+- Preserve homepage Stats preferences when Chess.com switches to its responsive
+  `.stats-mobile-content` card grid: known mobile rating cards use the same
+  visibility and fixed order settings, while unknown future cards remain visible.
+
+## 70. Version 2.1.0 Product Amendments
+
+- Add an opt-in `OLED black` appearance setting shared by the Chromium popup,
+  side panel, and Android settings dialog. Apply a true-black page canvas on the
+  exact supported homepage, live-game, and Game Review routes at every width.
+- On the homepage, show one responsive continuation card above Quick Play only
+  when the rendered native DOM contains an exact Chess.com
+  `/game/live/<game-id>` link. Reuse that URL unchanged for `Return to game`.
+- Remove the card when the native link disappears. Detect late native evidence
+  without adding requests, permissions, account storage, or guessed routes.
+
+## 71. Version 2.1.1 Product Amendments
+
+- Treat Game History's `/game/live/<game-id>` links as completed-game history,
+  not proof of an unfinished game. Continue to fail closed when no eligible
+  native link exists outside Game History.
+- Present the continuation action as a fixed, dismissible overlay labeled
+  `Jump to open game`. Match the Rapid Quick Play button's typography, color,
+  height, and maximum content width without changing the homepage flow.
+- Extend OLED black from the main canvas to stable Chess.com chrome: the mobile
+  top toolbar, retractable navigation, player rows, analysis/sidebar panels,
+  and fixed review controls. Keep boards and content cards native.
+
+## 72. Version 2.1.2 Product Amendments
+
+- Do not infer whether a homepage game link represents an active game. Replace
+  the floating prompt with an ordinary configurable managed card labeled only
+  `Jump to open game`. Reuse the first exact native `/game/<numeric-id>` or
+  legacy `/game/live/<numeric-id>` URL; Game History is the intentional fallback.
+- Default the card last in Right on desktop. Because responsive layouts apply
+  the same managed order in one column, this puts it at the bottom on phones.
+  Preserve Show/Hide, Main/Right placement, and ordering controls on desktop
+  and Android settings.
+- Match current live games at `/game/<numeric-id>` for OLED injection, retaining
+  legacy route compatibility. Keep runtime validation exact even though
+  extension/userscript metadata must use the broader `/game/*` path pattern.
+- Display the current VINF source version in Android settings.
+- Recognize the current move-by-move review hierarchy after Chess.com removed
+  `move-by-move-redesign`; retain the direct graph-child contract, signed-in
+  route guard, and below-600-CSS-pixel phone boundary.
+
+## 73. Version 2.1.3 Product Amendments
+
+- Make the whole `Jump to open game` card one centered link target.
+- Recognize `/live/game/<numeric-id>` and both
+  `/analysis/game/(live/)?<numeric-id>/review` forms for OLED presentation,
+  with exact runtime validation behind broader browser metadata patterns.
+- Apply OLED-black surfaces to Chess.com's native post-game result dialog
+  without replacing the dialog or its controls.
+
+## 74. Version 2.2.0 Product Amendments
+
+- Add a separate saved `OLED button colors` switch to both settings surfaces.
+  It is independent from the OLED page-background switch and defaults off.
+- When enabled, style only Quick Play and `Jump to open game` with near-black
+  surfaces, `#ededed` labels, muted time-class accent borders, and restrained
+  interaction states. Preserve all geometry, placement, labels, and behavior.

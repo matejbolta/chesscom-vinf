@@ -1,6 +1,6 @@
 # Android Installation and Architecture
 
-Last verified: 2026-07-26.
+Last verified: 2026-09-10.
 
 ## Recommended platform
 
@@ -70,8 +70,8 @@ This needs no hosting or developer account.
 2. Open the Violentmonkey dashboard from Firefox's Extensions menu.
 3. Choose **New**, replace the template with the complete generated file, and
    save it.
-4. Confirm the script is enabled and its match is
-   `https://www.chess.com/home*`.
+4. Confirm the script is enabled and its matches cover the Chess.com homepage
+   plus live-game review routes.
 
 ### Method B: serve the generated file on the local network
 
@@ -159,6 +159,8 @@ shared runtime lifecycle
 homepage detector → semantic module locator → reversible layout controller
                   ↓
 validated native launch adapter + shared configurable Quick Play renderer/CSS
+
+live-game review guard → reversible phone evaluation-graph placement
 ```
 
 The Android shell contributes only:
@@ -200,6 +202,25 @@ At tablet widths Quick Play uses two columns. At narrow phone widths it becomes
 one column. Controls keep 7rem touch targets, no hover dependency, visible focus,
 and a reduced-motion mode.
 
+On live-game review routes below 600 CSS pixels, the shared runtime moves the
+native evaluation graph into Chess.com's existing chart slot immediately below
+the lower player and clock while move-by-move review is active. The initial
+report and tablet/desktop widths remain native. The graph returns to its original
+parent on widening, disable, route departure, or review-state replacement.
+
+The shared `OLED black` setting applies true black to the page canvas, mobile
+toolbar, retractable navigation, player rows, sidebar, and review controls on
+the homepage, exact live-game routes, and Game Review at phone and tablet
+widths. The independent `OLED button colors` setting gives Quick Play and the
+Open Game shortcut near-black surfaces, off-white text, and muted accents.
+If the responsive homepage exposes an eligible native `/game/<id>` or
+legacy `/game/live/<id>` link, the same shared controller adds a full-width
+`Jump to open game` managed card. It defaults to the bottom of the single
+column and falls back to the latest Game History link without inferring whether
+that game is still active. The settings header shows the installed source
+version.
+Neither behavior adds a request or stores game data.
+
 The userscript runs at `document-start`. Its shared observer begins at
 `.base-container`, responsive `main`/`[role=main]`, `body`, or the document
 element as soon as one exists, while waiting for stored settings before changing
@@ -212,7 +233,8 @@ markers, and original-position restoration all apply on Android.
 Automated tests use a sanitized responsive fixture and never start a game. On
 the signed-in tablet, verify:
 
-1. The script runs only on `/home` and leaves other Chess.com routes untouched.
+1. The script changes only the exact `/home` and supported live-game review
+   routes and leaves other Chess.com routes untouched.
 2. Quick Play appears once, above Game History, in portrait and landscape.
 3. Puzzles, Next Lesson, Game Review, and the redundant action stack are absent.
    If Chess.com serves `#main-banner`, confirm it is absent too.
@@ -232,6 +254,15 @@ the signed-in tablet, verify:
    enough for Chess.com to rerender dynamic cards; no duplicate panel should
    appear.
 8. Disable VINF and confirm native cards and their original order return.
+9. On a phone, enter move-by-move Game Review and confirm the evaluation graph
+   sits below the lower player/clock and above the Game Review toolbar. Confirm
+   the initial report is unchanged, then rotate or widen past 600 CSS pixels and
+   verify the native placement returns.
+10. Enable OLED black and verify a true-black canvas on the homepage, an active
+    live game, and Game Review in portrait and landscape.
+11. Open `/home` and confirm one bottom-of-column `Jump to open game` card opens
+    the first exact native game URL. With no unfinished-game link before Game
+    History, confirm it falls back to the latest completed row.
 
 ## Limitations
 
@@ -239,6 +270,9 @@ the signed-in tablet, verify:
   private signed-in Android page could not be captured in this development
   session. Chess.com experiments, locales, or future DOM changes may require a
   small sanitized tablet DOM sample and a locator update.
+- The Game Review contract was captured from Chess.com's phone layout in a
+  narrow signed-in desktop window; final Firefox-for-Android phone verification
+  remains manual.
 - Exact English card headings remain a fallback for some cards; semantic URLs
   are preferred where available.
 - The settings of the Android userscript and desktop extension are intentionally

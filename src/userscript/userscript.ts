@@ -42,6 +42,7 @@ import {
 import { startVinfRuntime, type SettingsSource } from "../content/runtime";
 
 declare const __VINF_USERSCRIPT_CSS__: string;
+declare const __VINF_VERSION__: string;
 
 declare function GM_getValue<T>(key: string, defaultValue: T): T;
 declare function GM_setValue(key: string, value: unknown): void;
@@ -154,7 +155,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   title.id = "chesscom-vinf-settings-title";
   title.textContent = "ChessComVINF";
   const subtitle = document.createElement("p");
-  subtitle.textContent = "Android settings";
+  subtitle.textContent = `Android settings · v${__VINF_VERSION__}`;
   const close = document.createElement("button");
   close.type = "submit";
   close.value = "close";
@@ -242,7 +243,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const enabledStrong = document.createElement("strong");
   enabledStrong.textContent = "Enable VINF";
   const enabledSmall = document.createElement("small");
-  enabledSmall.textContent = "Apply homepage enhancements";
+  enabledSmall.textContent = "Apply all VINF enhancements";
   enabledCopyText.append(enabledStrong, enabledSmall);
   enabledCopy.append(enabledCopyText);
   const enabledInput = document.createElement("input");
@@ -257,6 +258,21 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     homepage,
     "chesscom-vinf-userscript-native-play-panel",
     "Native play panel"
+  );
+  const appearance = document.createElement("section");
+  appearance.className = "chesscom-vinf-settings-card";
+  appearance.setAttribute("aria-label", "Appearance settings");
+  const oledModeInput = createToggle(
+    appearance,
+    "chesscom-vinf-userscript-oled-mode",
+    "OLED black",
+    "Use a pitch-black page background"
+  );
+  const oledButtonColorsInput = createToggle(
+    appearance,
+    "chesscom-vinf-userscript-oled-button-colors",
+    "OLED button colors",
+    "Use low-glare colors for Quick Play and Open Game"
   );
 
   const presets = document.createElement("section");
@@ -531,6 +547,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     getRecommendedMatchVisiblePlacement(): RecommendedMatchVisiblePlacement;
     getGameHistoryPlacement(): GameHistoryPlacement;
     getGameHistoryVisiblePlacement(): GameHistoryVisiblePlacement;
+    getOpenGamePlacement(): MainColumnCardPlacement;
+    getOpenGameVisiblePlacement(): MainColumnCardVisiblePlacement;
     getOrder(): HomepageSidebarCardId[];
     getVisible(): HomepageSidebarCardId[];
     render(
@@ -543,7 +561,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       recommendedMatchPlacement: RecommendedMatchPlacement,
       recommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
       gameHistoryPlacement: GameHistoryPlacement,
-      gameHistoryVisiblePlacement: GameHistoryVisiblePlacement
+      gameHistoryVisiblePlacement: GameHistoryVisiblePlacement,
+      openGamePlacement: MainColumnCardPlacement,
+      openGameVisiblePlacement: MainColumnCardVisiblePlacement
     ): void;
   }
 
@@ -558,7 +578,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     initialRecommendedMatchPlacement: RecommendedMatchPlacement,
     initialRecommendedMatchVisiblePlacement: RecommendedMatchVisiblePlacement,
     initialGameHistoryPlacement: GameHistoryPlacement,
-    initialGameHistoryVisiblePlacement: GameHistoryVisiblePlacement
+    initialGameHistoryVisiblePlacement: GameHistoryVisiblePlacement,
+    initialOpenGamePlacement: MainColumnCardPlacement,
+    initialOpenGameVisiblePlacement: MainColumnCardVisiblePlacement
   ): HomepageCardEditor {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "chesscom-vinf-settings-preference-group";
@@ -579,6 +601,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       initialRecommendedMatchVisiblePlacement;
     let gameHistoryPlacement = initialGameHistoryPlacement;
     let gameHistoryVisiblePlacement = initialGameHistoryVisiblePlacement;
+    let openGamePlacement = initialOpenGamePlacement;
+    let openGameVisiblePlacement = initialOpenGameVisiblePlacement;
     const labels = new Map(catalog.map((item) => [item.id, item.label]));
 
     const render = (
@@ -598,7 +622,10 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       nextGameHistoryPlacement: GameHistoryPlacement =
         gameHistoryPlacement,
       nextGameHistoryVisiblePlacement: GameHistoryVisiblePlacement =
-        gameHistoryVisiblePlacement
+        gameHistoryVisiblePlacement,
+      nextOpenGamePlacement: MainColumnCardPlacement = openGamePlacement,
+      nextOpenGameVisiblePlacement: MainColumnCardVisiblePlacement =
+        openGameVisiblePlacement
     ): void => {
       order = [...nextOrder];
       visible = new Set(nextVisible);
@@ -611,10 +638,12 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         nextRecommendedMatchVisiblePlacement;
       gameHistoryPlacement = nextGameHistoryPlacement;
       gameHistoryVisiblePlacement = nextGameHistoryVisiblePlacement;
+      openGamePlacement = nextOpenGamePlacement;
+      openGameVisiblePlacement = nextOpenGameVisiblePlacement;
       list.replaceChildren();
 
       const getPlacement = (
-        id: "profile" | "daily-games" | "recommended-match" | "game-history"
+        id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game"
       ): MainColumnCardPlacement =>
         id === "profile"
           ? profilePlacement
@@ -622,9 +651,11 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           ? dailyGamesPlacement
           : id === "recommended-match"
             ? recommendedMatchPlacement
-            : gameHistoryPlacement;
+            : id === "game-history"
+              ? gameHistoryPlacement
+              : openGamePlacement;
       const getVisiblePlacement = (
-        id: "profile" | "daily-games" | "recommended-match" | "game-history"
+        id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game"
       ): MainColumnCardVisiblePlacement =>
         id === "profile"
           ? profileVisiblePlacement
@@ -632,9 +663,11 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           ? dailyGamesVisiblePlacement
           : id === "recommended-match"
             ? recommendedMatchVisiblePlacement
-            : gameHistoryVisiblePlacement;
+            : id === "game-history"
+              ? gameHistoryVisiblePlacement
+              : openGameVisiblePlacement;
       const setPlacement = (
-        id: "profile" | "daily-games" | "recommended-match" | "game-history",
+        id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game",
         placement: MainColumnCardPlacement
       ): void => {
         if (id === "profile") {
@@ -643,12 +676,14 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           dailyGamesPlacement = placement;
         } else if (id === "recommended-match") {
           recommendedMatchPlacement = placement;
-        } else {
+        } else if (id === "game-history") {
           gameHistoryPlacement = placement;
+        } else {
+          openGamePlacement = placement;
         }
       };
       const setVisiblePlacement = (
-        id: "profile" | "daily-games" | "recommended-match" | "game-history",
+        id: "profile" | "daily-games" | "recommended-match" | "game-history" | "open-game",
         placement: MainColumnCardVisiblePlacement
       ): void => {
         if (id === "profile") {
@@ -657,8 +692,10 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           dailyGamesVisiblePlacement = placement;
         } else if (id === "recommended-match") {
           recommendedMatchVisiblePlacement = placement;
-        } else {
+        } else if (id === "game-history") {
           gameHistoryVisiblePlacement = placement;
+        } else {
+          openGameVisiblePlacement = placement;
         }
       };
 
@@ -672,7 +709,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           id === "profile" ||
           id === "daily-games" ||
           id === "recommended-match" ||
-          id === "game-history"
+          id === "game-history" ||
+          id === "open-game"
         ) {
           const checkbox = document.createElement("input");
           checkbox.id = `chesscom-vinf-homepage-${id}`;
@@ -775,6 +813,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         recommendedMatchVisiblePlacement,
       getGameHistoryPlacement: () => gameHistoryPlacement,
       getGameHistoryVisiblePlacement: () => gameHistoryVisiblePlacement,
+      getOpenGamePlacement: () => openGamePlacement,
+      getOpenGameVisiblePlacement: () => openGameVisiblePlacement,
       getOrder: () => [...order],
       getVisible: () =>
         order.filter((id) => {
@@ -789,6 +829,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           }
           if (id === "game-history") {
             return gameHistoryPlacement === "sidebar";
+          }
+          if (id === "open-game") {
+            return openGamePlacement === "sidebar";
           }
           return visible.has(id);
         }),
@@ -807,7 +850,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     DEFAULT_SETTINGS.recommendedMatchPlacement,
     DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
     DEFAULT_SETTINGS.gameHistoryPlacement,
-    DEFAULT_SETTINGS.gameHistoryVisiblePlacement
+    DEFAULT_SETTINGS.gameHistoryVisiblePlacement,
+    DEFAULT_SETTINGS.openGamePlacement,
+    DEFAULT_SETTINGS.openGameVisiblePlacement
   );
   const homepageNote = document.createElement("p");
   homepageNote.className = "chesscom-vinf-settings-note";
@@ -858,11 +903,13 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   status.className = "chesscom-vinf-settings-status";
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
-  form.append(header, master, homepage, presets, stats, status);
+  form.append(header, master, appearance, homepage, presets, stats, status);
   dialog.append(form);
 
   function render(settings: ExtensionSettings): void {
     enabledInput.checked = settings.enabled;
+    oledModeInput.checked = settings.oledMode;
+    oledButtonColorsInput.checked = settings.oledButtonColors;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
     homepageCardEditor.render(
       settings.homepageSidebarOrder,
@@ -874,7 +921,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       settings.recommendedMatchPlacement,
       settings.recommendedMatchVisiblePlacement,
       settings.gameHistoryPlacement,
-      settings.gameHistoryVisiblePlacement
+      settings.gameHistoryVisiblePlacement,
+      settings.openGamePlacement,
+      settings.openGameVisiblePlacement
     );
     presetCountSelect.value = String(settings.quickPlayPresetCount);
     renderPresetSelects(
@@ -899,6 +948,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     try {
       await store.save({
         enabled: enabledInput.checked,
+        oledMode: oledModeInput.checked,
+        oledButtonColors: oledButtonColorsInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,
         profilePlacement: homepageCardEditor.getProfilePlacement(),
         profileVisiblePlacement:
@@ -914,6 +965,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
           homepageCardEditor.getGameHistoryPlacement(),
         gameHistoryVisiblePlacement:
           homepageCardEditor.getGameHistoryVisiblePlacement(),
+        openGamePlacement: homepageCardEditor.getOpenGamePlacement(),
+        openGameVisiblePlacement:
+          homepageCardEditor.getOpenGameVisiblePlacement(),
         homepageSidebarOrder: homepageCardEditor.getOrder(),
         homepageSidebarVisible: homepageCardEditor.getVisible(),
         quickPlayPresetCount: getPresetCount(),
@@ -960,7 +1014,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       DEFAULT_SETTINGS.recommendedMatchPlacement,
       DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
       DEFAULT_SETTINGS.gameHistoryPlacement,
-      DEFAULT_SETTINGS.gameHistoryVisiblePlacement
+      DEFAULT_SETTINGS.gameHistoryVisiblePlacement,
+      DEFAULT_SETTINGS.openGamePlacement,
+      DEFAULT_SETTINGS.openGameVisiblePlacement
     );
     void save("Homepage defaults restored.");
   });
