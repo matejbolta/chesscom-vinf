@@ -76,6 +76,18 @@ describe("settings popup", () => {
       "#close-side-panel"
     )!;
     const enabled = document.querySelector<HTMLInputElement>("#enabled")!;
+    const extreme = document.querySelector<HTMLInputElement>("#extreme-oled")!;
+    const clockBars = document.querySelector<HTMLInputElement>("#extreme-oled-clocks")!;
+    expect(clockBars.disabled).toBe(true);
+    for (const [on, clocks] of [[true, false], [false, false], [false, true]]) {
+      extreme.checked = on;
+      clockBars.checked = clocks;
+      extreme.dispatchEvent(new Event("change", { bubbles: true }));
+      await flushAsyncWork();
+      expect(set).toHaveBeenLastCalledWith({[SETTINGS_STORAGE_KEY]: expect.objectContaining({extremeOled: on, extremeOledClocks: clocks})});
+      expect(clockBars.disabled).toBe(!on);
+    }
+
     const oledMode = document.querySelector<HTMLInputElement>("#oled-mode")!;
     const oledButtonColors = document.querySelector<HTMLInputElement>(
       "#oled-button-colors"

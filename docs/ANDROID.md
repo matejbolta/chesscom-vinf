@@ -298,3 +298,12 @@ the signed-in tablet, verify:
 - Chrome Android and Brave Android are not supported targets for this delivery.
 - When Chess.com removes or changes the validated native immediate-match link,
   Quick Play fails closed instead of guessing a matchmaking URL.
+
+### Extreme OLED Edition (2.3.0)
+
+In VINF settings, enable Extreme OLED Edition and optionally Clock bars. This
+changes supported games/reviews only. Use the userscript manager's VINF settings
+menu to disable it and reveal hidden game controls. The settings dialog remains
+visible even when Extreme OLED is active. Clock bars use remaining time observed
+since activation; see HANDOFF.md for details. Build and synthetic phone viewport
+checks pass; native board input and physical Android testing remain outstanding.

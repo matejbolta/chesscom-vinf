@@ -1,3 +1,4 @@
+import { ExtremeOledController } from "../../src/content/extreme-oled-controller";
 import { GameReviewLayoutController } from "../../src/content/game-review-layout-controller";
 import { LayoutController } from "../../src/content/layout-controller";
 import { NativeLaunchAdapter } from "../../src/content/launch-adapter";
@@ -209,4 +210,26 @@ if (window.location.pathname === "/game-review-mobile") {
     ...previewSettings,
     timeControlIds: [...previewSettings.timeControlIds]
   });
+}
+
+if (window.location.pathname === "/extreme-oled") {
+  const extreme = new ExtremeOledController();
+  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme"),
+    extremeOledClocks: !searchParams.has("no-clock") };
+  const apply = () => extreme.reconcile(document,
+    { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings);
+  apply();
+  // Only this local fixture simulates time and navigation; never a real game.
+  const bottom = document.querySelector('#board-layout-player-bottom [role="timer"]')!;
+  if (searchParams.has("low-time")) { bottom.textContent = "0:20"; apply(); }
+  document.querySelector('.game-buttons-container-component [aria-label="Previous Move"]')?.addEventListener("click", () => {
+    document.body.dataset.fixtureMove = "previous";
+    const pawn = document.querySelector<HTMLElement>(".wp")!;
+    pawn.style.top = "50%";
+  });
+  document.querySelector('.game-buttons-container-component [aria-label="Next Move"]')?.addEventListener("click", () => {
+    document.body.dataset.fixtureMove = "next";
+    document.querySelector<HTMLElement>(".wp")!.style.top = "75%";
+  });
+  window.setInterval(apply, 750);
 }

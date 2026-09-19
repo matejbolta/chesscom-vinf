@@ -38,6 +38,8 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   enabled: true,
   oledMode: false,
   oledButtonColors: false,
+  extremeOled: false,
+  extremeOledClocks: true,
   showNativePlayPanel: false,
   profilePlacement: "hidden",
   profileVisiblePlacement: "main",
@@ -253,6 +255,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     enabled?: unknown;
     oledMode?: unknown;
     oledButtonColors?: unknown;
+    extremeOled?: unknown;
+    extremeOledClocks?: unknown;
     showNativePlayPanel?: unknown;
     profilePlacement?: unknown;
     profileVisiblePlacement?: unknown;
@@ -426,6 +430,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       typeof candidate.enabled === "boolean"
         ? candidate.enabled
         : DEFAULT_SETTINGS.enabled,
+    extremeOled: typeof candidate.extremeOled === "boolean" ? candidate.extremeOled : false,
+    extremeOledClocks: typeof candidate.extremeOledClocks === "boolean" ? candidate.extremeOledClocks : true,
     oledMode:
       typeof candidate.oledMode === "boolean"
         ? candidate.oledMode

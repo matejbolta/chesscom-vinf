@@ -564,3 +564,26 @@ limits accidental movement of a broader page container.
 - Launch failure restores the controls after a bounded timeout, marks the failed
   button locally, and announces non-persistent text through a visually hidden
   status region without shifting the page.
+
+## Extreme OLED 2.3.0 — 2026-09-20
+
+Audited saved game/review captures show `wc-chess-board#board-single` or
+`#board-analysis-board` inside `#board-layout-chessboard`, native `.piece`
+classes (`wp`…`wk`, `bp`…`bk`), and exact English Previous Move/Next Move button
+aria-labels. Controls are resolved only in board sidebar/game navigation containers.
+Clocks are `#board-layout-player-top/bottom .clock-component [role="timer"]`;
+`.clock-white`/`.clock-black` keep fractions associated with color when flipped.
+Saved first-party board CSS confirms `.promotion-window`, `.promotion-pieces`,
+and `.promotion-piece` surfaces; these retain native input with dark styling.
+
+The controller applies reversible visibility/filter markers, resizes the existing
+wrapper, and forwards navigation to native buttons. It does not replace the board,
+move pieces, or calculate game state. Unsupported/missing boards and detected
+canvas boards leave the normal UI visible. Non-English labels, new selectors,
+3D themes and native engine resize/hit testing are not proven by fixture tests.
+
+`tests/fixtures/extreme-oled.html` is synthetic (Unicode SVG silhouettes), shaped
+from these contracts, not a signed-in capture. IAB checks at 1280x720 and 390x844
+verified board/arrows fit, previous forwarding, time bars/low time, clock-off,
+Escape restoration and settings appearance; no warning/error logs appeared.
+Live play, promotion interaction and physical Android verification remain open.

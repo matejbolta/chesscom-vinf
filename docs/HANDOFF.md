@@ -2,8 +2,8 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-09-19.
-Current source version: 2.2.2.
+Last updated: 2026-09-20.
+Current source version: 2.3.0.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.2.2. This handoff is the shortest
+chronological amendments through version 2.3.0. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,30 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Extreme OLED Edition (2.3.0)
+
+Independent opt-in `extremeOled` (default false) and `extremeOledClocks` (default
+true) settings exist in desktop popup/side panel and Android settings. Exact
+signed-in game/review routes only; homepage and ordinary OLED are unchanged.
+The original 2D board stays mounted, with its wrapper centered and fitted to the
+viewport. Everything outside the board, two move arrows, and optional time bars
+is hidden. Promotion choices remain usable and dark. Escape reveals the normal
+UI until the setting is toggled off/on or the route changes; Android can disable
+it through the userscript manager settings menu. Its settings dialog stays visible.
+
+Clock fractions use each color's maximum observed displayed time since activation,
+not an inferred original time control. Enabling midway starts at full remaining
+time; increments can extend the bar. Low time means <= min(30 seconds, 10% of
+that maximum). Unreadable/missing clocks hide their bars. No simulated timer,
+network request, account data storage, or gameplay automation was added.
+
+Selectors and limitations: see DOM_AUDIT.md. Automated tests and synthetic
+browser fixtures cover restoration, clock behavior, navigation forwarding and
+phone/desktop geometry. Real game drag/drop, native piece themes, promotion and
+Android physical-device rendering still need user verification. Never start or
+play a real game to test. Current Store package remains 2.2.2; do not push/package
+2.3.0 without a new request.
 
 ## Current User Experience
 

@@ -53,6 +53,18 @@ describe("Android userscript shell", () => {
       "[data-chesscom-vinf-userscript-settings]"
     );
     expect(dialog?.open).toBe(true);
+    const extreme = dialog!.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-extreme-oled")!;
+    const clockBars = dialog!.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-extreme-oled-clocks")!;
+    expect(clockBars.disabled).toBe(true);
+    for (const [on, clocks] of [[true, false], [false, false], [false, true]]) {
+      extreme.checked = on;
+      clockBars.checked = clocks;
+      extreme.dispatchEvent(new Event("change", { bubbles: true }));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({extremeOled: on, extremeOledClocks: clocks}));
+      expect(clockBars.disabled).toBe(!on);
+    }
+
     expect(dialog?.querySelectorAll("select")).toHaveLength(18);
     expect(dialog?.textContent).toContain("Android settings · v2.2.1");
     expect(

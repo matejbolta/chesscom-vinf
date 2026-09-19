@@ -1646,3 +1646,17 @@ reduced to functional controls only.
   parity is verified, but a 2.2.2 Firefox/Violentmonkey device test remains open.
 - Add no permissions, telemetry, stored account/game data, or OLED changes.
   Local source/build version is 2.2.2; no Store artifact or remote update.
+
+## 77. Version 2.3.0 Product Amendments
+
+- Add separate opt-in Extreme OLED Edition for games/reviews only. Hide surrounding
+  site UI, names, icons and numeric clocks. Retain a very dark board, black pieces
+  with dim outlines, dim white pieces, and previous/next move arrows.
+- Clock bars are independently optional, two pixels high above/below the board,
+  shrinking from the left according to native displayed remaining time; low time
+  turns muted red. Fractions use maximum observed time since activation, including
+  increments, rather than guessing the original time control.
+- Preserve native board input and promotion choices. Fit the board to the viewport;
+  Escape temporarily reveals the site UI. Keep Android settings reachable via the
+  userscript manager. Homepage and existing OLED preferences are unchanged.
+- Local source/build version 2.3.0. No GitHub or Store release in this task.

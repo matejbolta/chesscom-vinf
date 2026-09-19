@@ -9,6 +9,18 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-09-20
+
+### Added
+
+- Optional Extreme OLED Edition for supported games and game reviews: black
+  surroundings, a very dark board, outlined black pieces, dim white pieces,
+  and previous/next move arrows. The homepage is unchanged.
+- Independent clock-bars switch: thin native-time bars above/below the board,
+  muted red in low time. No separate timer or additional network requests.
+- Desktop/Android settings and Escape-to-reveal on desktop. Local builds only;
+  live board input and Android device verification remain outstanding.
+
 ## [2.2.2] - 2026-09-19
 
 ### Fixed

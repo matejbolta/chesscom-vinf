@@ -1,3 +1,4 @@
+import { ExtremeOledController } from "./extreme-oled-controller";
 import {
   HOME_PATHS,
   MARKERS,
@@ -36,6 +37,7 @@ export function startVinfRuntime(
   dependencies: RuntimeDependencies = {}
 ): void {
   const controller = new LayoutController(new NativeLaunchAdapter());
+  const extremeOledController = new ExtremeOledController();
   const gameReviewController = new GameReviewLayoutController();
   const phoneGameReviewMedia = window.matchMedia?.(
     PHONE_GAME_REVIEW_MEDIA_QUERY
@@ -206,6 +208,7 @@ export function startVinfRuntime(
       settings.enabled,
       phoneGameReviewMedia?.matches ?? window.innerWidth <= 599
     );
+    extremeOledController.reconcile(document, window.location, settings);
     hasAppliedLayout = homepageApplied || gameReviewApplied;
     // An incomplete target document asks the controller to clean up. Re-arm
     // setting-specific pre-hide markers immediately so late native cards cannot
@@ -354,6 +357,7 @@ export function startVinfRuntime(
   }
 
   function checkRoute(): void {
+    if (settings) extremeOledController.reconcile(document, window.location, settings);
     const rootWasDetached = Boolean(observedRoot && !observedRoot.isConnected);
     const activeGameHref = isTargetRoute()
       ? (findGameContinuationLink(document)?.href ?? null)

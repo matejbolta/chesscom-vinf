@@ -275,6 +275,11 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     "Use low-glare colors for Quick Play and Open Game"
   );
 
+  const extremeOledInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled",
+    "Extreme OLED Edition", "Games only: dark board, pieces and move arrows. Turn off here to reveal game controls.");
+  const extremeOledClocksInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled-clocks",
+    "Clock bars", "Thin time bars above and below the board. Off hides clocks.");
+
   const presets = document.createElement("section");
   presets.className = "chesscom-vinf-settings-card";
   const presetsHeader = document.createElement("div");
@@ -908,6 +913,9 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
 
   function render(settings: ExtensionSettings): void {
     enabledInput.checked = settings.enabled;
+    extremeOledInput.checked = settings.extremeOled;
+    extremeOledClocksInput.checked = settings.extremeOledClocks;
+    extremeOledClocksInput.disabled = !settings.extremeOled;
     oledModeInput.checked = settings.oledMode;
     oledButtonColorsInput.checked = settings.oledButtonColors;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -948,6 +956,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     try {
       await store.save({
         enabled: enabledInput.checked,
+        extremeOled: extremeOledInput.checked,
+        extremeOledClocks: extremeOledClocksInput.checked,
         oledMode: oledModeInput.checked,
         oledButtonColors: oledButtonColorsInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,
@@ -986,6 +996,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   }
 
   form.addEventListener("change", () => {
+    extremeOledClocksInput.disabled = !extremeOledInput.checked;
     void save();
   });
   presetCountSelect.addEventListener("change", () => {
