@@ -30,7 +30,8 @@ export class LayoutController {
   reconcile(
     document: Document,
     location: Location,
-    settings: ExtensionSettings = DEFAULT_SETTINGS
+    settings: ExtensionSettings = DEFAULT_SETTINGS,
+    activeGameHref: string | null = null
   ): boolean {
     if (!settings.enabled || !isChessComHomepage(document, location)) {
       this.cleanup(document);
@@ -181,7 +182,7 @@ export class LayoutController {
     }
     const gameContinuation = ensureGameContinuation(
       document,
-      modules.activeGameLink
+      activeGameHref ?? modules.activeGameLink
     );
     if (gameContinuation) {
       if (settings.openGamePlacement === "hidden") {

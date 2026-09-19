@@ -71,6 +71,7 @@ describe("privacy boundaries", () => {
     expect(manifest.host_permissions).toBeUndefined();
     expect(manifest.content_scripts[0].matches).toEqual([
       "https://www.chess.com/home*",
+      "https://www.chess.com/play/online/new*",
       "https://www.chess.com/game/*",
       "https://www.chess.com/live/game/*",
       "https://www.chess.com/analysis/game/*"
@@ -92,6 +93,9 @@ describe("privacy boundaries", () => {
     );
 
     expect(builder).toContain("@match        https://www.chess.com/home*");
+    expect(builder).toContain(
+      "@match        https://www.chess.com/play/online/new*"
+    );
     expect(builder).toContain(
       "@match        https://www.chess.com/game/*"
     );

@@ -1602,3 +1602,24 @@ reduced to functional controls only.
 - When enabled, style only Quick Play and `Jump to open game` with near-black
   surfaces, `#ededed` labels, muted time-class accent borders, and restrained
   interaction states. Preserve all geometry, placement, labels, and behavior.
+
+## 75. Version 2.2.1 Product Amendments
+
+- Match Chess.com's native `/play/online/new*` matchmaking bootstrap in desktop
+  and Android delivery metadata so VINF is already loaded when Chess.com turns
+  that document into `/game/<numeric-id>` through client-side navigation.
+- Make no DOM or presentation change on the bootstrap route itself. Continue to
+  apply OLED only after the existing exact live-game runtime guard succeeds.
+- Prefer Chess.com's exact active-game link outside Game History over any
+  finished-game fallback, regardless of DOM order. Use the first exact Game
+  History link only when no such active-game link is rendered.
+- Since Chess.com's homepage does not render a cross-device active-game link,
+  make one authenticated same-origin read-only request to its native
+  `/service/presence/users` service. Read the current UUID only from the page's
+  own signed-in context and accept only a validated `playing` live-game numeric
+  ID. Prefer that URL over all rendered links.
+- Add no new host, browser permission, credential access, telemetry, or stored
+  user/game data. Fail closed to the existing native Game History fallback.
+- Under OLED page mode, style both observed live-game move-navigation
+  containers with a true-black tray and near-black, off-white secondary
+  controls. Preserve their native geometry and disabled states.

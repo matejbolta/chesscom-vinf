@@ -12,6 +12,7 @@ const metadata = `// ==UserScript==
 // @version      ${packageJson.version}
 // @description  A focused Chess.com homepage and improved phone Game Review layout.
 // @match        https://www.chess.com/home*
+// @match        https://www.chess.com/play/online/new*
 // @match        https://www.chess.com/game/*
 // @match        https://www.chess.com/live/game/*
 // @match        https://www.chess.com/analysis/game/*

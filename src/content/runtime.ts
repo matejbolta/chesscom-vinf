@@ -12,7 +12,10 @@ import {
   isChessComLiveGameReview
 } from "./game-review-layout-controller";
 import {
+  findActiveLiveGameHref,
+  findCurrentUserUuid,
   findGameContinuationLink,
+  type GamePresenceFetch,
   isChessComGame
 } from "./game-continuation";
 import { LayoutController } from "./layout-controller";
@@ -23,7 +26,14 @@ export interface SettingsSource {
   subscribe(listener: (settings: ExtensionSettings) => void): void;
 }
 
-export function startVinfRuntime(settingsSource: SettingsSource): void {
+export interface RuntimeDependencies {
+  fetch?: GamePresenceFetch;
+}
+
+export function startVinfRuntime(
+  settingsSource: SettingsSource,
+  dependencies: RuntimeDependencies = {}
+): void {
   const controller = new LayoutController(new NativeLaunchAdapter());
   const gameReviewController = new GameReviewLayoutController();
   const phoneGameReviewMedia = window.matchMedia?.(
@@ -35,8 +45,14 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
   let reconcileTimer: number | null = null;
   let lastUrl = window.location.href;
   let lastActiveGameHref: string | null = null;
+  let resolvedActiveGameHref: string | null = null;
+  let activeGameLookupState: "idle" | "loading" | "complete" = "idle";
+  let activeGameLookupGeneration = 0;
   let settings: ExtensionSettings | null = null;
   let hasAppliedLayout = false;
+  const presenceFetch =
+    dependencies.fetch ??
+    (typeof window.fetch === "function" ? window.fetch.bind(window) : null);
 
   function isTargetRoute(): boolean {
     return (
@@ -177,7 +193,8 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
     const homepageApplied = controller.reconcile(
       document,
       window.location,
-      settings
+      settings,
+      resolvedActiveGameHref
     );
     const gameReviewApplied = gameReviewController.reconcile(
       document,
@@ -202,6 +219,58 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
       observer = null;
       observedRoot = null;
     }
+
+    if (
+      settings.enabled &&
+      settings.openGamePlacement !== "hidden" &&
+      isTargetRoute()
+    ) {
+      void resolveActiveGame();
+    }
+  }
+
+  async function resolveActiveGame(): Promise<void> {
+    if (
+      activeGameLookupState !== "idle" ||
+      !presenceFetch ||
+      !shouldResolveActiveGame() ||
+      !findCurrentUserUuid(document)
+    ) {
+      return;
+    }
+
+    activeGameLookupState = "loading";
+    const generation = activeGameLookupGeneration;
+    const route = window.location.href;
+    const href = await findActiveLiveGameHref(document, presenceFetch);
+    if (
+      generation !== activeGameLookupGeneration ||
+      route !== window.location.href ||
+      !shouldResolveActiveGame()
+    ) {
+      return;
+    }
+
+    activeGameLookupState = "complete";
+    if (resolvedActiveGameHref !== href) {
+      resolvedActiveGameHref = href;
+      hasAppliedLayout = false;
+      reconcileImmediately();
+    }
+  }
+
+  function shouldResolveActiveGame(): boolean {
+    return Boolean(
+      settings?.enabled &&
+        settings.openGamePlacement !== "hidden" &&
+        isTargetRoute()
+    );
+  }
+
+  function resetActiveGameLookup(): void {
+    activeGameLookupGeneration += 1;
+    activeGameLookupState = "idle";
+    resolvedActiveGameHref = null;
   }
 
   function scheduleReconcile(): void {
@@ -231,8 +300,12 @@ export function startVinfRuntime(settingsSource: SettingsSource): void {
       ? (findGameContinuationLink(document)?.href ?? null)
       : null;
     const activeGameChanged = activeGameHref !== lastActiveGameHref;
+    const routeChanged = window.location.href !== lastUrl;
+    if (routeChanged) {
+      resetActiveGameLookup();
+    }
     if (
-      window.location.href !== lastUrl ||
+      routeChanged ||
       rootWasDetached ||
       activeGameChanged
     ) {

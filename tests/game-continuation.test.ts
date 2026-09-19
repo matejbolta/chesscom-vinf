@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   ensureGameContinuation,
+  findActiveLiveGameHref,
+  findCurrentUserUuid,
   findGameContinuationLink,
   isChessComGame
 } from "../src/content/game-continuation";
@@ -10,6 +12,8 @@ import { GAME_CONTINUATION_OWNER, MARKERS } from "../src/shared/constants";
 import { HOME_LOCATION, loadModernHomepageFixture } from "./test-utils";
 
 describe("game continuation shortcut", () => {
+  const userUuid = "12345678-1234-1234-1234-123456789abc";
+
   it("recognizes current and legacy exact Chess.com game routes", () => {
     for (const pathname of [
       "/game/123456",
@@ -40,7 +44,7 @@ describe("game continuation shortcut", () => {
     ).toBe(false);
   });
 
-  it("uses the first exact native game link, including Game History fallback", () => {
+  it("uses the first exact Game History link as its fallback", () => {
     const document = loadModernHomepageFixture();
     const history = document.querySelector<HTMLElement>(
       ".game-history-games-component"
@@ -50,6 +54,86 @@ describe("game continuation shortcut", () => {
     history.prepend(latestGame);
 
     expect(findGameContinuationLink(document)).toBe(latestGame);
+  });
+
+  it("prefers an active-game link outside Game History over the history fallback", () => {
+    const document = loadModernHomepageFixture();
+    const history = document.querySelector<HTMLElement>(
+      ".game-history-games-component"
+    )!;
+    const finishedGame = document.createElement("a");
+    finishedGame.href = "https://www.chess.com/game/123456";
+    history.prepend(finishedGame);
+
+    const activeGame = document.createElement("a");
+    activeGame.href = "https://www.chess.com/game/live/654321";
+    document.body.append(activeGame);
+
+    expect(findGameContinuationLink(document)).toBe(activeGame);
+  });
+
+  it("uses Chess.com's current-user presence game before the history fallback", async () => {
+    const document = loadModernHomepageFixture();
+    const context = document.createElement("script");
+    context.textContent = `context = {"user":{"uuid":"${userUuid}"}};`;
+    document.head.append(context);
+    const fetcher = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          users: [
+            {
+              id: userUuid,
+              activity: "playing",
+              activityContext: {
+                games: [
+                  { source: "live_chess", numericId: 987654321 }
+                ]
+              }
+            }
+          ]
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      )
+    );
+
+    expect(findCurrentUserUuid(document)).toBe(userUuid);
+    await expect(findActiveLiveGameHref(document, fetcher)).resolves.toBe(
+      "https://www.chess.com/game/live/987654321"
+    );
+    expect(fetcher).toHaveBeenCalledWith(
+      new URL(
+        `https://www.chess.com/service/presence/users?ids=${userUuid}`
+      ),
+      {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" }
+      }
+    );
+  });
+
+  it("fails closed when presence does not prove a current live game", async () => {
+    const document = loadModernHomepageFixture();
+    const context = document.createElement("script");
+    context.textContent = `window.context = {"user":{"uuid":"${userUuid}"}};`;
+    document.head.append(context);
+    const fetcher = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          users: [
+            {
+              id: userUuid,
+              activity: "online",
+              activityContext: {
+                games: [{ source: "live_chess", numericId: 987654321 }]
+              }
+            }
+          ]
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      )
+    );
+
+    await expect(findActiveLiveGameHref(document, fetcher)).resolves.toBeNull();
   });
 
   it("renders one full-width managed card in the default desktop sidebar", () => {
@@ -79,6 +163,27 @@ describe("game continuation shortcut", () => {
         `[${MARKERS.owned}="${GAME_CONTINUATION_OWNER}"]`
       )
     ).toHaveLength(1);
+  });
+
+  it("lets verified presence override the native history link", () => {
+    const document = loadModernHomepageFixture();
+    const historyLink = document.createElement("a");
+    historyLink.href = "https://www.chess.com/game/123456";
+    document.querySelector(".game-history-games-component")!.prepend(historyLink);
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+
+    controller.reconcile(
+      document,
+      HOME_LOCATION,
+      undefined,
+      "https://www.chess.com/game/live/987654321"
+    );
+
+    expect(
+      document.querySelector<HTMLAnchorElement>(
+        ".chesscom-vinf-game-continuation-action"
+      )?.href
+    ).toBe("https://www.chess.com/game/live/987654321");
   });
 
   it("removes the module when no native game link remains", () => {

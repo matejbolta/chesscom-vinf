@@ -74,13 +74,28 @@ Android capture was unavailable in this session
   Chess.com `/home`, current `/game/<numeric-id>`, legacy
   `/game/live/<numeric-id>`, alternate `/live/game/<numeric-id>`, and both
   observed Game Review route forms.
+- Extension and userscript metadata also match the exact native matchmaking
+  bootstrap prefix `/play/online/new*`. VINF makes no visual change there; the
+  existing route poll keeps the already-loaded runtime alive when Chess.com
+  replaces that URL with an exact live-game route without replacing the page.
 - The homepage continuation detector accepts only an already-rendered anchor
   whose parsed URL is HTTPS, uses `chess.com` or `www.chess.com`, and has the
   exact pathname `/game/<numeric-id>`, `/game/live/<numeric-id>`, or
   `/live/game/<numeric-id>` with an optional trailing slash.
-- The first exact link wins. This deliberately allows an unfinished-game link
-  elsewhere on the homepage to win, while Game History supplies the latest
-  finished-game fallback when no such link precedes it.
+- The first exact link outside `.game-history-games-component` wins regardless
+  of document order, so Chess.com's active-game link takes precedence. The first
+  exact link inside Game History remains the latest-finished-game fallback when
+  no active-game link is rendered.
+- Because `/home` does not render the current game played on another device,
+  VINF reads the signed-in user's UUID from Chess.com's inline `context.user`
+  bootstrap and makes one same-origin GET to
+  `/service/presence/users?ids=<uuid>`. This is the same presence model used by
+  Chess.com's current navigation code. Only an `activity: "playing"` user with
+  an `activityContext.games` entry whose source is `live_chess` and whose
+  numeric ID is positive is accepted as `/game/live/<id>`.
+- The presence result is kept only in memory for the current page. Missing or
+  malformed bootstrap data, request failure, a non-playing state, daily games,
+  and nonnumeric IDs all fail closed to the native Game History fallback.
 - Analysis/history links such as `/analysis/game/live/<game-id>` are rejected.
   Query parameters on a valid native live-game URL are preserved unchanged.
 - VINF creates one owned full-width `Jump to open game` managed card and removes
@@ -89,13 +104,17 @@ Android capture was unavailable in this session
   The runtime also compares this semantic link during its existing 750ms
   route/root check so late evidence outside the observed content root is not
   missed.
-- VINF intentionally makes no active-versus-finished claim; the native link is
-  only a safe navigation target.
+- A validated presence result is the only active-versus-finished claim. Native
+  links outside Game History remain compatible evidence; Game History itself is
+  only the deliberate fallback.
 
 OLED black explicitly covers the page canvas, `#mobile-toolbar`,
 `#sidebar-main-menu.sidebar-container`, player rows, board analysis/sidebar
-surfaces, and fixed Game Review controls. Boards and content cards keep their
-native surfaces.
+surfaces, fixed Game Review controls, and both observed live-game move-control
+containers (`.game-buttons-container-component` and
+`.game-buttons-container-mobile`). Their direct `.cc-button-secondary` controls
+use near-black surfaces with off-white glyphs while retaining Chess.com's
+native disabled state. Boards and content cards keep their native surfaces.
 
 ## Top dashboard
 

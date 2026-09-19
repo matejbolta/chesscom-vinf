@@ -1,13 +1,16 @@
 # ChessComVINF Privacy Policy
 
-Effective date: September 18, 2026
+Effective date: September 19, 2026
 
 ChessComVINF runs entirely inside the signed-in Chess.com homepage, live games,
 and supported live-game review pages.
 
-- It collects, transmits, or sells no data.
+- It collects or sells no data. Its only extension-initiated transmission is
+  sending the current signed-in UUID back to Chess.com's same-origin presence
+  service to resolve an active live game.
 - It has no telemetry, analytics, advertising, or remote configuration.
-- It makes no extension-owned network requests.
+- It makes one read-only, same-origin Chess.com presence request on the signed-in
+  homepage when the Open Game shortcut is enabled.
 - It stores no usernames, ratings, game history, credentials, cookies, or tokens.
 - It stores only local presentation preferences: enabled state, native play
   panel visibility, OLED-black appearance, OLED button palette,
@@ -23,23 +26,31 @@ preferences and the `sidePanel` permission only to show the same local settings
 interface in Chromium's persistent side panel. Opening that panel collects or
 transmits nothing. The content script runs only on
 `https://www.chess.com/home*` and
+`https://www.chess.com/play/online/new*` and
 `https://www.chess.com/game/*` and
 `https://www.chess.com/live/game/*` and
 `https://www.chess.com/analysis/game/*`. The review enhancement
 moves an already-rendered native graph and stores nothing about the reviewed
 game.
 
-The homepage continuation card uses only the first exact eligible game link
-already rendered by Chess.com. This can be an open-game link or the latest
-Game History fallback. VINF does not request, persist, or transmit its game ID
-or URL.
+To make the homepage continuation card work when a live game is open on another
+device, VINF reads the current user's UUID from Chess.com's own inline signed-in
+page context and sends it only to Chess.com's same-origin
+`/service/presence/users` endpoint. It uses only a validated live-game numeric
+ID from that response to construct Chess.com's `/game/live/<id>` URL. The UUID,
+response, game ID, and URL are kept only in page memory and are never stored,
+logged, or sent anywhere else. If the lookup is unavailable or does not prove a
+current live game, the card uses the latest eligible link already rendered in
+Game History.
 
 The Android userscript has the same privacy boundary. It grants only
 `GM_getValue`, `GM_setValue`, `GM_addValueChangeListener`, and
 `GM_registerMenuCommand` so Violentmonkey can persist those local presentation
-settings and open the local settings dialog. It has no cross-origin request
-grant, no remote code, and no update URL. Its metadata matches only
+settings and open the local settings dialog. Its presence lookup uses the same
+signed-in, same-origin Chess.com endpoint and needs no cross-origin request
+grant. It has no remote code and no update URL. Its metadata matches only
 `https://www.chess.com/home*` and
+`https://www.chess.com/play/online/new*` and
 `https://www.chess.com/game/*` and
 `https://www.chess.com/live/game/*` and
 `https://www.chess.com/analysis/game/*`. The runtime still enforces
@@ -47,8 +58,9 @@ exact route and layout guards before changing the DOM.
 
 ## Third parties
 
-ChessComVINF sells or shares no data with third parties. Normal requests made by
-Chess.com remain governed by Chess.com's own terms and privacy policy.
+ChessComVINF sells or shares no data with third parties. The one same-origin
+presence lookup and normal requests made by Chess.com remain governed by
+Chess.com's own terms and privacy policy.
 
 ChessComVINF is an independent, unofficial extension and is not affiliated with,
 endorsed by, or sponsored by Chess.com.

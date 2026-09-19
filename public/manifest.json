@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ChessComVINF",
   "short_name": "VINF",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A focused Chess.com experience with configurable Quick Play, OLED black, and active-game continuity.",
   "icons": {
     "16": "icons/icon-16.png",
@@ -26,6 +26,7 @@
     {
       "matches": [
         "https://www.chess.com/home*",
+        "https://www.chess.com/play/online/new*",
         "https://www.chess.com/game/*",
         "https://www.chess.com/live/game/*",
         "https://www.chess.com/analysis/game/*"

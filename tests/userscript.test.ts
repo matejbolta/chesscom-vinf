@@ -24,7 +24,7 @@ describe("Android userscript shell", () => {
     let menuCommand: (() => void) | undefined;
     const setValue = vi.fn();
     vi.stubGlobal("__VINF_USERSCRIPT_CSS__", "");
-    vi.stubGlobal("__VINF_VERSION__", "2.1.2");
+    vi.stubGlobal("__VINF_VERSION__", "2.2.1");
     vi.stubGlobal("GM_getValue", vi.fn(() => DEFAULT_SETTINGS));
     vi.stubGlobal("GM_setValue", setValue);
     vi.stubGlobal("GM_addValueChangeListener", vi.fn(() => 1));
@@ -54,7 +54,7 @@ describe("Android userscript shell", () => {
     );
     expect(dialog?.open).toBe(true);
     expect(dialog?.querySelectorAll("select")).toHaveLength(18);
-    expect(dialog?.textContent).toContain("Android settings · v2.1.2");
+    expect(dialog?.textContent).toContain("Android settings · v2.2.1");
     expect(
       dialog?.querySelector<HTMLSelectElement>(
         '[aria-label="Profile placement"]'

@@ -1,0 +1,78 @@
+<!doctype html>
+<html class="user-logged-in dark-mode" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Live game controls | OLED fixture</title>
+    <style>
+      :root { color-scheme: dark; font-size: 62.5%; }
+      * { box-sizing: border-box; }
+      body {
+        background: #302e2b;
+        color: #ededed;
+        font: 1.4rem/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 0;
+      }
+      .fixture-nav,
+      .fixture-player,
+      .fixture-tabs {
+        align-items: center;
+        background: #262522;
+        display: flex;
+        height: 5.6rem;
+        justify-content: space-around;
+      }
+      .fixture-nav { font-size: 2rem; font-weight: 700; justify-content: flex-start; padding: 0 1.6rem; }
+      .fixture-player { font-size: 1.6rem; font-weight: 700; padding: 0 1.6rem; }
+      .fixture-player span:last-child { margin-left: auto; }
+      .fixture-board {
+        background:
+          conic-gradient(from 90deg, #b58863 25%, #f0d9b5 0 50%, #b58863 0 75%, #f0d9b5 0)
+          0 0 / 9.75rem 9.75rem;
+        height: 39rem;
+      }
+      .fixture-tabs { border-bottom: .1rem solid #454441; height: 8rem; }
+      .fixture-moves { background: #262522; height: 19.4rem; padding: 2rem; }
+      .game-buttons-container-mobile {
+        background: #262522;
+        bottom: 0;
+        display: flex;
+        gap: .5rem;
+        left: 50%;
+        max-width: 40rem;
+        padding: 1rem;
+        position: fixed;
+        transform: translateX(-50%);
+        width: 100%;
+      }
+      .game-buttons-container-mobile > button {
+        background: #3a3936;
+        border: 0;
+        border-radius: .5rem;
+        color: #b7b7b7;
+        flex: 1 1 0;
+        font-size: 3rem;
+        height: 5.6rem;
+        min-width: 0;
+      }
+      .game-buttons-container-mobile > button:disabled { opacity: .45; }
+    </style>
+  </head>
+  <body class="board-layout with-players with-controls">
+    <nav class="fixture-nav">♟ Chess.com</nav>
+    <main id="board-layout-main">
+      <div class="fixture-player"><span>Player Two</span><span>4:50</span></div>
+      <div class="fixture-board" aria-label="Sanitized chess board"></div>
+      <div class="fixture-player"><span>Player One</span><span>0:20</span></div>
+      <div class="fixture-tabs"><span>Play</span><span>New Game</span><span>Games</span><span>Players</span></div>
+      <div class="fixture-moves">Moves &nbsp;&nbsp;&nbsp; Chat &nbsp;&nbsp;&nbsp; Info</div>
+    </main>
+    <nav class="game-buttons-container-mobile" aria-label="Move navigation">
+      <button class="cc-button-component cc-button-secondary cc-button-large cc-bg-secondary" aria-label="First Move">|‹</button>
+      <button class="cc-button-component cc-button-secondary cc-button-large cc-bg-secondary" aria-label="Previous Move">‹</button>
+      <button class="cc-button-component cc-button-secondary cc-button-large cc-bg-secondary" aria-label="Play / Pause">▶</button>
+      <button class="cc-button-component cc-button-secondary cc-button-large cc-bg-secondary cc-button-disabled" aria-label="Next Move" disabled>›</button>
+      <button class="cc-button-component cc-button-secondary cc-button-large cc-bg-secondary cc-button-disabled" aria-label="Last Move" disabled>›|</button>
+    </nav>
+  </body>
+</html>

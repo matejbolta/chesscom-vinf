@@ -83,6 +83,10 @@ const gameReviewFixtureHtml = await readFile(
   new URL("../fixtures/game-review-narrow.html", import.meta.url),
   "utf8"
 );
+const liveGameControlsFixtureHtml = await readFile(
+  new URL("../fixtures/live-game-controls-mobile.html", import.meta.url),
+  "utf8"
+);
 
 const safeHtml = rawHtml
   .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
@@ -187,6 +191,15 @@ const gameReviewHtml = gameReviewFixtureHtml
     "</body>",
     '<script src="/chesscom-vinf-visual-harness.js"></script></body>'
   );
+const liveGameControlsHtml = liveGameControlsFixtureHtml
+  .replace(
+    "</head>",
+    '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>'
+  )
+  .replace(
+    "</body>",
+    '<script src="/chesscom-vinf-visual-harness.js"></script></body>'
+  );
 
 const mimeTypes = {
   ".css": "text/css",
@@ -256,6 +269,18 @@ const server = createServer(async (request, response) => {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(
       '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF phone Game Review preview" src="/game-review-mobile?oled=1" style="border:0;height:844px;width:390px"></iframe></body></html>'
+    );
+    return;
+  }
+  if (pathname === "/live-game-controls-mobile") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(liveGameControlsHtml);
+    return;
+  }
+  if (pathname === "/live-game-controls-phone-preview") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(
+      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF phone live-game controls preview" src="/live-game-controls-mobile?oled=1" style="border:0;height:844px;width:390px"></iframe></body></html>'
     );
     return;
   }

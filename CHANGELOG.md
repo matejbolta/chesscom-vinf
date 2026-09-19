@@ -9,6 +9,20 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-09-19
+
+### Fixed
+
+- Load VINF on Chess.com's native `/play/online/new` matchmaking bootstrap so
+  OLED mode remains available when that document becomes a live game through
+  client-side navigation.
+- Prefer an exact active-game link outside Game History for `Jump to open game`,
+  while retaining the newest finished Game History link as the fallback.
+- Resolve cross-device live games through Chess.com's signed-in, same-origin
+  presence service before using the finished Game History fallback.
+- Apply OLED black to the separate live-game move-navigation tray and use
+  near-black, low-glare surfaces for its secondary controls.
+
 ## [2.2.0] - 2026-09-18
 
 ### Added

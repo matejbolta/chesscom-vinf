@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { startVinfRuntime } from "../src/content/runtime";
-import { MARKERS, RECONCILE_DELAY_MS } from "../src/shared/constants";
+import {
+  MARKERS,
+  RECONCILE_DELAY_MS,
+  ROUTE_CHECK_INTERVAL_MS
+} from "../src/shared/constants";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
 import { loadResponsiveHomepageFixture } from "./test-utils";
 
@@ -98,6 +102,30 @@ describe("responsive runtime lifecycle", () => {
     expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
   });
 
+  it("applies OLED after the native matchmaking bootstrap becomes a live game", async () => {
+    vi.useFakeTimers();
+    window.history.replaceState(
+      {},
+      "",
+      "/play/online/new?action=createLiveChallenge&base=600&timeIncrement=0"
+    );
+    document.documentElement.className = "user-logged-in";
+    document.body.replaceChildren();
+
+    startVinfRuntime({
+      load: async () => ({ ...DEFAULT_SETTINGS, oledMode: true }),
+      subscribe: () => undefined
+    });
+    await Promise.resolve();
+
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
+
+    window.history.replaceState({}, "", "/game/183987646934");
+    await vi.advanceTimersByTimeAsync(ROUTE_CHECK_INTERVAL_MS);
+
+    expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
+  });
+
   it("observes a main element when the desktop base container is absent", async () => {
     vi.useFakeTimers();
     const fixture = loadResponsiveHomepageFixture();
@@ -131,6 +159,11 @@ describe("responsive runtime lifecycle", () => {
     const fixture = loadResponsiveHomepageFixture();
     document.documentElement.className = fixture.documentElement.className;
     document.documentElement.innerHTML = fixture.documentElement.innerHTML;
+    const historyFallback = document.createElement("a");
+    historyFallback.href = "https://www.chess.com/game/111111";
+    document
+      .querySelector('[data-fixture-module="game-history"]')!
+      .append(historyFallback);
 
     startVinfRuntime({
       load: async () => DEFAULT_SETTINGS,
@@ -138,12 +171,66 @@ describe("responsive runtime lifecycle", () => {
     });
     await Promise.resolve();
 
+    expect(
+      document
+        .querySelector(".chesscom-vinf-game-continuation a")
+        ?.getAttribute("href")
+    ).toBe("https://www.chess.com/game/111111");
+
     const activeGameLink = document.createElement("a");
     activeGameLink.href = "https://www.chess.com/game/live/654321";
     activeGameLink.hidden = true;
-    document.body.prepend(activeGameLink);
+    document.body.append(activeGameLink);
     await vi.advanceTimersByTimeAsync(750);
 
+    expect(
+      document
+        .querySelector(".chesscom-vinf-game-continuation a")
+        ?.getAttribute("href")
+    ).toBe("https://www.chess.com/game/live/654321");
+  });
+
+  it("replaces the history fallback with the current user's presence game", async () => {
+    vi.useFakeTimers();
+    const fixture = loadResponsiveHomepageFixture();
+    document.documentElement.className = fixture.documentElement.className;
+    document.documentElement.innerHTML = fixture.documentElement.innerHTML;
+    const userUuid = "12345678-1234-1234-1234-123456789abc";
+    const context = document.createElement("script");
+    context.textContent = `context = {"user":{"uuid":"${userUuid}"}};`;
+    document.head.append(context);
+    const historyFallback = document.createElement("a");
+    historyFallback.href = "https://www.chess.com/game/111111";
+    document
+      .querySelector('[data-fixture-module="game-history"]')!
+      .append(historyFallback);
+    const fetcher = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          users: [
+            {
+              id: userUuid,
+              activity: "playing",
+              activityContext: {
+                games: [{ source: "live_chess", numericId: 654321 }]
+              }
+            }
+          ]
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      )
+    );
+
+    startVinfRuntime(
+      {
+        load: async () => DEFAULT_SETTINGS,
+        subscribe: () => undefined
+      },
+      { fetch: fetcher }
+    );
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(fetcher).toHaveBeenCalledTimes(1);
     expect(
       document
         .querySelector(".chesscom-vinf-game-continuation a")

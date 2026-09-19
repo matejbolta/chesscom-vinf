@@ -71,7 +71,7 @@ This needs no hosting or developer account.
 3. Choose **New**, replace the template with the complete generated file, and
    save it.
 4. Confirm the script is enabled and its matches cover the Chess.com homepage
-   plus live-game review routes.
+   plus the native matchmaking bootstrap, live-game, and review routes.
 
 ### Method B: serve the generated file on the local network
 
@@ -159,6 +159,7 @@ shared runtime lifecycle
 homepage detector → semantic module locator → reversible layout controller
                   ↓
 validated native launch adapter + shared configurable Quick Play renderer/CSS
+same-origin presence resolver → validated live-game continuation URL
 
 live-game review guard → reversible phone evaluation-graph placement
 ```
@@ -169,9 +170,11 @@ The Android shell contributes only:
 - the settings menu command and responsive modal;
 - bundled local CSS and userscript metadata.
 
-It makes no network requests. Matchmaking still derives from the native
+It makes no matchmaking request. Matchmaking still derives from the native
 same-origin Chess.com immediate-match link already present in the signed-in
-homepage, and changes only `base` and `timeIncrement`.
+homepage, and changes only `base` and `timeIncrement`. When the Open Game
+shortcut is enabled, the shared runtime makes one read-only request to
+Chess.com's same-origin presence service to resolve a cross-device live game.
 
 ## Responsive behavior
 
@@ -212,14 +215,17 @@ The shared `OLED black` setting applies true black to the page canvas, mobile
 toolbar, retractable navigation, player rows, sidebar, and review controls on
 the homepage, exact live-game routes, and Game Review at phone and tablet
 widths. The independent `OLED button colors` setting gives Quick Play and the
-Open Game shortcut near-black surfaces, off-white text, and muted accents.
-If the responsive homepage exposes an eligible native `/game/<id>` or
-legacy `/game/live/<id>` link, the same shared controller adds a full-width
-`Jump to open game` managed card. It defaults to the bottom of the single
-column and falls back to the latest Game History link without inferring whether
-that game is still active. The settings header shows the installed source
+Open Game shortcut near-black surfaces, off-white text, and muted accents. The
+OLED page setting also makes the separate live-game move-navigation tray black
+and gives its five direct controls low-glare near-black surfaces while
+preserving Chess.com's disabled states.
+The shared controller adds a full-width `Jump to open game` managed card when
+it can resolve either a strictly validated current live game through Chess.com's
+same-origin presence service or an eligible native `/game/<id>` or legacy
+`/game/live/<id>` link. It defaults to the bottom of the single column and falls
+back to the latest Game History link. The UUID and game result remain in memory
+only; no game data is stored. The settings header shows the installed source
 version.
-Neither behavior adds a request or stores game data.
 
 The userscript runs at `document-start`. Its shared observer begins at
 `.base-container`, responsive `main`/`[role=main]`, `body`, or the document
@@ -260,9 +266,10 @@ the signed-in tablet, verify:
    verify the native placement returns.
 10. Enable OLED black and verify a true-black canvas on the homepage, an active
     live game, and Game Review in portrait and landscape.
-11. Open `/home` and confirm one bottom-of-column `Jump to open game` card opens
-    the first exact native game URL. With no unfinished-game link before Game
-    History, confirm it falls back to the latest completed row.
+11. While a live game is open on another device, open `/home` and confirm the
+    bottom-of-column `Jump to open game` card opens that live game. After it
+    ends, reload `/home` and confirm the card falls back to the latest completed
+    Game History row.
 
 ## Limitations
 
