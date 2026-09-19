@@ -26,6 +26,10 @@ directory.
   project-continuity rules current exactly as before. Local builds and local
   installation artifacts remain part of normal development.
 
+- When Store packaging is explicitly requested, generate only the uploadable
+  `release/chesscom-vinf-<version>.zip`. Never create a `*-store-submission.zip`
+  or another wrapper archive. Existing listing files remain separate.
+
 ## Required project context
 
 - Before changing this project, read `docs/HANDOFF.md` completely. It is the

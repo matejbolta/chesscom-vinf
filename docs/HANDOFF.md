@@ -1024,13 +1024,14 @@ Android artifact:
 
     dist-android/chesscom-vinf.user.js
 
-Latest convenience Chrome Web Store handoff:
-
-    release/chesscom-vinf-2.2.0-store-submission.zip
-
-SHA-256:
-
-    3aeca6c82fde38a1f11054a5eb3e5883238d3973d1956ad50757e9781df4b781
+Store submission wrapper archives are retired by user instruction (2026-09-19).
+All seven existing `*-store-submission.zip` files were deleted. Future explicit
+Store preparation must produce only `release/chesscom-vinf-<version>.zip`, whose
+root contains `manifest.json`. Never generate a wrapper ZIP containing the
+extension ZIP, listing copy, screenshots, or other handoff materials. Existing
+listing assets remain separate; a stale screenshot version badge does not
+justify regenerating it. This packaging-policy cleanup changes no extension
+behavior or version; source and current uploadable package remain 2.2.2.
 
 The project is an independent public Git repository:
 
