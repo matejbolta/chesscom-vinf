@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import {
   ensureGameContinuation,
@@ -106,7 +108,10 @@ describe("game continuation shortcut", () => {
       ),
       {
         credentials: "same-origin",
-        headers: { Accept: "application/json" }
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+        redirect: "error",
+        signal: undefined
       }
     );
   });
@@ -134,6 +139,46 @@ describe("game continuation shortcut", () => {
     );
 
     await expect(findActiveLiveGameHref(document, fetcher)).resolves.toBeNull();
+  });
+
+  // Structural facts captured from a real cross-device mobile game on
+  // 2026-09-19; both account and game identifiers are synthetic.
+  const rcnPresence = JSON.parse(readFileSync(
+    resolve(process.cwd(), "tests/fixtures/presence-rcn-playing.json"), "utf8"
+  ));
+
+  it("maps the observed RCN live presence to Chess.com's current native route", async () => {
+    const document = loadModernHomepageFixture();
+    const script = document.createElement("script");
+    script.textContent = `context = {"user":{"uuid":"${userUuid}"}};`;
+    document.head.append(script);
+    const fetcher = vi.fn(async () => new Response(JSON.stringify(rcnPresence)));
+    expect(await findActiveLiveGameHref(document, fetcher)).toBe(
+      "https://www.chess.com/game/987654321"
+    );
+  });
+
+  it.each([
+    ["unrelated user", (p: any) => { p.users[0].id = "other"; }],
+    ["duplicate users", (p: any) => { p.users.push(p.users[0]); }],
+    ["ambiguous games", (p: any) => { p.users[0].activityContext.games.push(p.users[0].activityContext.games[0]); }],
+    ["daily game", (p: any) => { p.users[0].activityContext.games[0].timeclass = "daily"; }],
+    ["unknown source", (p: any) => { p.users[0].activityContext.games[0].source = "unknown"; }],
+    ["missing numeric ID", (p: any) => { delete p.users[0].activityContext.games[0].numericId; }],
+    ["off-origin ID", (p: any) => { p.users[0].activityContext.games[0].numericId = "https://example.com/game/1"; }],
+    ["unsafe numeric ID", (p: any) => { p.users[0].activityContext.games[0].numericId = Number.MAX_SAFE_INTEGER + 1; }],
+    ["not playing", (p: any) => { p.users[0].activity = "none"; }],
+    ["malformed games", (p: any) => { p.users[0].activityContext.games = [null]; }]
+  ])("rejects %s instead of inventing an active game", async (_name, change) => {
+    const document = loadModernHomepageFixture();
+    const script = document.createElement("script");
+    script.textContent = `context = {"user":{"uuid":"${userUuid}"}};`;
+    document.head.append(script);
+    const payload = structuredClone(rcnPresence);
+    change(payload);
+    expect(await findActiveLiveGameHref(document, async () =>
+      new Response(JSON.stringify(payload))
+    )).toBeNull();
   });
 
   it("renders one full-width managed card in the default desktop sidebar", () => {

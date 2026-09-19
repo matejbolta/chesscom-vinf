@@ -14,6 +14,7 @@ interface PresenceGame {
   id?: unknown;
   numericId?: unknown;
   source?: unknown;
+  timeclass?: unknown;
 }
 
 interface PresenceUser {
@@ -90,18 +91,33 @@ export function findCurrentUserUuid(document: Document): string | null {
   return null;
 }
 
-function numericLiveGameId(game: PresenceGame): string | null {
-  if (game.source !== "live_chess") {
+function liveGamePath(game: PresenceGame): string | null {
+  // Current first-party presence uses RCN for live games and routes those to
+  // /game/<numericId>; the older live_chess service uses /game/live/<id>.
+  if (game.source !== "live_chess" && game.source !== "rcn") {
     return null;
   }
-  const candidate = game.numericId ?? game.id;
+  if (
+    (game.source === "rcn" || game.timeclass !== undefined) &&
+    !["bullet", "blitz", "rapid"].includes(String(game.timeclass))
+  ) {
+    return null;
+  }
+  const candidate = game.source === "rcn" ? game.numericId : game.numericId ?? game.id;
+  if (typeof candidate === "number" && !Number.isSafeInteger(candidate)) {
+    return null;
+  }
   const id = typeof candidate === "number" ? String(candidate) : candidate;
-  return typeof id === "string" && /^[1-9]\d*$/.test(id) ? id : null;
+  if (typeof id !== "string" || !/^[1-9]\d*$/.test(id)) {
+    return null;
+  }
+  return game.source === "rcn" ? `/game/${id}` : `/game/live/${id}`;
 }
 
 export async function findActiveLiveGameHref(
   document: Document,
-  fetcher: GamePresenceFetch
+  fetcher: GamePresenceFetch,
+  signal?: AbortSignal
 ): Promise<string | null> {
   const uuid = findCurrentUserUuid(document);
   if (!uuid) {
@@ -127,7 +143,10 @@ export async function findActiveLiveGameHref(
   try {
     const response = await fetcher(endpoint, {
       credentials: "same-origin",
-      headers: { Accept: "application/json" }
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+      redirect: "error",
+      signal
     });
     if (!response.ok) {
       return null;
@@ -137,7 +156,7 @@ export async function findActiveLiveGameHref(
     if (!Array.isArray(payload.users)) {
       return null;
     }
-    const currentUser = payload.users.find((candidate): candidate is PresenceUser => {
+    const matchingUsers = payload.users.filter((candidate): candidate is PresenceUser => {
       return (
         typeof candidate === "object" &&
         candidate !== null &&
@@ -145,24 +164,21 @@ export async function findActiveLiveGameHref(
         (candidate as PresenceUser).id === uuid
       );
     });
-    if (currentUser?.activity !== "playing") {
+    if (matchingUsers.length !== 1 || matchingUsers[0].activity !== "playing") {
       return null;
     }
 
+    const currentUser = matchingUsers[0];
     const games = currentUser.activityContext?.games;
-    if (!Array.isArray(games)) {
+    if (!Array.isArray(games) || games.length !== 1) {
       return null;
     }
-    for (const candidate of games) {
-      if (typeof candidate !== "object" || candidate === null) {
-        continue;
-      }
-      const gameId = numericLiveGameId(candidate as PresenceGame);
-      if (gameId) {
-        return new URL(`/game/live/${gameId}`, pageUrl).href;
-      }
+    const candidate = games[0];
+    if (typeof candidate !== "object" || candidate === null) {
+      return null;
     }
-    return null;
+    const path = liveGamePath(candidate as PresenceGame);
+    return path ? new URL(path, pageUrl).href : null;
   } catch {
     return null;
   }

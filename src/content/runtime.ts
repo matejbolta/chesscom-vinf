@@ -28,6 +28,7 @@ export interface SettingsSource {
 
 export interface RuntimeDependencies {
   fetch?: GamePresenceFetch;
+  navigate?: (href: string) => void;
 }
 
 export function startVinfRuntime(
@@ -48,6 +49,9 @@ export function startVinfRuntime(
   let resolvedActiveGameHref: string | null = null;
   let activeGameLookupState: "idle" | "loading" | "complete" = "idle";
   let activeGameLookupGeneration = 0;
+  let activeGameRequest: Promise<string | null> | null = null;
+  let activeGameAbort: AbortController | null = null;
+  let continuationPending = false;
   let settings: ExtensionSettings | null = null;
   let hasAppliedLayout = false;
   const presenceFetch =
@@ -229,48 +233,103 @@ export function startVinfRuntime(
     }
   }
 
-  async function resolveActiveGame(): Promise<void> {
+  function resolveActiveGame(refresh = false): Promise<string | null> {
+    if (activeGameRequest) {
+      return activeGameRequest;
+    }
     if (
-      activeGameLookupState !== "idle" ||
+      (!refresh && activeGameLookupState !== "idle") ||
       !presenceFetch ||
       !shouldResolveActiveGame() ||
       !findCurrentUserUuid(document)
     ) {
-      return;
+      return Promise.resolve(null);
     }
 
     activeGameLookupState = "loading";
     const generation = activeGameLookupGeneration;
     const route = window.location.href;
-    const href = await findActiveLiveGameHref(document, presenceFetch);
-    if (
-      generation !== activeGameLookupGeneration ||
-      route !== window.location.href ||
-      !shouldResolveActiveGame()
-    ) {
-      return;
-    }
-
-    activeGameLookupState = "complete";
-    if (resolvedActiveGameHref !== href) {
-      resolvedActiveGameHref = href;
-      hasAppliedLayout = false;
-      reconcileImmediately();
-    }
+    const abort = new AbortController();
+    activeGameAbort = abort;
+    // A stalled service must not trap the intentional Game History fallback.
+    const timeout = window.setTimeout(() => abort.abort(), 4_000);
+    activeGameRequest = findActiveLiveGameHref(document, presenceFetch, abort.signal)
+      .then((href) => {
+        if (
+          generation !== activeGameLookupGeneration ||
+          route !== window.location.href ||
+          !shouldResolveActiveGame()
+        ) {
+          return null;
+        }
+        activeGameLookupState = "complete";
+        if (resolvedActiveGameHref !== href) {
+          resolvedActiveGameHref = href;
+          hasAppliedLayout = false;
+          reconcileImmediately();
+        }
+        return href;
+      })
+      .finally(() => {
+        window.clearTimeout(timeout);
+        if (generation === activeGameLookupGeneration) {
+          activeGameRequest = null;
+          activeGameAbort = null;
+        }
+      });
+    return activeGameRequest;
   }
 
   function shouldResolveActiveGame(): boolean {
     return Boolean(
       settings?.enabled &&
         settings.openGamePlacement !== "hidden" &&
+        document.documentElement.classList.contains("user-logged-in") &&
         isTargetRoute()
     );
   }
 
   function resetActiveGameLookup(): void {
     activeGameLookupGeneration += 1;
+    activeGameAbort?.abort();
+    activeGameAbort = null;
+    activeGameRequest = null;
     activeGameLookupState = "idle";
     resolvedActiveGameHref = null;
+  }
+
+  async function continueGame(event: MouseEvent): Promise<void> {
+    if (
+      event.defaultPrevented || event.button !== 0 ||
+      event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
+      !(event.target instanceof Element) ||
+      !event.target.closest(".chesscom-vinf-game-continuation-action") ||
+      !shouldResolveActiveGame()
+    ) {
+      return;
+    }
+    event.preventDefault();
+    if (continuationPending) {
+      return;
+    }
+    continuationPending = true;
+    const generation = activeGameLookupGeneration;
+    const route = window.location.href;
+    try {
+      const activeHref = await resolveActiveGame(true);
+      if (
+        generation !== activeGameLookupGeneration ||
+        route !== window.location.href || !shouldResolveActiveGame()
+      ) {
+        return;
+      }
+      const href = activeHref ?? findGameContinuationLink(document)?.href;
+      if (href) {
+        (dependencies.navigate ?? ((url) => window.location.assign(url)))(href);
+      }
+    } finally {
+      continuationPending = false;
+    }
   }
 
   function scheduleReconcile(): void {
@@ -317,7 +376,11 @@ export function startVinfRuntime(
   }
 
   settingsSource.subscribe((nextSettings) => {
+    const wasResolving = shouldResolveActiveGame();
     settings = normalizeSettings(nextSettings);
+    if (wasResolving !== shouldResolveActiveGame()) {
+      resetActiveGameLookup();
+    }
     controller.cleanup(document);
     gameReviewController.cleanup(document);
     hasAppliedLayout = false;
@@ -326,6 +389,7 @@ export function startVinfRuntime(
 
   window.addEventListener("popstate", reconcileImmediately);
   window.addEventListener("hashchange", reconcileImmediately);
+  document.addEventListener("click", (event) => void continueGame(event));
   phoneGameReviewMedia?.addEventListener("change", reconcileImmediately);
   window.setInterval(checkRoute, ROUTE_CHECK_INTERVAL_MS);
   attachObserver();
