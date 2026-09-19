@@ -9,6 +9,20 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.2.2] - 2026-09-19
+
+### Fixed
+
+- Accept Chess.com's observed `rcn` live-game presence and use its native
+  `/game/<numericId>` route. Version 2.2.1 incorrectly accepted only
+  `live_chess`, so current cross-device games fell back to Game History.
+- Refresh presence on ordinary shortcut activation so games started after the
+  homepage loaded are discoverable. Deduplicate concurrent requests, time out
+  after four seconds, and cancel pending navigation on disable/hide/departure.
+- Retain the newest-finished-game fallback and existing card/OLED presentation.
+  Desktop continuation was verified against a real mobile game by the user;
+  Android uses the same corrected runtime and still needs device verification.
+
 ## [2.2.1] - 2026-09-19
 
 ### Fixed
@@ -18,8 +32,9 @@ History before this baseline may not have exact local source snapshots.
   client-side navigation.
 - Prefer an exact active-game link outside Game History for `Jump to open game`,
   while retaining the newest finished Game History link as the fallback.
-- Resolve cross-device live games through Chess.com's signed-in, same-origin
-  presence service before using the finished Game History fallback.
+- Add a signed-in, same-origin presence lookup before the finished Game History
+  fallback. Its `live_chess`-only assumption did not handle the current RCN
+  service; the real cross-device failure is corrected in 2.2.2.
 - Apply OLED black to the separate live-game move-navigation tray and use
   near-black, low-glare surfaces for its secondary controls.
 

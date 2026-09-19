@@ -12,10 +12,11 @@ An optional OLED-black appearance replaces the page canvas with true black on
 the homepage, live games, and Game Review at desktop, tablet, and phone widths.
 An independent `OLED button colors` switch applies a low-glare near-black
 palette to Quick Play and the Open Game shortcut without changing their layout.
-VINF presents a managed `Jump to open game` card. When enabled, it makes one
-read-only, same-origin Chess.com presence lookup to resolve a live game open on
-another device; otherwise it prefers an exact eligible game link already on the
-page and deliberately falls back to the latest Game History link. The UUID and
+VINF presents a managed `Jump to open game` card. When enabled, it makes a
+read-only, same-origin Chess.com presence lookup at homepage load and refreshes
+it on ordinary click or keyboard activation to find a game open on another
+device. It recognizes current RCN and legacy live games; otherwise it prefers
+an exact eligible game link already on the page and deliberately falls back to the latest Game History link. The UUID and
 result remain in page memory and are never stored or logged.
 
 ![Sanitized ChessComVINF homepage](docs/reference-homepage.png)

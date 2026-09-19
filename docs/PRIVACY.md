@@ -9,8 +9,10 @@ and supported live-game review pages.
   sending the current signed-in UUID back to Chess.com's same-origin presence
   service to resolve an active live game.
 - It has no telemetry, analytics, advertising, or remote configuration.
-- It makes one read-only, same-origin Chess.com presence request on the signed-in
-  homepage when the Open Game shortcut is enabled.
+- It makes a read-only, same-origin Chess.com presence request on the signed-in
+  homepage when the Open Game shortcut is enabled and refreshes it on ordinary
+  click or keyboard activation. Concurrent activations share one request; there
+  is no background polling. Requests time out after four seconds.
 - It stores no usernames, ratings, game history, credentials, cookies, or tokens.
 - It stores only local presentation preferences: enabled state, native play
   panel visibility, OLED-black appearance, OLED button palette,
@@ -37,7 +39,8 @@ To make the homepage continuation card work when a live game is open on another
 device, VINF reads the current user's UUID from Chess.com's own inline signed-in
 page context and sends it only to Chess.com's same-origin
 `/service/presence/users` endpoint. It uses only a validated live-game numeric
-ID from that response to construct Chess.com's `/game/live/<id>` URL. The UUID,
+ID from that response to construct Chess.com's native `/game/<id>` URL for
+current RCN live games or `/game/live/<id>` for legacy live games. The UUID,
 response, game ID, and URL are kept only in page memory and are never stored,
 logged, or sent anywhere else. If the lookup is unavailable or does not prove a
 current live game, the card uses the latest eligible link already rendered in
@@ -58,8 +61,8 @@ exact route and layout guards before changing the DOM.
 
 ## Third parties
 
-ChessComVINF sells or shares no data with third parties. The one same-origin
-presence lookup and normal requests made by Chess.com remain governed by
+ChessComVINF sells or shares no data with third parties. The same-origin
+presence lookups and normal requests made by Chess.com remain governed by
 Chess.com's own terms and privacy policy.
 
 ChessComVINF is an independent, unofficial extension and is not affiliated with,

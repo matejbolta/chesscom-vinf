@@ -59,9 +59,9 @@ directory.
   Chromium side panel must reuse the same local autosaving UI and fail safely
   when a browser does not expose `chrome.sidePanel`.
 - Do not add telemetry, analytics, remote code, or extension-owned network calls
-  beyond the documented one-shot, same-origin current-user presence lookup used
-  by `Jump to open game`. Do not broaden that request's host, data, frequency,
-  or purpose without an explicit product decision.
+  beyond the documented same-origin current-user presence lookup at homepage
+  load and ordinary shortcut activation. Do not broaden that request's host,
+  data, frequency, or purpose without an explicit product decision.
 - Keep OLED black opt-in and scoped to exact supported homepage, current
   `/game/<id>`, legacy `/game/live/<id>`, and review routes. The configurable
   homepage `Jump to open game` card prefers a strictly validated current live

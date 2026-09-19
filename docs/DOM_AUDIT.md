@@ -83,19 +83,43 @@ Android capture was unavailable in this session
   exact pathname `/game/<numeric-id>`, `/game/live/<numeric-id>`, or
   `/live/game/<numeric-id>` with an optional trailing slash.
 - The first exact link outside `.game-history-games-component` wins regardless
-  of document order, so Chess.com's active-game link takes precedence. The first
+  of document order; this is compatible native navigation evidence, not by
+  itself proof of active state. The first
   exact link inside Game History remains the latest-finished-game fallback when
   no active-game link is rendered.
-- Because `/home` does not render the current game played on another device,
-  VINF reads the signed-in user's UUID from Chess.com's inline `context.user`
-  bootstrap and makes one same-origin GET to
-  `/service/presence/users?ids=<uuid>`. This is the same presence model used by
-  Chess.com's current navigation code. Only an `activity: "playing"` user with
-  an `activityContext.games` entry whose source is `live_chess` and whose
-  numeric ID is positive is accepted as `/game/live/<id>`.
-- The presence result is kept only in memory for the current page. Missing or
-  malformed bootstrap data, request failure, a non-playing state, daily games,
-  and nonnumeric IDs all fail closed to the native Game History fallback.
+- On the inspected homepage, there was no exact cross-device game anchor.
+  VINF reads the signed-in UUID from the inline `context.user` bootstrap and
+  requests `/service/presence/users?ids=<uuid>` on the same origin.
+- The 2026-09-19 live audit confirmed the UUID matches `window.context.user.uuid`,
+  the installed 2.2.1 content script executes this request, and both page-world
+  and Chromium isolated-world requests succeed without redirect (HTTP 200).
+  No-game presence returned `activity: "none"`. During a user-started mobile
+  rapid game, the matching user returned `activity: "playing"`, with one game
+  containing `id` (UUID), `numericId` (number), `variant: "chess"`,
+  `timeclass: "rapid"`, and **`source: "rcn"`**. The old `live_chess`-only check
+  was the direct rejection cause, not a missing UUID or blocked endpoint.
+- Current first-party [navigation.js](https://www.chess.com/r2/client-packages/navigation/2026.9.4/navigation.js)
+  chooses `web_game_live` for `live_chess`, otherwise `web_game_uuid`, preferring
+  `numericId` over `id`. Its route table maps those to `/game/live/<id>` and
+  `/game/<id>` respectively. This is presence-to-game-link code used by native
+  user navigation/popovers, not proof of a dedicated own-game resume API.
+- Version 2.2.2 accepts RCN only with a positive numeric ID and a live time class
+  (Bullet/Blitz/Rapid), retains legacy support, and requires one matching user
+  and one game. Unknown sources, daily games, ambiguity, or malformed IDs fail
+  closed. The committed `tests/fixtures/presence-rcn-playing.json` retains only
+  these observed structural facts, replacing all user/game identifiers.
+- The initial lookup is supplemented by an awaited refresh on ordinary click
+  or keyboard activation: the audit also demonstrated a homepage loaded before
+  the game retained the earlier result. Concurrent activations share a request;
+  no background polling is added. Requests use `cache: "no-store"`, reject
+  redirects, and abort after four seconds. Disable/hide/departure invalidates
+  pending navigation. Modified/middle/context-menu navigation remains native
+  and uses the last resolved anchor URL.
+- The built 2.2.2 desktop card matched the actual active mobile game's numeric
+  ID, retained its exact label, and existed only once. The user clicked it and
+  confirmed it opened that ongoing game before the opponent resigned.
+  Android uses the same runtime, but its installed version, fetch isolation,
+  and real-device activation remain unverified in this audit.
 - Analysis/history links such as `/analysis/game/live/<game-id>` are rejected.
   Query parameters on a valid native live-game URL are preserved unchanged.
 - VINF creates one owned full-width `Jump to open game` managed card and removes

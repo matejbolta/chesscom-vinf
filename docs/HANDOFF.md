@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-19.
-Current source version: 2.2.1.
+Current source version: 2.2.2.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.0.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.2.1. This handoff is the shortest
+chronological amendments through version 2.2.2. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -247,9 +247,12 @@ turns that same document into an exact live-game route through client-side
 navigation, at which point the existing route poll applies OLED normally.
 
 On `/home`, VINF shows one owned, configurable `Jump to open game` managed card.
-It makes one same-origin read-only request to Chess.com's native presence
-service using the signed-in UUID already present in the page bootstrap. A
-strictly validated `playing` live-game numeric ID takes first priority, followed
+It makes a same-origin read-only request to Chess.com's native presence service
+using the signed-in UUID already present in the page bootstrap, then refreshes
+on ordinary click or keyboard activation. A strictly validated `playing` RCN
+game uses `/game/<numericId>`; legacy `live_chess` uses `/game/live/<id>`.
+Exactly one current-user match and one game are required; RCN must have a live
+Bullet/Blitz/Rapid time class. The resolved game takes first priority, followed
 by an exact HTTPS Chess.com `/game/<numeric-id>` or legacy
 `/game/live/<numeric-id>` anchor outside Game History. Game History deliberately
 supplies the latest finished-game fallback. The card defaults last in Right on desktop
@@ -425,7 +428,8 @@ The explicit Quick Play Reset action continues to use the per-count map above.
 
 17. Do not add telemetry, analytics, ads, tracking, remote code, remote
     configuration, or extension-owned network requests beyond the documented
-    one-shot, same-origin current-user presence lookup for Open Game.
+    same-origin current-user presence lookup at load and ordinary Open Game
+    activation, with no background polling.
 
 18. Never commit or package raw signed-in page captures, account identifiers,
     session markup, tokens, screenshots, or reference assets.
@@ -779,8 +783,9 @@ The extension stores only:
 - six per-rating initial `expanded` or `retracted` preferences.
 
 It stores no username, UUID, rating, games, credentials, cookies, tokens, page
-HTML, or analytics. When Open Game is enabled, it makes one read-only same-origin
-presence request using the current UUID already embedded by Chess.com; neither
+HTML, or analytics. When Open Game is enabled, it makes a read-only same-origin
+presence request at homepage load and ordinary shortcut activation using the
+current UUID already embedded by Chess.com; neither
 the UUID nor the response is persisted or logged.
 
 The Android userscript grants only `GM_getValue`, `GM_setValue`,
@@ -807,14 +812,17 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 2.2.1, the suite has 125 passing tests across sixteen files and
+As of version 2.2.2, the suite has 137 passing tests across seventeen files and
 covers the homepage plus focused phone Game Review behavior. Important coverage
 includes:
 
 - OLED background/button setting normalization, autosave, route scoping, and cleanup;
 - native matchmaking bootstrap-to-live-game route transition behavior;
 - current-user UUID extraction, strict presence-response validation, and
-  cross-device active-game precedence over Game History;
+  cross-device active-game precedence over Game History (the RCN fixture is
+  based on a real response; legacy cases remain synthetic);
+- activation-time freshness, request deduplication, four-second timeout, and
+  cancellation on disable/hide/route departure;
 - exact current/legacy/alternate native game URL recognition, card idempotence/removal, and
   late evidence outside the main observer root;
 
@@ -1156,12 +1164,13 @@ now load VINF on that exact same-origin prefix; the bootstrap itself remains
 untouched, and the existing 750 ms route check applies OLED only after the URL
 becomes an exact supported live-game route. The continuation selector also now
 prefers an exact game link outside Game History regardless of DOM order, while
-retaining the first history link as the finished-game fallback. Because
-Chess.com does not render a cross-device active-game link on `/home`, VINF now
-also performs one read-only same-origin query to Chess.com's native presence
-service and accepts only the signed-in user's validated `playing` live-game
-numeric ID. The UUID, response, and game URL remain in memory only. This adds no
-new host, permission, credential access, or stored-game capability. OLED mode
+retaining the first history link as the finished-game fallback. Based on a
+saved homepage lacking a cross-device active-game link, 2.2.1 added a one-shot
+same-origin presence query. Its tests assumed the older `live_chess` source;
+that assumption rejected real RCN games and did not fix cross-device discovery.
+Version 2.2.2 below supersedes that claim. The UUID, response, and game URL
+remain in memory only. This adds no new host, permission, credential access,
+or stored-game capability. OLED mode
 also covers Chess.com's separate live-game move-navigation tray on narrow
 layouts: the tray is black and its five direct secondary controls use
 near-black surfaces with `#ededed` glyphs, without changing native geometry or
@@ -1171,6 +1180,71 @@ disabled behavior. Version 2.2.0 remains the latest Store-prepared package; no
 Before every push, run the full test suite. `tests/privacy.test.ts` rejects
 absolute home paths, literal private LAN addresses, email addresses,
 secret-shaped credentials, and weakened raw-capture ignore rules.
+
+## Version 2.2.2 Cross-Device Investigation and Outcome
+
+On 2026-09-19 the user reproduced a mobile live game opening the desktop's
+finished-game fallback. Investigation and repair used only this repository,
+its ignored first-party captures, and read-only desktop homepage diagnostics.
+No game was started, moved, resigned, or otherwise manipulated by the agent.
+
+Verified evidence:
+
+- Installed Brave extension was enabled at 2.2.1, and DevTools Sources contained
+  the new resolver. Source and both local builds also contained it. A controlled
+  homepage reload showed the request initiated by `content-script.js`, HTTP 200.
+- The exact UUID extraction expression found the correct `context.user.uuid` on
+  the current homepage. Page-world and isolated-world requests both succeeded;
+  no CSP, credential, redirect, or fetch-binding failure was observed.
+- Before the mobile game, presence returned one matching user with activity
+  `none`. During the user-started ten-minute mobile game it returned `playing`
+  with one `rcn` game, a numeric `numericId`, UUID `id`, `timeclass: "rapid"`,
+  and `variant: "chess"`. Version 2.2.1 rejected it solely because it required
+  `source === "live_chess"`. Its initial result also stayed cached when a game
+  began after the homepage loaded.
+- Current navigation package `2026.9.4/navigation.js` maps `live_chess` to
+  `/game/live/<id>`, other native presence games to `/game/<id>`, and prefers
+  `numericId`. This code supports presence game links in user navigation/popovers;
+  it does not establish a dedicated own-game resume endpoint. See `DOM_AUDIT.md`
+  for the exact asset URL and sanitized structural evidence.
+
+The shared resolver now accepts the observed RCN format with explicit live time
+classes and uses the native current route. Legacy live games remain supported.
+Ambiguous users/games, daily games, unknown sources, and invalid IDs fail closed.
+The ordinary click/keyboard handler refreshes presence, shares in-flight work,
+rejects redirects, bypasses cached responses, and aborts after four seconds.
+It navigates only if the route/settings generation is still current; failure
+uses the current native-link/history fallback. No recurring requests are added.
+No OLED CSS, geometry, card customization, host permission, or persisted data
+changed. Modifier/middle/context-menu actions retain native anchor behavior and
+the most recently resolved destination.
+
+Validation status:
+
+- Minimal sanitized real-response regression fixture:
+  `tests/fixtures/presence-rcn-playing.json`; every account/game identifier is
+  synthetic. Tests cover the observed source/mapping and stale-homepage sequence,
+  history fallback, malformed/ambiguous evidence, deduplication, timeout,
+  disable/hide/departure, and reconciliation retaining the resolved target.
+- Strict TypeScript, all 137 tests (17 files), desktop build, Android build, and
+  `git diff --check` pass. The `pnpm` launcher could not switch to the pinned
+  version because registry access failed; the same scripts were run directly
+  using installed TypeScript/Vitest and `node scripts/build*.mjs`. No dependency
+  or package-manager metadata was changed.
+- Brave was reloaded to 2.2.2. Read-only DOM inspection proved the single card's
+  target equaled the active mobile game's numeric ID and retained the label.
+  The user then clicked it and confirmed **it opened the ongoing game**. The
+  opponent subsequently resigned. This is actual cross-device desktop evidence,
+  not a mocked-test claim.
+- The installed Android artifact could not be inspected. The regenerated
+  `dist-android/chesscom-vinf.user.js` is 2.2.2 and shares the fixed runtime; its
+  Firefox/Violentmonkey device test is still required. Install it, open the
+  homepage before another device starts a game, activate the shortcut during
+  that game, then check newest-finished-game fallback after it ends.
+
+Work remains local. Source/build version is 2.2.2; 2.2.0 remains the last
+Store-prepared package. No Git fetch/push, upload, remote synchronization, tag,
+release, or Store packaging was performed. Existing local commits were retained.
 
 ## Manual Live Checklist Still Outstanding
 
@@ -1344,9 +1418,14 @@ reverse them while “cleaning up” code:
   Chess.com's phone layout. Real Firefox-for-Android phone verification remains
   outstanding.
 - The continuation card depends on Chess.com's undocumented same-origin
-  presence response retaining `activity`, `activityContext.games`, `source`, and
-  `numericId`. Any shape or endpoint change fails closed to the first eligible
-  rendered link and should be re-audited from current Chess.com code.
+  presence response retaining `activity`, `activityContext.games`, `source`,
+  `timeclass`, and `numericId`. Unknown sources, multiple games, and malformed
+  state fail closed to the first eligible rendered link. Re-audit changes; do
+  not add speculative fields or sources. Ordinary activation refreshes the
+  lookup, while modified/middle/context-menu navigation uses the last resolved
+  native anchor destination. A four-second service timeout uses the fallback.
+- Desktop cross-device activation is user-verified for 2.2.2. Actual Android
+  2.2.2 installation, fetch behavior, and activation remain to be verified.
 - Android settings are intentionally separate from desktop extension settings.
 - Generated `dist/` and `release/` are ignored; rebuilding can replace them.
 - Generated `dist-android/` is ignored and can be replaced by `build:android`.

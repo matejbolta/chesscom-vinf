@@ -1613,7 +1613,7 @@ reduced to functional controls only.
 - Prefer Chess.com's exact active-game link outside Game History over any
   finished-game fallback, regardless of DOM order. Use the first exact Game
   History link only when no such active-game link is rendered.
-- Since Chess.com's homepage does not render a cross-device active-game link,
+- Based on the captured homepage lacking a cross-device active-game link,
   make one authenticated same-origin read-only request to its native
   `/service/presence/users` service. Read the current UUID only from the page's
   own signed-in context and accept only a validated `playing` live-game numeric
@@ -1623,3 +1623,26 @@ reduced to functional controls only.
 - Under OLED page mode, style both observed live-game move-navigation
   containers with a true-black tray and near-black, off-white secondary
   controls. Preserve their native geometry and disabled states.
+
+## 76. Version 2.2.2 Product Amendments
+
+- Correct the unverified 2.2.1 source assumption: a real mobile rapid game
+  returned `activity: "playing"` and `source: "rcn"`, which 2.2.1 rejected.
+- Follow the current first-party navigation mapping: RCN live games use
+  `/game/<numericId>`; legacy `live_chess` uses `/game/live/<id>`.
+- Require exactly one matching current user and one game. RCN requires a
+  positive numeric ID and a Bullet, Blitz, or Rapid time class; reject daily,
+  unknown, ambiguous, or malformed evidence. Keep the rendered-link/history
+  fallback, card label, geometry, placement, customization, and OLED styling.
+- Refresh the same-origin lookup on ordinary click or keyboard activation,
+  in addition to the initial lookup. Share in-flight requests, reject redirects,
+  bypass the response cache, and abort after four seconds. Disable/hide/route
+  departure invalidates pending navigation. Do not poll in the background.
+- Modified clicks, middle clicks, and context-menu actions retain native anchor
+  behavior with the last resolved destination; they do not trigger the awaited
+  refresh used by ordinary activation.
+- Desktop 2.2.2 was loaded and its target matched the active mobile game's ID;
+  the user then confirmed the shortcut opened that ongoing game. Android build
+  parity is verified, but a 2.2.2 Firefox/Violentmonkey device test remains open.
+- Add no permissions, telemetry, stored account/game data, or OLED changes.
+  Local source/build version is 2.2.2; no Store artifact or remote update.

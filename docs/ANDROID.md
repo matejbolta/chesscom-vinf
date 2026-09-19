@@ -173,8 +173,11 @@ The Android shell contributes only:
 It makes no matchmaking request. Matchmaking still derives from the native
 same-origin Chess.com immediate-match link already present in the signed-in
 homepage, and changes only `base` and `timeIncrement`. When the Open Game
-shortcut is enabled, the shared runtime makes one read-only request to
-Chess.com's same-origin presence service to resolve a cross-device live game.
+shortcut is enabled, the shared runtime makes a read-only request to
+Chess.com's same-origin presence service on homepage load and ordinary shortcut
+activation, sharing concurrent requests without background polling. Version
+2.2.2 recognizes the observed `rcn` live-game source and uses `/game/<numericId>`;
+legacy `live_chess` continues to use `/game/live/<id>`.
 
 ## Responsive behavior
 
@@ -226,6 +229,14 @@ same-origin presence service or an eligible native `/game/<id>` or legacy
 back to the latest Game History link. The UUID and game result remain in memory
 only; no game data is stored. The settings header shows the installed source
 version.
+
+On 2026-09-19, a user-started mobile rapid game exposed `rcn` presence on the
+desktop homepage, and the user confirmed that the desktop 2.2.2 shortcut opened
+that exact ongoing game. This verifies mobile-to-desktop continuation, not the
+installed Firefox/Violentmonkey runtime. Install the regenerated 2.2.2 userscript,
+open its homepage before starting a game on another device, then activate the
+shortcut while that game is active. Also check the newest-history fallback
+after the game ends. Those Android checks remain outstanding.
 
 The userscript runs at `document-start`. Its shared observer begins at
 `.base-container`, responsive `main`/`[role=main]`, `body`, or the document
