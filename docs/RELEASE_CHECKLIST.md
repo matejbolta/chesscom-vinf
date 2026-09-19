@@ -1,5 +1,13 @@
 # Release Checklist
 
+> **Current status: inactive historical release workflow.** VINF is in
+> local-only development mode. Do not prepare or upload Chrome Web Store
+> packages, push to GitHub, create release tags, or create GitHub Releases
+> unless the user explicitly replaces that policy. The checked items below
+> preserve the existing release-gate record and do not mean the current local
+> version is Store-prepared. Routine local work still follows the validation,
+> versioning, privacy, and handoff rules in `AGENTS.md` and `docs/HANDOFF.md`.
+
 ## Automated release gate
 
 - [x] TypeScript strict typecheck passes.
@@ -9,7 +17,7 @@
   permissions.
 - [x] Package contains no raw fixture, screenshot, source map, or account data.
 - [x] Chrome Web Store copy contains no Markdown blockquote prefixes, reflects
-  every current homepage control, and keeps the zero-collection disclosures.
+  every current homepage control, and keeps the current privacy disclosures.
 - [x] Public-safe store screenshots use only synthetic identities and reflect
   the currently prepared Store version, 2.2.0.
 - [x] All 17 catalog controls map to their exact native base/increment pairs.
@@ -108,8 +116,9 @@
   landmarks that arrive after startup.
 - [x] Android userscript bundles only local code, CSS, and four local GM grants.
 - [x] Android build remains separate from the Chrome/Brave `dist/` package.
-- [x] Desktop and Android metadata include only the homepage, live-game, and
-  exact live-game review path shapes, with no added permissions or network capability.
+- [x] Desktop and Android metadata include only the homepage, native matchmaking
+  bootstrap, live-game, and exact review path shapes, with no added permissions
+  or network capability.
 - [x] Phone move-by-move review moves the one native evaluation graph into the
   post-board chart slot idempotently and restores it on disable, widening, route
   departure, state change, or native rerender.
@@ -119,10 +128,10 @@
   permissions, remote resources, or stored account/game data.
 - [x] OLED button colors normalize and autosave independently, apply only to
   Quick Play and Open Game, and preserve their layout and full click targets.
-- [x] The continuation detector accepts only exact current or legacy native
-  Chess.com game paths, allows Game History as the deliberate fallback, rejects
-  analysis and off-origin links, remains idempotent, and removes its card when
-  native evidence disappears.
+- [x] The continuation detector accepts only a strictly validated current-user
+  live game from Chess.com's same-origin presence response or exact current and
+  legacy native paths; it rejects malformed/off-origin evidence, retains Game
+  History as the deliberate fallback, and remains idempotent.
 
 ## Visual fixture gate
 
