@@ -10,7 +10,8 @@ directory.
   repository until the user explicitly replaces this policy.
 - Use Git normally for local history: review the complete visible change set,
   run proportional checks, and organize finished work into a small number of
-  coherent local commits when the user asks to bring Git up to date.
+  coherent local commits automatically after completed project changes, with
+  appropriate version/build/release-record updates under the existing scheme.
 - The user-defined phrases `Git is up to date`, `get Git up to date`, and close
   equivalents refer to that healthy local state: intended work is captured in
   coherent local commits, required metadata and continuity documents agree,

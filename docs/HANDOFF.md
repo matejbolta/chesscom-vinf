@@ -4,7 +4,7 @@ This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-19.
 Current source version: 2.2.2.
-Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.0.zip`.
+Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
 ## Start Here
@@ -33,6 +33,18 @@ chronological amendments through version 2.2.2. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
+
+Checkpoint exception (2026-09-19): the user authorized a one-time GitHub push
+and preparation of `release/chesscom-vinf-2.2.2.zip` from the existing 2.2.2
+source. Archive SHA-256:
+`ab355dd5f2678abd48bfad5e112b29b1210c4d1db10b4ee1344a8f63478ef3ed`.
+No new screenshots, listing descriptions, or other Store assets were requested
+or changed; older screenshot version badges are explicitly acceptable. The ZIP
+is prepared for user upload, not submitted by the agent. This is not ongoing
+publication authorization. Future completed changes receive appropriate local
+version/build/release-record updates and ordinary local commits automatically;
+GitHub pushes and Store preparation/upload require a new explicit request.
+
 
 The user placed VINF in local-only development mode on 2026-09-19. Development,
 validation, versioning, desktop builds, Android userscript builds, and durable
