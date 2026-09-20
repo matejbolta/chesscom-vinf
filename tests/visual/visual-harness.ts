@@ -218,10 +218,37 @@ if (window.location.pathname === "/extreme-oled") {
     extremeOledClocks: !searchParams.has("no-clock") };
   const apply = () => extreme.reconcile(document,
     { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings);
+  const fixtureBoard = document.querySelector<HTMLElement>("wc-chess-board")!;
+  const initialBounds = fixtureBoard.getBoundingClientRect();
+  document.body.dataset.nativeBoardBounds = JSON.stringify({x:initialBounds.x,y:initialBounds.y,width:initialBounds.width,height:initialBounds.height});
+  // Observe real pointer delivery across the board without contacting a service.
+  const squareAt = (event: PointerEvent) => {
+    const rect = fixtureBoard.getBoundingClientRect();
+    return `${Math.floor((event.clientX - rect.left) / rect.width * 8)},${Math.floor((event.clientY - rect.top) / rect.height * 8)}`;
+  };
+  fixtureBoard.addEventListener("pointerdown", event => {
+    document.body.dataset.fixturePointerDown = squareAt(event);
+  });
+  fixtureBoard.addEventListener("pointerup", event => {
+    document.body.dataset.fixturePointerUp = squareAt(event);
+  });
   apply();
   // Only this local fixture simulates time and navigation; never a real game.
   const bottom = document.querySelector('#board-layout-player-bottom [role="timer"]')!;
   if (searchParams.has("low-time")) { bottom.textContent = "0:20"; apply(); }
+  // Fixture-only keyboard scenarios: T changes turn, L enters low time,
+  // E opens the native-shaped result screen. None performs gameplay.
+  document.addEventListener("keydown", event => {
+    if (event.key === "t") {
+      document.querySelectorAll(".clock-component").forEach(clock => clock.classList.toggle("clock-player-turn"));
+    }
+    if (event.key === "l") bottom.textContent = "0:59.8";
+    if (event.key === "e") {
+      document.querySelector("#board-layout-chessboard")!.insertAdjacentHTML("beforeend",
+        '<div class="board-modal-container-container"><div class="game-over-modal-shell-container"><h2>Game over</h2><p>Won on time</p><button>Game Review</button><button>New game</button></div></div>');
+    }
+    apply();
+  });
   document.querySelector('.game-buttons-container-component [aria-label="Previous Move"]')?.addEventListener("click", () => {
     document.body.dataset.fixtureMove = "previous";
     const pawn = document.querySelector<HTMLElement>(".wp")!;

@@ -9,6 +9,23 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-09-20
+
+### Fixed
+
+- Remove Extreme OLED's forced board sizing/positioning implicated in clipped
+  pieces and unreliable input. Preserve native-hidden board layers and add
+  vertical scroll room for mobile browser toolbar collapse.
+- Restore native game-end/result controls when Chess.com reports a result;
+  keep the initial Game Review report visible.
+- Flatten white pieces to a uniform dim gray and add a tiny native-turn dot.
+- Tapping either left clock area reveals/hides both numeric clocks. Once either
+  timer is below a minute, both stay visible, including with bars off. Show
+  whole seconds below one minute and minutes:seconds above; low-time color now
+  begins below 60 seconds. Never simulate time or infer game over from zero.
+- Tests and both local builds pass. New browser QA was blocked by the locked
+  Mac; actual Firefox Android scrolling, piece input and results need rechecking.
+
 ## [2.3.0] - 2026-09-20
 
 ### Added

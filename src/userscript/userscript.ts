@@ -278,7 +278,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const extremeOledInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled",
     "Extreme OLED Edition", "Games only: dark board, pieces and move arrows. Turn off here to reveal game controls.");
   const extremeOledClocksInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled-clocks",
-    "Clock bars", "Thin time bars above and below the board. Off hides clocks.");
+    "Clock bars", "Optional time bars. Tap the left clock areas for numbers; both stay visible once either is below 1 min.");
 
   const presets = document.createElement("section");
   presets.className = "chesscom-vinf-settings-card";

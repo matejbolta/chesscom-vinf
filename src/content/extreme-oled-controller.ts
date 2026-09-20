@@ -5,6 +5,25 @@ import { isChessComLiveGameReview } from "./game-review-layout-controller";
 const ACTIVE = "data-chesscom-vinf-extreme-oled";
 const BOARD = "data-chesscom-vinf-extreme-board";
 const OWNER = "chesscom-vinf-extreme-controls";
+const MOVE_REVIEW = ".sidebar-view-content > .move-by-move-container > .move-by-move-component";
+
+function nativeGameHasEnded(document: Document): boolean {
+  // Native result evidence only: zero on a clock is not proof of game over.
+  const candidates = document.querySelectorAll<HTMLElement>(
+    ".game-over-modal-shell-container, #board-layout-player-top .player-game-over-component," +
+    "#board-layout-player-bottom .player-game-over-component, #board-layout-sidebar .game-result"
+  );
+  return [...candidates].some(element => {
+    if (element.matches(".game-result") &&
+        !/^(1-0|0-1|½-½|1\/2-1\/2)$/.test(element.textContent?.replace(/\s/g, "") ?? "")) return false;
+    // Ignore pre-mounted inactive results, but not our own visibility rule.
+    for (let node: HTMLElement | null = element; node; node = node.parentElement) {
+      if (node.hidden || node.getAttribute("aria-hidden") === "true" ||
+          document.defaultView?.getComputedStyle(node).display === "none") return false;
+    }
+    return true;
+  });
+}
 
 // Read the site's displayed timer; never invent or run an independent clock.
 export function readClockSeconds(text: string): number | null {
@@ -20,13 +39,18 @@ export class ExtremeOledController {
   private board: HTMLElement | null = null;
   private stage: HTMLElement | null = null;
   private overlay: HTMLElement | null = null;
+  private scrollRoom: HTMLElement | null = null;
   private observer: MutationObserver | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private timer: number | null = null;
   private document: Document | null = null;
   private route = "";
   private suspendedRoute = "";
+  private finishedRoute = "";
+  private isReview = false;
   private withClocks = true;
+  private revealTimes = false;
+  private forcedTimes = false;
   private maxima = new Map<string, number>();
 
   private readonly schedule = (): void => {
@@ -48,8 +72,12 @@ export class ExtremeOledController {
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings): boolean {
     const route = `${location.protocol}//${location.hostname}${location.pathname}`;
     if (route !== this.route || !settings.extremeOled) this.suspendedRoute = "";
-    if (route !== this.route) this.cleanup(document);
+    if (route !== this.route) {
+      this.cleanup(document);
+      this.finishedRoute = "";
+    }
     this.route = route;
+    this.isReview = isChessComLiveGameReview(location);
     if (!settings.enabled || !settings.extremeOled || this.suspendedRoute === route ||
         !document.documentElement.classList.contains("user-logged-in") ||
         !(isChessComGame(location) || isChessComLiveGameReview(location))) {
@@ -60,13 +88,20 @@ export class ExtremeOledController {
     this.document = document;
     this.update(document);
     if (!this.observer && document.body) {
-      this.observer = new MutationObserver(this.schedule);
+      this.observer = new MutationObserver(records => {
+        if (records.some(record => {
+          const target = record.target.nodeType === 1 ? record.target as Element : record.target.parentElement;
+          return !target?.closest(`.${OWNER}, .chesscom-vinf-extreme-scroll-room`);
+        })) this.schedule();
+      });
       this.observer.observe(document.body, {
         childList: true, subtree: true, characterData: true,
-        attributes: true, attributeFilter: ["class", "disabled", "aria-disabled"]
+        attributes: true, attributeFilter: ["class", "style", "hidden", "aria-hidden", "disabled", "aria-disabled"]
       });
       document.defaultView?.addEventListener("resize", this.schedule);
       document.defaultView?.addEventListener("scroll", this.schedule, true);
+      document.defaultView?.visualViewport?.addEventListener("resize", this.schedule);
+      document.defaultView?.visualViewport?.addEventListener("scroll", this.schedule);
       document.addEventListener("keydown", this.escape);
     }
     return this.board !== null;
@@ -82,6 +117,11 @@ export class ExtremeOledController {
   }
 
   private update(document: Document): void {
+    if (!this.isReview && nativeGameHasEnded(document)) this.finishedRoute = this.route;
+    if (this.finishedRoute === this.route || (this.isReview && !document.querySelector(MOVE_REVIEW))) {
+      this.clearPresentation(document);
+      return;
+    }
     // Only the audited primary board, never a mini-board or analysis preview.
     const board = document.querySelector<HTMLElement>(
       "wc-chess-board#board-single, wc-chess-board#board-analysis-board"
@@ -95,7 +135,6 @@ export class ExtremeOledController {
       this.clearPresentation(document);
       this.board = board;
       this.stage = stage;
-      stage.setAttribute("data-chesscom-vinf-extreme-stage", "true");
       board.setAttribute(BOARD, "true");
       const Resize = document.defaultView?.ResizeObserver;
       if (Resize) {
@@ -114,8 +153,24 @@ export class ExtremeOledController {
         bar.setAttribute("aria-label", `${side === "top" ? "Top" : "Bottom"} player time remaining`);
         bar.setAttribute("aria-valuemin", "0");
         const line = document.createElement("span");
+        line.className = "chesscom-vinf-extreme-fuse";
         bar.append(line);
         this.overlay.append(bar);
+        const time = document.createElement("button");
+        time.type = "button";
+        time.className = `chesscom-vinf-extreme-time ${side}`;
+        time.addEventListener("click", () => {
+          if (this.forcedTimes) return;
+          this.revealTimes = !this.revealTimes;
+          this.update(document);
+        });
+        this.overlay.append(time);
+        const turn = document.createElement("div");
+        turn.className = `chesscom-vinf-extreme-turn ${side}`;
+        turn.setAttribute("role", "img");
+        turn.setAttribute("aria-label", `${side === "top" ? "Top" : "Bottom"} player to move`);
+        turn.hidden = true;
+        this.overlay.append(turn);
       }
       const controls = document.createElement("nav");
       controls.setAttribute("aria-label", "Move navigation");
@@ -134,24 +189,57 @@ export class ExtremeOledController {
       this.overlay.append(controls);
       document.body.append(this.overlay);
     }
+    if (!this.scrollRoom?.isConnected) {
+      this.scrollRoom = document.createElement("div");
+      this.scrollRoom.className = "chesscom-vinf-extreme-scroll-room";
+      this.scrollRoom.setAttribute("aria-hidden", "true");
+      document.body.append(this.scrollRoom);
+    }
     document.documentElement.setAttribute(ACTIVE, "true");
     const rect = board.getBoundingClientRect();
     const view = document.defaultView;
-    this.overlay.style.left = `${rect.left + (view?.scrollX ?? 0)}px`;
-    this.overlay.style.top = `${rect.top + (view?.scrollY ?? 0)}px`;
+    // Follow native geometry; never resize/reposition the board or intercept input.
+    this.overlay.style.left = `${rect.left}px`;
+    this.overlay.style.top = `${rect.top}px`;
     this.overlay.style.width = `${rect.width}px`;
     this.overlay.style.height = `${rect.height}px`;
-    for (const button of this.overlay.querySelectorAll<HTMLButtonElement>("button")) {
+    this.scrollRoom.style.top = `${Math.max(view?.innerHeight ?? 0, rect.bottom + (view?.scrollY ?? 0)) + 96}px`;
+    for (const button of this.overlay.querySelectorAll<HTMLButtonElement>("nav button")) {
       const native = this.nativeControl(document, button.getAttribute("aria-label")!);
       const disabled = !native || native.disabled || native.getAttribute("aria-disabled") === "true" ||
         native.classList.contains("cc-button-disabled");
       if (button.disabled !== disabled) button.disabled = disabled;
     }
+    const activeClocks = document.querySelectorAll(
+      "#board-layout-player-top .clock-player-turn, #board-layout-player-bottom .clock-player-turn"
+    );
+    const clockSeconds = ["top", "bottom"].map(side => readClockSeconds(
+      document.querySelector(`#board-layout-player-${side} .clock-component [role="timer"]`)?.textContent ?? ""
+    ));
+    // Latch for this game: an increment back over a minute must not hide urgency.
+    if (clockSeconds.some(seconds => seconds !== null && seconds < 60)) this.forcedTimes = true;
+    const showTimes = this.revealTimes || this.forcedTimes;
     for (const side of ["top", "bottom"]) {
       const bar = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-clock.${side}`)!;
       const clock = document.querySelector<HTMLElement>(`#board-layout-player-${side} .clock-component`);
+      const turn = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-turn.${side}`)!;
+      turn.hidden = activeClocks.length !== 1 || clock !== activeClocks[0];
       const text = clock?.querySelector('[role="timer"]')?.textContent ?? "";
       const seconds = readClockSeconds(text);
+      const time = this.overlay.querySelector<HTMLButtonElement>(`.chesscom-vinf-extreme-time.${side}`)!;
+      // Bars are optional. The paired numeric reveal/urgency rule is independent.
+      time.hidden = clockSeconds.every(value => value === null);
+      time.setAttribute("aria-pressed", String(showTimes));
+      time.setAttribute("aria-disabled", String(this.forcedTimes));
+      const player = side === "top" ? "Top" : "Bottom";
+      const whole = seconds === null ? null : Math.floor(seconds);
+      const display = whole === null ? "—" : whole < 60 ? String(whole) :
+        `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, "0")}`;
+      time.setAttribute("aria-label", showTimes ? `${player} clock ${display}. ${this.forcedTimes ? "Time stays visible" : "Hide both clocks"}` :
+        `${player} clock area: show both clocks`);
+      time.dataset.low = String(seconds !== null && seconds < 60);
+      const label = showTimes ? display : "";
+      if (time.textContent !== label) time.textContent = label;
       bar.hidden = !this.withClocks || seconds === null;
       if (bar.hidden || seconds === null) continue;
       const key = clock?.classList.contains("clock-white") ? "white" :
@@ -161,7 +249,7 @@ export class ExtremeOledController {
       bar.setAttribute("aria-valuemax", String(maximum));
       bar.setAttribute("aria-valuenow", String(seconds));
       bar.setAttribute("aria-valuetext", text.trim());
-      bar.dataset.low = String(seconds <= Math.min(30, maximum * 0.1));
+      bar.dataset.low = String(seconds < 60);
       bar.firstElementChild!.setAttribute("style", `transform:scaleX(${seconds / maximum})`);
     }
   }
@@ -170,16 +258,19 @@ export class ExtremeOledController {
     document.documentElement.removeAttribute(ACTIVE);
     this.board?.removeAttribute(BOARD);
     this.board = null;
-    this.stage?.removeAttribute("data-chesscom-vinf-extreme-stage");
     this.stage = null;
     this.overlay?.remove();
     this.overlay = null;
+    this.scrollRoom?.remove();
+    this.scrollRoom = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.maxima.clear();
   }
 
   cleanup(document: Document): void {
+    this.revealTimes = false;
+    this.forcedTimes = false;
     this.observer?.disconnect();
     this.observer = null;
     const view = this.document?.defaultView;
@@ -187,6 +278,8 @@ export class ExtremeOledController {
     this.timer = null;
     view?.removeEventListener("resize", this.schedule);
     view?.removeEventListener("scroll", this.schedule, true);
+    view?.visualViewport?.removeEventListener("resize", this.schedule);
+    view?.visualViewport?.removeEventListener("scroll", this.schedule);
     this.document?.removeEventListener("keydown", this.escape);
     this.clearPresentation(document);
     this.document = null;

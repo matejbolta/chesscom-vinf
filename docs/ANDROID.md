@@ -299,11 +299,21 @@ the signed-in tablet, verify:
 - When Chess.com removes or changes the validated native immediate-match link,
   Quick Play fails closed instead of guessing a matchmaking URL.
 
-### Extreme OLED Edition (2.3.0)
+### Extreme OLED Edition (2.3.1)
 
-In VINF settings, enable Extreme OLED Edition and optionally Clock bars. This
-changes supported games/reviews only. Use the userscript manager's VINF settings
-menu to disable it and reveal hidden game controls. The settings dialog remains
-visible even when Extreme OLED is active. Clock bars use remaining time observed
-since activation; see HANDOFF.md for details. Build and synthetic phone viewport
-checks pass; native board input and physical Android testing remain outstanding.
+In VINF settings enable Extreme OLED Edition and optionally Clock bars. Supported
+active games and move-by-move review only; initial review reports remain native.
+Use the userscript manager's VINF settings menu to disable it and reveal game
+controls. The settings dialog remains visible. Swipe the empty area around the
+board to scroll; a small scroll extent is provided so Firefox can collapse its
+browser bar without changing the native board's geometry.
+
+Tap either left clock area to reveal/hide both numeric clocks. Below one minute
+for either player, both stay visible for that game even with bars off. Numbers
+show whole seconds below a minute; the small dot above/below identifies the
+native side to move. Native results release Extreme automatically.
+
+2.3.0 had user-reported clipping, unreliable input and a hidden result screen.
+2.3.1 removes its forced board geometry and restores the result UI. Builds/tests
+pass, but new browser checks were blocked by the locked Mac. Recheck scrolling,
+all-file taps/drags, promotion and game-end behavior on the real Android device.

@@ -1660,3 +1660,16 @@ reduced to functional controls only.
   Escape temporarily reveals the site UI. Keep Android settings reachable via the
   userscript manager. Homepage and existing OLED preferences are unchanged.
 - Local source/build version 2.3.0. No GitHub or Store release in this task.
+
+## 78. Version 2.3.1 Product Amendments
+
+- Preserve native board geometry/input and native-hidden layers in Extreme OLED.
+  Allow a short vertical scroll so mobile Firefox may collapse its toolbar.
+- Use uniform dim-gray white pieces and a subtle dot on the native active side.
+- Either left clock area toggles both numeric clocks together. Once either
+  player has under 60 seconds, both stay visible for the game, even if clock bars
+  are off or an increment later raises time. Use integer seconds below one minute,
+  minutes:seconds above; never create a second countdown.
+- Release Extreme on native game-result evidence and leave initial Game Review
+  reports visible. No auto-navigation or game actions.
+- Local 2.3.1 builds only; new browser verification was blocked by a locked Mac.

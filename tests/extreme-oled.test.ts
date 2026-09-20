@@ -49,7 +49,7 @@ describe("Extreme OLED", () => {
     controller.reconcile(document, location, settings);
     expect(document.querySelector("wc-chess-board")).toBe(board);
     expect(document.querySelectorAll(".chesscom-vinf-extreme-controls")).toHaveLength(1);
-    expect(document.querySelectorAll(".chesscom-vinf-extreme-controls button")).toHaveLength(2);
+    expect(document.querySelectorAll(".chesscom-vinf-extreme-controls nav button")).toHaveLength(2);
     const proxy = document.querySelector<HTMLButtonElement>('.chesscom-vinf-extreme-controls [aria-label="Previous Move"]')!;
     proxy.click(); expect(click).toHaveBeenCalledTimes(1);
     native.disabled = true;
@@ -104,8 +104,107 @@ describe("Extreme OLED", () => {
   it("supports the observed review board and omits clocks when none exist", () => {
     document.querySelector("wc-chess-board")!.id = "board-analysis-board";
     document.querySelectorAll(".clock-component").forEach(e=>e.remove());
+    document.body.insertAdjacentHTML("beforeend", '<div class="sidebar-view-content"><div class="move-by-move-container"><div class="move-by-move-component"></div></div></div>');
     expect(controller.reconcile(document, { ...location, pathname: "/analysis/game/live/123/review" }, settings)).toBe(true);
     expect(bar("top").hidden && bar("bottom").hidden).toBe(true);
+  });
+  it("toggles both times together and locks them visible after either goes below a minute", async () => {
+    controller.reconcile(document, location, settings);
+    const top = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.top")!;
+    const bottom = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.bottom")!;
+    expect([top.textContent, bottom.textContent]).toEqual(["", ""]);
+    top.click();
+    expect([top.textContent, bottom.textContent]).toEqual(["10:00", "10:00"]);
+    bottom.click();
+    expect([top.textContent, bottom.textContent]).toEqual(["", ""]);
+    clock("bottom").textContent = "1:00";
+    await vi.advanceTimersByTimeAsync(20);
+    expect(bottom.textContent).toBe("");
+    clock("bottom").textContent = "0:59.9";
+    await vi.advanceTimersByTimeAsync(20);
+    expect([top.textContent, bottom.textContent]).toEqual(["10:00", "59"]);
+    top.click(); bottom.click();
+    expect([top.textContent, bottom.textContent]).toEqual(["10:00", "59"]);
+    clock("bottom").textContent = "0:09.1";
+    clock("top").textContent = "0:58";
+    await vi.advanceTimersByTimeAsync(20);
+    expect([top.textContent, bottom.textContent]).toEqual(["58", "9"]);
+    clock("bottom").textContent = "1:04";
+    clock("top").textContent = "1:01";
+    await vi.advanceTimersByTimeAsync(20);
+    top.click();
+    expect([top.textContent, bottom.textContent]).toEqual(["1:01", "1:04"]);
+    expect(top.getAttribute("aria-disabled")).toBe("true");
+  });
+  it("uses the native turn class even without clock bars and never guesses during ambiguous states", async () => {
+    controller.reconcile(document, location, { ...settings, extremeOledClocks: false });
+    const top = document.querySelector<HTMLElement>(".chesscom-vinf-extreme-turn.top")!;
+    const bottom = document.querySelector<HTMLElement>(".chesscom-vinf-extreme-turn.bottom")!;
+    expect([top.hidden, bottom.hidden]).toEqual([true, false]);
+    clock("bottom").parentElement!.classList.remove("clock-player-turn");
+    clock("top").parentElement!.classList.add("clock-player-turn");
+    await vi.advanceTimersByTimeAsync(20);
+    expect([top.hidden, bottom.hidden]).toEqual([false, true]);
+    clock("bottom").parentElement!.classList.add("clock-player-turn");
+    await vi.advanceTimersByTimeAsync(20);
+    expect([top.hidden, bottom.hidden]).toEqual([true, true]);
+  });
+  it("keeps paired time reveal and low-time numbers available when bars are off", async () => {
+    controller.reconcile(document, location, { ...settings, extremeOledClocks: false });
+    const top = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.top")!;
+    const bottom = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.bottom")!;
+    expect(top.hidden || bottom.hidden).toBe(false);
+    top.click();
+    expect([top.textContent, bottom.textContent]).toEqual(["10:00", "10:00"]);
+    top.click();
+    clock("top").textContent = "0:42.5";
+    await vi.advanceTimersByTimeAsync(20);
+    bottom.click();
+    expect([top.textContent, bottom.textContent]).toEqual(["42", "10:00"]);
+    expect(bar("top").hidden && bar("bottom").hidden).toBe(true);
+  });
+  it.each(["modal", "player", "result"])("releases the native end screen on %s evidence and stays released", async kind => {
+    controller.reconcile(document, location, settings);
+    if (kind === "modal") document.querySelector("#board-layout-chessboard")!.insertAdjacentHTML("beforeend", '<div class="game-over-modal-shell-container">Game Review</div>');
+    if (kind === "player") document.querySelector("#board-layout-player-top")!.insertAdjacentHTML("beforeend", '<div class="player-game-over-component">Won</div>');
+    if (kind === "result") document.body.insertAdjacentHTML("beforeend", '<div id="board-layout-sidebar"><span class="game-result">0-1</span></div>');
+    await vi.advanceTimersByTimeAsync(20);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
+    expect(document.querySelector(".chesscom-vinf-extreme-controls")).toBeNull();
+    document.querySelectorAll(".game-over-modal-shell-container, .player-game-over-component, .game-result").forEach(e => e.remove());
+    expect(controller.reconcile(document, location, settings)).toBe(false);
+    expect(controller.reconcile(document, { ...location, pathname: "/game/654321" }, settings)).toBe(true);
+  });
+  it("does not mistake a hidden result or a zero clock for a finished game", async () => {
+    document.body.insertAdjacentHTML("beforeend", '<div hidden><div class="game-over-modal-shell-container"></div></div>');
+    clock("bottom").textContent = "0:00";
+    expect(controller.reconcile(document, location, settings)).toBe(true);
+    document.querySelector<HTMLElement>("[hidden]")!.hidden = false;
+    await vi.advanceTimersByTimeAsync(20);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
+  });
+  it("leaves the initial Game Review report visible, including when leaving move-by-move", async () => {
+    const reviewLocation = { ...location, pathname: "/analysis/game/live/123/review" };
+    expect(controller.reconcile(document, reviewLocation, settings)).toBe(false);
+    document.body.insertAdjacentHTML("beforeend", '<div class="sidebar-view-content"><div class="move-by-move-container"><div class="move-by-move-component"></div></div></div>');
+    await vi.advanceTimersByTimeAsync(20);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(true);
+    document.querySelector(".move-by-move-container")!.remove();
+    await vi.advanceTimersByTimeAsync(20);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
+  });
+  it("never rewrites native sizing, positioning, touch behavior or piece transforms", () => {
+    const stage = document.querySelector<HTMLElement>("#board-layout-chessboard")!;
+    const board = document.querySelector<HTMLElement>("wc-chess-board")!;
+    board.style.cssText = "height:0;padding-bottom:100%;touch-action:none";
+    stage.style.cssText = "width:360px;position:relative";
+    const before = stage.outerHTML;
+    controller.reconcile(document, location, settings);
+    expect(board.style.height).toBe("0px");
+    expect(stage.style.width).toBe("360px");
+    controller.cleanup(document);
+    expect(stage.outerHTML).toBe(before);
+    expect(document.querySelector(".chesscom-vinf-extreme-scroll-room")).toBeNull();
   });
 });
 it.each([["9:00",540],["0:09.8",9.8],["1:02:03",3723],["8,5",8.5],["Disconnected",null],["1:99",null],["-1",null]])("reads native timer %s", (text,seconds) => {

@@ -587,3 +587,37 @@ from these contracts, not a signed-in capture. IAB checks at 1280x720 and 390x84
 verified board/arrows fit, previous forwarding, time bars/low time, clock-off,
 Escape restoration and settings appearance; no warning/error logs appeared.
 Live play, promotion interaction and physical Android verification remain open.
+
+## Extreme OLED 2.3.1 — native geometry and game lifecycle
+
+The user reported board clipping/unreliable input and a hidden result screen on
+2.3.0. Saved first-party CSS contains `wc-chess-board { height:0;
+padding-bottom:100%; touch-action:none }` and native percentage-sized pieces;
+the first synthetic fixture instead used `aspect-ratio`. VINF's forced wrapper
+size/position and board height were not a reliable native geometry contract.
+Remove those overrides, preserve native-hidden board descendants, and measure
+only for a pointer-transparent owned overlay. A separate absolute scroll spacer
+provides 96px of root scrolling without changing native board sizing.
+
+Saved `game-over-result-desktop-2026-09-18.html` shows:
+- `.game-over-modal-shell-container` inside `.board-modal-container-container`
+  alongside the board in `#board-layout-chessboard`;
+- `.player-game-over-component` inside the top/bottom player rows;
+- `.game-result` in the sidebar move list (accept only standard result scores).
+These release Extreme for the rest of the route; hidden/display-none inactive
+results are excluded. Clock zero alone does not imply completion. Exact existing
+`.sidebar-view-content > .move-by-move-container > .move-by-move-component`
+marks the review state where Extreme may resume; initial reports remain native.
+
+The observed `.clock-player-turn` is the turn indicator; require exactly one
+among the two player clocks. Numeric-clock reveal is transient, paired and
+latched after either timer falls below 60, even with bars disabled. Whole seconds
+truncate fractions; no independent countdown. Observer ignores owned mutations.
+
+Fixture changes include padding-based board sizing, a native-hidden overlay and
+pointer probes. T changes turn, L sets low time, E inserts a native-shaped result.
+`/extreme-oled?extreme` is the normal fixture; append `&no-clock` or `&low-time`
+as needed. The browser was unavailable while the Mac was locked, so these new
+visual/input scenarios and real Firefox Android remain unverified. Unit tests
+cover paired reveal/locking, turn changes, result arrival/dismissal, route reuse,
+initial review and native DOM/style preservation.
