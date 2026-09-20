@@ -1,11 +1,9 @@
 import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { isChessComGame } from "./game-continuation";
-import { isChessComLiveGameReview } from "./game-review-layout-controller";
 
 const ACTIVE = "data-chesscom-vinf-extreme-oled";
 const BOARD = "data-chesscom-vinf-extreme-board";
 const OWNER = "chesscom-vinf-extreme-controls";
-const MOVE_REVIEW = ".sidebar-view-content > .move-by-move-container > .move-by-move-component";
 
 function nativeGameHasEnded(document: Document): boolean {
   // Native result evidence only: zero on a clock is not proof of game over.
@@ -47,7 +45,6 @@ export class ExtremeOledController {
   private route = "";
   private suspendedRoute = "";
   private finishedRoute = "";
-  private isReview = false;
   private revealTimes = false;
   private forcedTimes = false;
   private maxima = new Map<string, number>();
@@ -76,10 +73,9 @@ export class ExtremeOledController {
       this.finishedRoute = "";
     }
     this.route = route;
-    this.isReview = isChessComLiveGameReview(location);
     if (!settings.enabled || !settings.extremeOled || this.suspendedRoute === route ||
         !document.documentElement.classList.contains("user-logged-in") ||
-        !(isChessComGame(location) || isChessComLiveGameReview(location))) {
+        !isChessComGame(location)) {
       this.cleanup(document);
       return false;
     }
@@ -115,14 +111,14 @@ export class ExtremeOledController {
   }
 
   private update(document: Document): void {
-    if (!this.isReview && nativeGameHasEnded(document)) this.finishedRoute = this.route;
-    if (this.finishedRoute === this.route || (this.isReview && !document.querySelector(MOVE_REVIEW))) {
+    if (nativeGameHasEnded(document)) this.finishedRoute = this.route;
+    if (this.finishedRoute === this.route) {
       this.clearPresentation(document);
       return;
     }
     // Only the audited primary board, never a mini-board or analysis preview.
     const board = document.querySelector<HTMLElement>(
-      "wc-chess-board#board-single, wc-chess-board#board-analysis-board"
+      "wc-chess-board#board-single"
     );
     const stage = board?.closest<HTMLElement>("#board-layout-chessboard");
     if (!board || !stage || board.querySelector("canvas") || !board.querySelector(".piece")) {
@@ -172,11 +168,19 @@ export class ExtremeOledController {
       }
       const controls = document.createElement("nav");
       controls.setAttribute("aria-label", "Move navigation");
-      for (const [label, glyph] of [["Previous Move", "‹"], ["Next Move", "›"]]) {
+      for (const [label, path] of [["Previous Move", "M15 6 9 12 15 18"], ["Next Move", "M9 6 15 12 9 18"]]) {
         const button = document.createElement("button");
         button.type = "button";
         button.setAttribute("aria-label", label);
-        button.textContent = glyph;
+        // Symmetric SVG bounds avoid the baseline/side-bearing offsets of font glyphs.
+        const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        icon.setAttribute("viewBox", "0 0 24 24");
+        icon.setAttribute("aria-hidden", "true");
+        icon.setAttribute("focusable", "false");
+        const chevron = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        chevron.setAttribute("d", path);
+        icon.append(chevron);
+        button.append(icon);
         button.addEventListener("click", () => {
           const native = this.nativeControl(document, label);
           if (native && !native.disabled && native.getAttribute("aria-disabled") !== "true" &&

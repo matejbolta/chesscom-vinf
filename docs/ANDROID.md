@@ -299,12 +299,12 @@ the signed-in tablet, verify:
 - When Chess.com removes or changes the validated native immediate-match link,
   Quick Play fails closed instead of guessing a matchmaking URL.
 
-### Extreme OLED mode (2.3.2)
+### Extreme OLED mode (2.3.3)
 
 At the bottom of VINF settings, the three switches are OLED background, OLED
 play buttons and Extreme OLED mode. Clock bars are always shown in Extreme mode
 when native timers are readable; there is no separate clock switch. Supported
-active games and move-by-move review only; initial review reports remain native.
+active games only; Extreme never applies to Game Review, including moves.
 Use the userscript manager's VINF settings menu to disable it and reveal game
 controls. The settings dialog remains visible. Swipe the empty area around the
 board to scroll; a small scroll extent is provided so Firefox can collapse its
@@ -321,7 +321,9 @@ native side to move. Native results release Extreme automatically.
 pass, but new browser checks were blocked by the locked Mac. Recheck scrolling,
 all-file taps/drags, promotion and game-end behavior on the real Android device.
 
-2.3.2 adds outlined circular move buttons, inset pill-shaped clock targets with
-centered system text, and dark outlines around the flat gray white pieces.
-Native board sizing/input and result restoration remain unchanged. Browser QA
-is still blocked by the locked Mac; recheck appearance and headroom on the phone.
+2.3.3 uses centered SVG chevrons in the outlined move circles. Clock-pill outlines
+disappear with the numbers while their invisible tap areas remain active. White
+pieces are flat gray again, without dark outlines. Game-end release was confirmed
+by the user; the subsequent unwanted Game Review reactivation is now disabled.
+Native board sizing/input is unchanged. Browser QA is still blocked by the locked
+Mac; recheck control appearance and the review transition on the phone.

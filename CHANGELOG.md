@@ -9,6 +9,19 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.3.3] - 2026-09-20
+
+### Fixed
+
+- Keep Extreme OLED off throughout Game Review, including when entering moves.
+  Ordinary OLED background and the phone review-graph enhancement are unchanged.
+- Replace font arrows with centered SVG chevrons; explicitly center all control
+  contents. Hide pill borders/backgrounds with hidden clock numbers while keeping
+  their invisible tap targets available. Low-time reveal still locks both on.
+- Restore uniform gray white pieces without dark outlines.
+- Typecheck, 166 tests and both builds pass. Visual/browser QA remains blocked
+  by the locked Mac; no new screenshot or phone appearance verification claimed.
+
 ## [2.3.2] - 2026-09-20
 
 ### Changed

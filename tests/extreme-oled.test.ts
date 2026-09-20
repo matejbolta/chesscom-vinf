@@ -28,7 +28,7 @@ describe("Extreme OLED", () => {
     expect(normalizeSettings({ extremeOledClocks: false })).not.toHaveProperty("extremeOledClocks");
     expect(normalizeSettings({ extremeOled: "true", extremeOledClocks: 1 })).toMatchObject({extremeOled: false});
   });
-  it.each(["/home", "/play/online/new", "/analysis", "/game/daily/123"])("does not affect %s", pathname => {
+  it.each(["/home", "/play/online/new", "/analysis", "/game/daily/123", "/analysis/game/live/123/review", "/analysis/game/123/review"])("does not affect %s", pathname => {
     expect(controller.reconcile(document, { ...location, pathname }, settings)).toBe(false);
     expect(document.querySelector(".chesscom-vinf-extreme-controls")).toBeNull();
     expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
@@ -102,20 +102,22 @@ describe("Extreme OLED", () => {
     controller.reconcile(document, { ...location, pathname: "/home" }, settings);
     expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
   });
-  it("supports the observed review board and omits clocks when none exist", () => {
+  it("leaves an analysis board native even before a route transition completes", () => {
+    controller.reconcile(document, location, settings);
     document.querySelector("wc-chess-board")!.id = "board-analysis-board";
-    document.querySelectorAll(".clock-component").forEach(e=>e.remove());
-    document.body.insertAdjacentHTML("beforeend", '<div class="sidebar-view-content"><div class="move-by-move-container"><div class="move-by-move-component"></div></div></div>');
-    expect(controller.reconcile(document, { ...location, pathname: "/analysis/game/live/123/review" }, settings)).toBe(true);
-    expect(bar("top").hidden && bar("bottom").hidden).toBe(true);
+    expect(controller.reconcile(document, location, settings)).toBe(false);
+    expect(document.querySelector(".chesscom-vinf-extreme-controls")).toBeNull();
   });
   it("toggles both times together and locks them visible after either goes below a minute", async () => {
     controller.reconcile(document, location, settings);
     const top = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.top")!;
     const bottom = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.bottom")!;
     expect([top.textContent, bottom.textContent]).toEqual(["", ""]);
+    expect([top.getAttribute("aria-pressed"), bottom.getAttribute("aria-pressed")]).toEqual(["false", "false"]);
+    expect(top.hidden || bottom.hidden).toBe(false);
     top.click();
     expect([top.textContent, bottom.textContent]).toEqual(["10:00", "10:00"]);
+    expect([top.getAttribute("aria-pressed"), bottom.getAttribute("aria-pressed")]).toEqual(["true", "true"]);
     bottom.click();
     expect([top.textContent, bottom.textContent]).toEqual(["", ""]);
     clock("bottom").textContent = "1:00";
@@ -184,15 +186,21 @@ describe("Extreme OLED", () => {
     await vi.advanceTimersByTimeAsync(20);
     expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
   });
-  it("leaves the initial Game Review report visible, including when leaving move-by-move", async () => {
+  it("stays off from game end through Game Review moves, then resumes for a new live game", async () => {
+    controller.reconcile(document, location, settings);
+    document.querySelector("#board-layout-player-top")!.insertAdjacentHTML("beforeend", '<div class="player-game-over-component">Won</div>');
+    await vi.advanceTimersByTimeAsync(20);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
+    document.querySelector(".player-game-over-component")!.remove();
     const reviewLocation = { ...location, pathname: "/analysis/game/live/123/review" };
     expect(controller.reconcile(document, reviewLocation, settings)).toBe(false);
     document.body.insertAdjacentHTML("beforeend", '<div class="sidebar-view-content"><div class="move-by-move-container"><div class="move-by-move-component"></div></div></div>');
     await vi.advanceTimersByTimeAsync(20);
-    expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(true);
+    expect(controller.reconcile(document, reviewLocation, settings)).toBe(false);
+    expect(document.querySelector(".chesscom-vinf-extreme-controls")).toBeNull();
     document.querySelector(".move-by-move-container")!.remove();
-    await vi.advanceTimersByTimeAsync(20);
-    expect(document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled")).toBe(false);
+    expect(controller.reconcile(document, reviewLocation, settings)).toBe(false);
+    expect(controller.reconcile(document, { ...location, pathname: "/game/654321" }, settings)).toBe(true);
   });
   it("never rewrites native sizing, positioning, touch behavior or piece transforms", () => {
     const stage = document.querySelector<HTMLElement>("#board-layout-chessboard")!;

@@ -636,9 +636,7 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board] 
 }
 html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   :is(.wp, .wn, .wb, .wr, .wq, .wk) {
-  filter: brightness(0) invert(.4)
-    drop-shadow(1px 0 0 #080808) drop-shadow(-1px 0 0 #080808)
-    drop-shadow(0 1px 0 #080808) drop-shadow(0 -1px 0 #080808) !important;
+  filter: brightness(0) invert(.4) !important;
 }
 html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   :is(.bp, .bn, .bb, .br, .bq, .bk) {
@@ -669,6 +667,10 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
 }
 .chesscom-vinf-extreme-controls button {
   pointer-events: auto;
+  display: grid;
+  place-items: center;
+  appearance: none;
+  margin: 0;
   width: 44px;
   height: 44px;
   padding: 0;
@@ -679,6 +681,17 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   color: #777;
   font: 32px/1 system-ui, sans-serif;
   cursor: pointer;
+}
+.chesscom-vinf-extreme-controls nav button svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 .chesscom-vinf-extreme-controls button:disabled { color: #292929; cursor: default; }
 .chesscom-vinf-extreme-controls button:not(:disabled):hover { color: #aaa; }
@@ -758,6 +771,10 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
 .chesscom-vinf-extreme-time.bottom { top: calc(100% + 12px); }
 .chesscom-vinf-extreme-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #a34c4c; }
 .chesscom-vinf-extreme-time[aria-disabled="true"] { cursor: default; }
+.chesscom-vinf-extreme-controls .chesscom-vinf-extreme-time[aria-pressed="false"] {
+  border-color: transparent;
+  background: transparent;
+}
 .chesscom-vinf-extreme-turn {
   position: absolute;
   left: calc(50% - 2px);

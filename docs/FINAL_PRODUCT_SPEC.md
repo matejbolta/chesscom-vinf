@@ -1685,3 +1685,13 @@ reduced to functional controls only.
 - Give move arrows thin circular borders; clock targets become inset pills with
   centered friendly system text. Add dark outlines to flat gray white pieces.
 - Local version/build/commit only. Browser QA blocked by locked Mac.
+
+## 80. Version 2.3.3 Product Amendments
+
+- Restrict Extreme OLED to supported live-game routes/boards; never reactivate in
+  Game Review, including move-by-move. Preserve ordinary OLED and graph behavior.
+- Restore flat gray white pieces without outlines.
+- Center contents of all circles/pills, using symmetric SVG move chevrons rather
+  than baseline-dependent font glyphs. Clock pills are invisible with their numbers,
+  while both tap areas remain active; reveal/low-time lock shows both pills again.
+- Local 2.3.3 builds only. New browser visual checks blocked by the locked Mac.

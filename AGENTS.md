@@ -46,8 +46,9 @@ directory.
   the phone Game Review enhancement only on exact signed-in live-game review
   routes while the move-by-move view is present.
 - Keep Chess.com's main navigation except inside explicitly enabled Extreme OLED
-  games/reviews; hide the native Game Review homepage card.
-- Extreme OLED is a separate opt-in game/review setting. Leave homepage appearance
+  live games; hide the native Game Review homepage card.
+- Extreme OLED is a separate opt-in live-game setting, never active in Game Review.
+  Leave homepage appearance
   unchanged, preserve native board input, and never simulate clocks or game state.
 - Expose 0, 1, 2, 3, 4, 6, or 8 user-selected time controls. Zero removes the
   Quick Play module entirely. Default to the original six recorded in

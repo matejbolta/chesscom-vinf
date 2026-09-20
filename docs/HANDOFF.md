@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-20.
-Current source version: 2.3.2.
+Current source version: 2.3.3.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.3.2. This handoff is the shortest
+chronological amendments through version 2.3.3. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -62,14 +62,14 @@ policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
 
-## Extreme OLED mode (2.3.2)
+## Extreme OLED mode (2.3.3)
 
 The final settings card on desktop popup/side panel and Android contains only
 OLED background, OLED play buttons, and Extreme OLED mode, with no helper copy.
 `extremeOled` remains opt-in (default false). The retired `extremeOledClocks`
 preference is discarded by normalization; valid native time bars always show. Homepage
-and ordinary OLED are unchanged. Exact signed-in games and move-by-move review
-only; initial review reports stay native. Escape reveals the normal UI until
+and ordinary OLED are unchanged. Exact signed-in live-game routes only; all Game
+Review states stay outside Extreme OLED, including move-by-move. Escape reveals the normal UI until
 Extreme is toggled off/on or the route changes. Android can disable Extreme via
 the userscript manager settings menu; its settings dialog remains visible.
 
@@ -88,11 +88,12 @@ the player/board rows in `#board-layout-main`: clamp(128px, 18svh, 152px), rough
 3–4 CSS cm. No board sizing, transform or native CSS board variables are changed.
 Desktop positioning is unchanged. The extra room can be scrolled away.
 
-White pieces are flat #666 silhouettes with #080808 outlines (alpha preserved);
+White pieces are flat #666 silhouettes without outlines (alpha preserved);
 black pieces retain black fill with dim outlines. Move arrows have thin 44px
-circular borders at the lower right; clock targets are 80x44px pills inset 12px
-from the left, with centered rounded/system-font text. Empty pills remain visible
-so their tap areas are discoverable. A 4px dot above/below marks the one native
+circular borders at the lower right with centered symmetric SVG chevrons; all
+control contents use explicit grid centering. Clock targets are 80x44px pills
+inset 12px from the left, with rounded/system-font text. Hidden numbers also hide
+the pill borders/backgrounds; invisible tap targets remain available. A 4px dot above/below marks the one native
 `.clock-player-turn`; ambiguous/missing turn evidence shows no dot. Clock bars
 always show when native timers are readable. Tapping either left clock area toggles both
 numeric clocks. Once either native timer reads below 60 seconds, both numbers
@@ -106,16 +107,18 @@ below one minute. All time and turn state comes from the DOM; no simulated
 clock, network request, account-data storage or gameplay automation was added.
 Recognized native result evidence releases Extreme for the rest of that game
 route so the site's result/Game Review actions work. A zero clock alone is not
-proof of game over. The initial Game Review screen remains native; move-by-move
-can opt into Extreme again.
+proof of game over. The user confirmed game-end release on 2.3.2, but reported
+unwanted reactivation in review moves. Version 2.3.3 removes review routes and
+analysis boards from Extreme entirely; the ordinary OLED background and phone
+review-graph behavior are unaffected.
 
-Selectors/limits: DOM_AUDIT.md. 164 tests, typecheck and desktop/Android builds
+Selectors/limits: DOM_AUDIT.md. 166 tests, typecheck and desktop/Android builds
 pass. The visual fixture now includes native padding-based board sizing, hidden
 board content, pointer delivery probes and T/L/E keys for turn/low-time/result.
 New real-browser QA was blocked by the locked Mac/unavailable browser; no claim
 of visual, native-input or physical Android verification for this patch. The
 prior 2.3.0 synthetic visual checks did not predict the reported live failures.
-Store package remains 2.2.2; do not push/package 2.3.2 without a new request.
+Store package remains 2.2.2; do not push/package 2.3.3 without a new request.
 
 ## Current User Experience
 
@@ -880,7 +883,7 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 2.3.2, the suite has 164 passing tests across eighteen files and
+As of version 2.3.3, the suite has 166 passing tests across eighteen files and
 covers the homepage plus focused phone Game Review behavior. Important coverage
 includes:
 

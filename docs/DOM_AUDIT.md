@@ -637,3 +637,18 @@ right. Native timer/turn/result selectors are unchanged. Bars no longer have a
 preference; stale bars-off settings cannot suppress them. Existing settings tests
 verify the final card's exact three labels, absence of help/clock switch, and
 preserved autosave. New rendered/browser checks remain blocked by the locked Mac.
+
+## Extreme OLED 2.3.3 — live games only
+
+The user confirmed result-screen release, then reported unwanted Extreme OLED
+reactivation on entering Game Review moves. Remove all review-route support from
+this controller and accept only `wc-chess-board#board-single`; an analysis board
+also releases presentation before a route transition has completed. Tests cover
+both review URL shapes and the game-end → review → moves → new live game lifecycle.
+This does not change the separate ordinary OLED or review-graph controller.
+
+Native Previous Move/Next Move proxies now contain symmetric, aria-hidden SVG
+chevrons centered with CSS grid. Clock pills use the existing paired `aria-pressed`
+state to hide borders/backgrounds while numbers are hidden. Targets remain
+clickable, and keyboard focus still has an accessible outline. New browser QA
+remains blocked by the locked Mac; no screenshot was available for this revision.
