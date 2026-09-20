@@ -9,6 +9,21 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.3.2] - 2026-09-20
+
+### Changed
+
+- Move OLED controls to the bottom of desktop and Android settings, using only
+  OLED background, OLED play buttons, and Extreme OLED mode labels.
+- Remove the clock-bars preference. Extreme OLED always shows available native
+  time bars; old saved bars-off values are discarded during normalization.
+- Add 128–152 CSS pixels of mobile headroom above the native board/player rows
+  without resizing or transforming the board. Keep the area scrollable.
+- Outline move arrows with thin circles and inset both clock areas in pills,
+  using a softer system font. Add dark outlines to the uniform gray white pieces.
+- Keep paired-clock reveal, low-time locking and native game-end restoration.
+  Typecheck/tests/builds pass; browser QA remains blocked by the locked Mac.
+
 ## [2.3.1] - 2026-09-20
 
 ### Fixed

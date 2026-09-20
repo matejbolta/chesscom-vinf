@@ -78,9 +78,10 @@ Chrome Web Store disclosures will be updated before that version is distributed.
 For privacy questions or support, open an issue in the
 [public GitHub repository](https://github.com/matejbolta/chesscom-vinf/issues).
 
-### Extreme OLED settings (2.3.0)
+### Extreme OLED settings (2.3.2)
 
-Two additional local booleans store Extreme OLED and clock-bar preferences.
+One additional local boolean stores Extreme OLED. The former clock-bar preference
+is discarded when normalizing settings and omitted from subsequent saves.
 Displayed clock text and per-color maximum seconds are read into transient memory
 for rendering bars, then discarded on cleanup. They are neither stored nor sent.
 No new permissions or network calls are introduced.

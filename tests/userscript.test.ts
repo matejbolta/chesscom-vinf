@@ -54,15 +54,18 @@ describe("Android userscript shell", () => {
     );
     expect(dialog?.open).toBe(true);
     const extreme = dialog!.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-extreme-oled")!;
-    const clockBars = dialog!.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-extreme-oled-clocks")!;
-    expect(clockBars.disabled).toBe(true);
-    for (const [on, clocks] of [[true, false], [false, false], [false, true]]) {
+    expect(document.querySelector('[id$="extreme-oled-clocks"]')).toBeNull();
+    const oledGroup = extreme.closest("section")!;
+    expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(-1)).toBe(oledGroup);
+    expect([...oledGroup.querySelectorAll("strong")].map(e => e.textContent)).toEqual([
+      "OLED background", "OLED play buttons", "Extreme OLED mode"
+    ]);
+    expect(oledGroup.querySelector("small")).toBeNull();
+    for (const on of [true, false]) {
       extreme.checked = on;
-      clockBars.checked = clocks;
       extreme.dispatchEvent(new Event("change", { bubbles: true }));
       await vi.advanceTimersByTimeAsync(0);
-      expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({extremeOled: on, extremeOledClocks: clocks}));
-      expect(clockBars.disabled).toBe(!on);
+      expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({extremeOled: on}));
     }
 
     expect(dialog?.querySelectorAll("select")).toHaveLength(18);
@@ -120,10 +123,10 @@ describe("Android userscript shell", () => {
       "#chesscom-vinf-userscript-oled-button-colors"
     );
     expect(oledMode?.checked).toBe(false);
-    expect(oledMode?.closest("label")?.textContent).toContain("OLED black");
+    expect(oledMode?.closest("label")?.textContent).toContain("OLED background");
     expect(oledButtonColors?.checked).toBe(false);
     expect(oledButtonColors?.closest("label")?.textContent).toContain(
-      "OLED button colors"
+      "OLED play buttons"
     );
     const dailyPlacement = dialog?.querySelector<HTMLSelectElement>(
       '[aria-label="Daily Games placement"]'

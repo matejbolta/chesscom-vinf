@@ -299,17 +299,20 @@ the signed-in tablet, verify:
 - When Chess.com removes or changes the validated native immediate-match link,
   Quick Play fails closed instead of guessing a matchmaking URL.
 
-### Extreme OLED Edition (2.3.1)
+### Extreme OLED mode (2.3.2)
 
-In VINF settings enable Extreme OLED Edition and optionally Clock bars. Supported
+At the bottom of VINF settings, the three switches are OLED background, OLED
+play buttons and Extreme OLED mode. Clock bars are always shown in Extreme mode
+when native timers are readable; there is no separate clock switch. Supported
 active games and move-by-move review only; initial review reports remain native.
 Use the userscript manager's VINF settings menu to disable it and reveal game
 controls. The settings dialog remains visible. Swipe the empty area around the
 board to scroll; a small scroll extent is provided so Firefox can collapse its
-browser bar without changing the native board's geometry.
+browser bar without changing the native board's dimensions. Phone layouts add 128–152 CSS
+pixels of black headroom above the player/board rows.
 
 Tap either left clock area to reveal/hide both numeric clocks. Below one minute
-for either player, both stay visible for that game even with bars off. Numbers
+for either player, both stay visible for that game even after a time increment. Numbers
 show whole seconds below a minute; the small dot above/below identifies the
 native side to move. Native results release Extreme automatically.
 
@@ -317,3 +320,8 @@ native side to move. Native results release Extreme automatically.
 2.3.1 removes its forced board geometry and restores the result UI. Builds/tests
 pass, but new browser checks were blocked by the locked Mac. Recheck scrolling,
 all-file taps/drags, promotion and game-end behavior on the real Android device.
+
+2.3.2 adds outlined circular move buttons, inset pill-shaped clock targets with
+centered system text, and dark outlines around the flat gray white pieces.
+Native board sizing/input and result restoration remain unchanged. Browser QA
+is still blocked by the locked Mac; recheck appearance and headroom on the phone.

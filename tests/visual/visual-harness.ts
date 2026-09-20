@@ -214,8 +214,7 @@ if (window.location.pathname === "/game-review-mobile") {
 
 if (window.location.pathname === "/extreme-oled") {
   const extreme = new ExtremeOledController();
-  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme"),
-    extremeOledClocks: !searchParams.has("no-clock") };
+  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme") };
   const apply = () => extreme.reconcile(document,
     { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings);
   const fixtureBoard = document.querySelector<HTMLElement>("wc-chess-board")!;

@@ -77,15 +77,18 @@ describe("settings popup", () => {
     )!;
     const enabled = document.querySelector<HTMLInputElement>("#enabled")!;
     const extreme = document.querySelector<HTMLInputElement>("#extreme-oled")!;
-    const clockBars = document.querySelector<HTMLInputElement>("#extreme-oled-clocks")!;
-    expect(clockBars.disabled).toBe(true);
-    for (const [on, clocks] of [[true, false], [false, false], [false, true]]) {
+    expect(document.querySelector('[id$="extreme-oled-clocks"]')).toBeNull();
+    const oledGroup = extreme.closest("section")!;
+    expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(-1)).toBe(oledGroup);
+    expect([...oledGroup.querySelectorAll("strong")].map(e => e.textContent)).toEqual([
+      "OLED background", "OLED play buttons", "Extreme OLED mode"
+    ]);
+    expect(oledGroup.querySelector("small")).toBeNull();
+    for (const on of [true, false]) {
       extreme.checked = on;
-      clockBars.checked = clocks;
       extreme.dispatchEvent(new Event("change", { bubbles: true }));
       await flushAsyncWork();
-      expect(set).toHaveBeenLastCalledWith({[SETTINGS_STORAGE_KEY]: expect.objectContaining({extremeOled: on, extremeOledClocks: clocks})});
-      expect(clockBars.disabled).toBe(!on);
+      expect(set).toHaveBeenLastCalledWith({[SETTINGS_STORAGE_KEY]: expect.objectContaining({extremeOled: on})});
     }
 
     const oledMode = document.querySelector<HTMLInputElement>("#oled-mode")!;
@@ -164,10 +167,10 @@ describe("settings popup", () => {
     );
     expect(enabled.checked).toBe(false);
     expect(oledMode.checked).toBe(false);
-    expect(oledMode.closest("label")?.textContent).toContain("OLED black");
+    expect(oledMode.closest("label")?.textContent).toContain("OLED background");
     expect(oledButtonColors.checked).toBe(false);
     expect(oledButtonColors.closest("label")?.textContent).toContain(
-      "OLED button colors"
+      "OLED play buttons"
     );
     oledButtonColors.checked = true;
     oledButtonColors.dispatchEvent(new Event("change", { bubbles: true }));

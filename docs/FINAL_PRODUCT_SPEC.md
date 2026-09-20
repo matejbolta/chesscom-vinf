@@ -1673,3 +1673,15 @@ reduced to functional controls only.
 - Release Extreme on native game-result evidence and leave initial Game Review
   reports visible. No auto-navigation or game actions.
 - Local 2.3.1 builds only; new browser verification was blocked by a locked Mac.
+
+## 79. Version 2.3.2 Product Amendments
+
+- Put all OLED switches at the bottom of both settings surfaces. Labels only:
+  OLED background, OLED play buttons, Extreme OLED mode.
+- Remove the clock-bars switch and old preference. Show available native time
+  bars whenever Extreme OLED is active; retain paired number toggling and lock.
+- Add roughly 3–4 CSS cm (128–152px) of scrollable mobile headroom above native
+  player/board rows, without changing board dimensions or applying transforms.
+- Give move arrows thin circular borders; clock targets become inset pills with
+  centered friendly system text. Add dark outlines to flat gray white pieces.
+- Local version/build/commit only. Browser QA blocked by locked Mac.

@@ -636,7 +636,9 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board] 
 }
 html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   :is(.wp, .wn, .wb, .wr, .wq, .wk) {
-  filter: brightness(0) invert(.4) !important;
+  filter: brightness(0) invert(.4)
+    drop-shadow(1px 0 0 #080808) drop-shadow(-1px 0 0 #080808)
+    drop-shadow(0 1px 0 #080808) drop-shadow(0 -1px 0 #080808) !important;
 }
 html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   :is(.bp, .bn, .bb, .br, .bq, .bk) {
@@ -659,9 +661,8 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   padding: 0;
   border: 0;
   position: absolute;
-  top: calc(100% + 20px);
-  left: 50%;
-  transform: translateX(-50%);
+  top: calc(100% + 12px);
+  right: 12px;
   display: flex;
   gap: 12px;
   background: #000;
@@ -671,8 +672,9 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 0;
-  border-radius: 0;
+  box-sizing: border-box;
+  border: 1px solid #444;
+  border-radius: 50%;
   background: #000;
   color: #777;
   font: 32px/1 system-ui, sans-serif;
@@ -728,20 +730,32 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
   height: 1px;
   pointer-events: none;
 }
+@media (max-width: 599px) {
+  /* A normal-flow spacer above the native player/board rows, not a board resize
+     or transform. Roughly 3–4 CSS cm of black room for positioning by scrolling. */
+  html[data-chesscom-vinf-extreme-oled="true"] #board-layout-main::before {
+    content: "";
+    display: block;
+    height: clamp(128px, 18svh, 152px);
+    flex: 0 0 clamp(128px, 18svh, 152px);
+    pointer-events: none;
+  }
+}
 .chesscom-vinf-extreme-controls .chesscom-vinf-extreme-time {
   position: absolute;
-  left: 0;
-  width: 72px;
+  left: 12px;
+  width: 80px;
   height: 44px;
-  text-align: left;
-  background: transparent;
-  color: #777;
-  font: 14px/1 ui-monospace, monospace;
+  border-radius: 999px;
+  text-align: center;
+  background: #000;
+  color: #888;
+  font: 500 16px/1 ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   touch-action: manipulation;
 }
-.chesscom-vinf-extreme-time.top { top: -50px; }
-.chesscom-vinf-extreme-time.bottom { top: calc(100% + 6px); }
+.chesscom-vinf-extreme-time.top { top: -56px; }
+.chesscom-vinf-extreme-time.bottom { top: calc(100% + 12px); }
 .chesscom-vinf-extreme-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #a34c4c; }
 .chesscom-vinf-extreme-time[aria-disabled="true"] { cursor: default; }
 .chesscom-vinf-extreme-turn {

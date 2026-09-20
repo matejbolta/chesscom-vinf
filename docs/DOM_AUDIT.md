@@ -621,3 +621,19 @@ as needed. The browser was unavailable while the Mac was locked, so these new
 visual/input scenarios and real Firefox Android remain unverified. Unit tests
 cover paired reveal/locking, turn changes, result arrival/dismissal, route reuse,
 initial review and native DOM/style preservation.
+
+## Extreme OLED 2.3.2 — presentation refinement
+
+The saved first-party `chessboard-layout.Cn7fJCzylQ.css` defines
+`.board-layout-main` as a column flex container and the actual board's dimensions
+through `--boardWidth` / `--boardHeight` in `.board-layout-chessboard .board`.
+Below 600px, add only a normal-flow `#board-layout-main::before` spacer
+(clamp(128px,18svh,152px)). Do not override those native dimensions, grid columns
+or transforms. Marker cleanup also removes the spacer, including at game over.
+
+The owned controls remain pointer-transparent over the board. Interactive shapes
+sit outside it: inset clock pills on the left, outlined move circles at lower
+right. Native timer/turn/result selectors are unchanged. Bars no longer have a
+preference; stale bars-off settings cannot suppress them. Existing settings tests
+verify the final card's exact three labels, absence of help/clock switch, and
+preserved autosave. New rendered/browser checks remain blocked by the locked Mac.

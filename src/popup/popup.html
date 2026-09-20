@@ -29,7 +29,7 @@
             <path d="M10 7v6"></path>
           </svg>
         </button>
-        <span class="version">v2.3.1</span>
+        <span class="version">v2.3.2</span>
         <button
           id="close-side-panel"
           class="side-panel-button side-panel-close-button"
@@ -64,34 +64,6 @@
           >Reset</button>
           <input id="enabled" type="checkbox" role="switch">
         </div>
-      </section>
-
-      <section class="settings-card" aria-label="Appearance settings">
-        <label class="setting-row">
-          <span>
-            <strong>OLED black</strong>
-            <small>Use a pitch-black page background</small>
-          </span>
-          <input id="oled-mode" type="checkbox" role="switch">
-        </label>
-        <label class="setting-row">
-          <span>
-            <strong>OLED button colors</strong>
-            <small>Use low-glare colors for Quick Play and Open Game</small>
-          </span>
-          <input id="oled-button-colors" type="checkbox" role="switch">
-        </label>
-      </section>
-
-      <section class="settings-card" aria-label="Extreme OLED settings">
-        <label class="setting-row">
-          <span><strong>Extreme OLED Edition</strong><small>Games only: dark board, pieces and move arrows. Escape reveals the game UI.</small></span>
-          <input id="extreme-oled" type="checkbox" role="switch">
-        </label>
-        <label class="setting-row">
-          <span><strong>Clock bars</strong><small>Optional time bars. Tap the left clock areas for numbers; both stay visible once either is below 1 min.</small></span>
-          <input id="extreme-oled-clocks" type="checkbox" role="switch">
-        </label>
       </section>
 
       <section class="settings-card" aria-label="Homepage settings">
@@ -161,6 +133,21 @@
         <p class="stats-note">
           If Chess.com includes Insights here, VINF keeps it visible at the bottom.
         </p>
+      </section>
+
+      <section class="settings-card" aria-label="OLED settings">
+        <label class="setting-row">
+          <span><strong>OLED background</strong></span>
+          <input id="oled-mode" type="checkbox" role="switch">
+        </label>
+        <label class="setting-row">
+          <span><strong>OLED play buttons</strong></span>
+          <input id="oled-button-colors" type="checkbox" role="switch">
+        </label>
+        <label class="setting-row">
+          <span><strong>Extreme OLED mode</strong></span>
+          <input id="extreme-oled" type="checkbox" role="switch">
+        </label>
       </section>
 
       <p id="status" class="status" role="status" aria-live="polite"></p>

@@ -48,7 +48,6 @@ export class ExtremeOledController {
   private suspendedRoute = "";
   private finishedRoute = "";
   private isReview = false;
-  private withClocks = true;
   private revealTimes = false;
   private forcedTimes = false;
   private maxima = new Map<string, number>();
@@ -84,7 +83,6 @@ export class ExtremeOledController {
       this.cleanup(document);
       return false;
     }
-    this.withClocks = settings.extremeOledClocks;
     this.document = document;
     this.update(document);
     if (!this.observer && document.body) {
@@ -227,7 +225,7 @@ export class ExtremeOledController {
       const text = clock?.querySelector('[role="timer"]')?.textContent ?? "";
       const seconds = readClockSeconds(text);
       const time = this.overlay.querySelector<HTMLButtonElement>(`.chesscom-vinf-extreme-time.${side}`)!;
-      // Bars are optional. The paired numeric reveal/urgency rule is independent.
+      // Numeric times toggle together; the native-time bars always remain visible.
       time.hidden = clockSeconds.every(value => value === null);
       time.setAttribute("aria-pressed", String(showTimes));
       time.setAttribute("aria-disabled", String(this.forcedTimes));
@@ -240,7 +238,7 @@ export class ExtremeOledController {
       time.dataset.low = String(seconds !== null && seconds < 60);
       const label = showTimes ? display : "";
       if (time.textContent !== label) time.textContent = label;
-      bar.hidden = !this.withClocks || seconds === null;
+      bar.hidden = seconds === null;
       if (bar.hidden || seconds === null) continue;
       const key = clock?.classList.contains("clock-white") ? "white" :
         clock?.classList.contains("clock-black") ? "black" : side;

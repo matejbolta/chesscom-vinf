@@ -261,24 +261,20 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   );
   const appearance = document.createElement("section");
   appearance.className = "chesscom-vinf-settings-card";
-  appearance.setAttribute("aria-label", "Appearance settings");
+  appearance.setAttribute("aria-label", "OLED settings");
   const oledModeInput = createToggle(
     appearance,
     "chesscom-vinf-userscript-oled-mode",
-    "OLED black",
-    "Use a pitch-black page background"
+    "OLED background"
   );
   const oledButtonColorsInput = createToggle(
     appearance,
     "chesscom-vinf-userscript-oled-button-colors",
-    "OLED button colors",
-    "Use low-glare colors for Quick Play and Open Game"
+    "OLED play buttons"
   );
 
   const extremeOledInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled",
-    "Extreme OLED Edition", "Games only: dark board, pieces and move arrows. Turn off here to reveal game controls.");
-  const extremeOledClocksInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled-clocks",
-    "Clock bars", "Optional time bars. Tap the left clock areas for numbers; both stay visible once either is below 1 min.");
+    "Extreme OLED mode");
 
   const presets = document.createElement("section");
   presets.className = "chesscom-vinf-settings-card";
@@ -908,14 +904,12 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   status.className = "chesscom-vinf-settings-status";
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
-  form.append(header, master, appearance, homepage, presets, stats, status);
+  form.append(header, master, homepage, presets, stats, appearance, status);
   dialog.append(form);
 
   function render(settings: ExtensionSettings): void {
     enabledInput.checked = settings.enabled;
     extremeOledInput.checked = settings.extremeOled;
-    extremeOledClocksInput.checked = settings.extremeOledClocks;
-    extremeOledClocksInput.disabled = !settings.extremeOled;
     oledModeInput.checked = settings.oledMode;
     oledButtonColorsInput.checked = settings.oledButtonColors;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -957,7 +951,6 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       await store.save({
         enabled: enabledInput.checked,
         extremeOled: extremeOledInput.checked,
-        extremeOledClocks: extremeOledClocksInput.checked,
         oledMode: oledModeInput.checked,
         oledButtonColors: oledButtonColorsInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,
@@ -996,7 +989,6 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   }
 
   form.addEventListener("change", () => {
-    extremeOledClocksInput.disabled = !extremeOledInput.checked;
     void save();
   });
   presetCountSelect.addEventListener("change", () => {

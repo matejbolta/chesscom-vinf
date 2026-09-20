@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-20.
-Current source version: 2.3.1.
+Current source version: 2.3.2.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.3.1. This handoff is the shortest
+chronological amendments through version 2.3.2. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -62,10 +62,12 @@ policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
 
-## Extreme OLED Edition (2.3.1)
+## Extreme OLED mode (2.3.2)
 
-Independent opt-in `extremeOled` (default false) and `extremeOledClocks` (default
-true) settings exist in desktop popup/side panel and Android settings. Homepage
+The final settings card on desktop popup/side panel and Android contains only
+OLED background, OLED play buttons, and Extreme OLED mode, with no helper copy.
+`extremeOled` remains opt-in (default false). The retired `extremeOledClocks`
+preference is discarded by normalization; valid native time bars always show. Homepage
 and ordinary OLED are unchanged. Exact signed-in games and move-by-move review
 only; initial review reports stay native. Escape reveals the normal UI until
 Extreme is toggled off/on or the route changes. Android can disable Extreme via
@@ -73,7 +75,7 @@ the userscript manager settings menu; its settings dialog remains visible.
 
 The 2.3.0 user reported clipped pieces, unreliable taps/drags, blocked browser
 bar collapse and hidden game results. 2.3.1 removes all forced board/wrapper
-geometry: Chess.com owns its original size, position and input. Native-hidden
+geometry: Chess.com owns its board dimensions and input. Native-hidden
 board descendants are no longer forced visible. Scroll room is added outside
 layout (96px beyond the viewport/board), root scrolling is enabled and the owned
 controls follow native bounds without intercepting the board. A swipe on the
@@ -81,13 +83,20 @@ empty area is intended to let Firefox collapse its toolbar; actual Firefox
 Android behavior still needs device verification. Never restore CSS-only board
 resizing or replace the native engine merely to make a fixture look centered.
 
-White pieces are flat #666 silhouettes (alpha preserved); black pieces retain
-black fill with dim outlines. A 4px dot above/below marks the one native
+On phone widths below 600px, 2.3.2 adds an empty normal-flow pseudo-element above
+the player/board rows in `#board-layout-main`: clamp(128px, 18svh, 152px), roughly
+3–4 CSS cm. No board sizing, transform or native CSS board variables are changed.
+Desktop positioning is unchanged. The extra room can be scrolled away.
+
+White pieces are flat #666 silhouettes with #080808 outlines (alpha preserved);
+black pieces retain black fill with dim outlines. Move arrows have thin 44px
+circular borders at the lower right; clock targets are 80x44px pills inset 12px
+from the left, with centered rounded/system-font text. Empty pills remain visible
+so their tap areas are discoverable. A 4px dot above/below marks the one native
 `.clock-player-turn`; ambiguous/missing turn evidence shows no dot. Clock bars
-remain independently optional. Tapping either left clock area toggles both
+always show when native timers are readable. Tapping either left clock area toggles both
 numeric clocks. Once either native timer reads below 60 seconds, both numbers
-are latched visible for that game, including with bars off and after increments
-raise time again. Below a minute show integer seconds with the fractional part
+are latched visible for that game, including after increments raise time again. Below a minute show integer seconds with the fractional part
 removed; above it use minutes:seconds. Missing one timer shows a dash, never a
 fabricated value. No numbers/tap targets when both timers are absent.
 
@@ -106,7 +115,7 @@ board content, pointer delivery probes and T/L/E keys for turn/low-time/result.
 New real-browser QA was blocked by the locked Mac/unavailable browser; no claim
 of visual, native-input or physical Android verification for this patch. The
 prior 2.3.0 synthetic visual checks did not predict the reported live failures.
-Store package remains 2.2.2; do not push/package 2.3.1 without a new request.
+Store package remains 2.2.2; do not push/package 2.3.2 without a new request.
 
 ## Current User Experience
 
@@ -698,7 +707,6 @@ interface ExtensionSettings {
   oledMode: boolean;
   oledButtonColors: boolean;
   extremeOled: boolean;
-  extremeOledClocks: boolean;
   showNativePlayPanel: boolean;
   profilePlacement: "main" | "sidebar" | "hidden";
   profileVisiblePlacement: "main" | "sidebar";
@@ -872,7 +880,7 @@ pnpm build
 pnpm build:android
 ```
 
-As of version 2.3.1, the suite has 164 passing tests across eighteen files and
+As of version 2.3.2, the suite has 164 passing tests across eighteen files and
 covers the homepage plus focused phone Game Review behavior. Important coverage
 includes:
 

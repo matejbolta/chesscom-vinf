@@ -5,7 +5,7 @@ import { ExtremeOledController, readClockSeconds } from "../src/content/extreme-
 import { DEFAULT_SETTINGS, normalizeSettings } from "../src/shared/settings";
 
 const location = { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" };
-const settings = { ...DEFAULT_SETTINGS, extremeOled: true, extremeOledClocks: true };
+const settings = { ...DEFAULT_SETTINGS, extremeOled: true };
 let controller: ExtremeOledController;
 beforeEach(() => {
   vi.useFakeTimers();
@@ -22,10 +22,11 @@ const bar = (side: string) => document.querySelector<HTMLElement>(`.chesscom-vin
 const clock = (side: string) => document.querySelector(`#board-layout-player-${side} [role="timer"]`)!;
 
 describe("Extreme OLED", () => {
-  it("defaults off and preserves the clock preference independently", () => {
+  it("defaults off and discards the retired clock-bars preference", () => {
     expect(normalizeSettings({}).extremeOled).toBe(false);
-    expect(normalizeSettings({ extremeOled: true, extremeOledClocks: false })).toMatchObject({extremeOled: true, extremeOledClocks: false});
-    expect(normalizeSettings({ extremeOled: "true", extremeOledClocks: 1 })).toMatchObject({extremeOled: false, extremeOledClocks: true});
+    expect(normalizeSettings({ extremeOled: true, extremeOledClocks: false })).toMatchObject({extremeOled: true});
+    expect(normalizeSettings({ extremeOledClocks: false })).not.toHaveProperty("extremeOledClocks");
+    expect(normalizeSettings({ extremeOled: "true", extremeOledClocks: 1 })).toMatchObject({extremeOled: false});
   });
   it.each(["/home", "/play/online/new", "/analysis", "/game/daily/123"])("does not affect %s", pathname => {
     expect(controller.reconcile(document, { ...location, pathname }, settings)).toBe(false);
@@ -79,9 +80,9 @@ describe("Extreme OLED", () => {
     await vi.advanceTimersByTimeAsync(20);
     expect(bar("top").hidden).toBe(true);
   });
-  it("hides both clocks when selected and restores the game UI on Escape", () => {
-    controller.reconcile(document, location, { ...settings, extremeOledClocks: false });
-    expect(bar("top").hidden && bar("bottom").hidden).toBe(true);
+  it("always shows both valid clock bars and restores the game UI on Escape", () => {
+    controller.reconcile(document, location, normalizeSettings({ ...settings, extremeOledClocks: false }));
+    expect(bar("top").hidden || bar("bottom").hidden).toBe(false);
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     expect(controller.reconcile(document, location, settings)).toBe(false);
     controller.reconcile(document, location, { ...settings, extremeOled: false });
@@ -136,8 +137,8 @@ describe("Extreme OLED", () => {
     expect([top.textContent, bottom.textContent]).toEqual(["1:01", "1:04"]);
     expect(top.getAttribute("aria-disabled")).toBe("true");
   });
-  it("uses the native turn class even without clock bars and never guesses during ambiguous states", async () => {
-    controller.reconcile(document, location, { ...settings, extremeOledClocks: false });
+  it("uses the native turn class and never guesses during ambiguous states", async () => {
+    controller.reconcile(document, location, normalizeSettings({ ...settings, extremeOledClocks: false }));
     const top = document.querySelector<HTMLElement>(".chesscom-vinf-extreme-turn.top")!;
     const bottom = document.querySelector<HTMLElement>(".chesscom-vinf-extreme-turn.bottom")!;
     expect([top.hidden, bottom.hidden]).toEqual([true, false]);
@@ -149,8 +150,8 @@ describe("Extreme OLED", () => {
     await vi.advanceTimersByTimeAsync(20);
     expect([top.hidden, bottom.hidden]).toEqual([true, true]);
   });
-  it("keeps paired time reveal and low-time numbers available when bars are off", async () => {
-    controller.reconcile(document, location, { ...settings, extremeOledClocks: false });
+  it("ignores an old saved bars-off setting without affecting paired time reveal", async () => {
+    controller.reconcile(document, location, normalizeSettings({ ...settings, extremeOledClocks: false }));
     const top = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.top")!;
     const bottom = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.bottom")!;
     expect(top.hidden || bottom.hidden).toBe(false);
@@ -161,7 +162,7 @@ describe("Extreme OLED", () => {
     await vi.advanceTimersByTimeAsync(20);
     bottom.click();
     expect([top.textContent, bottom.textContent]).toEqual(["42", "10:00"]);
-    expect(bar("top").hidden && bar("bottom").hidden).toBe(true);
+    expect(bar("top").hidden || bar("bottom").hidden).toBe(false);
   });
   it.each(["modal", "player", "result"])("releases the native end screen on %s evidence and stays released", async kind => {
     controller.reconcile(document, location, settings);

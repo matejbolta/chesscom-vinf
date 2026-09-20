@@ -54,7 +54,6 @@ const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
 )!;
 const enabledInput = document.querySelector<HTMLInputElement>("#enabled")!;
 const extremeOledInput = document.querySelector<HTMLInputElement>("#extreme-oled")!;
-const extremeOledClocksInput = document.querySelector<HTMLInputElement>("#extreme-oled-clocks")!;
 const oledModeInput = document.querySelector<HTMLInputElement>("#oled-mode")!;
 const oledButtonColorsInput = document.querySelector<HTMLInputElement>(
   "#oled-button-colors"
@@ -700,8 +699,6 @@ function renderPresetSelects(
 function renderSettings(settings: ExtensionSettings): void {
   enabledInput.checked = settings.enabled;
   extremeOledInput.checked = settings.extremeOled;
-  extremeOledClocksInput.checked = settings.extremeOledClocks;
-  extremeOledClocksInput.disabled = !settings.extremeOled;
   oledModeInput.checked = settings.oledMode;
   oledButtonColorsInput.checked = settings.oledButtonColors;
   showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -783,7 +780,6 @@ function readSettings(): ExtensionSettings {
   return {
     enabled: enabledInput.checked,
     extremeOled: extremeOledInput.checked,
-    extremeOledClocks: extremeOledClocksInput.checked,
     oledMode: oledModeInput.checked,
     oledButtonColors: oledButtonColorsInput.checked,
     showNativePlayPanel: showNativePlayPanelInput.checked,
@@ -847,7 +843,6 @@ form.addEventListener("submit", (event) => {
 });
 
 form.addEventListener("change", () => {
-  extremeOledClocksInput.disabled = !extremeOledInput.checked;
   if (!initialized) {
     return;
   }
