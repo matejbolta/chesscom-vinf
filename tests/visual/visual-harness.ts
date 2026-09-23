@@ -1,3 +1,4 @@
+import { PhoneExperienceController } from "../../src/content/phone-experience-controller";
 import { ExtremeOledController } from "../../src/content/extreme-oled-controller";
 import { GameReviewLayoutController } from "../../src/content/game-review-layout-controller";
 import { LayoutController } from "../../src/content/layout-controller";
@@ -258,4 +259,65 @@ if (window.location.pathname === "/extreme-oled") {
     document.querySelector<HTMLElement>(".wp")!.style.top = "75%";
   });
   window.setInterval(apply, 750);
+}
+
+// Native-shaped phone scenarios are local and never invoke Chess.com services.
+if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
+  const phone = new PhoneExperienceController();
+  const game = window.location.pathname === "/phone-game";
+  const route = { protocol: "https:", hostname: "www.chess.com",
+    pathname: game ? "/game/123456" : "/analysis/game/live/123456/review" };
+  const settings = { ...DEFAULT_SETTINGS, enabled: !searchParams.has("native"),
+    extremeOled: searchParams.has("extreme") };
+  const apply = () => phone.reconcile(document, route, settings, window.innerWidth <= 599);
+  const audio = document.querySelector<HTMLButtonElement>('[aria-label="Toggle Coach Audio"]');
+  audio?.addEventListener("click", () => {
+    const svg = audio.querySelector("svg")!;
+    svg.setAttribute("data-glyph", svg.getAttribute("data-glyph") === "media-audio-speaker-mute"
+      ? "media-audio-speaker" : "media-audio-speaker-mute");
+    document.body.dataset.audioClicks = String(Number(document.body.dataset.audioClicks ?? 0) + 1);
+  });
+  if (searchParams.has("audio-on")) audio?.querySelector("svg")?.setAttribute("data-glyph", "media-audio-speaker");
+  document.querySelectorAll('.mobile-gr-footer-footer button, .game-buttons-container-component button').forEach(button => {
+    button.addEventListener("click", () => document.body.dataset.lastControl = button.getAttribute("aria-label") ?? "");
+  });
+  document.querySelector("wc-simple-move-list")?.addEventListener("click", event => {
+    const node = (event.target as Element).closest(".node");
+    if (!node) return;
+    document.querySelectorAll(".node.selected").forEach(e => e.classList.remove("selected"));
+    node.classList.add("selected");
+    document.body.dataset.selectedMove = node.getAttribute("data-node") ?? "";
+  });
+  const board = document.querySelector<HTMLElement>("#board-single");
+  if (board) {
+    const initial = board.getBoundingClientRect();
+    document.body.dataset.nativeBoardSize = `${initial.width},${initial.height}`;
+    for (const kind of ["pointerdown", "pointerup"] as const) board.addEventListener(kind, event => {
+      const rect = board.getBoundingClientRect();
+      document.body.dataset[kind] = `${Math.floor((event.clientX - rect.left) / rect.width * 8)},${Math.floor((event.clientY - rect.top) / rect.height * 8)}`;
+    });
+  }
+  document.addEventListener("keydown", event => {
+    if (event.key === "m") {
+      const rows = document.querySelector("wc-simple-move-list > div");
+      const row = rows?.lastElementChild?.cloneNode(true) as HTMLElement | undefined;
+      if (row && rows) {
+        const n = Number(row.dataset.wholeMoveNumber) + 1;
+        row.dataset.wholeMoveNumber = String(n);
+        row.querySelectorAll(".selected").forEach(node => node.classList.remove("selected"));
+        row.firstChild!.textContent = `${n}. `;
+        row.querySelector(".white-move")!.setAttribute("data-node", `0-${2*n-2}`);
+        row.querySelector(".black-move")!.setAttribute("data-node", `0-${2*n-1}`);
+        rows.append(row);
+      }
+    }
+    if (event.key === "e") document.querySelector("#board-layout-sidebar")?.insertAdjacentHTML("beforeend", '<div class="game-result">1-0</div>');
+    if (event.key === "d") settings.enabled = !settings.enabled;
+    if (event.key === "r") route.pathname = route.pathname.includes("review") ? "/game/123456" : "/analysis/game/live/123456/review";
+    if (event.key === "b") document.querySelector('[aria-label="Best"]')?.toggleAttribute("hidden");
+    if (event.key === "a") audio?.querySelector("svg")?.setAttribute("data-glyph", "media-audio-speaker");
+    apply();
+  });
+  window.addEventListener("resize", apply);
+  apply();
 }

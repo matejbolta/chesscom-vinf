@@ -1695,3 +1695,21 @@ reduced to functional controls only.
   than baseline-dependent font glyphs. Clock pills are invisible with their numbers,
   while both tap areas remain active; reveal/low-time lock shows both pills again.
 - Local 2.3.3 builds only. New browser visual checks blocked by the locked Mac.
+
+
+## 81. Version 2.4.0 Product Amendments
+
+- Below 600 CSS pixels, normal active games (including ordinary OLED) hide the
+  top mobile toolbar and outer game tabs, add responsive blank headroom, compact
+  native clocks, and visually show audited complete move rows newest-first.
+  Board dimensions/input, inner tabs and all native game controls remain intact.
+- Phone Game Review mutes through the native coach control before hiding it and
+  enlarges the persistent dock to 80px plus safe area with 64px-high targets.
+  Existing graph, commentary and navigation are unchanged. Audio stays muted
+  when VINF is disabled; presentation changes otherwise restore natively.
+- Extreme OLED stays separate and never enters Review. Tablet/desktop and the
+  homepage retain existing behavior. Unsupported move/audio structures fail open.
+- No back-gesture interception: browser APIs cannot reliably deliver the requested
+  native confirmation without fragile history manipulation. No automatic resign.
+- Local desktop/Android builds and commit only; no Store or GitHub publication.
+  DOM audit records fixture coverage and outstanding Firefox Android checks.

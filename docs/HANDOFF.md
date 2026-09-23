@@ -2,8 +2,8 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-09-20.
-Current source version: 2.3.3.
+Last updated: 2026-09-23.
+Current source version: 2.4.0.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.3.3. This handoff is the shortest
+chronological amendments through version 2.4.0. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,34 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Phone gameplay and Review refinements (2.4.0)
+
+`PhoneExperienceController` adds responsive (<600px) normal gameplay treatment,
+including ordinary OLED: hide the mobile toolbar/outer tabs, add 240–380px of
+scrollable headroom, compact native clocks, and visually order audited complete
+move rows newest-first. No board geometry/input or native action handlers change.
+Its mutation observer covers live rows and coach-state changes; runtime polling
+also reconciles route/result state. Native result evidence latches the game
+presentation off until route change. Extreme OLED uses its existing separate
+presentation and stays disabled throughout Game Review.
+
+Phone Review keeps its existing graph/coach/navigation layout. The native audio
+control is used to mute, then hidden only after the muted glyph is observed.
+Unknown/unresponsive controls stay visible. Disabling restores the button but
+retains the requested native mute preference (never auto-unmute). The fixed dock
+is 80px plus safe area, with 64px-high buttons and a removable clearance spacer.
+Full selector evidence, renderer fallback, API research and verification limits
+are in `DOM_AUDIT.md` under the 2.4.0 audit. No Android back interception is shipped:
+web navigation APIs cannot reliably substitute the native resign dialog without
+history tricks. Keep native resign available and never trigger it from gestures.
+
+170 passing tests (four new focused scenarios), type checking, desktop/Android builds and
+sanitized IAB phone checks cover the changes. Physical Firefox Android remains
+unverified. `/phone-game` fixture has M/E/D/R keys for append/end/disable/route;
+`/game-review-mobile?audio-on=1` verifies native-shaped muting, B conditional Best,
+A re-enabled audio, D disable. Fixtures never contact Chess.com or play a game.
+Store-prepared package remains 2.2.2; no push, Store build, listing or asset changes.
 
 ## Extreme OLED mode (2.3.3)
 
@@ -442,7 +470,8 @@ The explicit Quick Play Reset action continues to use the per-count map above.
    `/home/` route. Run the phone review enhancement only on exact HTTPS
    `/analysis/game/live/<game-id>/review` routes.
 
-2. Leave the main Chess.com navigation intact.
+2. Leave the main Chess.com navigation intact except normal active-game phone
+   toolbar hiding (2.4.0) and the opt-in Extreme OLED live-game presentation.
 
 3. Render exactly the selected 0, 1, 2, 3, 4, 6, or 8 Quick Play controls.
    Repeated time controls are valid. Zero renders no Quick Play module.

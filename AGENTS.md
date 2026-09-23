@@ -45,8 +45,9 @@ directory.
 - Run homepage transformations only on the signed-in Chess.com homepage. Run
   the phone Game Review enhancement only on exact signed-in live-game review
   routes while the move-by-move view is present.
-- Keep Chess.com's main navigation except inside explicitly enabled Extreme OLED
-  live games; hide the native Game Review homepage card.
+- Keep Chess.com's main navigation except the active-game phone toolbar and
+  explicitly enabled Extreme OLED live games; hide the native Game Review
+  homepage card. Normal phone gameplay refinements never apply to Game Review.
 - Extreme OLED is a separate opt-in live-game setting, never active in Game Review.
   Leave homepage appearance
   unchanged, preserve native board input, and never simulate clocks or game state.

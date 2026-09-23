@@ -214,8 +214,8 @@ const mimeTypes = {
 const server = createServer(async (request, response) => {
   const pathname = decodeURIComponent(new URL(request.url ?? "/", "http://localhost").pathname);
 
-  if (pathname === "/extreme-oled") {
-    const html = await readFile(new URL("../fixtures/extreme-oled.html", import.meta.url), "utf8");
+  if (pathname === "/phone-game" || pathname === "/extreme-oled") {
+    const html = await readFile(new URL(pathname === "/phone-game" ? "../fixtures/phone-game.html" : "../fixtures/extreme-oled.html", import.meta.url), "utf8");
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(html.replace("</head>", '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>').replace("</body>", '<script src="/chesscom-vinf-visual-harness.js"></script></body>'));
     return;

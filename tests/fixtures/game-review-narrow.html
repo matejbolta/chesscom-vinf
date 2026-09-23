@@ -106,10 +106,18 @@
         .board-layout-chessboard { height: 52.8rem; width: 52.8rem; }
         .board-layout-sidebar { margin: 0; width: 46rem; }
       }
+      button { background:#45433f;color:#eee;border:0;border-radius:6px;cursor:pointer; }
+      button svg { width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2; }
+      .mobile-gr-footer-footer { align-items:center;background:#262522;bottom:0;display:flex;gap:12px;padding:4px 12px calc(4px + env(safe-area-inset-bottom));position:fixed;left:0;width:100%;z-index:15; }
+      .mobile-gr-footer-group-start,.mobile-gr-footer-group-end { align-items:center;display:flex;flex:1 1 0;gap:4px;min-width:0; }
+      .mobile-gr-footer-group-end { justify-content:flex-end; }
+      .mobile-gr-footer-footer button { width:40px;height:40px;font-size:24px; }
+      .fixture-coach { padding:12px;text-align:center; }
     </style>
   </head>
   <body class="board-layout with-players with-controls">
     <nav class="fixture-nav">♟ Chess.com</nav>
+    <div class="fixture-coach">Coach: Review this position.</div>
     <main id="board-layout-main" class="board-layout-main">
       <div id="board-layout-player-top" class="board-layout-player board-layout-top">
         <strong>Player Two</strong><span class="fixture-clock">8:54</span>
@@ -124,7 +132,7 @@
       <div class="sidebar-component">
         <div class="sidebar-view-component">
           <div class="cc-sidebar-header-component sidebar-header-header">
-            <span aria-label="Back">←</span><span>♡</span><span>⭐ Game Review</span><span>🔇</span>
+            <span aria-label="Back">←</span><span>♡</span><span>⭐ Game Review</span><button aria-label="Toggle Coach Audio"><svg data-glyph="media-audio-speaker-mute" viewBox="0 0 24 24"><path d="M4 9h4l5-5v16l-5-5H4z" fill="currentColor"/></svg></button>
           </div>
           <div class="sidebar-tab-content-component sidebar-view-content">
             <div class="move-by-move-container">
@@ -153,7 +161,11 @@
               </div>
             </div>
           </div>
-          <div class="game-controls-view-component"><span>💡</span><span>★</span><span>Next →</span><span>‹</span><span>›</span></div>
+          <div class="game-controls-view-component"><div class="mobile-gr-footer-footer">
+<div class="mobile-gr-footer-group-start"><button aria-label="Explain"><span>♧</span></button><button aria-label="Best"><span>★</span></button></div>
+<button class="mobile-gr-footer-primary" aria-label="Next"><span>▶</span></button>
+<div class="mobile-gr-footer-group-end"><button aria-label="Previous Move"><span><svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg></span></button><button aria-label="Next Move"><span><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span></button></div>
+</div></div>
         </div>
       </div>
     </aside>

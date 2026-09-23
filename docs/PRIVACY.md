@@ -85,3 +85,12 @@ is discarded when normalizing settings and omitted from subsequent saves.
 Displayed clock text and per-color maximum seconds are read into transient memory
 for rendering bars, then discarded on cleanup. They are neither stored nor sent.
 No new permissions or network calls are introduced.
+
+
+### Phone presentation (2.4.0)
+
+Phone layout and move ordering use native DOM state without storing move history
+or adding network requests. Coach muting uses Chess.com's existing audio toggle;
+Chess.com owns any persistence of that preference. VINF retains the requested
+mute state and never automatically re-enables audio. No back-gesture history
+entries, resign automation, new permissions, or audio interception are added.

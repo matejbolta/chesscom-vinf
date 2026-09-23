@@ -652,3 +652,80 @@ chevrons centered with CSS grid. Clock pills use the existing paired `aria-press
 state to hide borders/backgrounds while numbers are hidden. Targets remain
 clickable, and keyboard focus still has an accessible outline. New browser QA
 remains blocked by the locked Mac; no screenshot was available for this revision.
+
+
+## Phone play and Review refinement audit — 2.4.0 (2026-09-23)
+
+Evidence: private 2026-09-18 game-result HTML and its `play.css`, shared clock CSS,
+`chessboard-layout` CSS, and narrow in-move review HTML/`analysis.js`/mobile footer
+CSS. The game capture is a finished game: active-game behavior is checked with
+synthetic state, not a new real game. Imported renderer/audio chunks were not
+saved; no claim of inspecting their internals or live Android execution.
+
+- Phone gate remains below 600 CSS pixels (responsive, not user-agent sniffing).
+  Exact signed-in game routes require the primary board and two readable native
+  timers. Recognized native game-result evidence latches presentation off for
+  that route; zero time alone does not. Extreme OLED bypasses this presentation.
+- Hide only `#mobile-toolbar` and
+  `#board-layout-sidebar .sidebar-component > .tabs-component`. The latter is
+  the outer Play/New Game/Games/Players selector, hidden only while its first
+  native Play tab is active (otherwise it remains available); `.underlined-tabs-component`
+  (Moves/Chat/Info) and its active content remain intact.
+- `#board-layout-main` is a native column flex container. Its normal-flow empty
+  pseudo-element uses clamp(240px, 38svh, 380px). No board CSS variable, size,
+  transform, coordinates, pointer listener, or control stickiness is overridden.
+- `.board-layout-player .clock-component` retains native content and clock state.
+  28px height/18px font/80px minimum width replace 40px/24px/120px; width may grow
+  for longer times. Player content can shrink, with an 8px gap to the clock.
+  The native player width is `--layoutPlayerWidth`, independent of name width.
+- The captured `#live-game-tab-scroll-container` contains
+  `wc-simple-move-list[board-id="board-single"] > .timestamps-with-base-time`.
+  Its direct `.main-line-row.move-list-row` children have sequential
+  `data-whole-move-number` from 1 and `.node.white-move.main-line-ply` plus the
+  optional black ply. Native selection uses `.node[data-node]` children.
+  CSS flex order is the negative whole-move number, never a DOM reversal. The
+  opening header stays outside/above the scroll container. Mutation observation
+  handles appended/replaced rows and partial plies. No forced scrolling or
+  scrollTop remapping is added; native scroll-into-view can still use real bounds.
+  Virtualized slices, spacer children, variations and changed structures are
+  deliberately left native. Keyboard/screen-reader DOM traversal remains
+  chronological. Actual Chess.com renderer autoscroll remains a live-device
+  integration check; fixtures establish DOM identity and visual order only.
+- Review header audio selector: `.sidebar-header-header button[aria-label="Toggle
+  Coach Audio"]`. Saved `analysis.js` binds this to `isCoachAudioEnabled` and its
+  native toggle handler, with alternate speaker icons. The observed muted icon
+  is `svg[data-glyph="media-audio-speaker-mute"]`. A different speaker glyph on
+  this exact enabled button requests one native toggle; the button is hidden
+  only on observed muted state. Unknown/disabled/unsuccessful states remain
+  visible. Mutations re-check state and replacement buttons without blind loops.
+  English label is the audited contract. Native audio-off preference is retained
+  on cleanup; VINF never automatically unmutes or intercepts unrelated audio.
+- Review dock is `.game-controls-view-component > .mobile-gr-footer-footer`,
+  with group-start (Explain, conditional Best), primary Next, group-end Previous
+  Move/Next Move. Native 48px baseline becomes 80px + safe-area-inset-bottom.
+  64px-high buttons are 44–56px wide with 30px centered icons. A single removable
+  96px + safe-area spacer ends `.sidebar-view-component` so content stays reachable.
+  Native hidden/disabled controls retain their state. Existing graph relocation
+  and commentary/top navigation are not changed.
+
+Back gesture decision: no gesture, history, unload or resign handler added.
+[MDN popstate](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event)
+describes notification after the active history entry changes;
+[MDN beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event)
+permits only a generic browser warning and is unreliable on mobile.
+[Navigation API](https://developer.mozilla.org/en-US/docs/Web/API/Navigation_API)
+traversal cancellation/interception constraints do not supply a universal Android
+edge-back hook, particularly across documents/origins. A userscript cannot safely
+promise either-edge native-dialog interception; fake history/traps are rejected.
+This is a documented API limitation/inference, not an on-device gesture test.
+
+Verification: four focused automated scenarios cover dynamic rows/node identity,
+unsupported structure fallback, phone/Extreme/review/home/disable guards, game-end
+latching, native mute state/failed toggle/no loop, and dock cleanup. IAB Chromium
+sanitized fixtures at 390×844 and 320×740 exercise geometry, scroll, selection,
+new move insertion, pointer delivery, muted state, conditional Best, dock controls
+and content clearance; 600px verifies the responsive boundary. No real game was
+started, played, resigned or otherwise altered. Firefox Android toolbar collapse,
+actual native move autoscroll/dragging/audio, and physical bottom safe-area handling
+remain unverified. Fixtures emulate native handlers; they do not execute the site
+engine. Fixture console checks showed no errors/warnings.

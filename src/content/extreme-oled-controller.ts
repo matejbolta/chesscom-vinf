@@ -5,7 +5,7 @@ const ACTIVE = "data-chesscom-vinf-extreme-oled";
 const BOARD = "data-chesscom-vinf-extreme-board";
 const OWNER = "chesscom-vinf-extreme-controls";
 
-function nativeGameHasEnded(document: Document): boolean {
+export function nativeGameHasEnded(document: Document): boolean {
   // Native result evidence only: zero on a clock is not proof of game over.
   const candidates = document.querySelectorAll<HTMLElement>(
     ".game-over-modal-shell-container, #board-layout-player-top .player-game-over-component," +

@@ -327,3 +327,26 @@ pieces are flat gray again, without dark outlines. Game-end release was confirme
 by the user; the subsequent unwanted Game Review reactivation is now disabled.
 Native board sizing/input is unchanged. Browser QA is still blocked by the locked
 Mac; recheck control appearance and the review transition on the phone.
+
+
+### Phone play and Review (2.4.0)
+
+Normal games below 600 CSS pixels now have blank scrollable headroom above the
+opponent, compact native clocks, hidden top/outer navigation, and newest-first
+complete move rows. Scroll on the blank area to position the native board;
+VINF never resizes it. Inner Moves/Chat/Info and native game controls remain.
+Extreme OLED retains its own presentation; it stays off throughout Review.
+
+Review mutes via the native coach toggle before hiding it, retains the mute
+preference, and enlarges the bottom dock with safe-area/content clearance.
+Unknown audio states keep the native button visible. Disable restores presentation.
+
+Android edge-back remains native: a userscript cannot reliably replace browser
+navigation with Chess.com's resign-confirmation dialog without fragile history
+tricks. Use the native resign control when intended; VINF never auto-resigns.
+
+Validated with automated checks and sanitized IAB Chromium phone fixtures, not
+physical Firefox Android. On-device verification remains for browser-toolbar
+collapse, live move-list autoscroll and board interaction, coach audio, bottom
+safe-area behavior, and phone/tablet orientation changes. No real game was used
+for these tests. See `DOM_AUDIT.md` for evidence and exact applicability limits.

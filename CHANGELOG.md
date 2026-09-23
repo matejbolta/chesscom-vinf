@@ -9,6 +9,32 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-09-23
+
+### Added
+
+- Phone normal/OLED gameplay: hide the top toolbar and outer game tabs, add
+  responsive scrollable headroom, and compact native clocks. Native board size,
+  coordinates, input, move navigation, and game actions are untouched.
+- Show complete native move rows newest-first visually, preserving chronological
+  DOM nodes, white/black ordering and handlers. Unknown list shapes stay native.
+- Phone Game Review: mute through the native coach control before hiding it;
+  enlarge the bottom dock to 80px plus the safe area, with centered 44–56px by
+  64px button targets and content clearance. Preserve all native actions.
+- Keep normal gameplay changes separate from Extreme OLED and all Review states.
+  Restore presentation on disable, route departure and widths at/above 600px.
+
+- Type checking, 170 tests, and desktop/Android builds pass.
+
+### Limitations
+
+- No Android back-gesture interception: browser traversal/unload APIs cannot
+  reliably substitute Chess.com's confirmation without fragile history tricks.
+  Native resign controls remain available; VINF never resigns automatically.
+- Sanitized fixture/browser checks are not physical Firefox Android verification.
+  Unknown coach states stay visible; the requested native mute preference remains
+  off after disabling VINF. No network/audio-engine hooks or Store work added.
+
 ## [2.3.3] - 2026-09-20
 
 ### Fixed

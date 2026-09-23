@@ -787,3 +787,96 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
 .chesscom-vinf-extreme-turn.top { top: -14px; }
 .chesscom-vinf-extreme-turn.bottom { bottom: -14px; }
 .chesscom-vinf-extreme-controls [hidden] { display: none !important; }
+
+/* Normal phone play: no board sizing, transforms or input overlays. */
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-game] #mobile-toolbar,
+  html[data-chesscom-vinf-phone-game] #board-layout-sidebar .sidebar-component > .tabs-component:has(> .tabs-tab:first-child.tabs-active) {
+    display: none !important;
+  }
+  html[data-chesscom-vinf-phone-game] #board-layout-main::before {
+    content: "";
+    display: block;
+    height: clamp(240px, 38svh, 380px);
+    flex: 0 0 clamp(240px, 38svh, 380px);
+    pointer-events: none;
+  }
+  html[data-chesscom-vinf-phone-game] .board-layout-player .player-component {
+    gap: 8px;
+  }
+  html[data-chesscom-vinf-phone-game] .board-layout-player .player-playerContent {
+    min-width: 0;
+  }
+  html[data-chesscom-vinf-phone-game] .board-layout-player .clock-component:not(.clock-theatre) {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 80px;
+    max-width: none;
+    height: 28px;
+    font-size: 18px;
+    line-height: 28px;
+    padding-inline: 24px 6px;
+  }
+  html[data-chesscom-vinf-phone-game] .board-layout-player .clock-icon-icon {
+    width: 24px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  html[data-chesscom-vinf-phone-game] .board-layout-player .clock-icon-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  html[data-chesscom-vinf-phone-game] [data-chesscom-vinf-newest-first] {
+    display: flex;
+    flex-direction: column;
+  }
+  html[data-chesscom-vinf-phone-game] [data-chesscom-vinf-newest-first] > .main-line-row {
+    order: var(--chesscom-vinf-move-order);
+    flex-shrink: 0;
+  }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-coach-muted] {
+    display: none !important;
+  }
+  html[data-chesscom-vinf-phone-review] .game-controls-view-component > .mobile-gr-footer-footer {
+    box-sizing: border-box;
+    height: calc(80px + env(safe-area-inset-bottom, 0px));
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+    gap: 8px;
+    align-items: center;
+  }
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button {
+    box-sizing: border-box;
+    width: clamp(44px, 13vw, 56px);
+    min-width: 44px;
+    height: 64px;
+    min-height: 64px;
+    padding: 0;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    line-height: 1;
+  }
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button svg {
+    display: block;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+  }
+  html[data-chesscom-vinf-phone-review] .chesscom-vinf-review-dock-clearance {
+    height: calc(96px + env(safe-area-inset-bottom, 0px));
+    flex: 0 0 calc(96px + env(safe-area-inset-bottom, 0px));
+    pointer-events: none;
+  }
+}

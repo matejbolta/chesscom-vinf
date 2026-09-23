@@ -1,3 +1,4 @@
+import { PhoneExperienceController } from "./phone-experience-controller";
 import { ExtremeOledController } from "./extreme-oled-controller";
 import {
   HOME_PATHS,
@@ -39,6 +40,7 @@ export function startVinfRuntime(
   const controller = new LayoutController(new NativeLaunchAdapter());
   const extremeOledController = new ExtremeOledController();
   const gameReviewController = new GameReviewLayoutController();
+  const phoneExperienceController = new PhoneExperienceController();
   const phoneGameReviewMedia = window.matchMedia?.(
     PHONE_GAME_REVIEW_MEDIA_QUERY
   );
@@ -209,6 +211,8 @@ export function startVinfRuntime(
       phoneGameReviewMedia?.matches ?? window.innerWidth <= 599
     );
     extremeOledController.reconcile(document, window.location, settings);
+    phoneExperienceController.reconcile(document, window.location, settings,
+      phoneGameReviewMedia?.matches ?? window.innerWidth <= 599);
     hasAppliedLayout = homepageApplied || gameReviewApplied;
     // An incomplete target document asks the controller to clean up. Re-arm
     // setting-specific pre-hide markers immediately so late native cards cannot
@@ -357,7 +361,11 @@ export function startVinfRuntime(
   }
 
   function checkRoute(): void {
-    if (settings) extremeOledController.reconcile(document, window.location, settings);
+    if (settings) {
+      extremeOledController.reconcile(document, window.location, settings);
+      phoneExperienceController.reconcile(document, window.location, settings,
+        phoneGameReviewMedia?.matches ?? window.innerWidth <= 599);
+    }
     const rootWasDetached = Boolean(observedRoot && !observedRoot.isConnected);
     const activeGameHref = isTargetRoute()
       ? (findGameContinuationLink(document)?.href ?? null)
