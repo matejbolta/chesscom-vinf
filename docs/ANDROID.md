@@ -350,3 +350,9 @@ physical Firefox Android. On-device verification remains for browser-toolbar
 collapse, live move-list autoscroll and board interaction, coach audio, bottom
 safe-area behavior, and phone/tablet orientation changes. No real game was used
 for these tests. See `DOM_AUDIT.md` for evidence and exact applicability limits.
+
+
+2.4.1 fixes the user-reported Review heading offset and invisible OLED evaluation
+bar. The hidden muted coach button retains its layout slot; the native bar fill
+gets a local stacking context. Overview spacing and the dock stay unchanged.
+Browser fixture verification is separate from physical Firefox Android checks.

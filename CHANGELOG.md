@@ -9,6 +9,16 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-09-23
+
+### Fixed
+
+- Restore phone Game Review header centering in overview and move review by
+  retaining the invisible, noninteractive muted coach button's native layout slot.
+- Keep the native evaluation-bar fill above OLED's opaque background using a
+  local stacking context. Preserve its colors, score, animation and geometry.
+- Keep overview spacing and the enlarged bottom dock unchanged. No gameplay change.
+
 ## [2.4.0] - 2026-09-23
 
 ### Added

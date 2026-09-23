@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-23.
-Current source version: 2.4.0.
+Current source version: 2.4.1.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.4.0. This handoff is the shortest
+chronological amendments through version 2.4.1. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,21 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Phone Review corrections (2.4.1)
+
+User phone screenshots confirmed the 2.4.0 dock looked good but exposed a
+right-shifted title in both overview and move review, plus an invisible evaluation
+bar. Retain the muted coach control's native layout slot with visibility:hidden
+and pointer-events:none instead of display:none. Native header child-count rules
+then center the title without moving its other controls. The evaluation fill uses
+z-index:-1; isolate `.evaluation-bar-bar` only in phone OLED Review to prevent the
+opaque ancestor background covering it. No bar sizing, colors or native scores
+change. Overview gaps and dock are intentionally unchanged. Real gameplay testing
+is pending the user's later session. The fixture now models native header slots
+and negative-z fill; `?overview=1` covers the initial report header. IAB 390×844
+checks confirmed both title groups centered and the fill visible; 170 tests,
+type checking and both builds pass. Physical Android verification remains pending.
 
 ## Phone gameplay and Review refinements (2.4.0)
 

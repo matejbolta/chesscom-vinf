@@ -1713,3 +1713,11 @@ reduced to functional controls only.
   native confirmation without fragile history manipulation. No automatic resign.
 - Local desktop/Android builds and commit only; no Store or GitHub publication.
   DOM audit records fixture coverage and outstanding Firefox Android checks.
+
+
+## 82. Version 2.4.1 Product Amendments
+
+Phone Review retains the invisible muted audio control's layout space to keep
+its title centered in both states. OLED evaluation bars use a local stacking
+context so native fills remain visible. Overview gaps, dock and board geometry
+remain unchanged; no gameplay changes or publication.

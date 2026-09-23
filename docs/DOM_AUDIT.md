@@ -729,3 +729,28 @@ started, played, resigned or otherwise altered. Firefox Android toolbar collapse
 actual native move autoscroll/dragging/audio, and physical bottom safe-area handling
 remain unverified. Fixtures emulate native handlers; they do not execute the site
 engine. Fixture console checks showed no errors/warnings.
+
+
+## Phone Review header / evaluation layering — 2.4.1
+
+The 2026-09-18 native header is flex-based with start-button group, center title,
+secondary end audio button and end analysis button. Child-count selectors set
+center min-width and auto margins. `display:none` on audio leaves those selectors
+matching but removes its width, causing the reported rightward shift. Retain that
+slot using visibility:hidden plus pointer-events:none after confirmed mute; the
+control is neither visible, focusable nor a touch target. This works with one or
+two start buttons (overview versus move review) without absolute-positioned titles.
+
+Native `.evaluation-bar-fill` uses position:relative and z-index:-1, while white /
+black fills retain their own z-index and transform animation. The opaque OLED
+`#board-layout-main` background covers the negative layer without a local stacking
+context. Scope isolation:isolate to `.evaluation-bar-bar` under phone Review +
+OLED markers. This changes stacking only; the score and colors stay native.
+Sanitized browser baseline reproduced both failures. Updated fixture includes
+native-shaped header slots and the negative-z fill, including overview variant.
+
+Verification: IAB Chromium fixture at 390×844 reproduced a 36px title-group offset
+and hidden evaluation fill before the fix. Both overview and move-review title
+groups measure 0px center offset afterward; white/black fill is visibly restored.
+No console warnings/errors. Type checking, 170 existing tests and both builds pass.
+Physical Firefox Android confirmation is still pending; no real game was touched.

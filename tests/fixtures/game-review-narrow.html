@@ -113,6 +113,19 @@
       .mobile-gr-footer-group-end { justify-content:flex-end; }
       .mobile-gr-footer-footer button { width:40px;height:40px;font-size:24px; }
       .fixture-coach { padding:12px;text-align:center; }
+      .board-layout-chessboard { position:relative; width:min(34.8rem, calc(100vw - 4rem)); height:min(34.8rem, calc(100vw - 4rem)); }
+      @media (min-width:960px) { .board-layout-chessboard { width:52.8rem; height:52.8rem; } }
+      .evaluation-bar-bar { position:absolute;left:-18px;top:0;width:14px;height:100%; }
+      .evaluation-bar-fill { position:relative;height:100%;width:100%;overflow:hidden;z-index:-1; }
+      .evaluation-bar-color { position:absolute;bottom:0;height:100%;width:100%; }
+      .evaluation-bar-black { background:#403d39;z-index:1; }
+      .evaluation-bar-white { background:#fff;z-index:2; }
+      .evaluation-bar-scoreAbbreviated { position:absolute;bottom:4px;color:#403d39;z-index:2;font-size:10px; }
+      .sidebar-header-header { --cc-header-button-width:36px;display:flex;justify-content:normal; }
+      .cc-sidebar-header-header-start { display:flex; }
+      .sidebar-header-header button { display:flex;align-items:center;justify-content:center;flex-shrink:0;width:var(--cc-header-button-width);padding:0;background:transparent; }
+      .cc-sidebar-header-header-center { display:flex;align-items:center;justify-content:center;gap:8px;min-width:calc(100% - var(--cc-header-button-width)*4);margin-left:auto; }
+      .cc-sidebar-header-title { font-size:17px;white-space:nowrap; }
     </style>
   </head>
   <body class="board-layout with-players with-controls">
@@ -122,7 +135,7 @@
       <div id="board-layout-player-top" class="board-layout-player board-layout-top">
         <strong>Player Two</strong><span class="fixture-clock">8:54</span>
       </div>
-      <div id="board-layout-chessboard" class="board-layout-chessboard board-board" aria-label="Chess board"></div>
+      <div id="board-layout-chessboard" class="board-layout-chessboard board-board" aria-label="Chess board"><div class="evaluation-bar-bar"><span class="evaluation-bar-scoreAbbreviated">3.1</span><div class="evaluation-bar-fill"><div class="evaluation-bar-color evaluation-bar-black"></div><div class="evaluation-bar-color evaluation-bar-white" style="transform:translateY(25%)"></div></div></div></div>
       <div id="board-layout-player-bottom" class="board-layout-player board-layout-bottom">
         <strong>Player One</strong><span class="fixture-clock">8:43</span>
       </div>
@@ -132,7 +145,10 @@
       <div class="sidebar-component">
         <div class="sidebar-view-component">
           <div class="cc-sidebar-header-component sidebar-header-header">
-            <span aria-label="Back">←</span><span>♡</span><span>⭐ Game Review</span><button aria-label="Toggle Coach Audio"><svg data-glyph="media-audio-speaker-mute" viewBox="0 0 24 24"><path d="M4 9h4l5-5v16l-5-5H4z" fill="currentColor"/></svg></button>
+            <div class="cc-sidebar-header-header-start"><button aria-label="Back" class="cc-sidebar-header-icon-start">←</button><button aria-label="Settings" class="cc-sidebar-header-icon-start-secondary">⚙</button></div>
+            <div class="cc-sidebar-header-header-center"><span class="cc-sidebar-header-feature-icon">★</span><h1 class="cc-sidebar-header-title">Game Review</h1></div>
+            <button aria-label="Toggle Coach Audio" class="cc-sidebar-header-icon-end-secondary"><svg data-glyph="media-audio-speaker-mute" viewBox="0 0 24 24"><path d="M4 9h4l5-5v16l-5-5H4z" fill="currentColor"/></svg></button>
+            <button aria-label="Go to Analysis" class="cc-sidebar-header-icon-end">⌕</button>
           </div>
           <div class="sidebar-tab-content-component sidebar-view-content">
             <div class="move-by-move-container">

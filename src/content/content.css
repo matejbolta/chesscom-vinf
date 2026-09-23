@@ -839,7 +839,13 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
     flex-shrink: 0;
   }
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-coach-muted] {
-    display: none !important;
+    /* Preserve the native header's balancing slot, but remove all interaction. */
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  html[data-chesscom-vinf-phone-review][data-chesscom-vinf-oled="true"] .evaluation-bar-bar {
+    /* Native fill has z-index:-1; contain it above the opaque OLED ancestor. */
+    isolation: isolate;
   }
   html[data-chesscom-vinf-phone-review] .game-controls-view-component > .mobile-gr-footer-footer {
     box-sizing: border-box;

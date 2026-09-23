@@ -195,6 +195,10 @@ if (searchParams.has("duplicate-preview")) {
   };
 }
 
+if (window.location.pathname === "/game-review-mobile" && searchParams.has("overview")) {
+  document.querySelector('[aria-label="Back"]')?.remove();
+  document.querySelector(".move-by-move-component")?.classList.remove("move-by-move-component");
+}
 if (window.location.pathname === "/game-review-mobile") {
   gameReviewController.reconcile(
     document,
