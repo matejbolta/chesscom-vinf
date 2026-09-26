@@ -370,3 +370,19 @@ Tablet normal clocks and tablet Review remain unchanged.
 Touch annotations and moving Draw/Resign are pending safe native integration
 inspection. Initial board positioning remains pending screenshots. No back guard
 is included. Fixture checks do not establish real Firefox Android behavior.
+
+
+### 2.6.0 touch drawing and phone actions
+
+Tap the pencil beside your clock to draw: drag between squares for an arrow, tap a
+square for a red highlight, repeat to remove. While selected, board touches draw
+instead of moving pieces. Tap the pencil again to clear drawings and resume play.
+A board position/flip change also clears marks. This works on phone and tablet;
+drawings are local VINF overlays, not native engine annotations.
+
+In Extreme OLED the inactive pencil is invisible: its 44px tap area is immediately
+to the right of the bottom clock area. Tap there to enable; the pencil becomes
+visible while drawing. In normal/ordinary OLED it is always visible.
+Normal phone Draw/Resign now sit below your row and above Moves/Chat/Info, using
+original native controls and confirmations. Board headroom remains unchanged.
+Automated/browser-fixture checks passed; actual Firefox Android remains untested.

@@ -809,3 +809,29 @@ with the center unchanged; hiding either left action left its position blank.
 desktop shared clocks/five-action dock. Native-shaped low-time update forced both
 numbers visible; automated keyboard test verifies T cannot hide them. No console
 warnings/errors. Actual Firefox Android and live Chess.com behavior remain untested.
+
+
+## 2.6.0 Android local annotations and native action placement
+
+Saved first-party `shared.s4o5uy_kpO.css` from the private ended-game capture defines
+`.draw-button-component` and `.resign-button-component`, their disabled/highlight/
+wide states, labels/icons and hints. Active roots are absent from the ended-game
+HTML; current live handlers/confirmation ownership cannot be established locally.
+The new controller selects only those roots within `#board-layout-sidebar`, excludes
+dialog/draw-offer ancestry, and preserves the nodes with comment-position anchors.
+Destination: before `.sidebar-content > .underlined-tabs-component`, normal Android
+phone games only. Missing selectors restore rather than inventing controls. The
+sanitized phone fixture now names these component roots. Its fake confirmation
+handler tests preservation and explicit activation, not live Chess.com behavior.
+
+Native annotation API remains undocumented in saved assets. Instead, a separate
+owned SVG surface overlays `#board-layout-chessboard wc-chess-board#board-single`
+without changing its dimensions, DOM or event handlers. No guessed event adapter is
+used. Shape positions derive from the current 8×8 native rectangle; piece/class/style
+mutations clear marks, avoiding stale annotations after moves or board flips.
+Only the selected annotation surface consumes pointer/touch events; off uses
+pointer-events:none. Toggle tracks the native bottom clock (or Extreme bottom clock)
+with a 44px target. Markers and padding restore on route, disable or game completion.
+Browser fixture arrow + square gestures reached zero native board handlers; turning
+off restored native down/up delivery. 390px board stayed 390px; tablet stayed 528px.
+Actual Android touch delivery and current live action markup remain unverified.

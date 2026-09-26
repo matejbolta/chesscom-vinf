@@ -9,6 +9,30 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-09-26
+
+### Added
+
+- Android phone/tablet touch drawing: drag arrows, tap red squares, repeat to
+  remove. A clock-adjacent pencil switches between drawing and native board input.
+  Normal/OLED keeps the switch visible; Extreme OLED hides its inactive appearance
+  while its fixed tap area remains available beside the bottom clock.
+- Local SVG annotations consume their own gestures without synthetic board events
+  or engine calls. Switching off, changing position/orientation or leaving the game
+  clears drawings; Review and desktop remain unchanged.
+
+### Changed
+
+- Normal Android phone games move the original Draw/Resign components above
+  Moves/Chat/Info. Native handlers and confirmations stay attached; disabling VINF
+  restores original positions. Tablet, Extreme OLED and board headroom stay unchanged.
+
+### Verification limits
+
+- Automated and sanitized browser-fixture checks only; actual Firefox Android and
+  current live native action markup remain unverified. No real game was altered.
+
+
 ## [2.5.0] - 2026-09-26
 
 ### Added

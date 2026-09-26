@@ -1,0 +1,72 @@
+import { readFileSync } from "node:fs";
+import { expect, it, vi } from "vitest";
+import { TouchAnnotationsController } from "../src/content/touch-annotations";
+import { PhoneGameActionsController } from "../src/content/phone-game-actions";
+import { DEFAULT_SETTINGS } from "../src/shared/settings";
+const game = { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" };
+function fixture() {
+  document.documentElement.innerHTML = new DOMParser().parseFromString(readFileSync("tests/fixtures/phone-game.html", "utf8"), "text/html").documentElement.innerHTML;
+  document.documentElement.className = "user-logged-in";
+  document.documentElement.removeAttribute("data-chesscom-vinf-extreme-oled");
+  document.documentElement.setAttribute("data-chesscom-vinf-phone-game", "true");
+  const board = document.querySelector<HTMLElement>("#board-single")!;
+  vi.spyOn(board, "getBoundingClientRect").mockReturnValue({ left: 0, top: 100, width: 400, height: 400, right: 400, bottom: 500 } as DOMRect);
+  return board;
+}
+function pointer(layer: Element, type: string, x: number, y: number) {
+  const event = new MouseEvent(type, { clientX: x, clientY: y, bubbles: true, cancelable: true });
+  Object.defineProperty(event, "pointerId", { value: 1 });
+  layer.dispatchEvent(event);
+}
+it("captures annotation gestures separately, toggles marks, cancels and restores native input on exit", () => {
+  const board = fixture(), controller = new TouchAnnotationsController();
+  const native = vi.fn(); board.addEventListener("pointerdown", native);
+  const bubble = vi.fn(); document.addEventListener("pointerdown", bubble);
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  const button = document.querySelector<HTMLButtonElement>(".chesscom-vinf-annotation-toggle")!;
+  const layer = document.querySelector<SVGSVGElement>(".chesscom-vinf-annotations")!;
+  expect(layer.style.pointerEvents).toBe("none");
+  button.click();
+  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
+  expect(layer.querySelectorAll("rect")).toHaveLength(1);
+  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
+  expect(layer.querySelectorAll("rect")).toHaveLength(0);
+  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointermove", 175, 325); pointer(layer, "pointerup", 175, 325);
+  expect(layer.querySelectorAll("path")).toHaveLength(1);
+  pointer(layer, "pointerdown", 75, 175); pointer(layer, "pointercancel", 75, 175); pointer(layer, "pointerup", 75, 175);
+  expect(layer.querySelectorAll("rect")).toHaveLength(0);
+  expect(native).not.toHaveBeenCalled(); expect(bubble).not.toHaveBeenCalled();
+  document.documentElement.setAttribute("data-chesscom-vinf-extreme-oled", "true");
+  controller.reconcile(document, game, { ...DEFAULT_SETTINGS, extremeOled: true }, true);
+  expect(button.dataset.extreme).toBe("true"); expect(button.getAttribute("aria-pressed")).toBe("true");
+  board.classList.add("flipped"); controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(layer.children).toHaveLength(0);
+  button.click(); expect(layer.style.pointerEvents).toBe("none");
+  pointer(board, "pointerdown", 25, 125); expect(native).toHaveBeenCalledOnce();
+  controller.reconcile(document, { ...game, pathname: "/analysis/game/123456/review" }, DEFAULT_SETTINGS, true);
+  expect(document.querySelector(".chesscom-vinf-annotation-toggle")).toBeNull();
+  controller.reconcile(document, game, DEFAULT_SETTINGS, false);
+  expect(document.querySelector(".chesscom-vinf-annotations")).toBeNull();
+  document.removeEventListener("pointerdown", bubble);
+});
+it("moves only original action roots, leaves confirmations explicit, and restores their exact order", () => {
+  fixture(); const controller = new PhoneGameActionsController();
+  const resign = document.querySelector<HTMLButtonElement>(".resign-button-component")!;
+  const draw = document.querySelector<HTMLButtonElement>(".draw-button-component")!;
+  const original = resign.parentNode!;
+  const before = [...original.childNodes];
+  const confirm = document.createElement("button"); const commit = vi.fn(); confirm.addEventListener("click", commit);
+  const open = vi.fn(() => document.body.append(confirm)); resign.addEventListener("click", open);
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  const row = document.querySelector(".chesscom-vinf-phone-actions")!;
+  expect(row.nextElementSibling?.className).toBe("underlined-tabs-component");
+  expect(row.contains(draw)).toBe(true); expect(row.contains(resign)).toBe(true);
+  expect(open).not.toHaveBeenCalled(); expect(commit).not.toHaveBeenCalled();
+  resign.click(); expect(open).toHaveBeenCalledOnce(); expect(commit).not.toHaveBeenCalled();
+  confirm.click(); expect(commit).toHaveBeenCalledOnce();
+  controller.reconcile(document, game, { ...DEFAULT_SETTINGS, enabled: false }, true);
+  expect([...original.childNodes]).toEqual(before);
+  controller.reconcile(document, game, DEFAULT_SETTINGS, false);
+  expect(document.querySelector(".chesscom-vinf-phone-actions")).toBeNull();
+});

@@ -1,3 +1,5 @@
+import { TouchAnnotationsController } from "./touch-annotations";
+import { PhoneGameActionsController } from "./phone-game-actions";
 import { AndroidGameControlsController, isFirefoxAndroid } from "./android-game-controls";
 import { PhoneExperienceController } from "./phone-experience-controller";
 import { ExtremeOledController } from "./extreme-oled-controller";
@@ -41,6 +43,8 @@ export function startVinfRuntime(
 ): void {
   const android = isFirefoxAndroid(window.navigator);
   const desktop = !/Android|iPhone|iPad/i.test(window.navigator.userAgent);
+  const touchAnnotations = new TouchAnnotationsController();
+  const phoneActions = new PhoneGameActionsController();
   const androidGameControls = new AndroidGameControlsController();
   const controller = new LayoutController(new NativeLaunchAdapter());
   const extremeOledController = new ExtremeOledController();
@@ -220,6 +224,8 @@ export function startVinfRuntime(
     extremeOledController.reconcile(document, window.location, settings,
       desktop || (android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)));
     androidGameControls.reconcile(document, window.location, settings, android);
+    touchAnnotations.reconcile(document, window.location, settings, android);
+    phoneActions.reconcile(document, window.location, settings, android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599));
     hasAppliedLayout = homepageApplied || gameReviewApplied;
     // An incomplete target document asks the controller to clean up. Re-arm
     // setting-specific pre-hide markers immediately so late native cards cannot
@@ -372,6 +378,8 @@ export function startVinfRuntime(
       extremeOledController.reconcile(document, window.location, settings,
         desktop || (android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)));
       androidGameControls.reconcile(document, window.location, settings, android);
+      touchAnnotations.reconcile(document, window.location, settings, android);
+      phoneActions.reconcile(document, window.location, settings, android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599));
       phoneExperienceController.reconcile(document, window.location, settings,
         phoneGameReviewMedia?.matches ?? window.innerWidth <= 599);
     }

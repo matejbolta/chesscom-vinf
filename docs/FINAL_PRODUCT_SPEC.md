@@ -1734,3 +1734,18 @@ in clarification; tablet normal clocks/Review remain unchanged.
 Touch annotation and Draw/Resign relocation await native inspection; initial board
 spacing awaits screenshots. No annotation or back-gesture prototype is included.
 Local version/build/commit only; preserve existing Review heading/evaluation fixes.
+
+
+## 84. Version 2.6.0 Product Amendments
+
+User authorized independent implementation of the two remaining interaction items.
+Android phone/tablet local drawing adds a 44px clock-adjacent pencil, arrows by drag
+and red squares by tap; repeated gestures toggle individual marks. Drawing consumes
+input without moving pieces; off clears drawings and restores native input. Normal
+and ordinary OLED always show the pencil; Extreme hides the inactive appearance but
+retains its tap area and shows the enabled pencil. Native API integration was not
+assumed: rendering is an isolated VINF SVG layer. Game Review remains unchanged.
+Normal Android phone Draw/Resign roots move intact above Moves/Chat/Info with exact
+position restoration. Existing confirmations are neither replaced nor auto-triggered.
+Tablet/desktop action layout and initial board headroom are unchanged. Actual phone
+verification remains outstanding; no live game or publication actions authorized.

@@ -614,6 +614,8 @@ html[data-chesscom-vinf-extreme-oled="true"] body {
 html[data-chesscom-vinf-extreme-oled="true"] body *:not(
   [data-chesscom-vinf-extreme-board], [data-chesscom-vinf-extreme-board] *,
   .chesscom-vinf-extreme-controls, .chesscom-vinf-extreme-controls *,
+  .chesscom-vinf-annotations, .chesscom-vinf-annotations *,
+  .chesscom-vinf-annotation-toggle, .chesscom-vinf-annotation-toggle *,
   .chesscom-vinf-settings-dialog, .chesscom-vinf-settings-dialog *
 ) {
   visibility: hidden !important;
@@ -951,3 +953,24 @@ html [data-chesscom-vinf-four-moves] {
 
 /* Shared desktop/phone numeric clocks: retain native state and reserved layout. */
 html[data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component { visibility: hidden; }
+
+/* Owned input surface never changes native board dimensions or piece handlers. */
+.chesscom-vinf-annotations { position: fixed; z-index: 1000; touch-action: none; user-select: none; }
+.chesscom-vinf-annotations * { pointer-events: none; }
+.chesscom-vinf-annotation-toggle {
+  box-sizing: border-box; position: fixed; z-index: 1001; width: 44px; height: 44px; min-width: 44px;
+  padding: 10px; border: 1px solid #777; border-radius: 50%; background: #302e2b;
+  color: #bbb; place-items: center; touch-action: manipulation; cursor: pointer;
+}
+.chesscom-vinf-annotation-toggle svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.chesscom-vinf-annotation-toggle[aria-pressed="true"] { background: #46552f; color: #fff; border-color: #c6d6a2; }
+.chesscom-vinf-annotation-toggle[data-extreme="true"] { background: #000; color: #777; border-color: #444; }
+.chesscom-vinf-annotation-toggle[data-extreme="true"][aria-pressed="false"] { opacity: 0; }
+.chesscom-vinf-annotation-toggle:focus-visible { opacity: 1 !important; outline: 2px solid #aaa; }
+.chesscom-vinf-phone-actions { display: flex; justify-content: center; align-items: center; gap: 24px; padding: 8px 12px; }
+.chesscom-vinf-phone-actions > div { width: max-content; max-width: 45%; }
+.chesscom-vinf-phone-actions button { min-height: 44px; }
+
+html[data-chesscom-vinf-annotations="normal"] #board-layout-player-bottom .player-playerContent { padding-right: 48px; }
+.chesscom-vinf-annotations[data-extreme="false"] { z-index: 11; }
+.chesscom-vinf-annotation-toggle[data-extreme="false"] { z-index: 12; }

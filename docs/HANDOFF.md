@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-26.
-Current source version: 2.5.0.
+Current source version: 2.6.0.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.5.0. This handoff is the shortest
+chronological amendments through version 2.6.0. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -62,6 +62,40 @@ policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
 
+## Touch drawing and phone actions (2.6.0)
+
+`TouchAnnotationsController` is Firefox-Android-only, phone and tablet, signed-in
+exact live-game routes. It renders an owned SVG sibling over the unmodified native
+board rectangle. Pointer capture, touch-action:none and cancellation on the owned
+surface isolate gestures; no synthetic native events, private engine calls or
+network access. Drag adds/removes an orange arrow, tap adds/removes a red square.
+Turning drawing off clears marks and restores native hit testing. Position/orientation
+mutations clear stale marks and cancel unfinished strokes; route/disable/end cleanup
+removes the overlay. Observer/resize/scroll tracking follows native board geometry.
+Normal player content reserves 48px beside the native bottom clock for a 44px pencil.
+Extreme uses its bottom-clock area +100px offset: inactive pencil is transparent but
+its tap target remains; enabled pencil is visible. Accessible keyboard focus reveals
+it. This is VINF-local drawing, not a reverse-engineered native annotation API.
+
+`PhoneGameActionsController` moves only native `.draw-button-component` and
+`.resign-button-component` roots into compact non-clickable slots before the inner
+sidebar tabs, only in normal Android phone games with the existing phone marker.
+Comment anchors restore the exact original positions. No proxy click handlers or
+confirmation changes. Missing/changed component selectors fail open. Saved first-party
+CSS establishes these classes; the ended-game DOM cannot prove their current live
+ownership, so actual live integration remains unverified. Do not claim fixture
+confirmation tests prove current Chess.com handlers.
+
+2.6.0 checks: typecheck, 174 tests, desktop and Android builds. IAB sanitized fixture
+checks at 390×844 (normal/Extreme) and 800×1000 (tablet) show isolated arrow/square
+input, native pointer delivery after drawing off, unaltered board dimensions,
+44px toggle geometry, compact action placement and tablet action scope. At 320×740
+ordinary OLED has no horizontal overflow; disable restores original action roots
+and a Review route removes both additions. No fixture
+console warnings/errors. Actual Firefox Android touch behavior is not verified;
+no live game was started, played, drawn on, offered a draw or resigned. No push,
+Store package/upload/listing changes. Initial board headroom remains untouched.
+
 ## Shared clocks and navigation (2.5.0)
 
 This is the independently verifiable portion of the user's consolidated request.
@@ -86,15 +120,10 @@ its node/handlers, preserving outer widths while Previous/Next grow equally. No
 proxy game actions or native board mutations. Review uses fixed two-column side
 groups, explicit Hint/Best/Previous/Next columns and dock-only Share hiding.
 
-Pending: touch annotation native API/input isolation and Draw/Resign relocation.
-Saved sources do not establish the native board annotation interface or active
-Draw/Resign wrappers/confirmation ownership; user said live inspection unavailable
-and to finish independently verifiable changes first. Do not guess events or move
-consequential controls based on the synthetic fixture. Annotation preference:
-normal/OLED toggle always visible; Extreme inactive toggle hidden, active visible.
-Its precise hidden-state activation/reveal still needs resolution alongside the
-native integration. Board starting-position adjustment awaits screenshots; preserve
-current headroom until provided. Android Back experiment is explicitly separate.
+The earlier native-integration hold was superseded by the user's 2026-09-26
+instruction to implement touch drawing and Draw/Resign independently. See 2.6.0
+below. Board starting-position adjustment still awaits screenshots; preserve
+current headroom. Android Back remains a separate task.
 
 Verification for 2.5.0: typecheck, 172 tests and both desktop/Android builds pass.
 IAB Chromium sanitized fixtures at 390×844 and 320×740 verify original board

@@ -1,3 +1,5 @@
+import { TouchAnnotationsController } from "../../src/content/touch-annotations";
+import { PhoneGameActionsController } from "../../src/content/phone-game-actions";
 import { AndroidGameControlsController } from "../../src/content/android-game-controls";
 import { PhoneExperienceController } from "../../src/content/phone-experience-controller";
 import { ExtremeOledController } from "../../src/content/extreme-oled-controller";
@@ -270,6 +272,8 @@ if (window.location.pathname === "/extreme-oled") {
 if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const phone = new PhoneExperienceController();
   const clocks = new ExtremeOledController();
+  const annotations = new TouchAnnotationsController();
+  const actions = new PhoneGameActionsController();
   const androidDock = new AndroidGameControlsController();
   const game = window.location.pathname === "/phone-game";
   const route = { protocol: "https:", hostname: "www.chess.com",
@@ -280,6 +284,8 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
     clocks.reconcile(document, route, settings, game && (window.innerWidth <= 599 || searchParams.has("desktop")));
     androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
+    annotations.reconcile(document, route, settings, !searchParams.has("desktop"));
+    actions.reconcile(document, route, settings, window.innerWidth <= 599 && !searchParams.has("desktop"));
   };
   const audio = document.querySelector<HTMLButtonElement>('[aria-label="Toggle Coach Audio"]');
   audio?.addEventListener("click", () => {
