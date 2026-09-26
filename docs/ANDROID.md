@@ -356,3 +356,17 @@ for these tests. See `DOM_AUDIT.md` for evidence and exact applicability limits.
 bar. The hidden muted coach button retains its layout slot; the native bar fill
 gets a local stacking context. Overview spacing and the dock stay unchanged.
 Browser fixture verification is separate from physical Firefox Android checks.
+
+
+### 2.5.0 partial consolidated improvements
+
+Normal phone games now share the paired clock numbers/bars/turn indication and
+low-time lock with Extreme OLED, with compact player information. Timestamps are
+reversed vertically without changing move ownership; opening is below the moves.
+Phone/tablet native game docks omit Play/Pause and widen Previous/Next; phone
+Review reserves Hint/Best positions and broadens the right-side navigation targets.
+Tablet normal clocks and tablet Review remain unchanged.
+
+Touch annotations and moving Draw/Resign are pending safe native integration
+inspection. Initial board positioning remains pending screenshots. No back guard
+is included. Fixture checks do not establish real Firefox Android behavior.

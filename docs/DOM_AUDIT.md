@@ -754,3 +754,58 @@ and hidden evaluation fill before the fix. Both overview and move-review title
 groups measure 0px center offset afterward; white/black fill is visibly restored.
 No console warnings/errors. Type checking, 170 existing tests and both builds pass.
 Physical Firefox Android confirmation is still pending; no real game was touched.
+
+
+## Shared clocks / native dock positions — 2.5.0 (2026-09-26)
+
+Saved 2026-09-18 game HTML directly associates `.time-white`/`.time-black` with
+`data-move-list-el="timestamp"`, `data-ply`, `data-time` and separate native text.
+Site CSS uses absolute top:4px for white, bottom:3px for black; pseudo-elements
+hold duration bars. VINF swaps top/bottom on those direct full-row children only.
+It never changes `data-ply`, values, white/black nodes or horizontal ordering.
+The opening `.eco-opening-component` is moved after `#live-game-tab-scroll-container`
+with original parent/nextSibling retained; cleanup restores it, including game end.
+
+Native game docks `.game-buttons-container-component` / `-mobile` are flex rows
+with five equal-flex direct buttons and a column gap. The Android-only controller
+requires exactly First Move / Previous Move / Play / Pause / Next Move / Last Move.
+It reads the native gap and uses four grid tracks: original one-fifth width at
+each end, equal remaining widths in the center. Only Play/Pause is hidden; native
+buttons, handler identity, disabled state, container positioning/padding persist.
+Unknown sequences remain native. No Review or Extreme dock is affected.
+
+Review groups keep native markup. Their equal grid slots are selected using the
+observed English aria labels Explain (Hint), Best, Previous Move and Next Move.
+Missing or hidden conditional buttons leave their assigned position empty.
+Share is hidden only inside `.mobile-gr-footer-footer`; all other sharing remains.
+This is the audited English DOM contract, not a claim of locale-independent labels.
+
+Shared normal clocks read the exact same native timers and `.clock-player-turn`
+state as Extreme. Normal mode requires both parseable timers before hiding native
+clock boxes (visibility only; reserved layout remains). Pills follow those boxes;
+bars follow the unchanged native board bounds. No independent countdown, game
+mutation, board sizing or color overrides. In normal mode there are no proxy move
+arrows, content-hiding marker or added Extreme scroll extent. Phone avatar boxes
+become 20px; tagline text 11px, with native connection information retained. Native
+normal desktop player information dimensions are unchanged. See handoff for device
+scope and keyboard persistence/typing guards.
+
+Native annotation/Draw/Resign integration remains unverified: the saved ended-game
+DOM has no active action controls; saved entrypoint scripts import missing engine
+chunks. No guessed touch adapter, synthetic right click, resign endpoint or
+consequential control activation is shipped. User declined live inspection for
+now and authorized completion of independent changes first. Board headroom is
+unchanged pending requested reference screenshots.
+
+
+2.5.0 verification: 172 tests and typecheck pass, both builds succeed. Real-browser
+IAB fixtures at 390×844 / 320×740 retained 390px / 320px native boards, no horizontal
+overflow, delivered board pointer down/up, and restored native clocks, opening and
+Play/Pause on disable. At 390px navigation widths were 70.8 / 108.7 / 108.7 / 70.8px
+(the outer widths equal the original five-slot formula). Timestamp ply 40 rendered
+above ply 39, with both identities retained. Review side slots measured 76.8px each,
+with the center unchanged; hiding either left action left its position blank.
+768px fixture checks confirmed Android tablet native clocks/four-action dock and
+desktop shared clocks/five-action dock. Native-shaped low-time update forced both
+numbers visible; automated keyboard test verifies T cannot hide them. No console
+warnings/errors. Actual Firefox Android and live Chess.com behavior remain untested.

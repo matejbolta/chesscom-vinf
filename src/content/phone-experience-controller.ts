@@ -20,6 +20,7 @@ export class PhoneExperienceController {
   private wrappers = new Set<HTMLElement>();
   private rows = new Set<HTMLElement>();
   private muteAttempt: HTMLButtonElement | null = null;
+  private openingPositions = new Map<HTMLElement, { parent: Node; next: ChildNode | null }>();
   private spacer: HTMLElement | null = null;
 
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, phone: boolean): void {
@@ -63,10 +64,29 @@ export class PhoneExperienceController {
         [...timers].some(timer => readClockSeconds(timer.textContent ?? "") === null)) {
       document.documentElement.removeAttribute(GAME);
       this.clearRows();
+      this.restoreOpening();
       return;
     }
     document.documentElement.setAttribute(GAME, "true");
     this.updateRows(document);
+    this.moveOpening(document);
+  }
+
+  private moveOpening(document: Document): void {
+    const list = document.querySelector("#live-game-tab-scroll-container");
+    const opening = document.querySelector<HTMLElement>("#board-layout-sidebar .eco-opening-component");
+    if (!list?.parentElement || !opening?.parentNode) return;
+    if (!this.openingPositions.has(opening)) this.openingPositions.set(opening, { parent: opening.parentNode, next: opening.nextSibling });
+    if (list.nextSibling !== opening) list.after(opening);
+  }
+
+  private restoreOpening(): void {
+    for (const [opening, position] of this.openingPositions) {
+      if (position.parent.isConnected) position.parent.insertBefore(opening,
+        position.next?.parentNode === position.parent ? position.next : null);
+      else opening.remove();
+    }
+    this.openingPositions.clear();
   }
 
   private updateRows(document: Document): void {
@@ -150,6 +170,7 @@ export class PhoneExperienceController {
     this.timer = null;
     this.refresh = null;
     this.clearRows();
+    this.restoreOpening();
     document.documentElement.removeAttribute(GAME);
     document.documentElement.removeAttribute(REVIEW);
     document.querySelectorAll(`[${MUTED}]`).forEach(button => button.removeAttribute(MUTED));

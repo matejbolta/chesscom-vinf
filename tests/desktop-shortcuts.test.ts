@@ -1,0 +1,39 @@
+import { readFileSync } from "node:fs";
+import { expect, it, vi } from "vitest";
+import { startVinfRuntime } from "../src/content/runtime";
+import { DEFAULT_SETTINGS } from "../src/shared/settings";
+
+it("synchronizes desktop O/E, shares T clock state, and ignores typing, modifiers and Review E/T", async () => {
+  vi.useFakeTimers();
+  const fixture = new DOMParser().parseFromString(readFileSync("tests/fixtures/phone-game.html", "utf8"), "text/html");
+  document.documentElement.innerHTML = fixture.documentElement.innerHTML;
+  document.documentElement.className = "user-logged-in";
+  window.history.replaceState({}, "", "/game/123456");
+  let saved = { ...DEFAULT_SETTINGS };
+  const save = vi.fn(async next => { saved = next; });
+  startVinfRuntime({ load: async () => saved, subscribe: () => {}, save });
+  await vi.advanceTimersByTimeAsync(1);
+  const press = async (key: string, target: Element = document.body, options = {}) => {
+    target.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...options }));
+    await vi.advanceTimersByTimeAsync(1);
+  };
+  const time = () => document.querySelector('.chesscom-vinf-extreme-time.bottom')!;
+  expect(document.documentElement.hasAttribute("data-chesscom-vinf-normal-clocks")).toBe(true);
+  await press("t"); expect(time().getAttribute("aria-pressed")).toBe("true");
+  await press("o"); expect(saved.oledMode).toBe(true);
+  await press("e"); expect(saved.extremeOled).toBe(true);
+  const input = document.createElement("textarea"); document.body.append(input);
+  await press("e", input); await press("o", document.body, { ctrlKey: true });
+  expect(save).toHaveBeenCalledTimes(2);
+  document.querySelector('#board-layout-player-bottom [role="timer"]')!.textContent = "0:59";
+  await vi.advanceTimersByTimeAsync(20); await press("t");
+  expect(time().getAttribute("aria-pressed")).toBe("true");
+  window.history.replaceState({}, "", "/analysis/game/123456/review");
+  window.dispatchEvent(new PopStateEvent("popstate"));
+  await press("e"); await press("t");
+  expect(save).toHaveBeenCalledTimes(2);
+  expect(document.querySelector('.chesscom-vinf-extreme-controls')).toBeNull();
+  window.history.replaceState({}, "", "/home");
+  window.dispatchEvent(new PopStateEvent("popstate"));
+  vi.clearAllTimers(); vi.useRealTimers();
+});

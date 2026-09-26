@@ -1721,3 +1721,16 @@ Phone Review retains the invisible muted audio control's layout space to keep
 its title centered in both states. OLED evaluation bars use a local stacking
 context so native fills remain visible. Overview gaps, dock and board geometry
 remain unchanged; no gameplay changes or publication.
+
+
+## 83. Version 2.5.0 Product Amendments
+
+Implement the independently verifiable consolidated requirements: shared normal
+phone/desktop clocks and bars, paired numeric toggle/low-time lock, desktop O/E/T,
+compact phone player info, timestamp vertical reversal, opening below moves,
+Android four-action game dock with unchanged outer widths, and stable phone Review
+side slots with dock-only Share hiding. Desktop normal clocks explicitly approved
+in clarification; tablet normal clocks/Review remain unchanged.
+Touch annotation and Draw/Resign relocation await native inspection; initial board
+spacing awaits screenshots. No annotation or back-gesture prototype is included.
+Local version/build/commit only; preserve existing Review heading/evaluation fixes.

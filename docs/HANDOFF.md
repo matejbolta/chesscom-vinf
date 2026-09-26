@@ -2,8 +2,8 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-09-23.
-Current source version: 2.4.1.
+Last updated: 2026-09-26.
+Current source version: 2.5.0.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.4.1. This handoff is the shortest
+chronological amendments through version 2.5.0. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,49 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Shared clocks and navigation (2.5.0)
+
+This is the independently verifiable portion of the user's consolidated request.
+Shared clock presentation now applies to normal desktop and Firefox Android phone
+live games; Android tablets retain native normal clocks. Desktop expansion was
+explicitly approved in the clarification. `ExtremeOledController` accepts a
+normal-clock presentation flag: reuse the same timers/maxima/low-time latch/turn
+and paired reveal state, but set only `data-chesscom-vinf-normal-clocks`, anchor
+numeric pills to native clock boxes, and omit Extreme board colors, content hiding,
+move proxies and scroll room. Both modes stay off in Game Review/completed games.
+Desktop O/E write the same persisted settings as the UI through SettingsSource.save;
+T calls the same clock-toggle method as tapping a time area. O works on supported
+routes; E/T only exact game routes. Editable/control targets and modified/repeated
+keys are ignored. Existing settings subscriptions keep UI and runtime synchronized.
+
+Phone normal gameplay swaps only native timestamp top/bottom positioning, retains
+newest-first rows/ply attribution, moves the original opening line below the list
+with reversible parent/sibling tracking, and compacts player avatar/text presentation.
+`AndroidGameControlsController` requires Firefox Android and the exact native five
+button sequence: marks the dock for four-column layout, hides Play/Pause and keeps
+its node/handlers, preserving outer widths while Previous/Next grow equally. No
+proxy game actions or native board mutations. Review uses fixed two-column side
+groups, explicit Hint/Best/Previous/Next columns and dock-only Share hiding.
+
+Pending: touch annotation native API/input isolation and Draw/Resign relocation.
+Saved sources do not establish the native board annotation interface or active
+Draw/Resign wrappers/confirmation ownership; user said live inspection unavailable
+and to finish independently verifiable changes first. Do not guess events or move
+consequential controls based on the synthetic fixture. Annotation preference:
+normal/OLED toggle always visible; Extreme inactive toggle hidden, active visible.
+Its precise hidden-state activation/reveal still needs resolution alongside the
+native integration. Board starting-position adjustment awaits screenshots; preserve
+current headroom until provided. Android Back experiment is explicitly separate.
+
+Verification for 2.5.0: typecheck, 172 tests and both desktop/Android builds pass.
+IAB Chromium sanitized fixtures at 390×844 and 320×740 verify original board
+size/input delivery, clock reveal/forced low time, timestamp attribution/order,
+opening position, dock geometry and disable restoration. At 768px, Android keeps
+native clocks with a four-action dock; desktop has shared clocks with its original
+five-action dock. Conditional Hint/Best positions stay fixed. No fixture console
+warnings/errors. These are fixture results, not actual Firefox Android or live
+Chess.com input verification. No game was started, played or resigned.
 
 ## Phone Review corrections (2.4.1)
 

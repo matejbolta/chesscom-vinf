@@ -1,3 +1,4 @@
+import { AndroidGameControlsController } from "../../src/content/android-game-controls";
 import { PhoneExperienceController } from "../../src/content/phone-experience-controller";
 import { ExtremeOledController } from "../../src/content/extreme-oled-controller";
 import { GameReviewLayoutController } from "../../src/content/game-review-layout-controller";
@@ -268,12 +269,18 @@ if (window.location.pathname === "/extreme-oled") {
 // Native-shaped phone scenarios are local and never invoke Chess.com services.
 if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const phone = new PhoneExperienceController();
+  const clocks = new ExtremeOledController();
+  const androidDock = new AndroidGameControlsController();
   const game = window.location.pathname === "/phone-game";
   const route = { protocol: "https:", hostname: "www.chess.com",
     pathname: game ? "/game/123456" : "/analysis/game/live/123456/review" };
   const settings = { ...DEFAULT_SETTINGS, enabled: !searchParams.has("native"),
     extremeOled: searchParams.has("extreme") };
-  const apply = () => phone.reconcile(document, route, settings, window.innerWidth <= 599);
+  const apply = () => {
+    phone.reconcile(document, route, settings, window.innerWidth <= 599);
+    clocks.reconcile(document, route, settings, game && (window.innerWidth <= 599 || searchParams.has("desktop")));
+    androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
+  };
   const audio = document.querySelector<HTMLButtonElement>('[aria-label="Toggle Coach Audio"]');
   audio?.addEventListener("click", () => {
     const svg = audio.querySelector("svg")!;
@@ -318,6 +325,11 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     if (event.key === "e") document.querySelector("#board-layout-sidebar")?.insertAdjacentHTML("beforeend", '<div class="game-result">1-0</div>');
     if (event.key === "d") settings.enabled = !settings.enabled;
     if (event.key === "r") route.pathname = route.pathname.includes("review") ? "/game/123456" : "/analysis/game/live/123456/review";
+    if (event.key === "l") {
+      const timer = document.querySelector('#board-layout-player-bottom [role="timer"]');
+      if (timer) timer.textContent = "0:59";
+    }
+    if (event.key === "h") document.querySelector('[aria-label="Explain"]')?.toggleAttribute("hidden");
     if (event.key === "b") document.querySelector('[aria-label="Best"]')?.toggleAttribute("hidden");
     if (event.key === "a") audio?.querySelector("svg")?.setAttribute("data-glyph", "media-audio-speaker");
     apply();

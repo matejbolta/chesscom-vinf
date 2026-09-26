@@ -18,6 +18,9 @@ describe("phone play and review", () => {
   it("keeps native move nodes/listeners and handles appended/replaced rows, failing open on changed renderers", async () => {
     vi.useFakeTimers(); fixture();
     const wrapper = document.querySelector<HTMLElement>(".timestamps-with-base-time")!;
+    const opening = document.querySelector(".eco-opening-component")!;
+    const scroll = document.querySelector("#live-game-tab-scroll-container")!;
+    expect(opening.nextElementSibling).toBe(scroll);
     const first = wrapper.firstElementChild!;
     const node = first.querySelector<HTMLElement>(".node")!;
     const click = vi.fn(); node.addEventListener("click", click);
@@ -26,6 +29,7 @@ describe("phone play and review", () => {
     controller.reconcile(document, game, DEFAULT_SETTINGS, true);
     expect(document.documentElement.hasAttribute(marker)).toBe(true);
     expect(wrapper.firstElementChild).toBe(first);
+    expect(scroll.nextElementSibling).toBe(opening);
     expect((wrapper.lastElementChild as HTMLElement).style.getPropertyValue("--chesscom-vinf-move-order")).toBe("-20");
     node.click(); expect(click).toHaveBeenCalledOnce();
     const next = first.cloneNode(true) as HTMLElement;
@@ -43,6 +47,8 @@ describe("phone play and review", () => {
     await vi.advanceTimersByTimeAsync(65);
     expect(wrapper.hasAttribute("data-chesscom-vinf-newest-first")).toBe(false);
     expect((first as HTMLElement).style.getPropertyValue("--chesscom-vinf-move-order")).toBe("");
+    controller.cleanup(document);
+    expect(opening.nextElementSibling).toBe(scroll);
   });
 
   it("restores on disable, tablet, Extreme, home and review transitions; latches native game end", () => {

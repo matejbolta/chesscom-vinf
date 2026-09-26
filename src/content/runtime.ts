@@ -1,3 +1,4 @@
+import { AndroidGameControlsController, isFirefoxAndroid } from "./android-game-controls";
 import { PhoneExperienceController } from "./phone-experience-controller";
 import { ExtremeOledController } from "./extreme-oled-controller";
 import {
@@ -25,6 +26,7 @@ import { NativeLaunchAdapter } from "./launch-adapter";
 
 export interface SettingsSource {
   load(): Promise<ExtensionSettings>;
+  save?(settings: ExtensionSettings): Promise<void>;
   subscribe(listener: (settings: ExtensionSettings) => void): void;
 }
 
@@ -37,6 +39,9 @@ export function startVinfRuntime(
   settingsSource: SettingsSource,
   dependencies: RuntimeDependencies = {}
 ): void {
+  const android = isFirefoxAndroid(window.navigator);
+  const desktop = !/Android|iPhone|iPad/i.test(window.navigator.userAgent);
+  const androidGameControls = new AndroidGameControlsController();
   const controller = new LayoutController(new NativeLaunchAdapter());
   const extremeOledController = new ExtremeOledController();
   const gameReviewController = new GameReviewLayoutController();
@@ -210,9 +215,11 @@ export function startVinfRuntime(
       settings.enabled,
       phoneGameReviewMedia?.matches ?? window.innerWidth <= 599
     );
-    extremeOledController.reconcile(document, window.location, settings);
     phoneExperienceController.reconcile(document, window.location, settings,
       phoneGameReviewMedia?.matches ?? window.innerWidth <= 599);
+    extremeOledController.reconcile(document, window.location, settings,
+      desktop || (android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)));
+    androidGameControls.reconcile(document, window.location, settings, android);
     hasAppliedLayout = homepageApplied || gameReviewApplied;
     // An incomplete target document asks the controller to clean up. Re-arm
     // setting-specific pre-hide markers immediately so late native cards cannot
@@ -362,7 +369,9 @@ export function startVinfRuntime(
 
   function checkRoute(): void {
     if (settings) {
-      extremeOledController.reconcile(document, window.location, settings);
+      extremeOledController.reconcile(document, window.location, settings,
+        desktop || (android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)));
+      androidGameControls.reconcile(document, window.location, settings, android);
       phoneExperienceController.reconcile(document, window.location, settings,
         phoneGameReviewMedia?.matches ?? window.innerWidth <= 599);
     }
@@ -397,6 +406,33 @@ export function startVinfRuntime(
     gameReviewController.cleanup(document);
     hasAppliedLayout = false;
     reconcileImmediately();
+  });
+
+  let shortcutWrites = Promise.resolve();
+  document.addEventListener("keydown", event => {
+    if (!desktop || !settings?.enabled ||
+        event.defaultPrevented || event.repeat || event.isComposing ||
+        event.ctrlKey || event.metaKey || event.altKey || event.shiftKey ||
+        !(event.target instanceof Element) ||
+        event.target.closest('input, textarea, select, button, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"], [role="searchbox"]') ||
+        document.querySelector('.chesscom-vinf-settings-dialog[open]') ||
+        !(isTargetRoute() || isChessComGame(window.location) || isChessComLiveGameReview(window.location))) return;
+    const key = event.key.toLowerCase();
+    if (key === "t") {
+      if (isChessComGame(window.location) && extremeOledController.toggleTimes()) event.preventDefault();
+      return;
+    }
+    if ((key !== "o" && key !== "e") || !settingsSource.save) return;
+    if (key === "e" && !isChessComGame(window.location)) return;
+    event.preventDefault();
+    shortcutWrites = shortcutWrites.then(async () => {
+      if (!settings?.enabled) return;
+      const next = normalizeSettings({ ...settings,
+        [key === "o" ? "oledMode" : "extremeOled"]: !settings[key === "o" ? "oledMode" : "extremeOled"] });
+      await settingsSource.save!(next);
+      settings = next;
+      reconcileImmediately();
+    }).catch(() => { /* Failed storage writes leave the current settings intact. */ });
   });
 
   window.addEventListener("popstate", reconcileImmediately);

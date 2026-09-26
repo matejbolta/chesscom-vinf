@@ -1,5 +1,6 @@
 import {
   loadSettings,
+  saveSettings,
   normalizeSettings,
   SETTINGS_STORAGE_KEY
 } from "../shared/settings";
@@ -7,6 +8,7 @@ import { startVinfRuntime, type SettingsSource } from "./runtime";
 
 const chromeSettingsSource: SettingsSource = {
   load: loadSettings,
+  save: saveSettings,
   subscribe(listener) {
     if (typeof chrome === "undefined" || !chrome.storage?.onChanged) {
       return;

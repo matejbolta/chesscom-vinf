@@ -886,3 +886,68 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
     pointer-events: none;
   }
 }
+
+@media (max-width: 599px) {
+  /* Keep ply identity and horizontal order; reverse only timestamp vertical slots. */
+  html[data-chesscom-vinf-phone-game] [data-chesscom-vinf-newest-first] > .main-line-row > .time-black {
+    top: 4px;
+    bottom: auto;
+  }
+  html[data-chesscom-vinf-phone-game] [data-chesscom-vinf-newest-first] > .main-line-row > .time-white {
+    top: auto;
+    bottom: 3px;
+  }
+  html[data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component {
+    visibility: hidden;
+    width: 80px;
+    height: 44px;
+    flex: 0 0 80px;
+  }
+  html[data-chesscom-vinf-normal-clocks] .board-layout-player .player-component {
+    align-items: center;
+    min-height: 44px;
+  }
+  html[data-chesscom-vinf-normal-clocks] .player-component .player-avatar,
+  html[data-chesscom-vinf-normal-clocks] .player-component .player-avatar > img {
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+  }
+  html[data-chesscom-vinf-normal-clocks] .player-component .player-tagline {
+    height: auto;
+    min-width: 0;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+  html[data-chesscom-vinf-normal-clocks] .player-tagline :is(.user-username-component, .user-tagline-rating) {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+  html[data-chesscom-vinf-phone-review] :is(.mobile-gr-footer-group-start, .mobile-gr-footer-group-end) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+  }
+  html[data-chesscom-vinf-phone-review] :is(.mobile-gr-footer-group-start, .mobile-gr-footer-group-end) > button {
+    width: 100%;
+    min-width: 0;
+    grid-row: 1;
+  }
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button[aria-label="Explain"],
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button[aria-label="Previous Move"] { grid-column: 1; }
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button[aria-label="Best"],
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button[aria-label="Next Move"] { grid-column: 2; }
+  html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button[aria-label="Share"] { display: none !important; }
+}
+.chesscom-vinf-normal-clock-controls { z-index: 10; }
+.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time { background: transparent; }
+
+/* Android-only marker; outer widths remain one fifth of the original five slots. */
+html [data-chesscom-vinf-four-moves] {
+  display: grid;
+  grid-template-columns: calc((100% - 4 * var(--chesscom-vinf-nav-gap)) / 5) minmax(0, 1fr) minmax(0, 1fr) calc((100% - 4 * var(--chesscom-vinf-nav-gap)) / 5);
+}
+[data-chesscom-vinf-four-moves] > button[aria-label="Play / Pause"] { display: none !important; }
+
+/* Shared desktop/phone numeric clocks: retain native state and reserved layout. */
+html[data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component { visibility: hidden; }

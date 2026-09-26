@@ -94,3 +94,8 @@ or adding network requests. Coach muting uses Chess.com's existing audio toggle;
 Chess.com owns any persistence of that preference. VINF retains the requested
 mute state and never automatically re-enables audio. No back-gesture history
 entries, resign automation, new permissions, or audio interception are added.
+
+
+Version 2.5.0 reuses transient clock state in normal phone/desktop games. Desktop
+shortcuts write only existing local OLED preferences. No new permissions, requests,
+move storage, touch-event injection or consequential game actions are introduced.

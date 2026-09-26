@@ -9,6 +9,35 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-09-26
+
+### Added
+
+- Shared native-derived clock bars, turn dots and paired numeric-clock toggling
+  in normal Android phone and desktop games. Below-one-minute visibility stays
+  forced. Extreme OLED retains its own colors, layout and move controls.
+- Desktop O/E shortcuts save the existing ordinary/Extreme OLED settings; T
+  toggles shared clock numbers. Typing, settings controls and modified/repeated
+  shortcuts are excluded; Extreme OLED stays off throughout Game Review.
+
+### Changed
+
+- Phone gameplay: compact player information, black/newer timestamp above
+  white/older timestamp without changing attribution, opening below the move list.
+- Android phone/tablet game navigation keeps First/Last widths, removes Play/Pause,
+  and divides its freed space between Previous/Next. Desktop stays native.
+- Phone Review dock reserves stable Hint/Best slots and expands Previous/Next
+  across equal right-side slots; hides Share only within this dock. Central
+  action, height, safe area, heading centering and evaluation bar are retained.
+
+### Pending
+
+- Touch annotations and Draw/Resign relocation require native integration evidence;
+  the user deferred live inspection and authorized independent work first.
+- Initial board-spacing adjustment awaits the user's screenshots. Existing
+  gameplay headroom and accepted pre-review spacing are unchanged.
+- No Android Back experiment, publication or Store preparation in this batch.
+
 ## [2.4.1] - 2026-09-23
 
 ### Fixed
