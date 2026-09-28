@@ -2,6 +2,8 @@ import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { isChessComGame } from "./game-continuation";
 import { isChessComLiveGameReview } from "./game-review-layout-controller";
 import { nativeGameHasEnded, readClockSeconds } from "./extreme-oled-controller";
+import { PhonePlayerInfoController } from "./phone-player-info";
+import { PhoneGameEntry } from "./phone-game-entry";
 
 const GAME = "data-chesscom-vinf-phone-game";
 const REVIEW = "data-chesscom-vinf-phone-review";
@@ -11,6 +13,8 @@ const AUDIO_BUTTON = '.sidebar-header-header button[aria-label="Toggle Coach Aud
 
 /** Phone presentation only. Never resize/reparent the board or synthesize game actions. */
 export class PhoneExperienceController {
+  private playerInfo = new PhonePlayerInfoController();
+  private entry = new PhoneGameEntry();
   private route = "";
   private finished = false;
   private observer: MutationObserver | null = null;
@@ -63,11 +67,15 @@ export class PhoneExperienceController {
     if (this.finished || !board || timers.length !== 2 ||
         [...timers].some(timer => readClockSeconds(timer.textContent ?? "") === null)) {
       document.documentElement.removeAttribute(GAME);
+      this.playerInfo.cleanup();
+      if (this.finished) this.entry.cleanup();
       this.clearRows();
       this.restoreOpening();
       return;
     }
     document.documentElement.setAttribute(GAME, "true");
+    this.playerInfo.reconcile(document);
+    this.entry.reconcile(document, route);
     this.updateRows(document);
     this.moveOpening(document);
   }
@@ -164,6 +172,8 @@ export class PhoneExperienceController {
   }
 
   cleanup(document: Document): void {
+    this.playerInfo.cleanup();
+    this.entry.cleanup();
     this.observer?.disconnect();
     this.observer = null;
     if (this.timer !== null) this.document?.defaultView?.clearTimeout(this.timer);

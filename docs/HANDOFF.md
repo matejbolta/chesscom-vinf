@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-28.
-Current source version: 2.6.4.
+Current source version: 2.7.0.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.6.4. This handoff is the shortest
+chronological amendments through version 2.7.0. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,59 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Mobile game entry and compact controls (2.7.0)
+
+Latest supplied recording (33.4s, inspected at 0.5s intervals) shows a clipped
+board already during matchmaking at 3s, retained after pairing at 6.5–7s.
+There is no finger indicator at that transition. Later scrolling from ~13.5s
+coincides with the visible touch indicator. Native Abort changes to Resign
+around 22.5s after the first own move; never falsely relabel Abort as Resign.
+Ignored frame evidence: `fixtures/raw/mobile-start-2026-09-28`.
+
+- `PhoneGameEntry`: normal phone only, one 350ms post-hydration correction if
+  opponent row is clipped or board extends below usable viewport. Target row
+  top 48px (bounded by viewport). Touch/pointer/wheel/key cancels, route cleanup
+  cancels, and later ticks/resizes cannot rearm. No board sizing/transform changes.
+  This supersedes the earlier "no programmatic scroll" decision for entry only.
+- Native `:not(.player-theatre)` tagline height specificity was beating our
+  compact rule; matched specificity aligns avatar and username centers.
+- `PhonePlayerInfoController`: two independent transparent avatar-area buttons,
+  28×44px, hide only identity content via visibility, keep layout/restore target.
+  No player data saved; cleanup on disable/end/Review/Extreme/route replacement.
+- Native action roots now live in own player row before pencil/clock, original
+  comment anchors preserve restoration. Icon-only CSS preserves accessible text
+  and changing native Abort/Resign state. Draw/Resign/pencil targets 32×44px,
+  normal phone clock target 64×44px. Native confirmation actions are unchanged.
+  Very narrow phones ellipsize the name to retain rating/flag/signal and controls.
+- Normal clock default is visible (including desktop shared T presentation).
+  Explicit user toggle persists through same-game mode switching; fresh Extreme
+  still defaults hidden, low-time remains forced paired visibility.
+- Normal turn dot 4→6px, Extreme unchanged. Home/tablet layout and Review untouched.
+
+Audio investigation: VINF has no in-game audio interception/muting; only Review
+coach muting. Quick Play performs a full navigation to the audited native URL.
+Previously downloaded first-party shared eager bundle contains Howler's capture
+listeners for touchstart/touchend/click/keydown, suspended AudioContext resume,
+and queued playback waiting on resume. This explains a possible burst on first
+interaction, but is NOT proof of the actual Firefox Android context/permissions
+or the exact live-game audio path. Do not claim sound fixed. Check per-site
+Firefox autoplay first, compare a harmless tap in blank matchmaking area and
+stock native launch; any game test remains user-controlled. No synthetic unlock,
+new audio context, global monkeypatch, or permission change was shipped.
+Mozilla evidence is in ANDROID.md. Browser allow-autoplay may still require
+site interaction. No new shared-knowledge proposal: not a novel verified finding.
+
+Verification: 179 tests pass across 23 files, typecheck and desktop/Android builds.
+IAB sanitized fixture at 390px and 320px: native board size retained, centered
+avatar/text, compact controls, independent profile hide/restore, default visible
+clocks, paired hide/low-time reveal, entry clipped-scroll correction, and disable
+restoration. Tests cover cancellation/re-entry/cleanup and native handler identity.
+Browser logs retained the pre-existing preview MutationObserver/Node error; the
+fixture error listener captured no error during these interactions. Screenshot:
+`fixtures/raw/mobile-start-2026-09-28/after-fixture.png`.
+Actual updated Firefox Android behavior and audio permission are not verified;
+user video is baseline evidence only. No real game actions, push or Store work.
 
 ## Native touch annotations (2.6.4)
 

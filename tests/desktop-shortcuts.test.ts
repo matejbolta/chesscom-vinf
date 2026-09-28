@@ -19,7 +19,8 @@ it("synchronizes desktop O/E, shares T clock state, and ignores typing, modifier
   };
   const time = () => document.querySelector('.chesscom-vinf-extreme-time.bottom')!;
   expect(document.documentElement.hasAttribute("data-chesscom-vinf-normal-clocks")).toBe(true);
-  await press("t"); expect(time().getAttribute("aria-pressed")).toBe("true");
+  expect(time().getAttribute("aria-pressed")).toBe("true");
+  await press("t"); expect(time().getAttribute("aria-pressed")).toBe("false");
   await press("o"); expect(saved.oledMode).toBe(true);
   await press("e"); expect(saved.extremeOled).toBe(true);
   const input = document.createElement("textarea"); document.body.append(input);

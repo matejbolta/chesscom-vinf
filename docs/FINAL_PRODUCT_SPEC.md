@@ -1783,3 +1783,15 @@ The pencil and touch shield remain; native API calls handle preview, toggle and
 owned-mark cleanup. No custom arrow/square drawing or synthetic mouse events.
 Unavailable native access disables drawing without blocking ordinary board input.
 The userscript adds page access via `unsafeWindow`; desktop behavior is unchanged.
+
+### 2.7.0 — Compact normal phone gameplay
+
+Normal numeric clocks start visible; existing paired toggle/low-time latch stays.
+Both native player identities align horizontally. Tap the avatar area to hide
+or restore that identity independently, preserving its space. Native draw and
+Abort/Resign icons join pencil and clock beside the own-player identity, removing
+the separate actions row. Normal turn indicator diameter increases by 50%.
+Correct inherited clipped entry scroll once, cancel on user interaction, and
+never resize the native board or continue repositioning during play. Extreme,
+Review and homepage layouts remain separate. Audio investigation is documented
+without claiming an unverified sound fix or replacing the site's audio system.

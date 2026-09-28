@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PhoneExperienceController } from "../src/content/phone-experience-controller";
+import { PhoneGameEntry } from "../src/content/phone-game-entry";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
 
 const game = { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" };
@@ -114,4 +115,45 @@ describe("phone play and review", () => {
     expect(click).toHaveBeenCalledOnce();
     expect(button.hasAttribute("data-chesscom-vinf-coach-muted")).toBe(false);
   });
+});
+
+it("toggles each player independently without hiding clocks/actions, and restores on Review", () => {
+  fixture(); controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  const top = document.querySelector('#board-layout-player-top .player-playerContent')!;
+  const bottom = document.querySelector('#board-layout-player-bottom .player-playerContent')!;
+  const button = top.querySelector<HTMLButtonElement>('.chesscom-vinf-player-toggle')!;
+  button.click(); controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(top.hasAttribute('data-chesscom-vinf-player-hidden')).toBe(true);
+  expect(bottom.hasAttribute('data-chesscom-vinf-player-hidden')).toBe(false);
+  expect(document.querySelectorAll('.chesscom-vinf-player-toggle')).toHaveLength(2);
+  expect(top.contains(document.querySelector('.clock-component'))).toBe(false);
+  button.click(); expect(top.hasAttribute('data-chesscom-vinf-player-hidden')).toBe(false);
+  button.click(); controller.reconcile(document, review, DEFAULT_SETTINGS, true);
+  expect(top.hasAttribute('data-chesscom-vinf-player-hidden')).toBe(false);
+  expect(document.querySelector('.chesscom-vinf-player-toggle')).toBeNull();
+});
+
+it("corrects inherited clipping once, yields to input, and cancels pending entry on cleanup", async () => {
+  vi.useFakeTimers(); fixture();
+  const entry = new PhoneGameEntry();
+  document.documentElement.setAttribute(marker, 'true');
+  vi.spyOn(document.querySelector('#board-layout-player-top')!, 'getBoundingClientRect')
+    .mockReturnValue({ top: -200 } as DOMRect);
+  vi.spyOn(document.querySelector('#board-single')!, 'getBoundingClientRect')
+    .mockReturnValue({ height: 390, bottom: 250 } as DOMRect);
+  vi.spyOn(window, 'scrollY', 'get').mockReturnValue(400);
+  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+  entry.reconcile(document, '/game/1');
+  await vi.advanceTimersByTimeAsync(350);
+  expect(scroll).toHaveBeenCalledWith({ top: 152, behavior: 'instant' });
+  entry.reconcile(document, '/game/1'); await vi.advanceTimersByTimeAsync(1000);
+  expect(scroll).toHaveBeenCalledTimes(1);
+  entry.reconcile(document, '/game/2');
+  document.dispatchEvent(new Event('touchstart'));
+  await vi.advanceTimersByTimeAsync(400);
+  entry.reconcile(document, '/game/2'); await vi.advanceTimersByTimeAsync(400);
+  expect(scroll).toHaveBeenCalledTimes(1);
+  entry.reconcile(document, '/game/3'); entry.cleanup();
+  await vi.advanceTimersByTimeAsync(400); expect(scroll).toHaveBeenCalledTimes(1);
+  scroll.mockRestore(); vi.restoreAllMocks();
 });

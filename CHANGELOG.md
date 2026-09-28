@@ -9,6 +9,22 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-09-28
+
+### Changed
+
+- Normal-game numeric clocks start visible; paired tap/T toggling and the
+  low-time visibility latch remain. Extreme OLED retains its hidden default.
+- Normal phone play aligns avatars and names, enlarges the turn dot by 50%,
+  and places native draw/Abort/Resign icons beside the pencil and clock in the
+  player row. Native action labels/state and confirmation handlers remain intact.
+- Tap either avatar area to independently hide/restore that player's identity
+  information without shifting the board, clock or actions.
+- Correct clipped inherited matchmaking scroll once after game entry; any
+  touch, pointer, wheel or keyboard input cancels the correction.
+- Investigated delayed mobile audio: no audio interception was added. Browser
+  autoplay/user-activation is a supported hypothesis, pending device verification.
+
 ## [2.6.4] - 2026-09-28
 
 ### Changed

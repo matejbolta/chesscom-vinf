@@ -888,3 +888,26 @@ illustrative renderer, not copied native implementation.
 Native highlights are pooled by square. Temporary same-square previews are
 skipped; committed taps still use native highlighting. Arrow previews also skip
 existing native keys (`type|fromto`) to avoid duplicate renderer entries.
+
+## Compact mobile player rows — 2.7.0
+
+Native `.player-component:not(.player-theatre) .player-tagline {height:4rem}`
+from the saved first-party CSS overrides a less-specific compact rule. Match
+specificity and use flex alignment; never size the chessboard for this fix.
+`#board-layout-player-{top,bottom} .player-playerContent` owns identity only;
+transparent avatar-target buttons are siblings of the original avatar/tagline.
+`data-chesscom-vinf-player-hidden` hides those siblings without collapsing space.
+
+Draw/resign component roots are moved from sidebar into
+`#board-layout-player-bottom .player-component`, before the native clock and
+pencil. Lookup includes tracked moved roots; new native replacements supersede
+old owned slots. Original anchors support cleanup. Compact CSS targets only
+root buttons, not arbitrary nested dialog/confirmation buttons. Keep native
+text accessible and state-driven (Abort before enough moves, Resign afterwards).
+The latest user recording demonstrates that transition; no relabeling is needed.
+
+Entry correction reads original top player/board bounds and calls scrollTo once,
+never changes board CSS geometry or coordinates. Input cancels before the timeout.
+Sanitized fixture includes the native high-specificity 40px tagline regression;
+`/phone-game-preview?narrow=1&entry=1&oled=1` supplies a 320px frame with inherited
+scroll. These are fixture checks, not actual Firefox Android verification.

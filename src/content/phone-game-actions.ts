@@ -21,11 +21,11 @@ export class PhoneGameActionsController {
         this.originals.delete(action);
       }
     }
-    const tabs = document.querySelector("#board-layout-sidebar .sidebar-content > .underlined-tabs-component");
+    const clock = document.querySelector("#board-layout-player-bottom .player-component > .clock-component");
     const actions = ["draw", "resign"].map(kind => document.querySelector<HTMLElement>(
       `#board-layout-sidebar .${kind}-button-component`
-    ));
-    if (!tabs || actions.some(action => !action || action.closest('[role="dialog"], .draw-offer-component'))) {
+    ) ?? [...this.originals.keys()].find(action => action.matches(`.${kind}-button-component`)));
+    if (!clock || actions.some(action => !action || action.closest('[role="dialog"], .draw-offer-component'))) {
       this.restore(); return;
     }
     if (!this.row?.isConnected) {
@@ -33,7 +33,16 @@ export class PhoneGameActionsController {
       this.row = document.createElement("div");
       this.row.className = "chesscom-vinf-phone-actions";
       this.row.dataset.chesscomVinfOwned = "game-actions";
-      tabs.before(this.row);
+      clock.before(this.row);
+    }
+    // Native hydration can replace a component while its original anchor survives.
+    for (const [action, anchor] of this.originals) {
+      if (!actions.includes(action)) {
+        const slot = action.parentElement;
+        if (slot?.parentElement === this.row) slot.remove();
+        anchor.remove();
+        this.originals.delete(action);
+      }
     }
     for (const action of actions as HTMLElement[]) {
       if (!this.originals.has(action)) {

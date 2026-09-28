@@ -1024,3 +1024,94 @@ html[data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component { v
 html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .chesscom-vinf-annotation-toggle) { visibility: visible !important; }
 .chesscom-vinf-annotations[data-extreme="false"] { z-index: 11; }
 .chesscom-vinf-annotation-toggle[data-extreme="false"] { z-index: 12; }
+
+/* Normal phone player rows: native identity + native actions + pencil + clock.
+   Match the native :not(.player-theatre) specificity; its 40px tagline caused
+   the avatar/username baseline mismatch on the real site. */
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-game] .player-component:not(.player-theatre) .player-tagline {
+    height: auto;
+    display: flex;
+    align-items: center;
+    margin-inline: 3px 0;
+  }
+  html[data-chesscom-vinf-phone-game] .player-component { gap: 2px; }
+  html[data-chesscom-vinf-phone-game][data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component:not(.clock-theatre) {
+    width: 64px; min-width: 64px; flex: 0 0 64px; height: 44px;
+  }
+  html[data-chesscom-vinf-phone-game] .player-playerContent {
+    position: relative;
+    align-self: stretch;
+    min-width: 28px;
+  }
+  html[data-chesscom-vinf-phone-game] .player-component .player-avatar {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+  }
+  .chesscom-vinf-player-toggle {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 28px;
+    min-width: 28px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .chesscom-vinf-player-toggle:focus-visible { outline: 1px solid #aaa; outline-offset: -1px; }
+  [data-chesscom-vinf-player-hidden] > :not(.chesscom-vinf-player-toggle) { visibility: hidden; }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-phone-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0;
+    padding: 0;
+    height: 44px;
+  }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-phone-actions > div { max-width: none; width: 32px; }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-phone-actions > div > :is(button, [role="button"]) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    min-width: 32px;
+    height: 44px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #bbb;
+    font-size: 0;
+    gap: 0;
+  }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-phone-actions > div > :is(button, [role="button"]) * { font-size: 0; }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-phone-actions > div > :is(button, [role="button"]) :is(svg, [data-glyph], .icon-font-chess, [aria-hidden="true"]) {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"] {
+    width: 32px; min-width: 32px; flex-basis: 32px; padding: 8px;
+    border: 0; border-radius: 0; color: #bbb;
+  }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"]::before { content: none; }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"][aria-pressed="true"] { color: #b9d88d; }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time {
+    border-color: transparent;
+    border-radius: 0;
+    color: #bbb;
+    font-size: 18px;
+  }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #b65b5b; }
+  html[data-chesscom-vinf-phone-game] #board-layout-player-bottom { margin-bottom: 0; }
+  html[data-chesscom-vinf-phone-game] #board-layout-sidebar { margin-top: 0; }
+}
+.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-turn {
+  width: 6px; height: 6px; left: calc(50% - 3px);
+}

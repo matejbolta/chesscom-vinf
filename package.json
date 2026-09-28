@@ -1,6 +1,6 @@
 {
   "name": "chesscom-vinf",
-  "version": "2.6.4",
+  "version": "2.7.0",
   "private": true,
   "description": "A focused Chess.com experience for the homepage and phone Game Review.",
   "type": "module",

@@ -407,3 +407,28 @@ is disabled and normal board input remains usable. Native drawing requires
 actual Firefox Android / Violentmonkey verification after installation.
 
 Reference: https://violentmonkey.github.io/api/gm/#unsafewindow
+
+## Compact game rows and sound investigation (2.7.0)
+
+Normal phone games show clocks initially. Tap either clock area to hide/show
+both; either side below one minute forces both visible. Tap either avatar area
+to independently hide/restore that player's info. Draw, native Abort/Resign,
+pencil and clock share the player row. Long names truncate on narrow phones.
+A one-shot entry scroll correction yields immediately to touch/scroll/key input.
+Extreme presentation and Game Review remain separate.
+
+Delayed start/move sounds are **not confirmed fixed**. Source inspection found
+native Howler audio-unlock and resume queues, consistent with autoplay blocking,
+but the device's actual AudioContext state and native live-game path were not
+inspected. VINF does not intercept game audio. The homepage shortcut performs
+normal full-page navigation; a homepage tap cannot be assumed to unlock the
+new page's audio. Do not add fake events, audio replacement or global patches.
+
+Check chess.com's Firefox site permissions / autoplay setting. Mozilla documents
+per-site exceptions and notes that some sites still require interaction:
+https://support.mozilla.org/en-US/kb/playing-videos-firefox-android
+Web Audio contexts can be suspended until user activation:
+https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices
+A user-controlled harmless tap outside the board during matchmaking is a useful
+comparison, as is native launch with VINF disabled. Never start/play a real game
+as an automated audio test. Desktop fixtures cannot establish Android audio behavior.

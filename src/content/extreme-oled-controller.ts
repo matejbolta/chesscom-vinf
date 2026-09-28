@@ -48,7 +48,7 @@ export class ExtremeOledController {
   private route = "";
   private suspendedRoute = "";
   private finishedRoute = "";
-  private revealTimes = false;
+  private revealTimes: boolean | null = null;
   private forcedTimes = false;
   private maxima = new Map<string, number>();
 
@@ -74,7 +74,7 @@ export class ExtremeOledController {
 
   toggleTimes(): boolean {
     if (!this.overlay || !this.document) return false;
-    if (!this.forcedTimes) this.revealTimes = !this.revealTimes;
+    if (!this.forcedTimes) this.revealTimes = !(this.revealTimes ?? this.normalClocks);
     this.update(this.document);
     return true;
   }
@@ -240,7 +240,7 @@ export class ExtremeOledController {
     ));
     // Latch for this game: an increment back over a minute must not hide urgency.
     if (clockSeconds.some(seconds => seconds !== null && seconds < 60)) this.forcedTimes = true;
-    const showTimes = this.revealTimes || this.forcedTimes;
+    const showTimes = (this.revealTimes ?? this.normalClocks) || this.forcedTimes;
     for (const side of ["top", "bottom"]) {
       const bar = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-clock.${side}`)!;
       const clock = document.querySelector<HTMLElement>(`#board-layout-player-${side} .clock-component`);
@@ -251,7 +251,9 @@ export class ExtremeOledController {
       const time = this.overlay.querySelector<HTMLButtonElement>(`.chesscom-vinf-extreme-time.${side}`)!;
       if (this.normalClocks && clock) {
         const clockRect = clock.getBoundingClientRect();
-        time.style.left = `${clockRect.left - rect.left + (clockRect.width - 80) / 2}px`;
+        const width = Math.min(80, clockRect.width);
+        time.style.width = `${width}px`;
+        time.style.left = `${clockRect.left - rect.left + (clockRect.width - width) / 2}px`;
         time.style.top = `${clockRect.top - rect.top + (clockRect.height - 44) / 2}px`;
       }
       // Numeric times toggle together; the native-time bars always remain visible.
@@ -297,7 +299,7 @@ export class ExtremeOledController {
   }
 
   cleanup(document: Document): void {
-    this.revealTimes = false;
+    this.revealTimes = null;
     this.forcedTimes = false;
     this.observer?.disconnect();
     this.observer = null;
