@@ -1769,3 +1769,9 @@ Label Extreme OLED as `Extreme OLED mode (in-game)` on both platforms. At the
 bottom of desktop settings, explain VINF and native Chess.com shortcuts in
 separate groups, including source links and page-availability limits. This is
 help text only; no shortcut behavior changes. Android has no desktop guide.
+
+### 2.6.3 — Compact desktop reference
+
+Supersedes the verbose 2.6.2 guide: O/E/T with Escape inline, then native
+X/Z/F/B/Alt in that order and a final color-modifier sentence. No other help
+prose, arrow-key rows, separate Easter egg group, or source links in settings.

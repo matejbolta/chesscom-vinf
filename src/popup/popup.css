@@ -558,7 +558,7 @@ select {
 .shortcut-guide dl {
   display: grid;
   grid-template-columns: 58px minmax(0, 1fr);
-  gap: 10px 8px;
+  gap: 6px 8px;
   margin: 0;
 }
 
@@ -575,5 +575,3 @@ select {
   text-align: center;
 }
 
-.shortcut-guide a { color: #b8db89; }
-.shortcut-guide a:focus-visible { outline: 2px solid #b8db89; outline-offset: 3px; }

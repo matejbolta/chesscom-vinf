@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-28.
-Current source version: 2.6.2.
+Current source version: 2.6.3.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.6.2. This handoff is the shortest
+chronological amendments through version 2.6.3. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -1784,3 +1784,16 @@ homepage: native behavior, less noise, immediate clocks, and no surprises.
   label fits, guide wraps and scrolls, no console errors. Native F separately
   observed on public Analysis; Android label covered by userscript test/build,
   not a new Firefox Android device check. No push or Store artifacts.
+
+## 2.6.3 — Compact shortcut help
+
+User requested only O/E/T (Escape inline with E), then X/Z/F/B/Alt, followed
+by the color-modifier sentence. Removed other prose, arrow keys, and UI links;
+research references remain in the 2.6.2 record above. No keyboard or touch
+drawing behavior changed. Native touch annotation reuse remains unverified;
+the current independent overlay was chosen to isolate drawing from piece input,
+not because native integration was proven impossible.
+
+Verification: typecheck, 175 tests, desktop and Android builds passed. Local
+390px popup column visually checked in IAB: guide now about 424px tall instead
+of 834px; requested order and wrapping confirmed, no console errors.

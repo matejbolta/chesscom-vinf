@@ -9,6 +9,14 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.6.3] - 2026-09-28
+
+### Changed
+
+- Compacted desktop shortcut help to O/E/T and X/Z/F/B/Alt. Escape is an inline
+  note; removed arrow-key rows, extra explanations, separate Easter egg heading,
+  and source links from the UI. Retained the requested color-modifier sentence.
+
 ## [2.6.2] - 2026-09-28
 
 ### Changed
