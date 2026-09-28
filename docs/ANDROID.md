@@ -88,7 +88,7 @@ in Firefox on the tablet, replacing the host with the computer's LAN address:
 http://COMPUTER-LAN-IP:4174/chesscom-vinf.user.js
 ```
 
-Violentmonkey should open its install screen. Review the four local GM grants and
+Violentmonkey should open its install screen. Review the four local GM grants plus `unsafeWindow` page access and
 the Chess.com match before choosing Install. Stop the temporary server after the
 script is installed.
 
@@ -396,3 +396,14 @@ stay native. Bars/drawings scroll with the board container, and late native cont
 are adapted promptly. Numeric clocks still toggle together and lock visible below
 one minute; Extreme's spacing remains separate. Install the rebuilt userscript for
 these fixes. Validation used the more faithful fixture, not an updated phone capture.
+
+## Native annotation access (2.6.4)
+
+Update the complete generated userscript, including its metadata header. The new
+`unsafeWindow` grant lets the drawing adapter reach the page board's existing
+annotation API; no network or cookie grants are added. Retain the userscript
+manager's default injection mode. If page API access is unavailable, the pencil
+is disabled and normal board input remains usable. Native drawing requires
+actual Firefox Android / Violentmonkey verification after installation.
+
+Reference: https://violentmonkey.github.io/api/gm/#unsafewindow

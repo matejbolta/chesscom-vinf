@@ -99,3 +99,11 @@ entries, resign automation, new permissions, or audio interception are added.
 Version 2.5.0 reuses transient clock state in normal phone/desktop games. Desktop
 shortcuts write only existing local OLED preferences. No new permissions, requests,
 move storage, touch-event injection or consequential game actions are introduced.
+
+### Native annotation adapter (2.6.4)
+
+Android adds `unsafeWindow` to reach the existing page board's annotation API.
+Only annotation factories/add/toggle/get/remove methods are used. Gesture squares
+and owned mark references remain transient. No input fabrication, telemetry,
+remote code, cookies, additional network calls, or game/move actions are added.
+The existing four GM grants and narrow page matches remain unchanged.

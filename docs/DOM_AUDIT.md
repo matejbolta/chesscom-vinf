@@ -858,3 +858,33 @@ Runtime hydration regression checks exact bootstrap→game without popstate, lat
 native controls within 30ms (before the 750ms poll), native board identity, disable
 restoration and Review cleanup. Browser evidence and real-device limits are recorded
 in HANDOFF's 2.6.1 section; no real game was manipulated during verification.
+
+## Native touch annotation contract — 2.6.4 (2026-09-28)
+
+On the public signed-out Analysis board, right-click d4 produces native
+`.highlight.square-44`; repeating removes it without moving pieces. Its board
+is `wc-chess-board#board-analysis-board`; gameplay remains scoped to the already
+audited `#board-layout-chessboard wc-chess-board#board-single`.
+
+Public source inspected:
+- https://www.chess.com/r2/client-packages/analysis/2026.9.8/chessboard-947a29d.23dd9aa2.BlQir_RPs9.chunk.js
+- https://www.chess.com/r2/client-packages/analysis/2026.9.8/shared.eager.DLqp4stWnK.chunk.js
+
+The component assigns its API to `element.game`. The native marking pointer-up
+branch uses `markings.factory.buildStandardAnalysisHighlight(square)` for a tap
+or `buildStandardArrow(from,to)` for a drag and then `markings.toggleOne(mark)`.
+The factories accept algebraic squares and obtain colors/style from native options.
+`addOne`, `getOne`, and `removeOne` support temporary-preview ownership. The returned
+marking object is reused across the userscript/page boundary, avoiding injection
+of a sandbox-created object. Missing methods are treated as unavailable.
+
+VINF no longer renders annotation SVG paths or rects. Its empty input shield
+retains `.chesscom-vinf-annotations`; native marks render inside the board. The
+public API is not documented as stable. Analysis source evidence does not prove
+current live-game bundle compatibility or Firefox Android sandbox behavior.
+`tests/helpers/native-annotations.ts` is explicitly a contract double with an
+illustrative renderer, not copied native implementation.
+
+Native highlights are pooled by square. Temporary same-square previews are
+skipped; committed taps still use native highlighting. Arrow previews also skip
+existing native keys (`type|fromto`) to avoid duplicate renderer entries.

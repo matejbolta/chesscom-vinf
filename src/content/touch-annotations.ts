@@ -1,15 +1,15 @@
+import { NativeAnnotations, readNativeMarkings, type AnnotationApiResolver } from "./native-annotations";
 import { boardOverlayHost, placeBoardOverlay } from "./board-overlay";
 import { isChessComGame } from "./game-continuation";
 import { nativeGameHasEnded } from "./extreme-oled-controller";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
 
-const NS = "http://www.w3.org/2000/svg";
 type Square = [number, number];
 
-/** Local annotations only: never dispatch mouse events or call the chess engine. */
+/** Capture touch input separately; Chess.com owns annotation shapes and rendering. */
 export class TouchAnnotationsController {
   private board: HTMLElement | null = null;
-  private layer: SVGSVGElement | null = null;
+  private layer: HTMLDivElement | null = null;
   private button: HTMLButtonElement | null = null;
   private enabled = false;
   private extreme = false;
@@ -17,7 +17,10 @@ export class TouchAnnotationsController {
   private finished = false;
   private signature = "";
   private gesture: { id: number; start: Square; end: Square } | null = null;
-  private marks = new Map<string, [Square, Square]>();
+  private annotations: NativeAnnotations | null = null;
+  private failedApi: object | null = null;
+
+  constructor(private readonly resolveApi: AnnotationApiResolver = readNativeMarkings) {}
   private dispose: (() => void) | null = null;
 
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, android: boolean): void {
@@ -39,6 +42,7 @@ export class TouchAnnotationsController {
       this.board = board;
       this.mount(document);
     }
+    this.refreshApi();
     this.checkPosition();
     this.position();
   }
@@ -52,15 +56,14 @@ export class TouchAnnotationsController {
     if (signature !== this.signature) {
       this.signature = signature;
       this.gesture = null;
-      this.marks.clear();
+      this.clearMarks();
       this.render();
     }
   }
 
   private mount(document: Document): void {
-    const layer = document.createElementNS(NS, "svg");
+    const layer = document.createElement("div");
     layer.classList.add("chesscom-vinf-annotations");
-    layer.setAttribute("viewBox", "0 0 8 8");
     layer.setAttribute("aria-hidden", "true");
     layer.setAttribute("data-chesscom-vinf-owned", "annotations");
     const button = document.createElement("button");
@@ -72,9 +75,11 @@ export class TouchAnnotationsController {
     button.setAttribute("data-chesscom-vinf-owned", "annotations");
     button.addEventListener("click", event => {
       event.stopPropagation();
+      this.refreshApi();
+      if (!this.annotations) return;
       this.enabled = !this.enabled;
       this.gesture = null;
-      if (!this.enabled) this.marks.clear();
+      if (!this.enabled) this.clearMarks();
       this.render();
       this.position();
     });
@@ -88,6 +93,7 @@ export class TouchAnnotationsController {
     }
     layer.addEventListener("pointerdown", event => {
       block(event);
+      this.refreshApi();
       if (!this.enabled || event.button !== 0) return;
       if (this.gesture) { this.gesture = null; this.render(); return; }
       const square = this.square(event);
@@ -104,13 +110,12 @@ export class TouchAnnotationsController {
     });
     layer.addEventListener("pointerup", event => {
       block(event);
+      this.refreshApi();
       const gesture = this.gesture;
       this.gesture = null;
       const square = this.square(event);
       if (gesture?.id === event.pointerId && square) {
-        const key = `${gesture.start}:${square}`;
-        if (this.marks.has(key)) this.marks.delete(key);
-        else this.marks.set(key, [gesture.start, square]);
+        this.useNative(api => api.toggle(this.notation(gesture.start), this.notation(square)));
       }
       this.render();
     });
@@ -174,40 +179,62 @@ export class TouchAnnotationsController {
       });
       this.button.style.display = visible ? "grid" : "none";
     }
+    this.button.disabled = !this.annotations;
+    this.button.title = this.annotations ? "Draw arrows and red squares" : "Native drawing unavailable on this board";
+    this.button.setAttribute("aria-label", this.button.title);
     this.button.setAttribute("aria-pressed", String(this.enabled));
     this.button.dataset.extreme = String(this.extreme);
     this.layer.dataset.extreme = String(this.extreme);
     document.documentElement.setAttribute("data-chesscom-vinf-annotations", this.extreme ? "extreme" : "normal");
   }
 
-  private render(): void {
-    if (!this.layer) return;
-    this.layer.replaceChildren();
-    const marks = [...this.marks.values()];
-    if (this.gesture) marks.push([this.gesture.start, this.gesture.end]);
-    for (const [start, end] of marks) {
-      const same = start[0] === end[0] && start[1] === end[1];
-      const shape = this.layer.ownerDocument.createElementNS(NS, same ? "rect" : "path");
-      if (same) {
-        shape.setAttribute("x", String(start[0])); shape.setAttribute("y", String(start[1]));
-        shape.setAttribute("width", "1"); shape.setAttribute("height", "1");
-        shape.setAttribute("fill", "#df3636"); shape.setAttribute("opacity", ".55");
-      } else {
-        const x = start[0] + .5, y = start[1] + .5, ex = end[0] + .5, ey = end[1] + .5;
-        const angle = Math.atan2(ey-y, ex-x), ux = Math.cos(angle), uy = Math.sin(angle);
-        const bx = ex - .36*ux, by = ey - .36*uy;
-        shape.setAttribute("d", `M${x-.09*uy} ${y+.09*ux} L${bx-.09*uy} ${by+.09*ux} L${bx-.26*uy} ${by+.26*ux} L${ex} ${ey} L${bx+.26*uy} ${by-.26*ux} L${bx+.09*uy} ${by-.09*ux} L${x+.09*uy} ${y-.09*ux} Z`);
-        shape.setAttribute("fill", "#e99b24"); shape.setAttribute("opacity", ".8");
-      }
-      this.layer.append(shape);
+  private notation([x, y]: Square): string {
+    const flipped = this.board!.classList.contains("flipped");
+    return `${"abcdefgh"[flipped ? 7 - x : x]}${flipped ? y + 1 : 8 - y}`;
+  }
+
+  private refreshApi(): void {
+    let api = null;
+    try { api = this.board ? this.resolveApi(this.board) : null; } catch { /* Fail open to normal board input. */ }
+    if (api === this.annotations?.api) return;
+    this.clearMarks();
+    this.enabled = false;
+    this.gesture = null;
+    this.annotations = api && api !== this.failedApi ? new NativeAnnotations(api) : null;
+    this.position();
+  }
+
+  private useNative(action: (api: NativeAnnotations) => void): void {
+    if (!this.annotations) return;
+    try { action(this.annotations); }
+    catch {
+      this.failedApi = this.annotations.api;
+      this.clearMarks();
+      this.annotations = null;
+      this.enabled = false;
+      this.gesture = null;
+      this.position();
     }
+  }
+
+  private clearMarks(): void {
+    try { this.annotations?.clear(); } catch { /* Detached/replaced native API. */ }
+  }
+
+  private render(): void {
+    this.useNative(api => {
+      if (this.gesture) api.showPreview(this.notation(this.gesture.start), this.notation(this.gesture.end));
+      else api.clearPreview();
+    });
   }
 
   private cleanup(): void {
     this.board?.ownerDocument.documentElement.removeAttribute("data-chesscom-vinf-annotations");
+    this.clearMarks();
+    this.annotations = null; this.failedApi = null;
     this.dispose?.(); this.dispose = null;
     this.layer?.remove(); this.button?.remove();
     this.board = null; this.layer = null; this.button = null;
-    this.enabled = false; this.gesture = null; this.signature = ""; this.marks.clear();
+    this.enabled = false; this.gesture = null; this.signature = "";
   }
 }

@@ -1,3 +1,4 @@
+import type { AnnotationApiResolver } from "./native-annotations";
 import { TouchAnnotationsController } from "./touch-annotations";
 import { PhoneGameActionsController } from "./phone-game-actions";
 import { AndroidGameControlsController, isFirefoxAndroid } from "./android-game-controls";
@@ -33,6 +34,7 @@ export interface SettingsSource {
 }
 
 export interface RuntimeDependencies {
+  annotationApi?: AnnotationApiResolver;
   fetch?: GamePresenceFetch;
   navigate?: (href: string) => void;
 }
@@ -43,7 +45,7 @@ export function startVinfRuntime(
 ): void {
   const android = isFirefoxAndroid(window.navigator);
   const desktop = !/Android|iPhone|iPad/i.test(window.navigator.userAgent);
-  const touchAnnotations = new TouchAnnotationsController();
+  const touchAnnotations = new TouchAnnotationsController(dependencies.annotationApi);
   const phoneActions = new PhoneGameActionsController();
   const androidGameControls = new AndroidGameControlsController();
   const controller = new LayoutController(new NativeLaunchAdapter());

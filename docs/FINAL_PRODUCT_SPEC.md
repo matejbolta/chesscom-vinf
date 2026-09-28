@@ -1775,3 +1775,11 @@ help text only; no shortcut behavior changes. Android has no desktop guide.
 Supersedes the verbose 2.6.2 guide: O/E/T with Escape inline, then native
 X/Z/F/B/Alt in that order and a final color-modifier sentence. No other help
 prose, arrow-key rows, separate Easter egg group, or source links in settings.
+
+### 2.6.4 — Native Android annotations
+
+Phone/tablet drawing uses Chess.com's native annotation factories and renderer.
+The pencil and touch shield remain; native API calls handle preview, toggle and
+owned-mark cleanup. No custom arrow/square drawing or synthetic mouse events.
+Unavailable native access disables drawing without blocking ordinary board input.
+The userscript adds page access via `unsafeWindow`; desktop behavior is unchanged.

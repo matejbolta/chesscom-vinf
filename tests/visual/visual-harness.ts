@@ -1,3 +1,4 @@
+import { installAnnotationFixture } from "../helpers/native-annotations";
 import { TouchAnnotationsController } from "../../src/content/touch-annotations";
 import { PhoneGameActionsController } from "../../src/content/phone-game-actions";
 import { AndroidGameControlsController } from "../../src/content/android-game-controls";
@@ -13,6 +14,8 @@ import {
   getDefaultTimeControlIds,
   isQuickPlayPresetCount
 } from "../../src/shared/time-controls";
+
+window.addEventListener("error", event => { document.body.dataset.fixtureError = String(event.error?.stack ?? event.message); });
 
 const fixtureLocation = {
   protocol: "https:",
@@ -272,6 +275,16 @@ if (window.location.pathname === "/extreme-oled") {
 if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const phone = new PhoneExperienceController();
   const clocks = new ExtremeOledController();
+  const annotationBoard = document.querySelector<HTMLElement>("#board-single");
+  if (annotationBoard && !searchParams.has("no-annotation-api")) installAnnotationFixture(annotationBoard);
+  const annotationEvents: string[] = [];
+  for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture"]) {
+    document.addEventListener(type, event => {
+      if (!(event.target as Element)?.classList?.contains("chesscom-vinf-annotations")) return;
+      annotationEvents.push(`${type}:${(event as PointerEvent).pointerId}`);
+      document.body.dataset.annotationEvents = annotationEvents.slice(-12).join(",");
+    }, true);
+  }
   const annotations = new TouchAnnotationsController();
   const actions = new PhoneGameActionsController();
   const androidDock = new AndroidGameControlsController();

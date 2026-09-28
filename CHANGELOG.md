@@ -9,6 +9,19 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.6.4] - 2026-09-28
+
+### Changed
+
+- Android phone/tablet drawing now uses Chess.com's native annotation factories
+  and renderer, including native arrow shapes and colors. VINF retains only the
+  input shield and pencil toggle; no simulated mouse events or piece actions.
+- Native previews and owned marks clean up on cancel, toggle-off, position/board
+  changes, disable, game end and Review. Unrelated native marks remain intact.
+- Added userscript page access (`unsafeWindow`) for the native annotation API.
+  If the API is unavailable or fails, drawing disables without blocking the board.
+
+
 ## [2.6.3] - 2026-09-28
 
 ### Changed

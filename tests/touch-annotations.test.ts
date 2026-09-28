@@ -1,3 +1,4 @@
+import { installAnnotationFixture } from "./helpers/native-annotations";
 import { readFileSync } from "node:fs";
 import { expect, it, vi } from "vitest";
 import { TouchAnnotationsController } from "../src/content/touch-annotations";
@@ -11,6 +12,7 @@ function fixture() {
   document.documentElement.setAttribute("data-chesscom-vinf-phone-game", "true");
   const board = document.querySelector<HTMLElement>("#board-single")!;
   vi.spyOn(board, "getBoundingClientRect").mockReturnValue({ left: 0, top: 100, width: 400, height: 400, right: 400, bottom: 500 } as DOMRect);
+  installAnnotationFixture(board);
   return board;
 }
 function pointer(layer: Element, type: string, x: number, y: number) {
@@ -24,22 +26,23 @@ it("captures annotation gestures separately, toggles marks, cancels and restores
   const bubble = vi.fn(); document.addEventListener("pointerdown", bubble);
   controller.reconcile(document, game, DEFAULT_SETTINGS, true);
   const button = document.querySelector<HTMLButtonElement>(".chesscom-vinf-annotation-toggle")!;
-  const layer = document.querySelector<SVGSVGElement>(".chesscom-vinf-annotations")!;
+  const layer = document.querySelector<HTMLDivElement>(".chesscom-vinf-annotations")!;
   expect(layer.style.pointerEvents).toBe("none");
   button.click();
   pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
-  expect(layer.querySelectorAll("rect")).toHaveLength(1);
+  expect(board.querySelectorAll(".highlight")).toHaveLength(1);
   pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
-  expect(layer.querySelectorAll("rect")).toHaveLength(0);
+  expect(board.querySelectorAll(".highlight")).toHaveLength(0);
   pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointermove", 175, 325); pointer(layer, "pointerup", 175, 325);
-  expect(layer.querySelectorAll("path")).toHaveLength(1);
+  expect(board.querySelectorAll(".arrow")).toHaveLength(1);
   pointer(layer, "pointerdown", 75, 175); pointer(layer, "pointercancel", 75, 175); pointer(layer, "pointerup", 75, 175);
-  expect(layer.querySelectorAll("rect")).toHaveLength(0);
+  expect(board.querySelectorAll(".highlight")).toHaveLength(0);
   expect(native).not.toHaveBeenCalled(); expect(bubble).not.toHaveBeenCalled();
   document.documentElement.setAttribute("data-chesscom-vinf-extreme-oled", "true");
   controller.reconcile(document, game, { ...DEFAULT_SETTINGS, extremeOled: true }, true);
   expect(button.dataset.extreme).toBe("true"); expect(button.getAttribute("aria-pressed")).toBe("true");
   board.classList.add("flipped"); controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(board.querySelectorAll(".highlight, .arrow")).toHaveLength(0);
   expect(layer.children).toHaveLength(0);
   button.click(); expect(layer.style.pointerEvents).toBe("none");
   pointer(board, "pointerdown", 25, 125); expect(native).toHaveBeenCalledOnce();
@@ -69,4 +72,62 @@ it("moves only original action roots, leaves confirmations explicit, and restore
   expect([...original.childNodes]).toEqual(before);
   controller.reconcile(document, game, DEFAULT_SETTINGS, false);
   expect(document.querySelector(".chesscom-vinf-phone-actions")).toBeNull();
+});
+
+it("uses native factories, preserves unrelated marks, handles flip/cancel/API failure and retries hydration", () => {
+  const board = fixture();
+  const api = (board as unknown as { game: { markings: import("../src/content/native-annotations").NativeMarkings } }).game.markings;
+  const arrow = vi.spyOn(api.factory, "buildStandardArrow");
+  const square = vi.spyOn(api.factory, "buildStandardAnalysisHighlight");
+  const controller = new TouchAnnotationsController();
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  const button = document.querySelector<HTMLButtonElement>(".chesscom-vinf-annotation-toggle")!;
+  const layer = document.querySelector<HTMLElement>(".chesscom-vinf-annotations")!;
+  api.addOne(api.factory.buildStandardArrow("a1", "h8"));
+  button.click();
+  // Previewing an existing arrow must not create a duplicate native visual.
+  pointer(layer, "pointerdown", 25, 475); pointer(layer, "pointermove", 375, 125);
+  expect(board.querySelectorAll(".arrow")).toHaveLength(1);
+  pointer(layer, "pointercancel", 375, 125);
+  expect(api.getOne("arrow|a1h8")).toBeDefined();
+  pointer(layer, "pointerdown", 75, 475); pointer(layer, "pointermove", 125, 375);
+  expect(arrow).toHaveBeenLastCalledWith("b1", "c3");
+  pointer(layer, "pointercancel", 125, 375);
+  expect(board.querySelectorAll(".arrow")).toHaveLength(1); // only pre-existing native arrow
+  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
+  expect(square).toHaveBeenLastCalledWith("a8");
+  board.classList.add("flipped"); controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
+  expect(square).toHaveBeenLastCalledWith("h1");
+  // Another native interaction replaces our mark: cleanup must retain its object.
+  api.addOne(api.factory.buildStandardAnalysisHighlight("h1"));
+  button.click();
+  expect(board.querySelectorAll(".highlight")).toHaveLength(1);
+  api.removeOne("highlight|h1");
+  expect(board.querySelectorAll(".highlight")).toHaveLength(0);
+  expect(api.getOne("arrow|a1h8")).toBeDefined();
+  button.click();
+  vi.spyOn(api, "toggleOne").mockImplementation(() => { throw new Error("native contract changed"); });
+  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
+  expect(button.disabled).toBe(true); expect(layer.style.pointerEvents).toBe("none");
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(button.disabled).toBe(true); // no exception/retry loop against same API
+  installAnnotationFixture(board);
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(button.disabled).toBe(false);
+  controller.reconcile(document, game, { ...DEFAULT_SETTINGS, enabled: false }, true);
+});
+
+it("keeps drawing unavailable until the native API exists without blocking the board", () => {
+  const board = fixture();
+  Object.assign(board, { game: undefined });
+  const controller = new TouchAnnotationsController();
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  const button = document.querySelector<HTMLButtonElement>(".chesscom-vinf-annotation-toggle")!;
+  const layer = document.querySelector<HTMLElement>(".chesscom-vinf-annotations")!;
+  expect(button.disabled).toBe(true); expect(layer.style.pointerEvents).toBe("none");
+  installAnnotationFixture(board); controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(button.disabled).toBe(false);
+  controller.reconcile(document, { ...game, pathname: "/analysis/game/123456/review" }, DEFAULT_SETTINGS, true);
+  expect(document.querySelector(".chesscom-vinf-annotations")).toBeNull();
 });

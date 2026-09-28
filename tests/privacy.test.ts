@@ -106,7 +106,8 @@ describe("privacy boundaries", () => {
       "@match        https://www.chess.com/analysis/game/*"
     );
     expect(builder).toContain("@run-at       document-start");
-    expect(builder.match(/@grant/g)).toHaveLength(4);
+    expect(builder.match(/@grant/g)).toHaveLength(5);
+    expect(builder).toContain("@grant        unsafeWindow");
     expect(builder).not.toMatch(/@require|@connect|GM_xmlhttpRequest|GM\.xmlHttpRequest/);
     expect(builder).not.toMatch(/@downloadURL|@updateURL/);
   });

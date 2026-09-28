@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-28.
-Current source version: 2.6.3.
+Current source version: 2.6.4.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.6.3. This handoff is the shortest
+chronological amendments through version 2.6.4. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,46 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Native touch annotations (2.6.4)
+
+Supersedes the independent SVG drawing from 2.6.0. The Android phone/tablet
+pencil UX and gesture isolation remain; the input shield is now an empty div.
+`native-annotations.ts` calls the same `game.markings.factory` methods used by
+native right-click handling: `buildStandardArrow` / `buildStandardAnalysisHighlight`,
+then `toggleOne`. Native defaults select colors, opacity, and shapes (including
+knight arrows). Temporary native previews use an isolated random key and are
+removed on completion/cancellation. Cleanup removes only tracked native objects
+that have not been replaced by another interaction. No broad clear-all, synthetic
+input, game-state calls, or changes to input monitoring.
+
+The Android entry point resolves the page board through documented `unsafeWindow`
+access (one additional userscript grant); the Chrome/Brave manifest is unchanged.
+Missing/incompatible APIs disable the pencil with an explanatory accessible label
+and keep normal board input. Poll/reconciliation picks up late hydration; an API
+that throws stays disabled until replaced. Desktop/Home/Review scope unchanged.
+Native marks inherit existing Extreme OLED board styling.
+
+Source evidence: public Analysis 2026.9.8 board/marking implementation, downloaded
+with explicit user-approved request headers after an initial HTTP403. Details in
+`DOM_AUDIT.md`; raw scripts remain ignored under
+`fixtures/raw/native-annotations-2026-09-28`. The source explicitly monitors
+untrusted pointer input when enabled, so do not replace this adapter with synthetic
+right-clicks or tamper with native monitoring. The API is internal and can change.
+
+Verification uses a sanitized native-API contract double; its illustrative renderer
+is test-only and is NOT shipped. No actual Firefox Android userscript/page-realm
+integration or active-game drawing has been verified. Install updated userscript,
+then verify tap, drag, cancel, flip, toggle-off, and post-game/Review cleanup on the
+device. Never describe the fixture renderer as the actual Chess.com renderer.
+
+2.6.4 checks: typecheck, 177 tests, desktop/Android builds pass; four annotation
+checks rerun after the final duplicate-preview guard. IAB contract fixture at
+390px and 800px/Extreme verified marking calls, empty shield, no board input while
+active, toggle-off cleanup, and disabled-API fallback. Browser preview logs show
+an observer error outside the iframe's captured error stream; fixture gestures
+and assertions succeed, but do not claim an entirely clean browser console.
+Native device/page-realm integration remains outstanding as stated above.
 
 ## Recording-driven phone corrections (2.6.1)
 

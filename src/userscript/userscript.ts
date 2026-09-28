@@ -1,3 +1,4 @@
+import { readNativeMarkings } from "../content/native-annotations";
 import { MARKERS } from "../shared/constants";
 import type {
   DailyGamesPlacement,
@@ -43,6 +44,7 @@ import { startVinfRuntime, type SettingsSource } from "../content/runtime";
 
 declare const __VINF_USERSCRIPT_CSS__: string;
 declare const __VINF_VERSION__: string;
+declare const unsafeWindow: Window;
 
 declare function GM_getValue<T>(key: string, defaultValue: T): T;
 declare function GM_setValue(key: string, value: unknown): void;
@@ -1049,7 +1051,13 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
 
 const settingsStore = createSettingsStore();
 installStyles();
-startVinfRuntime(settingsStore);
+startVinfRuntime(settingsStore, {
+  annotationApi: board => {
+    // Userscript-manager page access; never inject scripts or synthetic input.
+    if (typeof unsafeWindow === "undefined") return null;
+    return readNativeMarkings(unsafeWindow.document.getElementById(board.id));
+  }
+});
 
 function openSettings(): void {
   if (!document.body) {

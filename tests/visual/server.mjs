@@ -214,6 +214,15 @@ const mimeTypes = {
 const server = createServer(async (request, response) => {
   const pathname = decodeURIComponent(new URL(request.url ?? "/", "http://localhost").pathname);
 
+  if (pathname === "/phone-game-preview") {
+    const params = new URL(request.url, "http://localhost").searchParams;
+    const width = params.has("tablet") ? 800 : 390;
+    const query = ["extreme", "no-annotation-api"].filter(key => params.has(key)).map(key => `${key}=1`).join("&");
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(`<!doctype html><html><body style="margin:0;background:#171614"><iframe title="VINF annotation contract fixture" src="/phone-game?${query}" style="border:0;width:${width}px;height:844px"></iframe></body></html>`);
+    return;
+  }
+
   if (pathname === "/phone-game" || pathname === "/extreme-oled") {
     const html = await readFile(new URL(pathname === "/phone-game" ? "../fixtures/phone-game.html" : "../fixtures/extreme-oled.html", import.meta.url), "utf8");
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });

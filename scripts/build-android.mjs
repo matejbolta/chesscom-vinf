@@ -18,6 +18,7 @@ const metadata = `// ==UserScript==
 // @match        https://www.chess.com/analysis/game/*
 // @run-at       document-start
 // @noframes
+// @grant        unsafeWindow
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_addValueChangeListener
