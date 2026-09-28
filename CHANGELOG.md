@@ -9,6 +9,15 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.7.1] - 2026-09-28
+
+- Normal Android phone rows permanently hide player identity, preserving native
+  captured pieces and material scores. Removed the avatar hide/restore toggle.
+- Above board: material, native draw and Abort/Resign, opponent clock. Below:
+  material, annotation pencil, own clock.
+- Normal phone clocks stay visible and cannot be toggled. Extreme OLED and
+  desktop clock toggles, tablet presentation and Game Review are unchanged.
+
 ## [2.7.0] - 2026-09-28
 
 ### Changed

@@ -21,7 +21,7 @@ export class PhoneGameActionsController {
         this.originals.delete(action);
       }
     }
-    const clock = document.querySelector("#board-layout-player-bottom .player-component > .clock-component");
+    const clock = document.querySelector("#board-layout-player-top .player-component > .clock-component");
     const actions = ["draw", "resign"].map(kind => document.querySelector<HTMLElement>(
       `#board-layout-sidebar .${kind}-button-component`
     ) ?? [...this.originals.keys()].find(action => action.matches(`.${kind}-button-component`)));

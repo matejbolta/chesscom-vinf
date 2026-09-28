@@ -72,8 +72,12 @@ export class ExtremeOledController {
     this.cleanup(this.document);
   };
 
+  private fixedPhoneTimes(): boolean {
+    return this.normalClocks && !!this.document?.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
+  }
+
   toggleTimes(): boolean {
-    if (!this.overlay || !this.document) return false;
+    if (!this.overlay || !this.document || this.fixedPhoneTimes()) return false;
     if (!this.forcedTimes) this.revealTimes = !(this.revealTimes ?? this.normalClocks);
     this.update(this.document);
     return true;
@@ -240,7 +244,8 @@ export class ExtremeOledController {
     ));
     // Latch for this game: an increment back over a minute must not hide urgency.
     if (clockSeconds.some(seconds => seconds !== null && seconds < 60)) this.forcedTimes = true;
-    const showTimes = (this.revealTimes ?? this.normalClocks) || this.forcedTimes;
+    const fixedTimes = this.fixedPhoneTimes();
+    const showTimes = fixedTimes || (this.revealTimes ?? this.normalClocks) || this.forcedTimes;
     for (const side of ["top", "bottom"]) {
       const bar = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-clock.${side}`)!;
       const clock = document.querySelector<HTMLElement>(`#board-layout-player-${side} .clock-component`);
@@ -258,13 +263,15 @@ export class ExtremeOledController {
       }
       // Numeric times toggle together; the native-time bars always remain visible.
       time.hidden = clockSeconds.every(value => value === null);
-      time.setAttribute("aria-pressed", String(showTimes));
-      time.setAttribute("aria-disabled", String(this.forcedTimes));
+      time.disabled = fixedTimes;
+      if (fixedTimes) time.removeAttribute("aria-pressed");
+      else time.setAttribute("aria-pressed", String(showTimes));
+      time.setAttribute("aria-disabled", String(fixedTimes || this.forcedTimes));
       const player = side === "top" ? "Top" : "Bottom";
       const whole = seconds === null ? null : Math.floor(seconds);
       const display = whole === null ? "—" : whole < 60 ? String(whole) :
         `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, "0")}`;
-      time.setAttribute("aria-label", showTimes ? `${player} clock ${display}. ${this.forcedTimes ? "Time stays visible" : "Hide both clocks"}` :
+      time.setAttribute("aria-label", showTimes ? `${player} clock ${display}. ${fixedTimes || this.forcedTimes ? "Time stays visible" : "Hide both clocks"}` :
         `${player} clock area: show both clocks`);
       time.dataset.low = String(seconds !== null && seconds < 60);
       const label = showTimes ? display : "";

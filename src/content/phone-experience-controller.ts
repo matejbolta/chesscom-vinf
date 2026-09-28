@@ -2,7 +2,6 @@ import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { isChessComGame } from "./game-continuation";
 import { isChessComLiveGameReview } from "./game-review-layout-controller";
 import { nativeGameHasEnded, readClockSeconds } from "./extreme-oled-controller";
-import { PhonePlayerInfoController } from "./phone-player-info";
 import { PhoneGameEntry } from "./phone-game-entry";
 
 const GAME = "data-chesscom-vinf-phone-game";
@@ -13,7 +12,6 @@ const AUDIO_BUTTON = '.sidebar-header-header button[aria-label="Toggle Coach Aud
 
 /** Phone presentation only. Never resize/reparent the board or synthesize game actions. */
 export class PhoneExperienceController {
-  private playerInfo = new PhonePlayerInfoController();
   private entry = new PhoneGameEntry();
   private route = "";
   private finished = false;
@@ -27,7 +25,7 @@ export class PhoneExperienceController {
   private openingPositions = new Map<HTMLElement, { parent: Node; next: ChildNode | null }>();
   private spacer: HTMLElement | null = null;
 
-  reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, phone: boolean): void {
+  reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, phone: boolean, phoneAndroid = phone): void {
     const route = `${location.protocol}//${location.hostname}${location.pathname}`;
     if (route !== this.route) {
       this.cleanup(document);
@@ -42,7 +40,7 @@ export class PhoneExperienceController {
       return;
     }
     this.document = document;
-    this.refresh = () => this.reconcile(document, location, settings, phone);
+    this.refresh = () => this.reconcile(document, location, settings, phone, phoneAndroid);
     if (!this.observer && document.body) {
       this.observer = new MutationObserver(() => {
         if (this.timer !== null) return;
@@ -67,14 +65,14 @@ export class PhoneExperienceController {
     if (this.finished || !board || timers.length !== 2 ||
         [...timers].some(timer => readClockSeconds(timer.textContent ?? "") === null)) {
       document.documentElement.removeAttribute(GAME);
-      this.playerInfo.cleanup();
+      document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
       if (this.finished) this.entry.cleanup();
       this.clearRows();
       this.restoreOpening();
       return;
     }
     document.documentElement.setAttribute(GAME, "true");
-    this.playerInfo.reconcile(document);
+    document.documentElement.toggleAttribute("data-chesscom-vinf-phone-material", phoneAndroid);
     this.entry.reconcile(document, route);
     this.updateRows(document);
     this.moveOpening(document);
@@ -172,7 +170,7 @@ export class PhoneExperienceController {
   }
 
   cleanup(document: Document): void {
-    this.playerInfo.cleanup();
+    document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
     this.entry.cleanup();
     this.observer?.disconnect();
     this.observer = null;

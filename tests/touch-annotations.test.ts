@@ -63,7 +63,7 @@ it("moves only original action roots, leaves confirmations explicit, and restore
   controller.reconcile(document, game, DEFAULT_SETTINGS, true);
   controller.reconcile(document, game, DEFAULT_SETTINGS, true);
   const row = document.querySelector(".chesscom-vinf-phone-actions")!;
-  expect(row.parentElement?.closest("#board-layout-player-bottom")).not.toBeNull();
+  expect(row.parentElement?.closest("#board-layout-player-top")).not.toBeNull();
   expect(row.contains(draw)).toBe(true); expect(row.contains(resign)).toBe(true);
   expect(open).not.toHaveBeenCalled(); expect(commit).not.toHaveBeenCalled();
   resign.lastChild!.textContent = "Abort";

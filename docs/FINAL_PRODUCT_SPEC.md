@@ -1795,3 +1795,11 @@ Correct inherited clipped entry scroll once, cancel on user interaction, and
 never resize the native board or continue repositioning during play. Extreme,
 Review and homepage layouts remain separate. Audio investigation is documented
 without claiming an unverified sound fix or replacing the site's audio system.
+
+### 2.7.1 — Phone material rows
+
+Supersedes normal phone identity toggles: permanently hide both identities but
+retain each player's captured material. Place draw/Abort/Resign above the board
+between material and opponent clock; pencil remains below between material and
+own clock. Normal phone clocks cannot be hidden. Preserve Extreme clock toggling
+and all desktop/tablet/Review behavior.

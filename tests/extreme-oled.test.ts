@@ -219,3 +219,22 @@ describe("Extreme OLED", () => {
 it.each([["9:00",540],["0:09.8",9.8],["1:02:03",3723],["8,5",8.5],["Disconnected",null],["1:99",null],["-1",null]])("reads native timer %s", (text,seconds) => {
   expect(readClockSeconds(String(text))).toBe(seconds);
 });
+
+it("keeps normal phone clocks visible without changing Extreme or desktop toggles", () => {
+  document.documentElement.setAttribute('data-chesscom-vinf-phone-material', '');
+  controller.reconcile(document, location, DEFAULT_SETTINGS, true);
+  const phoneTime = document.querySelector<HTMLButtonElement>('.chesscom-vinf-extreme-time.bottom')!;
+  expect(phoneTime.disabled).toBe(true);
+  expect(phoneTime.textContent).not.toBe('');
+  expect(controller.toggleTimes()).toBe(false);
+  phoneTime.click();
+  expect(phoneTime.textContent).not.toBe('');
+  document.documentElement.removeAttribute('data-chesscom-vinf-phone-material');
+  controller.reconcile(document, location, DEFAULT_SETTINGS, true);
+  expect(phoneTime.disabled).toBe(false);
+  expect(controller.toggleTimes()).toBe(true);
+  expect(phoneTime.textContent).toBe('');
+  controller.reconcile(document, location, settings);
+  expect(controller.toggleTimes()).toBe(true);
+  expect(document.querySelector('.chesscom-vinf-extreme-time.bottom')!.textContent).not.toBe('');
+});

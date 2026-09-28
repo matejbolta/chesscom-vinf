@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-28.
-Current source version: 2.7.0.
+Current source version: 2.7.1.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.7.0. This handoff is the shortest
+chronological amendments through version 2.7.1. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,30 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Phone material-only rows (2.7.1)
+
+Supersedes the 2.7.0 identity toggles and bottom action placement below.
+Normal Android phones (<600px) permanently hide avatar/name/Elo/flag/connection,
+while preserving native `wc-captured-pieces` and all its descendants/ancestors.
+CSS hides only siblings along the path to that native component, including when
+material lives inside `.player-tagline`; no material reparenting or cloning.
+The retired `PhonePlayerInfoController` and avatar buttons are removed.
+`data-chesscom-vinf-phone-material` is explicitly gated by Android + phone in
+runtime and removed on disable, end, Extreme and Review. Desktop narrow windows
+are excluded. Top row: material → original draw/Abort/Resign → opponent clock.
+Bottom: material → pencil → own clock. Existing native action anchors restore
+exact originals. Normal phone numeric clocks are permanently visible; their
+buttons are disabled, not focusable, and toggleTimes returns false. Extreme and
+desktop behavior remain unchanged. No audio or entry-scroll changes this patch.
+
+Verification: typecheck, 180 tests, desktop/Android builds pass. IAB fixture:
+320px material-only rows, noninteractive visible clocks, same native board width,
+annotation toggle, disable restoration; 800px tablet retains identity and native
+sidebar actions. Material node identity/live score update and mode/route guards
+covered in tests. Existing preview MutationObserver/Node console error remains
+outside the fixture-captured error stream. Updated Firefox Android is unverified.
+No real game interaction, push, Store packaging or screenshots.
 
 ## Mobile game entry and compact controls (2.7.0)
 

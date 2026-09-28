@@ -432,3 +432,12 @@ https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices
 A user-controlled harmless tap outside the board during matchmaking is a useful
 comparison, as is native launch with VINF disabled. Never start/play a real game
 as an automated audio test. Desktop fixtures cannot establish Android audio behavior.
+
+### 2.7.1 phone row redesign
+
+Normal phone player identity is permanently hidden (no avatar toggle). Native
+captured material remains visible and updates normally. Top row: material,
+draw, Abort/Resign, opponent clock. Bottom: material, pencil, own clock.
+Normal phone clocks are always visible and not tappable. Extreme retains its
+clock toggle; tablet, desktop and Review are unchanged. Actual updated device
+verification is still required; local fixture and automated checks passed.

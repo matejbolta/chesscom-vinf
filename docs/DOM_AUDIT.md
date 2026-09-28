@@ -911,3 +911,14 @@ never changes board CSS geometry or coordinates. Input cancels before the timeou
 Sanitized fixture includes the native high-specificity 40px tagline regression;
 `/phone-game-preview?narrow=1&entry=1&oled=1` supplies a 320px frame with inherited
 scroll. These are fixture checks, not actual Firefox Android verification.
+
+## Phone material-only rows — 2.7.1
+
+Saved native markup confirms `wc-captured-pieces` contains
+`.captured-pieces-cpiece` and `.captured-pieces-score`, beside the identity block
+inside player tagline. Hiding the whole `.player-playerContent` loses material.
+Under `data-chesscom-vinf-phone-material`, hide siblings outside the path to
+`wc-captured-pieces`, never its ancestors/descendants. The sanitized phone fixture
+now includes that nesting on both sides. Captured material remains native/live.
+Native actions now target the top player's clock anchor; pencil stays below.
+Runtime passes Android/phone scope explicitly; no desktop/tablet identity hiding.

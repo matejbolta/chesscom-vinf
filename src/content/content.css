@@ -1051,21 +1051,6 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
     align-items: center;
     justify-content: center;
   }
-  .chesscom-vinf-player-toggle {
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 28px;
-    min-width: 28px;
-    height: 44px;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-  .chesscom-vinf-player-toggle:focus-visible { outline: 1px solid #aaa; outline-offset: -1px; }
-  [data-chesscom-vinf-player-hidden] > :not(.chesscom-vinf-player-toggle) { visibility: hidden; }
   html[data-chesscom-vinf-phone-game] .chesscom-vinf-phone-actions {
     display: flex;
     flex: 0 0 auto;
@@ -1114,4 +1099,26 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
 }
 .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-turn {
   width: 6px; height: 6px; left: calc(50% - 3px);
+}
+
+/* Phone-only material rows. Keep the complete native path to captured pieces,
+   including its score and live updates; never hide the entire player content. */
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-material] .player-playerContent > :not(wc-captured-pieces):not(:has(wc-captured-pieces)),
+  html[data-chesscom-vinf-phone-material] .player-playerContent :has(wc-captured-pieces) > :not(wc-captured-pieces):not(:has(wc-captured-pieces)) {
+    display: none !important;
+  }
+  html[data-chesscom-vinf-phone-material] .player-component:not(.player-theatre) .player-tagline {
+    margin: 0;
+    height: auto;
+    align-items: center;
+  }
+  html[data-chesscom-vinf-phone-material] wc-captured-pieces { display: block; }
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled {
+    color: #bbb;
+    cursor: default;
+    opacity: 1;
+    pointer-events: none;
+  }
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled[data-low="true"] { color: #b65b5b; }
 }
