@@ -441,3 +441,12 @@ draw, Abort/Resign, opponent clock. Bottom: material, pencil, own clock.
 Normal phone clocks are always visible and not tappable. Extreme retains its
 clock toggle; tablet, desktop and Review are unchanged. Actual updated device
 verification is still required; local fixture and automated checks passed.
+
+### 2.7.2 performance correction
+
+Removed per-drag-frame overlay measurements and redundant same-square arrow
+preview rebuilds. Clock ticks update values without remeasuring the board.
+Native moves, annotations, clock state and board sizing remain site-owned.
+Dark captured material is gray on normal phone OLED for readability.
+Fixture operation counts improved substantially; actual Firefox Android FPS and
+touch latency have not been profiled or verified for this build.

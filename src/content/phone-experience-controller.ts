@@ -1,3 +1,4 @@
+import { isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { isChessComGame } from "./game-continuation";
 import { isChessComLiveGameReview } from "./game-review-layout-controller";
@@ -42,7 +43,9 @@ export class PhoneExperienceController {
     this.document = document;
     this.refresh = () => this.reconcile(document, location, settings, phone, phoneAndroid);
     if (!this.observer && document.body) {
-      this.observer = new MutationObserver(() => {
+      this.observer = new MutationObserver(records => {
+        if (!records.some(record => !isOwnedGameMutation(record) && !isBoardPaintMutation(record) &&
+            !(document.documentElement.hasAttribute(GAME) && isClockTextMutation(record)))) return;
         if (this.timer !== null) return;
         this.timer = document.defaultView!.setTimeout(() => {
           this.timer = null;

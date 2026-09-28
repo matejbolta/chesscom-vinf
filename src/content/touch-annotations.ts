@@ -51,8 +51,8 @@ export class TouchAnnotationsController {
     const board = this.board;
     if (!board) return;
     // Clear on a move or orientation change; never leave stale marks.
-    const signature = board.className + [...board.querySelectorAll(".piece")]
-      .map(piece => piece.className + (piece.getAttribute("style") ?? "")).join("|");
+    const signature = String(board.classList.contains("flipped")) + [...board.querySelectorAll(".piece")]
+      .map(piece => [...piece.classList].filter(token => /^(?:[wb][pnbrqk]|square-\d+)$/.test(token)).sort().join(" ")).join("|");
     if (signature !== this.signature) {
       this.signature = signature;
       this.gesture = null;
@@ -105,7 +105,8 @@ export class TouchAnnotationsController {
       block(event);
       if (this.gesture?.id !== event.pointerId) return;
       const square = this.square(event);
-      if (square) this.gesture.end = square;
+      if (!square || square[0] === this.gesture.end[0] && square[1] === this.gesture.end[1]) return;
+      this.gesture.end = square;
       this.render();
     });
     layer.addEventListener("pointerup", event => {
@@ -131,13 +132,22 @@ export class TouchAnnotationsController {
     view.visualViewport?.addEventListener("resize", position);
     const resize = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(position);
     resize?.observe(this.board!);
-    const observer = new MutationObserver(() => {
-      this.checkPosition();
-      this.position();
+    const observer = new MutationObserver(records => {
+      // Piece transforms and native mark rendering do not change overlay bounds.
+      // Only position/orientation changes can invalidate our annotations.
+      if (records.some(record => record.type === "attributes"
+        ? record.target === this.board || (record.target as Element).matches(".piece")
+        : [...record.addedNodes, ...record.removedNodes].some(node =>
+          node.nodeType === 1 && ((node as Element).matches(".piece") || (node as Element).querySelector(".piece"))))) {
+        this.checkPosition();
+      }
     });
-    observer.observe(this.board!, { attributes: true, childList: true, subtree: true });
+    observer.observe(this.board!, { attributes: true, attributeFilter: ["class"], childList: true, subtree: true });
+    const boardStyle = new MutationObserver(position);
+    boardStyle.observe(this.board!, { attributes: true, attributeFilter: ["style"] });
     this.dispose = () => {
       observer.disconnect();
+      boardStyle.disconnect();
       resize?.disconnect();
       view.removeEventListener("scroll", scroll, true);
       view.removeEventListener("resize", position);

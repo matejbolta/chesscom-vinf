@@ -922,3 +922,15 @@ Under `data-chesscom-vinf-phone-material`, hide siblings outside the path to
 now includes that nesting on both sides. Captured material remains native/live.
 Native actions now target the top player's clock anchor; pencil stays below.
 Runtime passes Android/phone scope explicitly; no desktop/tablet identity hiding.
+
+## Gameplay observer scope — 2.7.2
+
+Primary board `.piece` type (`wp` etc.), `square-NN`, and board `.flipped` identify
+position/orientation. Inline transforms are animation/drag paint, not position
+identity. Ignore paint-only descendants of initialized `wc-chess-board#board-single`
+for outer presentation; keep root attributes, initial pieces, replacement and
+canvas fallback observable. Clock text-node changes update clocks without a
+whole layout reconciliation. Native material `.captured-pieces-cpiece` sprites
+receive a neutral-gray filter only under normal phone OLED, preserving shape,
+score and updates. New operation-count regression uses the real runtime and
+sanitized native marking contract, never a real game.

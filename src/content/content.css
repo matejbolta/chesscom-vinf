@@ -1122,3 +1122,12 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
   }
   html[data-chesscom-vinf-phone-material] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled[data-low="true"] { color: #b65b5b; }
 }
+
+/* Native black captured-piece sprites otherwise disappear on the OLED page.
+   Tint only material icons, never board pieces or the Extreme presentation. */
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-material][data-chesscom-vinf-oled="true"] wc-captured-pieces .captured-pieces-cpiece {
+    filter: brightness(0) invert(.7);
+  }
+  html[data-chesscom-vinf-phone-material][data-chesscom-vinf-oled="true"] wc-captured-pieces .captured-pieces-score { color: #b3b3b3; }
+}

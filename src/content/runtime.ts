@@ -1,3 +1,4 @@
+import { hasGamePresentation, isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
 import type { AnnotationApiResolver } from "./native-annotations";
 import { TouchAnnotationsController } from "./touch-annotations";
 import { PhoneGameActionsController } from "./phone-game-actions";
@@ -115,8 +116,8 @@ export function startVinfRuntime(
         return;
       }
       if (records.some(record => {
-        const target = record.target.nodeType === 1 ? record.target as Element : record.target.parentElement;
-        return !target?.closest("[data-chesscom-vinf-owned]");
+        return !isOwnedGameMutation(record) && !isBoardPaintMutation(record) &&
+          !(hasGamePresentation(document) && isClockTextMutation(record));
       })) scheduleReconcile();
     });
     observer.observe(nextRoot, { childList: true, subtree: true });

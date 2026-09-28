@@ -1803,3 +1803,10 @@ retain each player's captured material. Place draw/Abort/Resign above the board
 between material and opponent clock; pencil remains below between material and
 own clock. Normal phone clocks cannot be hidden. Preserve Extreme clock toggling
 and all desktop/tablet/Review behavior.
+
+### 2.7.2 — Gameplay responsiveness
+
+Separate native board paint and clock ticks from structural layout work. Keep
+native piece input and rendering untouched, update drawing previews only when
+the destination square changes, and preserve resize/hydration/cleanup behavior.
+Ensure captured-material sprites remain readable on normal phone OLED black.

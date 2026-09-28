@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-28.
-Current source version: 2.7.1.
+Current source version: 2.7.2.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.7.1. This handoff is the shortest
+chronological amendments through version 2.7.2. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,48 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Gameplay performance correction (2.7.2)
+
+User's 113.824s Firefox Android recording of 2.7.1 inspected at 2s intervals,
+with 100ms frames at 13.5–15.5s (piece drag) and 250ms at 106–110s (annotations).
+Initial entry now shows the full board; scrolling remains user-controlled.
+Native knight arrows/red squares work on the device. At ~107s toggle-off clears
+all marks; the later red square is new input, not an uncleared mark. Dark captured
+material is visibly low contrast on black; normal phone OLED now tints only the
+native material icons to neutral gray. Board-piece rendering is untouched.
+Private evidence: `fixtures/raw/performance-2026-09-28`; do not commit recordings.
+
+Confirmed VINF inefficiencies and fixes:
+- Touch observer watched every descendant style mutation, rebuilt a signature
+  containing inline transforms, then measured/positioned overlays on each drag
+  frame. It now watches piece class/structure, compares only piece type/square +
+  flipped orientation, and uses resize/root-style events for overlay geometry.
+- Clock observer also treated piece paint as layout changes. Shared
+  `game-mutations.ts` skips paint only after presentation is established; initial
+  hydration, board replacement, canvas fallback and root geometry remain observable.
+  Clock text updates use cached layout; structural/resize events invalidate it.
+- Runtime/phone observers no longer run broad reconciliation on native clock
+  text/mark rendering or owned widget updates. The 750ms lifecycle/API fallback
+  remains intentionally; do not remove it without replacing late API hydration.
+- Same-square pointermove no longer removes/recreates native arrow preview.
+  Clock attributes are written only when changed, reducing observer/style churn.
+
+Measured in `tests/game-performance.test.ts` using real runtime/controllers and
+sanitized native API fixture, simulated 60 style-transform frames at 16ms:
+2.7.1: 366 geometry reads, 15 phone reconciles, 1 clock reconcile.
+2.7.2: 6 geometry reads, 1 phone reconcile, 1 clock reconcile.
+30 same-square pointermoves: 30 preview factory calls → 1.
+These are operation counts, NOT device CPU/FPS/latency measurements or a claim
+that all phone lag is fixed. Regression budgets also cover ten clock ticks,
+actual square-change mark cleanup and root-style geometry invalidation.
+
+Verification: 181 tests / 24 files pass, typecheck + desktop/Android builds.
+IAB phone fixture verified native annotation calls, input isolation/toggle-off,
+unchanged board bounds and computed material contrast. Existing browser-preview
+MutationObserver/Node error remains outside fixture-captured errors. Actual
+updated Firefox Android smoothness needs user verification. No real game actions,
+GitHub push, Store artifacts or Store screenshots.
 
 ## Phone material-only rows (2.7.1)
 

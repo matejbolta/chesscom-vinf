@@ -9,6 +9,16 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.7.2] - 2026-09-28
+
+- Removed repeated overlay layout measurements during native piece dragging.
+  Gameplay observers distinguish board paint and clock text from structural changes.
+- Clock ticks reuse overlay geometry; resize, hydration and layout changes still
+  reposition it. Avoid writing unchanged clock attributes.
+- Annotation previews rebuild only when entering another square. Actual piece
+  squares/orientation still clear stale marks; transient drag transforms do not.
+- Improve captured-material contrast on normal phone OLED backgrounds.
+
 ## [2.7.1] - 2026-09-28
 
 - Normal Android phone rows permanently hide player identity, preserving native
