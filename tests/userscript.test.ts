@@ -58,7 +58,7 @@ describe("Android userscript shell", () => {
     const oledGroup = extreme.closest("section")!;
     expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(-1)).toBe(oledGroup);
     expect([...oledGroup.querySelectorAll("strong")].map(e => e.textContent)).toEqual([
-      "OLED background", "OLED play buttons", "Extreme OLED mode"
+      "OLED background", "OLED play buttons", "Extreme OLED mode (in-game)"
     ]);
     expect(oledGroup.querySelector("small")).toBeNull();
     for (const on of [true, false]) {

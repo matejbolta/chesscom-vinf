@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-09-28.
-Current source version: 2.6.1.
+Current source version: 2.6.2.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.6.1. This handoff is the shortest
+chronological amendments through version 2.6.2. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -1762,3 +1762,25 @@ Before editing:
 
 The product should feel as if Chess.com itself had chosen a calmer, more useful
 homepage: native behavior, less noise, immediate clocks, and no surprises.
+
+
+## 2.6.2 — Settings labels and desktop shortcut guide (2026-09-28)
+
+- Desktop popup/side panel and Android settings say `Extreme OLED mode (in-game)`.
+- Desktop-only static help sits below OLED settings. It explains existing O/E/T/Esc
+  behavior and native X/Z/arrows/Alt, mouse annotations, and F/B novelty effects.
+  No gameplay behavior or keyboard handlers changed.
+- Native shortcuts verified against Chess.com's help:
+  https://support.chess.com/en/articles/8609263-what-chat-commands-can-i-use-in-game-chat
+- Hold B confirmed by Chess.com's staff announcement:
+  https://www.chess.com/news/view/announcing-new-chessboxing-feature
+- F directly verified on signed-out https://www.chess.com/analysis in the in-app
+  browser: pressing F displayed the yellow fist animation. No real game involved.
+  Native availability varies by surface; Courses-only shortcuts intentionally omitted.
+- Android receives only the label change, not the desktop help.
+- Verification: typecheck, all 175 tests, desktop build, and Android build passed.
+  Updated existing label/order assertions. Local popup fixture visually checked
+  in the in-app browser (390px settings column in the default 1280px layout):
+  label fits, guide wraps and scrolls, no console errors. Native F separately
+  observed on public Analysis; Android label covered by userscript test/build,
+  not a new Firefox Android device check. No push or Store artifacts.

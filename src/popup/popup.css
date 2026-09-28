@@ -537,3 +537,43 @@ select {
     width: 100%;
   }
 }
+
+.shortcut-guide {
+  padding: 14px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.shortcut-guide h3 {
+  font-size: 12px;
+  margin: 16px 0 8px;
+  color: #f1f1f1;
+}
+
+.shortcut-guide p {
+  color: #bdbcb9;
+  margin-top: 8px;
+}
+
+.shortcut-guide dl {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 10px 8px;
+  margin: 0;
+}
+
+.shortcut-guide dd { margin: 0; }
+
+.shortcut-guide kbd {
+  display: inline-block;
+  min-width: 23px;
+  padding: 1px 4px;
+  border: 1px solid #686660;
+  border-radius: 4px;
+  background: #262522;
+  font: inherit;
+  text-align: center;
+}
+
+.shortcut-guide a { color: #b8db89; }
+.shortcut-guide a:focus-visible { outline: 2px solid #b8db89; outline-offset: 3px; }

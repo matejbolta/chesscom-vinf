@@ -1761,3 +1761,11 @@ native positioned board stage without altering board geometry. Late game control
 are reconciled promptly and consistently. No forced scroll or history interception;
 keep the stock initial scrolling behavior and Extreme's distinct spacing. See the
 handoff for recording findings, fixture evidence and remaining device validation.
+
+
+### 2.6.2 — Settings shortcut reference
+
+Label Extreme OLED as `Extreme OLED mode (in-game)` on both platforms. At the
+bottom of desktop settings, explain VINF and native Chess.com shortcuts in
+separate groups, including source links and page-availability limits. This is
+help text only; no shortcut behavior changes. Android has no desktop guide.

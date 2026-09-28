@@ -9,6 +9,14 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.6.2] - 2026-09-28
+
+### Changed
+
+- Clarified the desktop and Android setting label as “Extreme OLED mode (in-game)”.
+- Added desktop settings help for VINF shortcuts, native Chess.com navigation,
+  mouse annotations, promotion override, and F/B Easter eggs. No key handlers changed.
+
 ## [2.6.1] - 2026-09-28
 
 ### Fixed
