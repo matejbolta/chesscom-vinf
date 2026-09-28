@@ -799,12 +799,9 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
   html[data-chesscom-vinf-phone-game] #board-layout-main::before {
     content: "";
     display: block;
-    height: clamp(240px, 38svh, 380px);
-    flex: 0 0 clamp(240px, 38svh, 380px);
+    height: clamp(48px, 10svh, 80px);
+    flex: 0 0 clamp(48px, 10svh, 80px);
     pointer-events: none;
-  }
-  html[data-chesscom-vinf-phone-game] .board-layout-player .player-component {
-    gap: 8px;
   }
   html[data-chesscom-vinf-phone-game] .board-layout-player .player-playerContent {
     min-width: 0;
@@ -909,21 +906,63 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
     align-items: center;
     min-height: 44px;
   }
-  html[data-chesscom-vinf-normal-clocks] .player-component .player-avatar,
-  html[data-chesscom-vinf-normal-clocks] .player-component .player-avatar > img {
+  html[data-chesscom-vinf-phone-game] .board-layout-player {
+    height: auto;
+    min-height: 44px;
+  }
+  html[data-chesscom-vinf-phone-game] .player-component {
+    align-items: center;
+    min-height: 44px;
+    gap: 4px;
+  }
+  html[data-chesscom-vinf-phone-game] .player-playerContent {
+    align-items: center;
+    min-width: 0;
+  }
+  html[data-chesscom-vinf-phone-game] .player-component .player-avatar {
     width: 20px;
     height: 20px;
-    flex-basis: 20px;
+    flex: 0 0 20px;
   }
-  html[data-chesscom-vinf-normal-clocks] .player-component .player-tagline {
+  html[data-chesscom-vinf-phone-game] .player-avatar :is(.cc-avatar-component, img) {
+    --cc-avatar-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+  html[data-chesscom-vinf-phone-game] .player-component .player-tagline {
     height: auto;
     min-width: 0;
+    margin-inline: 6px 0;
     font-size: 11px;
-    line-height: 1.2;
+    line-height: 1.25;
   }
-  html[data-chesscom-vinf-normal-clocks] .player-tagline :is(.user-username-component, .user-tagline-rating) {
+  html[data-chesscom-vinf-phone-game] .player-tagline .cc-user-block-component {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  html[data-chesscom-vinf-phone-game] .player-tagline :is(.cc-user-username-component, [class*="cc-user-rating-"], [class*="cc-text-"], .user-username-component, .user-tagline-rating) {
     font-size: 11px;
-    line-height: 1.2;
+    line-height: 1.25;
+  }
+  html[data-chesscom-vinf-phone-game] .player-tagline :is([class*="cc-user-rating-"], .cc-country-flag-component, .connection-component) {
+    flex-shrink: 0;
+  }
+  html[data-chesscom-vinf-phone-game] .player-tagline .connection-component {
+    width: 15px;
+    height: 7px;
+  }
+  html[data-chesscom-vinf-phone-game] .player-tagline .connection-component::before {
+    width: 3px;
+    box-shadow: 4px 0 var(--signal-2, currentColor), 8px 0 var(--signal-3, currentColor), 12px 0 var(--signal-4, currentColor);
+  }
+  html[data-chesscom-vinf-phone-game] #board-layout-sidebar .sidebar-content > .underlined-tabs-component {
+    min-height: 44px;
+    padding-block: 0;
+  }
+  html[data-chesscom-vinf-phone-game] #board-layout-sidebar .underlined-tabs-component :is(button, .underlined-tabs-tab) {
+    min-height: 44px;
+    padding-block: 0;
   }
   html[data-chesscom-vinf-phone-review] :is(.mobile-gr-footer-group-start, .mobile-gr-footer-group-end) {
     display: grid;
@@ -967,10 +1006,21 @@ html[data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component { v
 .chesscom-vinf-annotation-toggle[data-extreme="true"] { background: #000; color: #777; border-color: #444; }
 .chesscom-vinf-annotation-toggle[data-extreme="true"][aria-pressed="false"] { opacity: 0; }
 .chesscom-vinf-annotation-toggle:focus-visible { opacity: 1 !important; outline: 2px solid #aaa; }
-.chesscom-vinf-phone-actions { display: flex; justify-content: center; align-items: center; gap: 24px; padding: 8px 12px; }
+.chesscom-vinf-phone-actions { display: flex; justify-content: center; align-items: center; gap: 24px; padding: 0 12px; flex: 0 0 44px; }
 .chesscom-vinf-phone-actions > div { width: max-content; max-width: 45%; }
 .chesscom-vinf-phone-actions button { min-height: 44px; }
 
-html[data-chesscom-vinf-annotations="normal"] #board-layout-player-bottom .player-playerContent { padding-right: 48px; }
+/* Normal-game pencil participates in layout; keep its hit area 44px but its
+   visible circle compact. Extreme OLED retains the existing 44px presentation. */
+.chesscom-vinf-annotation-toggle[data-flow="true"] { position: relative; flex: 0 0 44px; }
+@media (max-width: 599px) {
+  .chesscom-vinf-annotation-toggle[data-flow="true"] { border: 0; background: transparent; padding: 12px; }
+  .chesscom-vinf-annotation-toggle[data-flow="true"]::before {
+    content: ""; position: absolute; inset: 6px; border: 1px solid #666; border-radius: 50%; pointer-events: none;
+  }
+  .chesscom-vinf-annotation-toggle[data-flow="true"] svg { position: relative; width: 20px; height: 20px; }
+  .chesscom-vinf-annotation-toggle[data-flow="true"][aria-pressed="true"]::before { border-color: #c6d6a2; background: #46552f; }
+}
+html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .chesscom-vinf-annotation-toggle) { visibility: visible !important; }
 .chesscom-vinf-annotations[data-extreme="false"] { z-index: 11; }
 .chesscom-vinf-annotation-toggle[data-extreme="false"] { z-index: 12; }

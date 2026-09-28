@@ -1,3 +1,4 @@
+import { boardOverlayHost, placeBoardOverlay } from "./board-overlay";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { isChessComGame } from "./game-continuation";
 
@@ -60,6 +61,10 @@ export class ExtremeOledController {
     }, 16);
   };
 
+  private readonly scroll = (): void => {
+    if (this.overlay?.parentElement === this.document?.body) this.schedule();
+  };
+
   private readonly escape = (event: KeyboardEvent): void => {
     if (this.normalClocks || event.key !== "Escape" || !this.document ||
         this.document.querySelector(".chesscom-vinf-settings-dialog[open]")) return;
@@ -103,7 +108,7 @@ export class ExtremeOledController {
       this.observer = new MutationObserver(records => {
         if (records.some(record => {
           const target = record.target.nodeType === 1 ? record.target as Element : record.target.parentElement;
-          return !target?.closest(`.${OWNER}, .chesscom-vinf-extreme-scroll-room`);
+          return !target?.closest(`[data-chesscom-vinf-owned], .chesscom-vinf-extreme-scroll-room`);
         })) this.schedule();
       });
       this.observer.observe(document.body, {
@@ -111,9 +116,9 @@ export class ExtremeOledController {
         attributes: true, attributeFilter: ["class", "style", "hidden", "aria-hidden", "disabled", "aria-disabled"]
       });
       document.defaultView?.addEventListener("resize", this.schedule);
-      document.defaultView?.addEventListener("scroll", this.schedule, true);
+      document.defaultView?.addEventListener("scroll", this.scroll, true);
       document.defaultView?.visualViewport?.addEventListener("resize", this.schedule);
-      document.defaultView?.visualViewport?.addEventListener("scroll", this.schedule);
+      document.defaultView?.visualViewport?.addEventListener("scroll", this.scroll);
       document.addEventListener("keydown", this.escape);
     }
     return this.board !== null;
@@ -207,7 +212,7 @@ export class ExtremeOledController {
         controls.append(button);
       }
       if (!this.normalClocks) this.overlay.append(controls);
-      document.body.append(this.overlay);
+      boardOverlayHost(board).append(this.overlay);
     }
     if (!this.normalClocks && !this.scrollRoom?.isConnected) {
       this.scrollRoom = document.createElement("div");
@@ -219,10 +224,7 @@ export class ExtremeOledController {
     const rect = board.getBoundingClientRect();
     const view = document.defaultView;
     // Follow native geometry; never resize/reposition the board or intercept input.
-    this.overlay.style.left = `${rect.left}px`;
-    this.overlay.style.top = `${rect.top}px`;
-    this.overlay.style.width = `${rect.width}px`;
-    this.overlay.style.height = `${rect.height}px`;
+    placeBoardOverlay(this.overlay, boardOverlayHost(board), rect);
     if (this.scrollRoom) this.scrollRoom.style.top = `${Math.max(view?.innerHeight ?? 0, rect.bottom + (view?.scrollY ?? 0)) + 96}px`;
     for (const button of this.overlay.querySelectorAll<HTMLButtonElement>("nav button")) {
       const native = this.nativeControl(document, button.getAttribute("aria-label")!);
@@ -303,9 +305,9 @@ export class ExtremeOledController {
     if (this.timer !== null) view?.clearTimeout(this.timer);
     this.timer = null;
     view?.removeEventListener("resize", this.schedule);
-    view?.removeEventListener("scroll", this.schedule, true);
+    view?.removeEventListener("scroll", this.scroll, true);
     view?.visualViewport?.removeEventListener("resize", this.schedule);
-    view?.visualViewport?.removeEventListener("scroll", this.schedule);
+    view?.visualViewport?.removeEventListener("scroll", this.scroll);
     this.document?.removeEventListener("keydown", this.escape);
     this.clearPresentation(document);
     this.document = null;

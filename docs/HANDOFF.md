@@ -2,8 +2,8 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-09-26.
-Current source version: 2.6.0.
+Last updated: 2026-09-28.
+Current source version: 2.6.1.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.6.0. This handoff is the shortest
+chronological amendments through version 2.6.1. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -62,6 +62,46 @@ policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
 
+## Recording-driven phone corrections (2.6.1)
+
+User supplied two private Firefox Android screen recordings (2026-09-28), stock
+and VINF. Initial partial-board framing exists in both. In the enabled recording,
+the large movement at ~10.1s follows a visible finger gesture and momentum; do not
+misdiagnose it as an autonomous extension scroll. Matchmaking's non-OLED background
+is intentional. Confirmed regressions: nested avatar overlaps text, inconsistent
+player sizing, excessive combined vertical footprint, and transient clock-bar
+separation during scrolling. Videos do not verify annotation gestures or clock
+reveal. Raw frames remain ignored under fixtures/raw/android-video-review-2026-09-28.
+
+- Native avatar is `.player-avatar > .cc-avatar-component > img`, not the old
+  fixture's text/direct image. Resize wrapper, nested component and image to 20px;
+  current `cc-user-*`/`cc-text-*` player text to 11px, with 6px avatar/text separation.
+  Preserve native flag sprite dimensions/offsets; compact connection bars using
+  their existing signal variables. Normal phone only. Native content remains intact.
+- Normal headroom is `clamp(48px,10svh,80px)` instead of 240–380px. Draw/Resign and
+  inner tabs use 44px rows. Pencil has a 44px flex slot before the native clock,
+  with a 32px visible ring on phones. No CSS-only board sizing or programmatic scroll.
+- `board-overlay.ts` puts owned overlays in the already-positioned native board
+  stage and expresses their bounds relative to that stage. Browser scrolling moves
+  them with the board; no board/host styles or dimensions are changed. Unknown
+  static hosts retain fixed-position fallback. Both clock and annotation overlays
+  share the helper; Extreme's appearance/headroom and desktop clock behavior remain.
+- Runtime observes the whole exact gameplay/matchmaking bootstrap document and
+  updates phone presentation, actions, clocks, annotations and dock in one order.
+  Late controls no longer wait for the 750ms route poll. No history interception,
+  native action synthesis or presentation changes on matchmaking are introduced.
+
+Verification: 175 tests, typecheck and desktop/Android builds. The enriched IAB
+fixture reproduced 40px avatar images spilling out of 20px wrappers before the fix;
+now both are 20px with a 6px gap to text. 360px board stays 360px, normal headroom
+296→78px, action row 60→44px. At 320px: no horizontal overflow, 4px separation
+between connection/pencil/clock regions, low time forces both numbers, disabling
+restores 40px avatars and original actions. Drawing consumes no board events and
+off restores native down/up. Board/bar offset stays 5px through scrolling; the
+annotation layer matches board bounds. 800px keeps native avatars/clocks and action
+placement. Extreme keeps 44px controls and hidden inactive pencil. These are
+fixture checks; real Firefox Android after-fix behavior still needs user testing.
+
 ## Touch drawing and phone actions (2.6.0)
 
 `TouchAnnotationsController` is Firefox-Android-only, phone and tablet, signed-in
@@ -72,7 +112,8 @@ network access. Drag adds/removes an orange arrow, tap adds/removes a red square
 Turning drawing off clears marks and restores native hit testing. Position/orientation
 mutations clear stale marks and cancel unfinished strokes; route/disable/end cleanup
 removes the overlay. Observer/resize/scroll tracking follows native board geometry.
-Normal player content reserves 48px beside the native bottom clock for a 44px pencil.
+Normal mode now gives the 44px pencil a real flex slot before the native bottom
+clock (2.6.1 replaces the former overlaid button and padding reservation).
 Extreme uses its bottom-clock area +100px offset: inactive pencil is transparent but
 its tap target remains; enabled pencil is visible. Accessible keyboard focus reveals
 it. This is VINF-local drawing, not a reverse-engineered native annotation API.
@@ -122,8 +163,9 @@ groups, explicit Hint/Best/Previous/Next columns and dock-only Share hiding.
 
 The earlier native-integration hold was superseded by the user's 2026-09-26
 instruction to implement touch drawing and Draw/Resign independently. See 2.6.0
-below. Board starting-position adjustment still awaits screenshots; preserve
-current headroom. Android Back remains a separate task.
+above. The 2026-09-28 recordings and authorization supersede the spacing hold;
+2.6.1 reduces normal headroom without commanding scrolling. Android Back remains
+a separate task.
 
 Verification for 2.5.0: typecheck, 172 tests and both desktop/Android builds pass.
 IAB Chromium sanitized fixtures at 390×844 and 320×740 verify original board

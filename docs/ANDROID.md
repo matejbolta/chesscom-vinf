@@ -386,3 +386,13 @@ visible while drawing. In normal/ordinary OLED it is always visible.
 Normal phone Draw/Resign now sit below your row and above Moves/Chat/Info, using
 original native controls and confirmations. Board headroom remains unchanged.
 Automated/browser-fixture checks passed; actual Firefox Android remains untested.
+
+
+### 2.6.1 recording-driven layout fixes
+
+Normal phone play uses compact nested avatars/text, a non-overlapping pencil slot,
+48–80px scrollable headroom, and compact Draw/Resign and inner-tab rows. Board sizes
+stay native. Bars/drawings scroll with the board container, and late native controls
+are adapted promptly. Numeric clocks still toggle together and lock visible below
+one minute; Extreme's spacing remains separate. Install the rebuilt userscript for
+these fixes. Validation used the more faithful fixture, not an updated phone capture.

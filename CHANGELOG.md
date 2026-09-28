@@ -9,6 +9,28 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.6.1] - 2026-09-28
+
+### Fixed
+
+- Phone player rows now resize the actual nested native avatar and current
+  username/rating components together. Connection bars and flag sprites remain
+  legible; the pencil occupies a layout slot instead of overlapping player text.
+- Clock bars and drawing overlays attach to the site's positioned board container
+  and scroll with it, without resizing the board or relying on delayed viewport
+  coordinate updates. Unknown unpositioned containers retain the prior fallback.
+- Game/late-control hydration runs the controllers in a consistent order and
+  observes the whole gameplay/bootstrap document instead of waiting for polling.
+
+### Changed
+
+- Normal phone headroom is now 48–80px, with a compact 44px Draw/Resign row and
+  44px inner tabs. The pencil retains its 44px target with a smaller visible ring.
+  Extreme OLED spacing, native scroll decisions and board dimensions are retained.
+- Sanitized phone fixture now models native nested avatars, current player text,
+  connection bars, player insets and the pinned move dock seen in user recordings.
+
+
 ## [2.6.0] - 2026-09-26
 
 ### Added

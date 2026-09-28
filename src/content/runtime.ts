@@ -81,8 +81,14 @@ export function startVinfRuntime(
     );
   }
 
+  function isGameBootstrapRoute(): boolean {
+    return window.location.protocol === "https:" &&
+      ["chess.com", "www.chess.com"].includes(window.location.hostname) &&
+      window.location.pathname === "/play/online/new";
+  }
+
   function findObservationRoot(): HTMLElement | null {
-    if (isChessComLiveGameReview(window.location)) {
+    if (isChessComLiveGameReview(window.location) || isChessComGame(window.location) || isGameBootstrapRoute()) {
       return document.body ?? document.documentElement;
     }
     return (
@@ -101,7 +107,16 @@ export function startVinfRuntime(
 
     observer?.disconnect();
     observedRoot = nextRoot;
-    observer = new MutationObserver(scheduleReconcile);
+    observer = new MutationObserver(records => {
+      if (!isChessComGame(window.location) && !isGameBootstrapRoute()) {
+        scheduleReconcile();
+        return;
+      }
+      if (records.some(record => {
+        const target = record.target.nodeType === 1 ? record.target as Element : record.target.parentElement;
+        return !target?.closest("[data-chesscom-vinf-owned]");
+      })) scheduleReconcile();
+    });
     observer.observe(nextRoot, { childList: true, subtree: true });
   }
 
@@ -198,6 +213,16 @@ export function startVinfRuntime(
     document.documentElement.removeAttribute(MARKERS.sidebarHidden);
   }
 
+  function reconcileGamePresentation(): void {
+    if (!settings) return;
+    const phone = phoneGameReviewMedia?.matches ?? window.innerWidth <= 599;
+    phoneExperienceController.reconcile(document, window.location, settings, phone);
+    phoneActions.reconcile(document, window.location, settings, android && phone);
+    extremeOledController.reconcile(document, window.location, settings, desktop || (android && phone));
+    touchAnnotations.reconcile(document, window.location, settings, android);
+    androidGameControls.reconcile(document, window.location, settings, android);
+  }
+
   function reconcile(): void {
     reconcileTimer = null;
     if (!settings) {
@@ -219,13 +244,7 @@ export function startVinfRuntime(
       settings.enabled,
       phoneGameReviewMedia?.matches ?? window.innerWidth <= 599
     );
-    phoneExperienceController.reconcile(document, window.location, settings,
-      phoneGameReviewMedia?.matches ?? window.innerWidth <= 599);
-    extremeOledController.reconcile(document, window.location, settings,
-      desktop || (android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)));
-    androidGameControls.reconcile(document, window.location, settings, android);
-    touchAnnotations.reconcile(document, window.location, settings, android);
-    phoneActions.reconcile(document, window.location, settings, android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599));
+    reconcileGamePresentation();
     hasAppliedLayout = homepageApplied || gameReviewApplied;
     // An incomplete target document asks the controller to clean up. Re-arm
     // setting-specific pre-hide markers immediately so late native cards cannot
@@ -233,7 +252,8 @@ export function startVinfRuntime(
     syncDocumentSettingsMarkers();
     if (
       settings.enabled &&
-      (isTargetRoute() ||
+      (isTargetRoute() || isChessComGame(window.location) ||
+        isGameBootstrapRoute() ||
         (isChessComLiveGameReview(window.location) &&
           (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)))
     ) {
@@ -360,7 +380,7 @@ export function startVinfRuntime(
     if (reconcileTimer === null) {
       reconcileTimer = window.setTimeout(
         reconcile,
-        hasAppliedLayout ? RECONCILE_DELAY_MS : 0
+        hasAppliedLayout && !isChessComGame(window.location) ? RECONCILE_DELAY_MS : 0
       );
     }
   }
@@ -374,15 +394,7 @@ export function startVinfRuntime(
   }
 
   function checkRoute(): void {
-    if (settings) {
-      extremeOledController.reconcile(document, window.location, settings,
-        desktop || (android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)));
-      androidGameControls.reconcile(document, window.location, settings, android);
-      touchAnnotations.reconcile(document, window.location, settings, android);
-      phoneActions.reconcile(document, window.location, settings, android && (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599));
-      phoneExperienceController.reconcile(document, window.location, settings,
-        phoneGameReviewMedia?.matches ?? window.innerWidth <= 599);
-    }
+    reconcileGamePresentation();
     const rootWasDetached = Boolean(observedRoot && !observedRoot.isConnected);
     const activeGameHref = isTargetRoute()
       ? (findGameContinuationLink(document)?.href ?? null)

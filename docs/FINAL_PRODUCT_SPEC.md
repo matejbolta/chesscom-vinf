@@ -1749,3 +1749,15 @@ Normal Android phone Draw/Resign roots move intact above Moves/Chat/Info with ex
 position restoration. Existing confirmations are neither replaced nor auto-triggered.
 Tablet/desktop action layout and initial board headroom are unchanged. Actual phone
 verification remains outstanding; no live game or publication actions authorized.
+
+
+## 85. Version 2.6.1 Product Amendments
+
+The user authorized corrections based on the 2026-09-28 stock/VINF phone videos.
+Normal phone headroom becomes 48–80px; player/avatar nesting and current text styles
+are handled correctly, pencil uses a layout slot, and actions/tabs retain 44px touch
+rows with reduced surrounding space. Owned clock/drawing overlays attach to the
+native positioned board stage without altering board geometry. Late game controls
+are reconciled promptly and consistently. No forced scroll or history interception;
+keep the stock initial scrolling behavior and Extreme's distinct spacing. See the
+handoff for recording findings, fixture evidence and remaining device validation.

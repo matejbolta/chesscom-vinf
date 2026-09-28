@@ -1,3 +1,4 @@
+import { boardOverlayHost, placeBoardOverlay } from "./board-overlay";
 import { isChessComGame } from "./game-continuation";
 import { nativeGameHasEnded } from "./extreme-oled-controller";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
@@ -79,7 +80,8 @@ export class TouchAnnotationsController {
     });
     this.layer = layer;
     this.button = button;
-    document.body.append(layer, button);
+    boardOverlayHost(this.board!).append(layer);
+    document.body.append(button);
     const block = (event: Event) => { event.preventDefault(); event.stopImmediatePropagation(); };
     for (const type of ["touchstart", "touchmove", "touchend", "click", "dblclick", "contextmenu", "mousedown", "mouseup"]) {
       layer.addEventListener(type, block, { passive: false });
@@ -118,7 +120,8 @@ export class TouchAnnotationsController {
     });
     const position = () => this.position();
     const view = document.defaultView!;
-    view.addEventListener("scroll", position, true);
+    const scroll = () => { if (layer.parentElement === document.body) position(); };
+    view.addEventListener("scroll", scroll, true);
     view.addEventListener("resize", position);
     view.visualViewport?.addEventListener("resize", position);
     const resize = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(position);
@@ -131,7 +134,7 @@ export class TouchAnnotationsController {
     this.dispose = () => {
       observer.disconnect();
       resize?.disconnect();
-      view.removeEventListener("scroll", position, true);
+      view.removeEventListener("scroll", scroll, true);
       view.removeEventListener("resize", position);
       view.visualViewport?.removeEventListener("resize", position);
     };
@@ -150,13 +153,27 @@ export class TouchAnnotationsController {
     const document = this.board.ownerDocument;
     const rect = this.board.getBoundingClientRect();
     const visible = rect.width > 0 && rect.height > 0;
-    this.layer.style.cssText = `left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;pointer-events:${this.enabled ? "auto" : "none"};display:${visible ? "block" : "none"}`;
-    const clock = document.querySelector(this.extreme
-      ? ".chesscom-vinf-extreme-time.bottom"
-      : "#board-layout-player-bottom .clock-component")?.getBoundingClientRect();
-    const left = this.extreme ? rect.left + 100 : (clock?.left ?? rect.right) - 48;
-    const top = this.extreme ? rect.bottom + 12 : (clock ? clock.top + (clock.height - 44) / 2 : rect.bottom + 2);
-    this.button.style.cssText = `left:${Math.max(rect.left, left)}px;top:${top}px;display:${visible ? "grid" : "none"}`;
+    const host = boardOverlayHost(this.board);
+    placeBoardOverlay(this.layer, host, rect);
+    this.layer.style.pointerEvents = this.enabled ? "auto" : "none";
+    this.layer.style.display = visible ? "block" : "none";
+    const clock = document.querySelector<HTMLElement>("#board-layout-player-bottom .clock-component");
+    const flow = !this.extreme && clock?.parentElement?.matches(".player-component");
+    this.button.dataset.flow = String(Boolean(flow));
+    if (flow && clock) {
+      // A real layout slot prevents the pencil from covering player text. The
+      // native clock still reserves the space used by the numeric clock target.
+      if (this.button.nextSibling !== clock) clock.before(this.button);
+      this.button.style.cssText = `display:${visible ? "grid" : "none"}`;
+    } else {
+      const clockRect = clock?.getBoundingClientRect();
+      placeBoardOverlay(this.button, host, {
+        left: this.extreme ? rect.left + 100 : Math.max(rect.left, (clockRect?.left ?? rect.right) - 48),
+        top: this.extreme ? rect.bottom + 12 : (clockRect ? clockRect.top + (clockRect.height - 44) / 2 : rect.bottom + 2),
+        width: 44, height: 44
+      });
+      this.button.style.display = visible ? "grid" : "none";
+    }
     this.button.setAttribute("aria-pressed", String(this.enabled));
     this.button.dataset.extreme = String(this.extreme);
     this.layer.dataset.extreme = String(this.extreme);

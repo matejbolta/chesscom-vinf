@@ -835,3 +835,26 @@ with a 44px target. Markers and padding restore on route, disable or game comple
 Browser fixture arrow + square gestures reached zero native board handlers; turning
 off restored native down/up delivery. 390px board stayed 390px; tablet stayed 528px.
 Actual Android touch delivery and current live action markup remain unverified.
+
+
+## 2.6.1 recording-driven corrections
+
+The user recordings confirm avatar/text overlap and control/spacing problems in
+normal phone gameplay. First-party saved DOM establishes the nested contract
+`.player-avatar > .cc-avatar-component.cc-avatar-size-40 > img.cc-avatar-img` and
+`.cc-user-block-component > .cc-user-username-component`. The previous fixture used
+a text avatar and obsolete username classes, so its passing layout checks did not
+cover those defects. The fixture now models the nested sizes, current text classes,
+connection bars, native player insets and pinned navigation dock with synthetic data.
+
+Saved chessboard-layout CSS positions `.board-layout-chessboard` relatively. Owned
+clock/drawing overlays can be absolute siblings of the board inside this host;
+the board and its input tree remain unchanged. Coordinate conversion includes host
+border/scroll offsets, and a static/unknown host falls back to viewport positioning.
+Native flag sprites depend on their original background size/offsets; do not use
+background-size:cover to shrink them. Native connection-state variables are retained.
+
+Runtime hydration regression checks exact bootstrap→game without popstate, late
+native controls within 30ms (before the 750ms poll), native board identity, disable
+restoration and Review cleanup. Browser evidence and real-device limits are recorded
+in HANDOFF's 2.6.1 section; no real game was manipulated during verification.
