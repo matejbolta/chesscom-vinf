@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-01.
-Current source version: 2.8.3.
+Current source version: 2.8.4.
+2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
 2.8.2 removes only the desktop Alt promotion-shortcut help row; annotation color help remains.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.

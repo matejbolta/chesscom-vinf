@@ -539,9 +539,13 @@ select {
 }
 
 .shortcut-guide {
-  padding: 14px;
+  padding: 12px 14px;
   font-size: 12px;
   line-height: 1.5;
+}
+
+.shortcut-guide > h2 {
+  padding: 0;
 }
 
 .shortcut-guide h3 {
