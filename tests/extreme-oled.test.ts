@@ -9,6 +9,7 @@ const settings = { ...DEFAULT_SETTINGS, extremeOled: true };
 let controller: ExtremeOledController;
 beforeEach(() => {
   vi.useFakeTimers();
+  sessionStorage.clear();
   document.documentElement.innerHTML = readFileSync(resolve(process.cwd(), "tests/fixtures/extreme-oled.html"), "utf8");
   document.documentElement.className = "user-logged-in";
   controller = new ExtremeOledController();
@@ -100,6 +101,27 @@ describe("Extreme OLED", () => {
     await vi.advanceTimersByTimeAsync(20);
     expect(bar("top").hidden).toBe(true);
   });
+  it("preserves the bar reference through reload/mode switches, separates games and follows paused state", async () => {
+    controller.reconcile(document, location, settings);
+    clock("bottom").textContent = "5:00";
+    await vi.advanceTimersByTimeAsync(20);
+    expect(bar("top").dataset.paused).toBe("true");
+    expect(bar("bottom").dataset.paused).toBe("false");
+    controller.cleanup(document);
+    controller = new ExtremeOledController(); // Reload with only the remaining native time.
+    controller.reconcile(document, location, settings);
+    expect(bar("bottom").getAttribute("aria-valuemax")).toBe("600");
+    expect(bar("bottom").firstElementChild!.getAttribute("style")).toContain("0.5");
+    controller.reconcile(document, location, DEFAULT_SETTINGS, true);
+    expect(bar("bottom").getAttribute("aria-valuemax")).toBe("600");
+    clock("bottom").parentElement!.classList.remove("clock-player-turn");
+    clock("top").parentElement!.classList.add("clock-player-turn");
+    await vi.advanceTimersByTimeAsync(20);
+    expect(bar("bottom").dataset.paused).toBe("true");
+    controller.reconcile(document, {...location, pathname: "/game/654321"}, settings);
+    expect(bar("bottom").getAttribute("aria-valuemax")).toBe("300");
+  });
+
   it("always shows both valid clock bars and restores the game UI on Escape", () => {
     controller.reconcile(document, location, normalizeSettings({ ...settings, extremeOledClocks: false }));
     expect(bar("top").hidden || bar("bottom").hidden).toBe(false);

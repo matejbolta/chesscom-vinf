@@ -173,7 +173,7 @@ export class TouchAnnotationsController {
     } else {
       const clockRect = clock?.getBoundingClientRect();
       placeBoardOverlay(this.button, host, {
-        left: this.extreme ? rect.left + 100 : Math.max(rect.left, (clockRect?.left ?? rect.right) - 48),
+        left: this.extreme ? rect.left + 124 : Math.max(rect.left, (clockRect?.left ?? rect.right) - 48),
         top: this.extreme ? rect.bottom + 12 : (clockRect ? clockRect.top + (clockRect.height - 44) / 2 : rect.bottom + 2),
         width: 44, height: 44
       });

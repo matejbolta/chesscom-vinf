@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.9.2.
+Current source version: 2.9.3.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,40 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Board-edge clock and move-follow corrections (2.9.3)
+
+Supersedes 2.9.2 row positioning: wide native actions now live in the owned board
+overlay, aligned with top time, rather than the native player row's different
+vertical center. Native comment anchors restore actions even after the overlay
+has been detached. Tablet Extreme clocks also sit right; tablet navigation stays
+left, with the pencil 12px beyond it. The 44px action targets end at the board
+edge without overlapping board input. Bar gap is zero, with a 7px outward cap
+for the explicitly inactive native clock.
+
+ClockBarReference remembers per-color observed maxima in one tab-local session
+record keyed by canonical game ID. No writes on countdown ticks. Reload, mode
+switch and board replacement preserve the reference; different games reset it.
+Blocked storage falls back to memory. First-ever mid-game activation cannot
+reconstruct an unobserved starting time; no guessed time control or simulated
+clock was added.
+
+Extreme .highlight keeps native hues; legal hints override the audited native
+color token, preserving static/dynamic shape. PhoneExperienceController follows
+new white AND black plies (including character-data hydration), not selected
+moves. A 500ms bounded scroll settle counters the native newest-at-bottom
+assumption; deliberate input cancels immediately. See DOM_AUDIT 2.9.3 for native
+source evidence. No real game or Brave reload used for testing.
+
+Validation: full 190-test suite passed; 49 relevant tests passed after the
+character-data/geometry refinement, and 41 passed after the final tablet pencil
+spacing change. Typecheck and desktop/Android builds pass. IAB phone 390px fixture
+showed row 21 at scrollTop 0 after delayed native-like scrolling. Desktop 1280px
+and tablet 800px fixtures have aligned top controls, zero bar gaps, no overlap,
+and visible red marks/legal hints. Fixture native confirmation/Cancel works;
+console clean. Evidence: fixtures/raw/clock-polish-2026-10-02/desktop.png (ignored).
+Actual Firefox Android and live native integration remain unverified. Built
+2.9.3 awaits loading; no push or Store work.
 
 ## Wide Extreme actions and clock insets (2.9.2)
 

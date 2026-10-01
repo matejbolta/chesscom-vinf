@@ -1,4 +1,5 @@
 import { LastMoveReader } from "./last-move";
+import { ClockBarReference } from "./clock-bar-reference";
 import { isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
 import { boardOverlayHost, placeBoardOverlay } from "./board-overlay";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
@@ -62,7 +63,7 @@ export class ExtremeOledController {
   private route = "";
   private suspendedRoute = "";
   private finishedRoute = "";
-  private maxima = new Map<string, number>();
+  private reference = new ClockBarReference();
 
   private readonly schedule = (): void => {
     const view = this.document?.defaultView;
@@ -116,6 +117,7 @@ export class ExtremeOledController {
       return false;
     }
     this.document = document;
+    this.reference.useGame(document, location.pathname);
     this.geometryDirty = true;
     this.update(document);
     if (!this.observer && document.body) {
@@ -238,10 +240,11 @@ export class ExtremeOledController {
       document.body.append(this.scrollRoom);
     }
     setAttribute(document.documentElement, this.normalClocks ? NORMAL : ACTIVE, "true");
-    const rowClocks = this.normalClocks || this.desktop || document.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
-    this.overlay.classList.toggle("chesscom-vinf-row-clock-controls", rowClocks);
+    const wideExtreme = !this.normalClocks && !document.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
+    this.overlay.classList.add("chesscom-vinf-row-clock-controls");
     const desktopExtreme = this.desktop && !this.normalClocks;
     this.overlay.classList.toggle("chesscom-vinf-desktop-extreme-controls", desktopExtreme);
+    this.overlay.classList.toggle("chesscom-vinf-wide-extreme-controls", wideExtreme);
     const dotSize = `${this.dotSize}px`;
     if (this.overlay.style.getPropertyValue("--vinf-turn-size") !== dotSize) this.overlay.style.setProperty("--vinf-turn-size", dotSize);
     const rect = this.geometryDirty ? board.getBoundingClientRect() : null;
@@ -301,14 +304,14 @@ export class ExtremeOledController {
           { duration: this.animationDuration, easing: "ease-out" });
       }
       const time = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-time.${side}`)!;
-      if (rowClocks && !desktopExtreme && clock && rect) {
+      if (!wideExtreme && clock && rect) {
         const clockRect = clock.getBoundingClientRect();
         const width = Math.min(80, clockRect.width);
         time.style.width = `${width}px`;
         time.style.left = `${clockRect.left - rect.left + (clockRect.width - width) / 2}px`;
         time.style.top = `${clockRect.top - rect.top + (clockRect.height - 44) / 2}px`;
       }
-      if ((!rowClocks || desktopExtreme) && time.style.width) {
+      if (wideExtreme && time.style.width) {
         // Phone -> tablet resize restores Extreme's separate clock positions.
         for (const property of ["width", "left", "top"]) time.style.removeProperty(property);
       }
@@ -326,12 +329,13 @@ export class ExtremeOledController {
       if (bar.hidden || seconds === null) continue;
       const key = clock?.classList.contains("clock-white") ? "white" :
         clock?.classList.contains("clock-black") ? "black" : side;
-      const maximum = Math.max(this.maxima.get(key) ?? 0, seconds, 1);
-      this.maxima.set(key, maximum);
+      const maximum = this.reference.maximum(key, seconds);
       setAttribute(bar, "aria-valuemax", String(maximum));
       setAttribute(bar, "aria-valuenow", String(seconds));
       setAttribute(bar, "aria-valuetext", text.trim());
       setAttribute(bar, "data-low", String(seconds < 60));
+      setAttribute(bar, "data-paused", String(!!active && inactive));
+      setAttribute(bar, "style", `--vinf-clock-fraction:${seconds / maximum}`);
       setAttribute(bar.firstElementChild!, "style", `transform:scaleX(${seconds / maximum})`);
     }
     this.geometryDirty = false;
@@ -349,7 +353,6 @@ export class ExtremeOledController {
     this.scrollRoom = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
-    this.maxima.clear();
     this.activePlayer = "";
     this.turnStarted = 0;
   }

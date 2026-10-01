@@ -1873,3 +1873,25 @@ normal size; timing and reduced-motion handling remain independent.
 Desktop/tablet Extreme exposes native Draw/Resign above the board, with44px
 icon targets and12px spacing. Confirmation remains native and explicit. Desktop
 Extreme clock text has equal12px board/right-edge insets. Phone layout retained.
+
+## 2.9.3 — Clock continuity, board-edge bars and clearer Extreme controls
+
+Wide Extreme draws its native Draw/Resign buttons in the same board-relative
+row as the right-aligned top clock; tablet navigation stays below on the left.
+44px action targets do not overlap board input. Numeric clocks retain 12px box
+insets from the board/right edge. Normal and phone layout contracts stay intact.
+Both fuse bars touch the board. A 7px outward end cap identifies the inactive
+clock when native turn state is unambiguous. No clock simulation is introduced.
+
+Bar maxima are remembered by player color and canonical game ID in one
+sessionStorage record per tab, written only when a new maximum is observed.
+Reload, overlay replacement and mode changes retain that reference. A different
+game gets a new reference. If storage is blocked, continuity is in-memory only;
+a first-ever mid-game activation still uses observed time, not a guessed initial
+time control. This does not persist remaining time or produce a separate timer.
+
+Extreme native highlights retain hue; native legal dots/capture rings use a
+visible neutral gray while preserving static and animated native shapes. Phone
+newest-first lists follow each new ply and settle native post-render scrolling
+for 500ms, yielding immediately to deliberate input. Review, desktop/tablet move
+lists and the page's own scroll position are unchanged.

@@ -283,6 +283,11 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const clocks = new ExtremeOledController();
   const annotationBoard = document.querySelector<HTMLElement>("#board-single");
   if (annotationBoard && !searchParams.has("no-annotation-api")) installAnnotationFixture(annotationBoard);
+  if (annotationBoard && searchParams.has("hints")) {
+    const api = (annotationBoard as HTMLElement & {game?: {markings: import("../../src/content/native-annotations").NativeMarkings}}).game?.markings;
+    if (api) api.addOne(api.factory.buildStandardAnalysisHighlight("e4"));
+    annotationBoard.insertAdjacentHTML("beforeend", '<div class="hint" style="position:absolute;left:50%;top:62.5%;width:12.5%;height:12.5%;padding:4.2%;box-sizing:border-box;border-radius:50%;background:var(--color-transparent-black-14,rgba(0,0,0,.14));background-clip:content-box;pointer-events:none"></div><div class="capture-hint" style="position:absolute;left:50%;top:12.5%;width:12.5%;height:12.5%;box-sizing:border-box;border:5px solid var(--color-transparent-black-14,rgba(0,0,0,.14));border-radius:50%;pointer-events:none"></div>');
+  }
   const annotationEvents: string[] = [];
   for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture"]) {
     document.addEventListener(type, event => {
@@ -363,6 +368,11 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
         row.querySelector(".white-move")!.setAttribute("data-node", `0-${2*n-2}`);
         row.querySelector(".black-move")!.setAttribute("data-node", `0-${2*n-1}`);
         rows.append(row);
+        // Native scroll-to-selection can occur after its render tick.
+        setTimeout(() => {
+          const scroll = document.querySelector<HTMLElement>("#live-game-tab-scroll-container");
+          if (scroll) scroll.scrollTop = scroll.scrollHeight;
+        }, 100);
       }
     }
     if (event.key === "e") document.querySelector("#board-layout-sidebar")?.insertAdjacentHTML("beforeend", '<div class="game-result">1-0</div>');

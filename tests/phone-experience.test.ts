@@ -52,6 +52,39 @@ describe("phone play and review", () => {
     expect(opening.nextElementSibling).toBe(scroll);
   });
 
+  it("follows each new white/black ply at the top, settles native scrolling, and yields to browsing", async () => {
+    vi.useFakeTimers(); fixture();
+    const scroll = document.querySelector<HTMLElement>("#live-game-tab-scroll-container")!;
+    const wrapper = document.querySelector<HTMLElement>(".timestamps-with-base-time")!;
+    scroll.scrollTop = 200;
+    controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+    expect(scroll.scrollTop).toBe(0);
+    await vi.advanceTimersByTimeAsync(600);
+    scroll.scrollTop = 100;
+    const row = wrapper.lastElementChild!.cloneNode(true) as HTMLElement;
+    row.dataset.wholeMoveNumber = '21'; row.querySelector('.black-move')!.remove(); wrapper.append(row);
+    await vi.advanceTimersByTimeAsync(80);
+    expect(scroll.scrollTop).toBe(0);
+    scroll.scrollTop = 300; scroll.dispatchEvent(new Event('scroll')); // Native post-render scroll.
+    expect(scroll.scrollTop).toBe(0);
+    document.dispatchEvent(new Event('touchstart'));
+    scroll.scrollTop = 100; scroll.dispatchEvent(new Event('scroll'));
+    expect(scroll.scrollTop).toBe(100);
+    row.querySelector('.white-move')!.classList.add('selected');
+    await vi.advanceTimersByTimeAsync(80);
+    expect(scroll.scrollTop).toBe(100); // Selection is not a new move.
+    row.insertAdjacentHTML('beforeend', '<div class="node black-move main-line-ply" data-node="0-41"> </div>');
+    await vi.advanceTimersByTimeAsync(80);
+    expect(scroll.scrollTop).toBe(100);
+    row.querySelector('.black-move')!.firstChild!.nodeValue = 'Nf6';
+    await vi.advanceTimersByTimeAsync(80);
+    expect(scroll.scrollTop).toBe(0);
+    controller.cleanup(document);
+    scroll.scrollTop = 150; scroll.dispatchEvent(new Event('scroll'));
+    await vi.advanceTimersByTimeAsync(600);
+    expect(scroll.scrollTop).toBe(150);
+  });
+
   it("restores on disable, tablet, home and review transitions; latches native game end", () => {
     fixture();
     for (const [location, settings, phone] of [

@@ -646,9 +646,21 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
     drop-shadow(0 1px 0 #555) drop-shadow(0 -1px 0 #555) !important;
 }
 html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
-  :is(.highlight, .hint, .capture-hint, .hover-square) {
+  :is(.hint, .capture-hint, .hover-square) {
   filter: grayscale(1) brightness(.35) !important;
   opacity: .35 !important;
+}
+/* Keep native marking hues (including red and modifier colors) recognizable. */
+html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board] .highlight {
+  filter: brightness(.8) !important;
+  opacity: .65 !important;
+}
+html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board] :is(.hint, .capture-hint) {
+  /* Native static padding/borders and dynamic .circle animations share this
+     color token. Preserve their shapes and reveal only the actual targets. */
+  --color-transparent-black-14: #707070;
+  filter: none !important;
+  opacity: .8 !important;
 }
 .chesscom-vinf-extreme-controls {
   position: fixed;
@@ -706,8 +718,8 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   background: transparent;
 }
 .chesscom-vinf-extreme-clock[hidden] { display: none !important; }
-.chesscom-vinf-extreme-clock.top { top: -5px; }
-.chesscom-vinf-extreme-clock.bottom { bottom: -5px; }
+.chesscom-vinf-extreme-clock.top { top: -2px; }
+.chesscom-vinf-extreme-clock.bottom { bottom: -2px; }
 .chesscom-vinf-extreme-fuse {
   display: block;
   height: 100%;
@@ -717,6 +729,14 @@ html[data-chesscom-vinf-extreme-oled="true"] [data-chesscom-vinf-extreme-board]
   transition: transform 150ms linear;
 }
 .chesscom-vinf-extreme-clock[data-low="true"] .chesscom-vinf-extreme-fuse { background: #923737; }
+.chesscom-vinf-extreme-clock[data-paused="true"]::after {
+  content: ""; position: absolute;
+  left: clamp(0px, calc(100% * var(--vinf-clock-fraction) - 2px), calc(100% - 2px));
+  width: 2px; height: 7px; background: #686868;
+}
+.chesscom-vinf-extreme-clock.top::after { bottom: 0; }
+.chesscom-vinf-extreme-clock.bottom::after { top: 0; }
+.chesscom-vinf-extreme-clock[data-low="true"]::after { background: #923737; }
 @media (prefers-reduced-motion: reduce) {
   .chesscom-vinf-extreme-fuse { transition: none; }
 }
@@ -1180,10 +1200,9 @@ html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] .chessc
 .chesscom-vinf-last-move[data-low="true"] { color: #b65b5b; }
 
 /* Wide Extreme controls retain native handlers, without taking layout space. */
-[data-chesscom-vinf-wide-actions] { position: relative; }
 .chesscom-vinf-phone-actions.chesscom-vinf-wide-actions {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  right: 64px;
+  position: absolute; top: auto; bottom: 100%;
+  right: calc(24px + 6ch); font: 500 16px/1 system-ui, sans-serif;
   width: 100px; height: 44px; padding: 0; gap: 12px;
   z-index: 1000; pointer-events: auto;
 }
@@ -1206,9 +1225,16 @@ html[data-chesscom-vinf-extreme-oled] body :is(
 ) { visibility: visible !important; }
 html[data-chesscom-vinf-extreme-oled] body :is([role="dialog"], [role="alertdialog"], .cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) { color: #bbb; }
 
-/* Equal 12px gaps from desktop Extreme clock text to board and right edge. */
-.chesscom-vinf-desktop-extreme-controls .chesscom-vinf-extreme-time {
-  left: auto; right: 12px; width: max-content; height: auto; padding: 0;
+/* Board-relative row: icon and clock centers are 22px from the board edge. */
+.chesscom-vinf-wide-extreme-controls .chesscom-vinf-extreme-time {
+  left: auto; right: 12px; width: 6ch; height: 20px; padding: 0;
+  place-items: center end;
 }
-.chesscom-vinf-desktop-extreme-controls .chesscom-vinf-extreme-time.top { top: auto; bottom: calc(100% + 12px); }
-.chesscom-vinf-desktop-extreme-controls .chesscom-vinf-extreme-time.bottom { top: calc(100% + 12px); }
+.chesscom-vinf-wide-extreme-controls .chesscom-vinf-extreme-time.top { top: auto; bottom: calc(100% + 12px); }
+.chesscom-vinf-wide-extreme-controls .chesscom-vinf-extreme-time.bottom { top: calc(100% + 12px); }
+.chesscom-vinf-wide-extreme-controls nav { right: auto; left: 12px; }
+
+html[data-chesscom-vinf-phone-game] #live-game-tab-scroll-container:has([data-chesscom-vinf-newest-first]) {
+  overflow-anchor: none;
+  scroll-behavior: auto;
+}

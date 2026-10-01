@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.9.3] - 2026-10-02
+
+- Align wide Extreme OLED Draw/Resign and time on one board-relative row; retain native buttons and confirmations.
+- Keep clock bars flush against both board edges, mark the paused bar with an end cap, and preserve per-player bar references across same-tab reloads.
+- Restore recognizable native highlight colors and visible legal-move dots/capture rings in Extreme OLED.
+- Follow every new phone move at the top of the reversed list, including black moves within an existing row, while yielding to manual browsing.
+
 ## [2.9.2] - 2026-10-02
 
 - Added original native Draw/Resign controls above the board in desktop/tablet Extreme OLED, with compact icons and native confirmation behavior.

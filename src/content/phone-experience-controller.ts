@@ -24,6 +24,8 @@ export class PhoneExperienceController {
   private refresh: (() => void) | null = null;
   private wrappers = new Set<HTMLElement>();
   private rows = new Set<HTMLElement>();
+  private latestPlies = new Map<HTMLElement, number>();
+  private stopFollowing: (() => void) | null = null;
   private muteAttempt: HTMLButtonElement | null = null;
   private openingPositions = new Map<HTMLElement, { parent: Node; next: ChildNode | null }>();
   private spacer: HTMLElement | null = null;
@@ -55,8 +57,8 @@ export class PhoneExperienceController {
         }, 60);
       });
       this.observer.observe(document.body, {
-        subtree: true, childList: true, attributes: true,
-        attributeFilter: ["class", "data-glyph", "disabled", "data-whole-move-number", "hidden", "aria-hidden"]
+        subtree: true, childList: true, characterData: true, attributes: true,
+        attributeFilter: ["class", "data-glyph", "disabled", "data-whole-move-number", "data-node", "hidden", "aria-hidden"]
       });
     }
     if (review) {
@@ -132,11 +134,42 @@ export class PhoneExperienceController {
           row.style.setProperty("--chesscom-vinf-move-order", order);
         }
       }
+      const last = rows[rows.length - 1];
+      const ply = rows.length * 2 - (last.querySelector(":scope > .black-move.main-line-ply")?.textContent?.trim() ? 0 : 1);
+      const previous = this.latestPlies.get(list) ?? -1;
+      this.latestPlies.set(list, ply);
+      if (ply > previous) this.followLatest(document, list.closest<HTMLElement>("#live-game-tab-scroll-container")!);
     }
-    for (const wrapper of this.wrappers) if (!validWrappers.has(wrapper)) wrapper.removeAttribute(ROWS);
+    for (const wrapper of this.wrappers) if (!validWrappers.has(wrapper)) {
+      wrapper.removeAttribute(ROWS);
+      this.latestPlies.delete(wrapper);
+      this.stopFollowing?.();
+    }
     for (const row of this.rows) if (!validRows.has(row)) row.style.removeProperty("--chesscom-vinf-move-order");
     this.wrappers = validWrappers;
     this.rows = validRows;
+  }
+
+  private followLatest(document: Document, container: HTMLElement): void {
+    this.stopFollowing?.();
+    const view = document.defaultView!;
+    // Native SELECT_NODE waits for rendering and assumes the latest ply is at
+    // the bottom. Settle only this scroll container, only after a new ply.
+    const top = () => { if (container.scrollTop !== 0) container.scrollTop = 0; };
+    const stop = () => {
+      view.clearTimeout(timer);
+      view.cancelAnimationFrame(frame);
+      container.removeEventListener("scroll", top);
+      for (const event of ["pointerdown", "touchstart", "wheel", "keydown"]) document.removeEventListener(event, stop, true);
+      if (this.stopFollowing === stop) this.stopFollowing = null;
+    };
+    const timer = view.setTimeout(stop, 500);
+    const frame = view.requestAnimationFrame(top);
+    this.stopFollowing = stop;
+    container.addEventListener("scroll", top, { passive: true });
+    // Any deliberate input wins immediately; older-move selection stays native.
+    for (const event of ["pointerdown", "touchstart", "wheel", "keydown"]) document.addEventListener(event, stop, { capture: true, passive: true });
+    top();
   }
 
   private updateReview(document: Document): void {
@@ -176,6 +209,8 @@ export class PhoneExperienceController {
   }
 
   private clearRows(): void {
+    this.stopFollowing?.();
+    this.latestPlies.clear();
     for (const wrapper of this.wrappers) wrapper.removeAttribute(ROWS);
     for (const row of this.rows) row.style.removeProperty("--chesscom-vinf-move-order");
     this.wrappers.clear();

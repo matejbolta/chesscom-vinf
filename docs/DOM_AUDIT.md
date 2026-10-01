@@ -1028,3 +1028,22 @@ keeps separate layout, no phone-material marker, both clocks visible/read-only.
 Actual device/native popover integration remains unverified. Same known preview
 MutationObserver/Node console issue as earlier; no new game activity.
 Private evidence: fixtures/raw/refinements-2026-10-01/extreme-phone.png.
+
+## 2.9.3 — Move scrolling and Extreme hints (2026-10-02)
+
+Saved first-party eager.js (`fixtures/raw/native-annotations-2026-09-28/`)
+shows native Vje awaiting a render tick, then Hje/mr scrolling the selected node
+to the nearest edge. Its Zn check uses scrollHeight-scrollTop-clientHeight to
+classify manual scrolling, assuming newest-at-bottom. Phone CSS reversal keeps
+native nodes but invalidates that assumption. VINF follows only a new main-line
+ply, settles native scroll events for at most 500ms, and cancels immediately on
+pointer/touch/wheel/key input. It touches only live-game-tab-scroll-container.
+Character-data and data-node changes cover in-place ply hydration; selection
+changes alone do not follow. Unknown/variation renderers retain native behavior.
+
+Saved play-global-styles.BlnBr0XWZ6.css from game-over-result-desktop-2026-09-18
+uses --color-transparent-black-14 for .hint padding/content-box dots, .capture-hint
+borders and dynamic .circle variants. Extreme overrides that token locally rather
+than replacing shapes or animations. Native red highlight is #eb6150; preserve
+hues with brightness(.8)/opacity(.65), instead of grayscale. Local visual hints
+are sanitized representative markup, not a live native board integration test.

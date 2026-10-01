@@ -161,6 +161,7 @@ it("reuses wide Extreme native actions, restores after Escape/disable, and never
   fixture(); const controller = new PhoneGameActionsController();
   document.documentElement.removeAttribute('data-chesscom-vinf-phone-game');
   document.documentElement.setAttribute('data-chesscom-vinf-extreme-oled', 'true');
+  const overlay = document.createElement('div'); overlay.className = 'chesscom-vinf-extreme-controls'; document.body.append(overlay);
   const resign = document.querySelector<HTMLButtonElement>('.resign-button-component')!;
   const original = resign.parentNode!; const before = [...original.childNodes];
   const open = vi.fn(); resign.addEventListener('click', open);
@@ -168,12 +169,14 @@ it("reuses wide Extreme native actions, restores after Escape/disable, and never
   controller.reconcile(document, game, settings, false, true);
   controller.reconcile(document, game, settings, false, true);
   expect(document.querySelectorAll('.chesscom-vinf-wide-actions')).toHaveLength(1);
-  expect(document.querySelector('#board-layout-player-top .chesscom-vinf-wide-actions')!.contains(resign)).toBe(true);
+  expect(document.querySelector('.chesscom-vinf-extreme-controls .chesscom-vinf-wide-actions')!.contains(resign)).toBe(true);
   expect(open).not.toHaveBeenCalled(); resign.click(); expect(open).toHaveBeenCalledOnce();
+  overlay.remove(); // Overlay cleanup precedes the actions controller.
   document.documentElement.removeAttribute('data-chesscom-vinf-extreme-oled'); // Escape/native end cleanup
   controller.reconcile(document, game, settings, false, true);
   expect([...original.childNodes]).toEqual(before);
   expect(document.querySelector('[data-chesscom-vinf-wide-actions]')).toBeNull();
+  document.body.append(overlay);
   document.documentElement.setAttribute('data-chesscom-vinf-extreme-oled', 'true');
   controller.reconcile(document, game, settings, false, true);
   controller.reconcile(document, game, {...settings, enabled: false}, false, true);
