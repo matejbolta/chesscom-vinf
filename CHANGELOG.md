@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.9.0] - 2026-10-02
+
+- Show the latest native move on the inactive player's side, opposite the turn dot, in normal/OLED/Extreme gameplay on desktop, tablet and phone.
+- Match notation color to the active dot, including low-time/long-turn red; preserve native captures, checks, promotions and figurine notation.
+
 ## [2.8.7] - 2026-10-02
 
 - Desktop Extreme OLED omits previous/next arrow buttons and places clocks at the normal player-row positions on the right. Phone/tablet presentation is unchanged.

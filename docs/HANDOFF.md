@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.8.7.
+Current source version: 2.9.0.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,34 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Last-move indicator (2.9.0)
+
+All gameplay presentations show the latest completed native SAN on the inactive
+player's side at the turn-dot center, opposite the active dot. Active side retains
+the dot and its pulse. Text uses the active dot's gray/red state, including <60s
+and observed >=60s turn duration. Text scales with dot size (minimum 12px).
+Shared overlay covers desktop/tablet/phone and normal/OLED/Extreme; never Review.
+
+LastMoveReader reads only wc-simple-move-list[board-id=board-single] main-line
+nodes with data-node=0-N; highest N wins regardless of selected node or visual
+row order. Native node-highlight-content supplies SAN; data-figurine supplies
+piece letters in icon mode. Strict SAN validation hides unsupported/missing text;
+no inference from board positions, game API calls or network requests. Require
+native clock color to agree with the inactive side before display. Cached until
+move-list mutation/replacement; native clock ticks and piece paint do not rescan.
+Uses the existing observer, with data-node/data-figurine included; no new timer.
+
+Evidence: sanitized native markup from the existing 2026-09-18 game-result
+capture and saved native board bundle (DOM_AUDIT). Tests cover live append,
+figurines, capture/check/promotion, selected-old-move exclusion, board flip,
+color transition, cached clock updates and Review cleanup in normal/Extreme.
+187 tests/typecheck and desktop/Android builds pass. IAB checked desktop Extreme,
+phone Extreme and normal tablet fixtures; phone text and dot both rgb(119,119,119),
+no fixture console errors. Screenshot: fixtures/raw/desktop-extreme-2026-10-02/last-move.png.
+Actual current game and physical Android remain unverified. User is playing;
+Brave/extension remain untouched and 2.9.0 must be loaded after the game.
+No push or Store work.
 
 ## Desktop Extreme OLED controls (2.8.7)
 

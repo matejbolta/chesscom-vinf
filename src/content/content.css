@@ -1167,3 +1167,14 @@ html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] wc-capt
 html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] :is([role="dialog"], [role="alertdialog"], .cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) { color: #bbb; }
 html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] .chesscom-vinf-annotation-toggle[data-flow="true"] { opacity: 1; }
 html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] .chesscom-vinf-extreme-controls nav { top: calc(100% + 60px); }
+
+/* The inactive side shows the last completed native move opposite the turn dot. */
+.chesscom-vinf-last-move {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  color: #777; background: transparent; pointer-events: none;
+  font: 600 max(12px, var(--vinf-turn-size, 12px))/1 system-ui, sans-serif;
+  white-space: nowrap;
+}
+.chesscom-vinf-last-move.top { bottom: calc(100% + 10px + var(--vinf-turn-size, 12px) / 2); transform: translate(-50%, 50%); }
+.chesscom-vinf-last-move.bottom { top: calc(100% + 10px + var(--vinf-turn-size, 12px) / 2); transform: translate(-50%, -50%); }
+.chesscom-vinf-last-move[data-low="true"] { color: #b65b5b; }

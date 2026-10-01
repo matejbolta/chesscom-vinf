@@ -228,6 +228,12 @@ if (window.location.pathname === "/extreme-oled") {
   const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme") };
   const apply = () => extreme.reconcile(document,
     { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings, searchParams.has("desktop"), searchParams.has("desktop"));
+  if (searchParams.has("last-move")) {
+    const moves = document.createElement("wc-simple-move-list");
+    moves.setAttribute("board-id", "board-single");
+    moves.innerHTML = '<div class="main-line-row"><div class="node black-move main-line-ply" data-node="0-1"><span class="node-highlight-content"><span data-figurine="N"></span>f6</span></div></div>';
+    document.body.append(moves);
+  }
   const fixtureBoard = document.querySelector<HTMLElement>("wc-chess-board")!;
   const initialBounds = fixtureBoard.getBoundingClientRect();
   document.body.dataset.nativeBoardBounds = JSON.stringify({x:initialBounds.x,y:initialBounds.y,width:initialBounds.width,height:initialBounds.height});

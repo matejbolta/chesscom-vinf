@@ -1,3 +1,4 @@
+import { LastMoveReader } from "./last-move";
 import { isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
 import { boardOverlayHost, placeBoardOverlay } from "./board-overlay";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
@@ -41,6 +42,7 @@ export function readClockSeconds(text: string): number | null {
 }
 
 export class ExtremeOledController {
+  private lastMove = new LastMoveReader();
   private normalClocks = false;
   private desktop = false;
   private dotSize = 12;
@@ -118,12 +120,13 @@ export class ExtremeOledController {
       this.observer = new MutationObserver(records => {
         const relevant = records.filter(record => !isOwnedGameMutation(record) && !isBoardPaintMutation(record));
         if (!relevant.length) return;
+        this.lastMove.invalidate(relevant);
         if (relevant.some(record => !isClockTextMutation(record))) this.geometryDirty = true;
         this.schedule();
       });
       this.observer.observe(document.body, {
         childList: true, subtree: true, characterData: true,
-        attributes: true, attributeFilter: ["class", "style", "hidden", "aria-hidden", "disabled", "aria-disabled"]
+        attributes: true, attributeFilter: ["class", "style", "hidden", "aria-hidden", "disabled", "aria-disabled", "data-node", "data-figurine"]
       });
       document.defaultView?.addEventListener("resize", this.scheduleGeometry);
       document.defaultView?.addEventListener("scroll", this.scroll, true);
@@ -196,6 +199,10 @@ export class ExtremeOledController {
         turn.setAttribute("aria-label", `${side === "top" ? "Top" : "Bottom"} player to move`);
         turn.hidden = true;
         this.overlay.append(turn);
+        const lastMove = document.createElement("span");
+        lastMove.className = `chesscom-vinf-last-move ${side}`;
+        lastMove.hidden = true;
+        this.overlay.append(lastMove);
       }
       const controls = document.createElement("nav");
       controls.setAttribute("aria-label", "Move navigation");
@@ -263,12 +270,22 @@ export class ExtremeOledController {
     const clockSeconds = ["top", "bottom"].map(side => readClockSeconds(
       document.querySelector(`#board-layout-player-${side} .clock-component [role="timer"]`)?.textContent ?? ""
     ));
+    const lastMove = this.lastMove.read(document);
+    const activeSeconds = readClockSeconds(active?.querySelector('[role="timer"]')?.textContent ?? "");
+    const activeLow = slowMove || activeSeconds !== null && activeSeconds < 60;
     for (const side of ["top", "bottom"]) {
       const bar = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-clock.${side}`)!;
       const clock = document.querySelector<HTMLElement>(`#board-layout-player-${side} .clock-component`);
       const turn = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-turn.${side}`)!;
       const inactive = activeClocks.length !== 1 || clock !== activeClocks[0];
       if (turn.hidden !== inactive) turn.hidden = inactive;
+      const last = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-last-move.${side}`)!;
+      const showLast = !!active && inactive && !!lastMove && !!clock?.classList.contains(`clock-${lastMove.color}`);
+      if (last.hidden === showLast) last.hidden = !showLast;
+      const notation = showLast ? lastMove!.notation : "";
+      if (last.textContent !== notation) last.textContent = notation;
+      setAttribute(last, "aria-label", notation ? `Last move: ${notation}` : "Last move");
+      setAttribute(last, "data-low", String(activeLow));
       const text = clock?.querySelector('[role="timer"]')?.textContent ?? "";
       const seconds = readClockSeconds(text);
       setAttribute(turn, "data-low", String(!inactive && (slowMove || seconds !== null && seconds < 60)));
@@ -344,5 +361,6 @@ export class ExtremeOledController {
     this.document?.removeEventListener("keydown", this.escape);
     this.clearPresentation(document);
     this.document = null;
+    this.lastMove.reset();
   }
 }

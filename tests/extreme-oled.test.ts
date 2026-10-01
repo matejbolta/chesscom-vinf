@@ -282,3 +282,34 @@ it("sizes the turn dot, pulses only on a player change, and warns for low time o
   nowSpy.mockRestore();
   vi.unstubAllGlobals();
 });
+
+it.each([false, true])("shows the native last move opposite the active dot (Extreme %s)", async extremeOled => {
+  document.body.insertAdjacentHTML('beforeend', readFileSync('tests/fixtures/live-last-move.html', 'utf8'));
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, extremeOled}, true, true);
+  const last = (side: string) => document.querySelector<HTMLElement>(`.chesscom-vinf-last-move.${side}`)!;
+  expect(last('top').textContent).toBe('dxc7+');
+  expect(last('top').hidden).toBe(false); expect(last('bottom').hidden).toBe(true);
+  const list = document.querySelector('wc-simple-move-list')!;
+  const read = vi.spyOn(list, 'querySelectorAll');
+  clock('bottom').textContent = '0:59'; await vi.advanceTimersByTimeAsync(20);
+  expect(last('top').dataset.low).toBe('true');
+  expect(read).not.toHaveBeenCalled(); // Clock ticks reuse notation, no list scans.
+  list.querySelector('.main-line-row:last-child')!.insertAdjacentHTML('beforeend',
+    '<div class="node white-move main-line-ply" data-node="0-4"><span class="node-highlight-content"><span data-figurine="N"></span>f3</span></div>');
+  clock('bottom').parentElement!.classList.remove('clock-player-turn');
+  clock('top').parentElement!.classList.add('clock-player-turn');
+  await vi.advanceTimersByTimeAsync(20);
+  expect(last('bottom').textContent).toBe('Nf3'); expect(last('bottom').hidden).toBe(false);
+  expect(last('top').hidden).toBe(true); expect(last('bottom').dataset.low).toBe('false');
+  const topClock = clock('top').parentElement!;
+  const bottomClock = clock('bottom').parentElement!;
+  document.querySelector('#board-layout-player-bottom')!.append(topClock);
+  document.querySelector('#board-layout-player-top')!.append(bottomClock);
+  await vi.advanceTimersByTimeAsync(20);
+  expect(last('top').textContent).toBe('Nf3'); expect(last('bottom').hidden).toBe(true);
+  list.querySelector('[data-node="0-4"] .node-highlight-content')!.textContent = 'c8=Q#';
+  await vi.advanceTimersByTimeAsync(20);
+  expect(last('top').textContent).toBe('c8=Q#');
+  controller.reconcile(document, {...location, pathname:'/analysis/game/123456/review'}, {...DEFAULT_SETTINGS, extremeOled}, true, true);
+  expect(document.querySelector('.chesscom-vinf-last-move')).toBeNull();
+});

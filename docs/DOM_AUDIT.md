@@ -31,6 +31,19 @@ Sanitized contract: `tests/fixtures/review-desktop-controls.html`. Live B on 2.8
 reproduced native Best click behavior; B with the button absent was a no-op.
 No live match was altered. Internal classes/glyphs remain subject to site changes.
 
+## Live last-move notation — 2026-10-02 (2.9.0)
+
+Existing private desktop game-result capture (2026-09-18) contains
+wc-simple-move-list[board-id="board-single"] with .main-line-row direct child
+.node.main-line-ply[data-node="0-N"], white-move/black-move classes, and SAN in
+.node-highlight-content. Timestamps are separate siblings. Read highest main-line
+index, never selected node or CSS order. Native saved board 1.187.1 source also
+renders figurine piece letters in data-figurine; textContent alone would lose N.
+Sanitized contract: tests/fixtures/live-last-move.html. Unknown notation/renderer
+fails closed to no label. No fresh private live-game DOM was inspected while the
+user played. Runtime caches and invalidates only on this list's mutations or
+replacement, retaining existing observer/timer behavior.
+
 ## Route and homepage guard
 
 - Verified URL: `https://www.chess.com/home`

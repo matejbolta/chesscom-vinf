@@ -1849,3 +1849,12 @@ respects reduced motion and leaves native game timing untouched.
 Desktop Extreme OLED has no on-screen previous/next arrows; use native keyboard
 navigation. Numeric clocks follow the normal player-row positions on the right.
 Phone and tablet controls stay unchanged, independent of viewport width.
+
+
+## 2.9.0 — Last move opposite the active dot
+
+Normal, OLED and Extreme gameplay on desktop/tablet/phone show the latest native
+move at the inactive side's dot position. The active side keeps its turn dot.
+Notation matches the active dot's color, including warning red, follows board
+flips, and never changes moves or appears in Game Review. If native notation or
+color cannot be reliably read, omit the label rather than guess.
