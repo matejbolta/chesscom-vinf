@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.8.3] - 2026-10-01
+
+- Set desktop O/E/X/Z/F/B shortcut descriptions to the requested concise wording.
+
 ## [2.8.2] - 2026-10-01
 
 - Removed the Alt promotion-shortcut explanation from desktop settings.
