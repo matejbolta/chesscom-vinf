@@ -1823,3 +1823,11 @@ switch then eases down over1s (respects reduced motion). Active dot turns red be
 piece colors. Place upper draw/flag/clock evenly across right half; lower pencil
 halfway from center to aligned clock. First primary phone Review action reveals
 the full evaluation graph above the dock once, yielding to manual scrolling.
+
+### 2.8.1 — Shared Extreme phone rows; no clock hiding
+
+Extreme phone games use normal material/action rows (captured material left,
+Draw/Resign/opponent clock above, pencil/own clock below). Keep Extreme's board
+colors and scroll space. Keep previous/next controls below the lower row.
+All platforms always show native numeric time; remove every clock-hiding action
+and desktop T shortcut. Tablet/desktop retain their separate Extreme layout.

@@ -9,6 +9,16 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.8.1] - 2026-10-01
+
+- Extreme OLED on phones now shares normal gameplay's material/action rows:
+  captured pieces left; Draw, Resign and clock above; pencil and clock below.
+- Removed clock hiding on every layout and deleted desktop T handling/help.
+  Numeric clocks are read-only, always-visible displays with no click targets.
+- Kept Extreme's dark board and scroll space; placed move navigation beneath
+  the lower row and preserved native confirmation visibility.
+
+
 ## [2.8.0] - 2026-10-01
 
 - Desktop B activates the visible native Best move control in Game Review.

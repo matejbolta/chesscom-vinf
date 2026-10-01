@@ -57,8 +57,6 @@ export class ExtremeOledController {
   private route = "";
   private suspendedRoute = "";
   private finishedRoute = "";
-  private revealTimes: boolean | null = null;
-  private forcedTimes = false;
   private maxima = new Map<string, number>();
 
   private readonly schedule = (): void => {
@@ -86,23 +84,10 @@ export class ExtremeOledController {
     this.cleanup(this.document);
   };
 
-  toggleTimes(): boolean {
-    if (!this.overlay || !this.document || this.normalClocks) return false;
-    if (!this.forcedTimes) this.revealTimes = !(this.revealTimes ?? this.normalClocks);
-    this.update(this.document);
-    return true;
-  }
-
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, normalGameClocks = false): boolean {
     this.dotSize = settings.turnDotSize;
     const normal = normalGameClocks && !settings.extremeOled;
-    if (normal !== this.normalClocks) {
-      const forced = this.forcedTimes;
-      const reveal = this.revealTimes;
-      this.cleanup(document);
-      this.forcedTimes = forced;
-      this.revealTimes = reveal;
-    }
+    if (normal !== this.normalClocks) this.cleanup(document);
     this.normalClocks = normal;
     const route = `${location.protocol}//${location.hostname}${location.pathname}`;
     if (route !== this.route || !settings.extremeOled) this.suspendedRoute = "";
@@ -191,12 +176,10 @@ export class ExtremeOledController {
         line.className = "chesscom-vinf-extreme-fuse";
         bar.append(line);
         this.overlay.append(bar);
-        const time = document.createElement("button");
-        time.type = "button";
+        const time = document.createElement("div");
+        time.setAttribute("role", "timer");
+        time.setAttribute("aria-live", "off");
         time.className = `chesscom-vinf-extreme-time ${side}`;
-        time.addEventListener("click", () => {
-          this.toggleTimes();
-        });
         this.overlay.append(time);
         const turn = document.createElement("div");
         turn.className = `chesscom-vinf-extreme-turn ${side}`;
@@ -237,6 +220,8 @@ export class ExtremeOledController {
       document.body.append(this.scrollRoom);
     }
     setAttribute(document.documentElement, this.normalClocks ? NORMAL : ACTIVE, "true");
+    const rowClocks = this.normalClocks || document.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
+    this.overlay.classList.toggle("chesscom-vinf-row-clock-controls", rowClocks);
     const dotSize = `${this.dotSize}px`;
     if (this.overlay.style.getPropertyValue("--vinf-turn-size") !== dotSize) this.overlay.style.setProperty("--vinf-turn-size", dotSize);
     const rect = this.geometryDirty ? board.getBoundingClientRect() : null;
@@ -269,10 +254,6 @@ export class ExtremeOledController {
     const clockSeconds = ["top", "bottom"].map(side => readClockSeconds(
       document.querySelector(`#board-layout-player-${side} .clock-component [role="timer"]`)?.textContent ?? ""
     ));
-    // Latch for this game: an increment back over a minute must not hide urgency.
-    if (clockSeconds.some(seconds => seconds !== null && seconds < 60)) this.forcedTimes = true;
-    const fixedTimes = this.normalClocks;
-    const showTimes = fixedTimes || (this.revealTimes ?? this.normalClocks) || this.forcedTimes;
     for (const side of ["top", "bottom"]) {
       const bar = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-clock.${side}`)!;
       const clock = document.querySelector<HTMLElement>(`#board-layout-player-${side} .clock-component`);
@@ -287,30 +268,28 @@ export class ExtremeOledController {
         turn.animate?.([{ transform: "scale(2)" }, { transform: "scale(1)" }],
           { duration: 1000, easing: "ease-out" });
       }
-      const time = this.overlay.querySelector<HTMLButtonElement>(`.chesscom-vinf-extreme-time.${side}`)!;
-      if (this.normalClocks && clock && rect) {
+      const time = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-time.${side}`)!;
+      if (rowClocks && clock && rect) {
         const clockRect = clock.getBoundingClientRect();
         const width = Math.min(80, clockRect.width);
         time.style.width = `${width}px`;
         time.style.left = `${clockRect.left - rect.left + (clockRect.width - width) / 2}px`;
         time.style.top = `${clockRect.top - rect.top + (clockRect.height - 44) / 2}px`;
       }
-      // Numeric times toggle together; the native-time bars always remain visible.
+      if (!rowClocks && time.style.width) {
+        // Phone -> tablet resize restores Extreme's separate clock positions.
+        for (const property of ["width", "left", "top"]) time.style.removeProperty(property);
+      }
+      // Read-only clock display; native-time bars remain visible as well.
       const unavailable = clockSeconds.every(value => value === null);
       if (time.hidden !== unavailable) time.hidden = unavailable;
-      if (time.disabled !== fixedTimes) time.disabled = fixedTimes;
-      if (fixedTimes) time.removeAttribute("aria-pressed");
-      else setAttribute(time, "aria-pressed", String(showTimes));
-      setAttribute(time, "aria-disabled", String(fixedTimes || this.forcedTimes));
       const player = side === "top" ? "Top" : "Bottom";
       const whole = seconds === null ? null : Math.floor(seconds);
       const display = whole === null ? "—" : whole < 60 ? String(whole) :
         `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, "0")}`;
-      setAttribute(time, "aria-label", showTimes ? `${player} clock ${display}. ${fixedTimes || this.forcedTimes ? "Time stays visible" : "Hide both clocks"}` :
-        `${player} clock area: show both clocks`);
+      setAttribute(time, "aria-label", `${player} clock ${display}`);
       setAttribute(time, "data-low", String(seconds !== null && seconds < 60));
-      const label = showTimes ? display : "";
-      if (time.textContent !== label) time.textContent = label;
+      if (time.textContent !== display) time.textContent = display;
       if (bar.hidden !== (seconds === null)) bar.hidden = seconds === null;
       if (bar.hidden || seconds === null) continue;
       const key = clock?.classList.contains("clock-white") ? "white" :
@@ -344,8 +323,6 @@ export class ExtremeOledController {
   }
 
   cleanup(document: Document): void {
-    this.revealTimes = null;
-    this.forcedTimes = false;
     this.observer?.disconnect();
     this.observer = null;
     const view = this.document?.defaultView;

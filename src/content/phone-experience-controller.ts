@@ -37,7 +37,7 @@ export class PhoneExperienceController {
     }
     const signedIn = document.documentElement.classList.contains("user-logged-in");
     const review = isChessComLiveGameReview(location);
-    const game = isChessComGame(location) && !settings.extremeOled;
+    const game = isChessComGame(location);
     if (!settings.enabled || !phone || !signedIn || (!review && !game)) {
       this.cleanup(document);
       return;
@@ -79,6 +79,13 @@ export class PhoneExperienceController {
     }
     document.documentElement.setAttribute(GAME, "true");
     document.documentElement.toggleAttribute("data-chesscom-vinf-phone-material", phoneAndroid);
+    if (settings.extremeOled) {
+      // Share only the player rows; retain Extreme's own spacing and hidden sidebar.
+      this.entry.cleanup();
+      this.clearRows();
+      this.restoreOpening();
+      return;
+    }
     this.entry.reconcile(document, route);
     this.updateRows(document);
     this.moveOpening(document);

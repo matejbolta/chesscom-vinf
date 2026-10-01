@@ -300,6 +300,19 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
     annotations.reconcile(document, route, settings, !searchParams.has("desktop"));
   };
+  // Sanitized native confirmation shape; never a real game action.
+  document.querySelector('.resign-button-component')?.addEventListener('click', () => {
+    if (document.querySelector('.cc-confirmation-popover-popover')) return;
+    const dialog = document.createElement('div');
+    dialog.className = 'cc-confirmation-popover-popover';
+    dialog.setAttribute('role', 'dialog'); dialog.setAttribute('aria-label', 'Fixture resign confirmation');
+    dialog.style.cssText = 'position:fixed;top:35%;left:10%;width:80%;padding:16px;background:#262522;z-index:2000';
+    dialog.innerHTML = '<p>Resign this fixture game?</p><button>Cancel</button><button>Confirm resign</button>';
+    dialog.querySelectorAll('button').forEach(button => button.addEventListener('click', () => {
+      document.body.dataset.confirmationChoice = button.textContent!; dialog.remove();
+    }));
+    document.body.append(dialog);
+  });
   const audio = document.querySelector<HTMLButtonElement>('[aria-label="Toggle Coach Audio"]');
   audio?.addEventListener("click", () => {
     const svg = audio.querySelector("svg")!;

@@ -976,3 +976,25 @@ Automated:183 tests/25 files, typecheck, desktop and Android builds. Performance
 regression budget still passes; dragging now produces zero preview factory calls,
 then one native arrow factory call on release. These are sanitized fixtures,
 not Firefox Android touch/scroll timing or live desktop verification.
+
+
+## 2026-10-01 — 2.8.1 Extreme phone rows
+
+Reused existing player/material/action selectors, gated by phone + Android.
+Extreme visibility now explicitly includes native captured pieces, relocated
+native action descendants, semantic dialogs and the saved first-party CSS roots
+cc-confirmation-popover-popover, cc-confirmation-modal-modal, draw-offer-component
+and draw-request-component. Those names were verified in stored September18
+play CSS. No fabricated native actions or confirmation clicks are introduced.
+Sanitized visual harness models a separate confirmation with Cancel/Confirm;
+its handlers only record fixture state.
+
+IAB phone fixture /phone-game-preview?extreme=1, 390x844: native board stays390px,
+both material rows/action icons visible, upper/lower clock centers align, pencil
+visible inactive, nav below lower row without overlap. Both clocks are DIVs with
+role=timer and pointer-events:none. Resign opens the native-shaped fixture popup;
+Cancel removes it and preserves Extreme/game presentation. Tablet fixture800x844
+keeps separate layout, no phone-material marker, both clocks visible/read-only.
+Actual device/native popover integration remains unverified. Same known preview
+MutationObserver/Node console issue as earlier; no new game activity.
+Private evidence: fixtures/raw/refinements-2026-10-01/extreme-phone.png.

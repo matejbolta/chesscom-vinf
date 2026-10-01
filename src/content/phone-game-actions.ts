@@ -8,7 +8,7 @@ export class PhoneGameActionsController {
   private originals = new Map<HTMLElement, Comment>();
 
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, phoneAndroid: boolean): void {
-    if (!phoneAndroid || !settings.enabled || settings.extremeOled || !isChessComGame(location) ||
+    if (!phoneAndroid || !settings.enabled || !isChessComGame(location) ||
         !document.documentElement.hasAttribute("data-chesscom-vinf-phone-game") || nativeGameHasEnded(document)) {
       this.restore(); return;
     }

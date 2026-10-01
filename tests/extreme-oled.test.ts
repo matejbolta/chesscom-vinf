@@ -108,36 +108,22 @@ describe("Extreme OLED", () => {
     expect(controller.reconcile(document, location, settings)).toBe(false);
     expect(document.querySelector(".chesscom-vinf-extreme-controls")).toBeNull();
   });
-  it("toggles both times together and locks them visible after either goes below a minute", async () => {
+  it("always displays read-only times, including low time and increments", async () => {
     controller.reconcile(document, location, settings);
-    const top = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.top")!;
-    const bottom = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.bottom")!;
-    expect([top.textContent, bottom.textContent]).toEqual(["", ""]);
-    expect([top.getAttribute("aria-pressed"), bottom.getAttribute("aria-pressed")]).toEqual(["false", "false"]);
-    expect(top.hidden || bottom.hidden).toBe(false);
-    top.click();
+    const top = document.querySelector<HTMLElement>(".chesscom-vinf-extreme-time.top")!;
+    const bottom = document.querySelector<HTMLElement>(".chesscom-vinf-extreme-time.bottom")!;
     expect([top.textContent, bottom.textContent]).toEqual(["10:00", "10:00"]);
-    expect([top.getAttribute("aria-pressed"), bottom.getAttribute("aria-pressed")]).toEqual(["true", "true"]);
-    bottom.click();
-    expect([top.textContent, bottom.textContent]).toEqual(["", ""]);
-    clock("bottom").textContent = "1:00";
-    await vi.advanceTimersByTimeAsync(20);
-    expect(bottom.textContent).toBe("");
+    expect(top.tagName).toBe("DIV");
+    expect(top.getAttribute("role")).toBe("timer");
+    expect(top.hasAttribute("aria-pressed")).toBe(false);
+    top.click(); bottom.click();
+    expect([top.textContent, bottom.textContent]).toEqual(["10:00", "10:00"]);
     clock("bottom").textContent = "0:59.9";
     await vi.advanceTimersByTimeAsync(20);
-    expect([top.textContent, bottom.textContent]).toEqual(["10:00", "59"]);
-    top.click(); bottom.click();
-    expect([top.textContent, bottom.textContent]).toEqual(["10:00", "59"]);
-    clock("bottom").textContent = "0:09.1";
-    clock("top").textContent = "0:58";
-    await vi.advanceTimersByTimeAsync(20);
-    expect([top.textContent, bottom.textContent]).toEqual(["58", "9"]);
+    expect(bottom.textContent).toBe("59");
     clock("bottom").textContent = "1:04";
-    clock("top").textContent = "1:01";
     await vi.advanceTimersByTimeAsync(20);
-    top.click();
-    expect([top.textContent, bottom.textContent]).toEqual(["1:01", "1:04"]);
-    expect(top.getAttribute("aria-disabled")).toBe("true");
+    expect(bottom.textContent).toBe("1:04");
   });
   it("uses the native turn class and never guesses during ambiguous states", async () => {
     controller.reconcile(document, location, normalizeSettings({ ...settings, extremeOledClocks: false }));
@@ -152,7 +138,7 @@ describe("Extreme OLED", () => {
     await vi.advanceTimersByTimeAsync(20);
     expect([top.hidden, bottom.hidden]).toEqual([true, true]);
   });
-  it("ignores an old saved bars-off setting without affecting paired time reveal", async () => {
+  it("ignores an old saved bars-off setting and keeps times visible", async () => {
     controller.reconcile(document, location, normalizeSettings({ ...settings, extremeOledClocks: false }));
     const top = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.top")!;
     const bottom = document.querySelector<HTMLButtonElement>(".chesscom-vinf-extreme-time.bottom")!;
@@ -220,23 +206,19 @@ it.each([["9:00",540],["0:09.8",9.8],["1:02:03",3723],["8,5",8.5],["Disconnected
   expect(readClockSeconds(String(text))).toBe(seconds);
 });
 
-it("keeps normal clocks fixed on every layout, leaving Extreme toggleable", () => {
-  document.documentElement.setAttribute('data-chesscom-vinf-phone-material', '');
-  controller.reconcile(document, location, DEFAULT_SETTINGS, true);
-  const phoneTime = document.querySelector<HTMLButtonElement>('.chesscom-vinf-extreme-time.bottom')!;
-  expect(phoneTime.disabled).toBe(true);
-  expect(phoneTime.textContent).not.toBe('');
-  expect(controller.toggleTimes()).toBe(false);
-  phoneTime.click();
-  expect(phoneTime.textContent).not.toBe('');
-  document.documentElement.removeAttribute('data-chesscom-vinf-phone-material');
-  controller.reconcile(document, location, DEFAULT_SETTINGS, true);
-  expect(phoneTime.disabled).toBe(true);
-  expect(controller.toggleTimes()).toBe(false);
-  expect(phoneTime.textContent).not.toBe('');
+it("uses read-only clocks in both normal and Extreme layouts", () => {
+  document.documentElement.setAttribute("data-chesscom-vinf-phone-material", "");
+  for (const extremeOled of [false, true]) {
+    controller.reconcile(document, location, {...DEFAULT_SETTINGS, extremeOled}, true);
+    const time = document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.bottom')!;
+    expect(time.tagName).toBe('DIV');
+    expect(time.textContent).toBe('10:00');
+    time.click();
+    expect(time.textContent).toBe('10:00');
+  }
+  document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
   controller.reconcile(document, location, settings);
-  expect(controller.toggleTimes()).toBe(true);
-  expect(document.querySelector('.chesscom-vinf-extreme-time.bottom')!.textContent).not.toBe('');
+  expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.bottom')!.style.left).toBe('');
 });
 
 it("sizes the turn dot, pulses only on a player change, and warns for low time or a long move", async () => {

@@ -52,12 +52,11 @@ describe("phone play and review", () => {
     expect(opening.nextElementSibling).toBe(scroll);
   });
 
-  it("restores on disable, tablet, Extreme, home and review transitions; latches native game end", () => {
+  it("restores on disable, tablet, home and review transitions; latches native game end", () => {
     fixture();
     for (const [location, settings, phone] of [
       [game, { ...DEFAULT_SETTINGS, enabled: false }, true],
       [game, DEFAULT_SETTINGS, false],
-      [game, { ...DEFAULT_SETTINGS, extremeOled: true }, true],
       [{ ...game, pathname: "/home" }, DEFAULT_SETTINGS, true],
       [review, DEFAULT_SETTINGS, true]
     ] as const) {
@@ -132,8 +131,7 @@ it("keeps native material intact and scopes material-only rows to Android phones
     [review, DEFAULT_SETTINGS, true, true],
     [game, DEFAULT_SETTINGS, false, false],
     [game, DEFAULT_SETTINGS, true, false],
-    [game, { ...DEFAULT_SETTINGS, enabled: false }, true, true],
-    [game, { ...DEFAULT_SETTINGS, extremeOled: true }, true, true]
+    [game, { ...DEFAULT_SETTINGS, enabled: false }, true, true]
   ] as const) {
     controller.reconcile(document, location, settings, phone, android);
     expect(document.documentElement.hasAttribute('data-chesscom-vinf-phone-material')).toBe(false);

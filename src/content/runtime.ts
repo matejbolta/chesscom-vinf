@@ -454,10 +454,6 @@ export function startVinfRuntime(
       return;
     }
     if (event.repeat || event.target.closest("button")) return;
-    if (key === "t") {
-      if (isChessComGame(window.location) && extremeOledController.toggleTimes()) event.preventDefault();
-      return;
-    }
     if ((key !== "o" && key !== "e") || !settingsSource.save) return;
     if (key === "e" && !isChessComGame(window.location)) return;
     event.preventDefault();

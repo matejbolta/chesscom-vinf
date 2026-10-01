@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-01.
-Current source version: 2.8.0.
+Current source version: 2.8.1.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.8.0. This handoff is the shortest
+chronological amendments through version 2.8.1. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,32 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Extreme rows and retired clock toggle (2.8.1)
+
+Supersedes the 2.8.0 Extreme clock-hiding policy below. Clock hiding is removed
+on every platform: no state, click handler, toggle method, T shortcut or T help.
+Numeric clocks are div[role=timer][aria-live=off] with pointer-events:none, always
+showing native time (whole seconds under a minute). Native clocks still drive
+bars, values and low-time colors; no simulated time. All numeric displays lack
+pill outlines. Row-positioned clocks share chesscom-vinf-row-clock-controls;
+normal-clock-controls remains the normal presentation/z-index marker.
+
+Extreme Android phone games reuse phone-game/material markers and native action
+relocation. PhoneExperienceController shares rows only: no normal entry scroll,
+opening relocation or newest-first list work while Extreme is selected. Extreme
+keeps its own headroom, black board and hidden surrounding site. Phone pencil is
+visible even when inactive and occupies the normal lower-row slot. Native Draw/
+Resign stay in the upper row; their nested controls and portalled native
+confirmation/draw components are visible. Previous/next circles sit below the
+lower row. Tablet/desktop keep their separate Extreme layout with clocks always
+visible. Crossing phone/tablet width clears obsolete inline clock positioning.
+
+Verified using sanitized phone/tablet browser fixtures, native-shaped confirmation
+cancel, unchanged board size, typecheck, 184 automated tests and both builds.
+Existing fixture browser MutationObserver error is unchanged from the baseline.
+No new Firefox Android/live-game verification, real game actions, push or Store
+work. Screenshot evidence stays ignored under fixtures/raw/refinements-2026-10-01.
 
 ## Game controls and review refinements (2.8.0)
 

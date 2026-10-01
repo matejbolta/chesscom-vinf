@@ -761,7 +761,11 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
   left: 12px;
   width: 80px;
   height: 44px;
-  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  pointer-events: none;
+  border: 0;
   text-align: center;
   background: #000;
   color: #888;
@@ -772,11 +776,6 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
 .chesscom-vinf-extreme-time.top { top: -56px; }
 .chesscom-vinf-extreme-time.bottom { top: calc(100% + 12px); }
 .chesscom-vinf-extreme-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #a34c4c; }
-.chesscom-vinf-extreme-time[aria-disabled="true"] { cursor: default; }
-.chesscom-vinf-extreme-controls .chesscom-vinf-extreme-time[aria-pressed="false"] {
-  border-color: transparent;
-  background: transparent;
-}
 .chesscom-vinf-extreme-turn {
   position: absolute;
   left: calc(50% - var(--vinf-turn-size, 12px) / 2);
@@ -796,7 +795,7 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
   html[data-chesscom-vinf-phone-game] #board-layout-sidebar .sidebar-component > .tabs-component:has(> .tabs-tab:first-child.tabs-active) {
     display: none !important;
   }
-  html[data-chesscom-vinf-phone-game] #board-layout-main::before {
+  html[data-chesscom-vinf-phone-game]:not([data-chesscom-vinf-extreme-oled]) #board-layout-main::before {
     content: "";
     display: block;
     height: clamp(48px, 10svh, 80px);
@@ -981,7 +980,7 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
   html[data-chesscom-vinf-phone-review] .mobile-gr-footer-footer button[aria-label="Share"] { display: none !important; }
 }
 .chesscom-vinf-normal-clock-controls { z-index: 10; }
-.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time { background: transparent; }
+.chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time { background: transparent; }
 
 /* Android-only marker; outer widths remain one fifth of the original five slots. */
 html [data-chesscom-vinf-four-moves] {
@@ -1088,13 +1087,13 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
   }
   html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"]::before { content: none; }
   html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"][aria-pressed="true"] { color: #b65b5b; }
-  html[data-chesscom-vinf-phone-game] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time {
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time {
     border-color: transparent;
     border-radius: 0;
     color: #bbb;
     font-size: 18px;
   }
-  html[data-chesscom-vinf-phone-game] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #b65b5b; }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #b65b5b; }
   html[data-chesscom-vinf-phone-game] #board-layout-player-bottom { margin-bottom: 0; }
   html[data-chesscom-vinf-phone-game] #board-layout-sidebar { margin-top: 0; }
 }
@@ -1112,22 +1111,22 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
     align-items: center;
   }
   html[data-chesscom-vinf-phone-material] wc-captured-pieces { display: block; }
-  html[data-chesscom-vinf-phone-material] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled {
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time {
     color: #bbb;
     cursor: default;
     opacity: 1;
     pointer-events: none;
   }
-  html[data-chesscom-vinf-phone-material] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled[data-low="true"] { color: #b65b5b; }
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #b65b5b; }
 }
 
 /* Shared game indicators; normal clocks are always visible and not buttons. */
 .chesscom-vinf-extreme-turn[data-low="true"] { background: #b65b5b; }
-.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled {
+.chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time {
   border: 0; border-radius: 0; background: transparent;
   color: #bbb; opacity: 1; cursor: default; pointer-events: none;
 }
-.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled[data-low="true"] { color: #b65b5b; }
+.chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #b65b5b; }
 @media (max-width: 599px) {
   /* Right-half centers: draw 58.33%, flag 75%, clock 91.67%.
      Pencil lies halfway from the midpoint to the clock: 70.83%. */
@@ -1143,8 +1142,8 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
   html[data-chesscom-vinf-phone-material] .chesscom-vinf-phone-actions > div > :is(button, [role="button"]) {
     width: 44px; min-width: 44px;
   }
-  html[data-chesscom-vinf-phone-material][data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component:not(.clock-theatre) {
-    grid-column: 6; grid-row: 1; justify-self: center; min-width: 0; width: 64px; max-width: 100%; padding: 0;
+  html[data-chesscom-vinf-phone-game][data-chesscom-vinf-phone-material] .board-layout-player .clock-component:not(.clock-theatre) {
+    grid-column: 6; grid-row: 1; justify-self: center; min-width: 0; width: 64px; max-width: 100%; height: 44px; padding: 0;
   }
   html[data-chesscom-vinf-phone-material] .chesscom-vinf-annotation-toggle[data-flow="true"] {
     grid-column: 4 / 6; grid-row: 1; justify-self: start;
@@ -1153,3 +1152,18 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
   html[data-chesscom-vinf-phone-material] wc-captured-pieces > div { display: flex; align-items: center; }
   html[data-chesscom-vinf-phone-material] wc-captured-pieces .captured-pieces-score { align-self: center; line-height: 1; margin-top: 0; }
 }
+
+/* Extreme phone games reuse native material/action rows, never player identity.
+   Reveal nested native confirmations as well as portalled semantic dialogs. */
+html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] :is(
+  wc-captured-pieces, wc-captured-pieces *,
+  .chesscom-vinf-phone-actions, .chesscom-vinf-phone-actions *,
+  [role="dialog"], [role="dialog"] *, [role="alertdialog"], [role="alertdialog"] *,
+  .cc-confirmation-popover-popover, .cc-confirmation-popover-popover *,
+  .cc-confirmation-modal-modal, .cc-confirmation-modal-modal *,
+  .draw-offer-component, .draw-offer-component *, .draw-request-component, .draw-request-component *
+) { visibility: visible !important; }
+html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] wc-captured-pieces { color: #bbb; }
+html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] :is([role="dialog"], [role="alertdialog"], .cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) { color: #bbb; }
+html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] .chesscom-vinf-annotation-toggle[data-flow="true"] { opacity: 1; }
+html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] .chesscom-vinf-extreme-controls nav { top: calc(100% + 60px); }

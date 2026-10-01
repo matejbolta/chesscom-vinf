@@ -460,3 +460,11 @@ clocks on both phone/tablet and the refined phone material rows. Phone Review's
 first green action now reveals its graph once. Tablet retains desktop layout;
 keyboard shortcuts remain desktop-only. Extreme retains paired clock hiding.
 This update passed sanitized browser checks, not a new Firefox Android device run.
+
+
+### 2.8.1
+
+Extreme phone games now use the normal material/action rows. Clocks are always
+visible in every mode on phone/tablet; clock hiding was removed altogether.
+Install the rebuilt userscript for this update. Tablet's other Extreme layout
+stays separate. Verification used local fixtures, not a new device run.

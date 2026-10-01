@@ -2,6 +2,7 @@ import { installAnnotationFixture } from "./helpers/native-annotations";
 import { readFileSync } from "node:fs";
 import { expect, it, vi } from "vitest";
 import { TouchAnnotationsController } from "../src/content/touch-annotations";
+import { PhoneExperienceController } from "../src/content/phone-experience-controller";
 import { PhoneGameActionsController } from "../src/content/phone-game-actions";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
 const game = { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" };
@@ -136,4 +137,22 @@ it("keeps drawing unavailable until the native API exists without blocking the b
   expect(button.disabled).toBe(false);
   controller.reconcile(document, { ...game, pathname: "/analysis/game/123456/review" }, DEFAULT_SETTINGS, true);
   expect(document.querySelector(".chesscom-vinf-annotations")).toBeNull();
+});
+
+it("shares phone material/actions in Extreme while keeping its sidebar and entry separate", () => {
+  fixture();
+  const phone = new PhoneExperienceController(), actions = new PhoneGameActionsController();
+  const settings = {...DEFAULT_SETTINGS, extremeOled:true};
+  const original = document.querySelector('.resign-button-component')!.parentElement;
+  phone.reconcile(document, game, settings, true, true);
+  actions.reconcile(document, game, settings, true);
+  expect(document.documentElement.hasAttribute('data-chesscom-vinf-phone-material')).toBe(true);
+  expect(document.querySelector('#board-layout-player-top .resign-button-component')).not.toBeNull();
+  expect(document.querySelector('[data-chesscom-vinf-newest-first]')).toBeNull();
+  const review = {...game, pathname:'/analysis/game/123456/review'};
+  phone.reconcile(document, review, settings, true, true);
+  actions.reconcile(document, review, settings, true);
+  expect(document.documentElement.hasAttribute('data-chesscom-vinf-phone-material')).toBe(false);
+  expect(document.querySelector('.resign-button-component')!.parentElement).toBe(original);
+  phone.cleanup(document);
 });

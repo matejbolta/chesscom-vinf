@@ -3,7 +3,7 @@ import { expect, it, vi } from "vitest";
 import { startVinfRuntime } from "../src/content/runtime";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
 
-it("synchronizes desktop O/E, shares T clock state, and ignores typing, modifiers and Review E/T", async () => {
+it("synchronizes desktop O/E, leaves T unhandled, and ignores typing, modifiers and Review E/T", async () => {
   vi.useFakeTimers();
   const fixture = new DOMParser().parseFromString(readFileSync("tests/fixtures/phone-game.html", "utf8"), "text/html");
   document.documentElement.innerHTML = fixture.documentElement.innerHTML;
@@ -28,7 +28,8 @@ it("synchronizes desktop O/E, shares T clock state, and ignores typing, modifier
   expect(save).toHaveBeenCalledTimes(2);
   document.querySelector('#board-layout-player-bottom [role="timer"]')!.textContent = "0:59";
   await vi.advanceTimersByTimeAsync(20); await press("t");
-  expect(time().getAttribute("aria-pressed")).toBe("true");
+  expect(time().getAttribute("aria-pressed")).toBeNull();
+  expect(time().textContent).toBe("59");
   window.history.replaceState({}, "", "/analysis/game/123456/review");
   window.dispatchEvent(new PopStateEvent("popstate"));
   await press("e"); await press("t");

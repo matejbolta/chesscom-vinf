@@ -162,7 +162,8 @@ export class TouchAnnotationsController {
     this.layer.style.pointerEvents = this.enabled ? "auto" : "none";
     this.layer.style.display = visible ? "block" : "none";
     const clock = document.querySelector<HTMLElement>("#board-layout-player-bottom .clock-component");
-    const flow = !this.extreme && clock?.parentElement?.matches(".player-component");
+    const flow = (!this.extreme || document.documentElement.hasAttribute("data-chesscom-vinf-phone-material")) &&
+      clock?.parentElement?.matches(".player-component");
     this.button.dataset.flow = String(Boolean(flow));
     if (flow && clock) {
       // A real layout slot prevents the pencil from covering player text. The
