@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-01.
-Current source version: 2.8.1.
+Current source version: 2.8.2.
+2.8.2 removes only the desktop Alt promotion-shortcut help row; annotation color help remains.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 

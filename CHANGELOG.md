@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.8.2] - 2026-10-01
+
+- Removed the Alt promotion-shortcut explanation from desktop settings.
+
 ## [2.8.1] - 2026-10-01
 
 - Extreme OLED on phones now shares normal gameplay's material/action rows:
