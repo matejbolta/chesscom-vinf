@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-01.
-Current source version: 2.8.5.
+Current source version: 2.8.6.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,30 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Unified OLED and turn animation settings (2.8.6)
+
+Desktop popup/side panel and Android settings now expose one OLED mode switch.
+The sole canonical setting is oledMode: it controls background plus the homepage
+play-button palette; O toggles the same value. Removed oledButtonColors from
+normalized settings and both editors. Migration preserves existing oledMode when
+boolean; only a legacy record without it falls back to oledButtonColors. This
+prevents a stale true legacy flag from re-enabling OLED after the user switches off.
+Extreme remains independent and existing route scopes are unchanged.
+
+turnAnimationDuration is persisted beside turnDotSize on both surfaces. Label:
+Animation duration (ms); integer range 0–5000, default 1000, input step 100. Zero
+skips pulses. Changing duration cancels any current pulse; subsequent confirmed
+turn changes use the new duration. Reduced-motion still suppresses animation.
+No added observers, polling, native-board changes, or gameplay actions.
+
+Verification: typecheck and all 184 tests pass (Android editor test rerun after
+restoring its edited value for later assertions); desktop/Android builds pass.
+Installed Brave 2.8.6 popup visually checked: one OLED toggle, duration directly
+below size, updated O help. Duration autosave tested at 1500 and restored to 1000.
+Private screenshot: fixtures/raw/settings-2026-10-01/oled-duration.png. Android
+editor/runtime covered by automated checks; no new physical-device verification.
+No push or Store work. No new substantive shared-knowledge contribution.
 
 ## Desktop Review B selector correction (2.8.5)
 

@@ -58,7 +58,7 @@ describe("Android userscript shell", () => {
     const oledGroup = extreme.closest("section")!;
     expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(-1)).toBe(oledGroup);
     expect([...oledGroup.querySelectorAll("strong")].map(e => e.textContent)).toEqual([
-      "OLED background", "OLED play buttons", "Extreme OLED mode (in-game)"
+      "OLED mode", "Extreme OLED mode (in-game)"
     ]);
     expect(oledGroup.querySelector("small")).toBeNull();
     for (const on of [true, false]) {
@@ -67,6 +67,14 @@ describe("Android userscript shell", () => {
       await vi.advanceTimersByTimeAsync(0);
       expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({extremeOled: on}));
     }
+
+    const duration = dialog!.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-turn-animation-duration")!;
+    expect(duration.value).toBe("1000");
+    duration.value = "1500"; duration.dispatchEvent(new Event("change", {bubbles: true}));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({turnAnimationDuration: 1500}));
+    duration.value = "1000"; duration.dispatchEvent(new Event("change", {bubbles: true}));
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(dialog?.querySelectorAll("select")).toHaveLength(18);
     expect(dialog?.textContent).toContain("Android settings · v2.2.1");
@@ -119,15 +127,9 @@ describe("Android userscript shell", () => {
     const oledMode = dialog?.querySelector<HTMLInputElement>(
       "#chesscom-vinf-userscript-oled-mode"
     );
-    const oledButtonColors = dialog?.querySelector<HTMLInputElement>(
-      "#chesscom-vinf-userscript-oled-button-colors"
-    );
     expect(oledMode?.checked).toBe(false);
-    expect(oledMode?.closest("label")?.textContent).toContain("OLED background");
-    expect(oledButtonColors?.checked).toBe(false);
-    expect(oledButtonColors?.closest("label")?.textContent).toContain(
-      "OLED play buttons"
-    );
+    expect(oledMode?.closest("label")?.textContent).toContain("OLED mode");
+    expect(dialog?.querySelector("#chesscom-vinf-userscript-oled-button-colors")).toBeNull();
     const dailyPlacement = dialog?.querySelector<HTMLSelectElement>(
       '[aria-label="Daily Games placement"]'
     );

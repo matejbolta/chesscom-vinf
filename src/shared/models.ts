@@ -79,9 +79,9 @@ export interface TimeControl {
 export interface ExtensionSettings {
   enabled: boolean;
   oledMode: boolean;
-  oledButtonColors: boolean;
   extremeOled: boolean;
   turnDotSize: number;
+  turnAnimationDuration: number;
   showNativePlayPanel: boolean;
   profilePlacement: ProfilePlacement;
   profileVisiblePlacement: ProfileVisiblePlacement;

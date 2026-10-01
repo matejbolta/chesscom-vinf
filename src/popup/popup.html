@@ -29,7 +29,7 @@
             <path d="M10 7v6"></path>
           </svg>
         </button>
-        <span class="version">v2.8.5</span>
+        <span class="version">v2.8.6</span>
         <button
           id="close-side-panel"
           class="side-panel-button side-panel-close-button"
@@ -139,16 +139,15 @@
         <label class="setting-row"><strong>Turn indicator size (px)</strong>
           <input id="turn-dot-size" type="number" min="4" max="24" step="1" style="width:64px">
         </label>
+        <label class="setting-row"><strong>Animation duration (ms)</strong>
+          <input id="turn-animation-duration" type="number" min="0" max="5000" step="100" style="width:80px">
+        </label>
       </section>
 
       <section class="settings-card" aria-label="OLED settings">
         <label class="setting-row">
-          <span><strong>OLED background</strong></span>
+          <span><strong>OLED mode</strong></span>
           <input id="oled-mode" type="checkbox" role="switch">
-        </label>
-        <label class="setting-row">
-          <span><strong>OLED play buttons</strong></span>
-          <input id="oled-button-colors" type="checkbox" role="switch">
         </label>
         <label class="setting-row">
           <span><strong>Extreme OLED mode (in-game)</strong></span>
@@ -160,7 +159,7 @@
         <h2 id="shortcuts-heading">Desktop shortcuts</h2>
         <h3>VINF</h3>
         <dl>
-          <dt><kbd>O</kbd></dt><dd>Toggle OLED background</dd>
+          <dt><kbd>O</kbd></dt><dd>Toggle OLED mode</dd>
           <dt><kbd>E</kbd></dt><dd>Toggle Extreme OLED in-game</dd>
         </dl>
         <h3>Chess.com</h3>

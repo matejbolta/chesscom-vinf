@@ -13,12 +13,15 @@ import {
 describe("settings", () => {
   it("uses the requested defaults", () => {
     expect(normalizeSettings(undefined)).toEqual(DEFAULT_SETTINGS);
+    expect(normalizeSettings({turnAnimationDuration: 2500}).turnAnimationDuration).toBe(2500);
+    expect(normalizeSettings({turnAnimationDuration: -1}).turnAnimationDuration).toBe(0);
+    expect(normalizeSettings({turnAnimationDuration: 6000}).turnAnimationDuration).toBe(5000);
+    expect(normalizeSettings({turnAnimationDuration: NaN}).turnAnimationDuration).toBe(1000);
     expect(DEFAULT_SETTINGS.oledMode).toBe(false);
     expect(normalizeSettings({turnDotSize: 16}).turnDotSize).toBe(16);
     expect(normalizeSettings({turnDotSize: 100}).turnDotSize).toBe(24);
     expect(normalizeSettings({turnDotSize: 0}).turnDotSize).toBe(4);
     expect(normalizeSettings({turnDotSize: NaN}).turnDotSize).toBe(12);
-    expect(DEFAULT_SETTINGS.oledButtonColors).toBe(false);
     expect(Object.values(DEFAULT_SETTINGS.statsRatingStates)).toEqual([
       "retracted",
       "retracted",
@@ -31,12 +34,14 @@ describe("settings", () => {
 
   it("preserves the OLED appearance preference", () => {
     expect(normalizeSettings({ oledMode: true }).oledMode).toBe(true);
+    expect(normalizeSettings({ oledMode: false, oledButtonColors: true }).oledMode).toBe(false);
+    expect(normalizeSettings({ oledMode: true, oledButtonColors: false })).not.toHaveProperty("oledButtonColors");
     expect(normalizeSettings({ oledMode: "yes" }).oledMode).toBe(false);
     expect(
-      normalizeSettings({ oledButtonColors: true }).oledButtonColors
+      normalizeSettings({ oledButtonColors: true }).oledMode
     ).toBe(true);
     expect(
-      normalizeSettings({ oledButtonColors: "yes" }).oledButtonColors
+      normalizeSettings({ oledButtonColors: "yes" }).oledMode
     ).toBe(false);
   });
 

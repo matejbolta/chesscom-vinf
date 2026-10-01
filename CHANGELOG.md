@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.8.6] - 2026-10-01
+
+- Combined OLED background and play-button colors into one OLED mode toggle on desktop and Android; O toggles both.
+- Added Animation duration (ms) below turn indicator size, default 1000, range 0–5000; zero disables the pulse.
+
 ## [2.8.5] - 2026-10-01
 
 - Fixed desktop Review B to activate the native Best move control beneath the coach.

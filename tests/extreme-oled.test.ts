@@ -226,7 +226,7 @@ it("sizes the turn dot, pulses only on a player change, and warns for low time o
   let now = 0;
   const nowSpy = vi.spyOn(window.performance, "now").mockImplementation(() => now);
   vi.stubGlobal('matchMedia', () => ({matches: false}));
-  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 16}, true);
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 16, turnAnimationDuration: 2500}, true);
   const top = document.querySelector<HTMLElement>('.chesscom-vinf-extreme-turn.top')!;
   const bottom = document.querySelector<HTMLElement>('.chesscom-vinf-extreme-turn.bottom')!;
   Object.assign(top, {animate}); Object.assign(bottom, {animate});
@@ -250,6 +250,14 @@ it("sizes the turn dot, pulses only on a player change, and warns for low time o
   document.querySelector('#board-layout-player-top')!.append(bottomClock);
   await vi.advanceTimersByTimeAsync(20);
   expect(bottom.hidden).toBe(false);
+  expect(animate).toHaveBeenCalledTimes(1);
+  expect(animate).toHaveBeenLastCalledWith(expect.any(Array), {duration: 2500, easing: "ease-out"});
+  const cancel = vi.fn();
+  Object.assign(bottom, {getAnimations: () => [{cancel}]});
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnAnimationDuration: 0}, true);
+  expect(cancel).toHaveBeenCalled();
+  topClock.classList.remove('clock-player-turn'); bottomClock.classList.add('clock-player-turn');
+  await vi.advanceTimersByTimeAsync(20);
   expect(animate).toHaveBeenCalledTimes(1);
   nowSpy.mockRestore();
   vi.unstubAllGlobals();

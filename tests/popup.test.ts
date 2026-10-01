@@ -69,6 +69,14 @@ describe("settings popup", () => {
     await import("../src/popup/popup");
     await flushAsyncWork();
 
+    const duration = document.querySelector<HTMLInputElement>("#turn-animation-duration")!;
+    expect(duration.value).toBe("1000");
+    duration.value = "1500"; duration.dispatchEvent(new Event("change", {bubbles: true}));
+    await flushAsyncWork();
+    expect(set).toHaveBeenLastCalledWith({[SETTINGS_STORAGE_KEY]: expect.objectContaining({turnAnimationDuration: 1500})});
+    duration.value = "1000"; duration.dispatchEvent(new Event("change", {bubbles: true}));
+    await flushAsyncWork();
+
     const openSidePanelButton = document.querySelector<HTMLButtonElement>(
       "#open-side-panel"
     )!;
@@ -81,7 +89,7 @@ describe("settings popup", () => {
     const oledGroup = extreme.closest("section")!;
     expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(-2)).toBe(oledGroup);
     expect([...oledGroup.querySelectorAll("strong")].map(e => e.textContent)).toEqual([
-      "OLED background", "OLED play buttons", "Extreme OLED mode (in-game)"
+      "OLED mode", "Extreme OLED mode (in-game)"
     ]);
     expect(oledGroup.querySelector("small")).toBeNull();
     for (const on of [true, false]) {
@@ -92,9 +100,7 @@ describe("settings popup", () => {
     }
 
     const oledMode = document.querySelector<HTMLInputElement>("#oled-mode")!;
-    const oledButtonColors = document.querySelector<HTMLInputElement>(
-      "#oled-button-colors"
-    )!;
+    expect(document.querySelector("#oled-button-colors")).toBeNull();
     const dailyGamesPlacement = document.querySelector<HTMLSelectElement>(
       "#homepage-daily-games-placement"
     )!;
@@ -167,22 +173,18 @@ describe("settings popup", () => {
     );
     expect(enabled.checked).toBe(false);
     expect(oledMode.checked).toBe(false);
-    expect(oledMode.closest("label")?.textContent).toContain("OLED background");
-    expect(oledButtonColors.checked).toBe(false);
-    expect(oledButtonColors.closest("label")?.textContent).toContain(
-      "OLED play buttons"
-    );
-    oledButtonColors.checked = true;
-    oledButtonColors.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(oledMode.closest("label")?.textContent).toContain("OLED mode");
+    oledMode.checked = true;
+    oledMode.dispatchEvent(new Event("change", { bubbles: true }));
     await flushAsyncWork();
     expect(set).toHaveBeenLastCalledWith({
       [SETTINGS_STORAGE_KEY]: {
         ...savedSettings,
-        oledButtonColors: true
+        oledMode: true
       }
     });
-    oledButtonColors.checked = false;
-    oledButtonColors.dispatchEvent(new Event("change", { bubbles: true }));
+    oledMode.checked = false;
+    oledMode.dispatchEvent(new Event("change", { bubbles: true }));
     await flushAsyncWork();
     expect(showProfile.checked).toBe(false);
     expect(profilePlacement.value).toBe("main");

@@ -45,7 +45,7 @@ describe("responsive runtime lifecycle", () => {
     expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
   });
 
-  it("applies the independent OLED button palette marker", async () => {
+  it("toggles OLED background and button palette together", async () => {
     vi.useFakeTimers();
     const fixture = loadResponsiveHomepageFixture();
     document.documentElement.className = fixture.documentElement.className;
@@ -55,7 +55,7 @@ describe("responsive runtime lifecycle", () => {
       | undefined;
 
     startVinfRuntime({
-      load: async () => ({ ...DEFAULT_SETTINGS, oledButtonColors: true }),
+      load: async () => ({ ...DEFAULT_SETTINGS, oledMode: true }),
       subscribe: (listener) => {
         settingsListener = listener;
       }
@@ -65,11 +65,12 @@ describe("responsive runtime lifecycle", () => {
     expect(document.documentElement.getAttribute(MARKERS.oledButtons)).toBe(
       "true"
     );
-    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
-    settingsListener?.({ ...DEFAULT_SETTINGS, oledButtonColors: false });
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(true);
+    settingsListener?.({ ...DEFAULT_SETTINGS, oledMode: false });
     expect(document.documentElement.hasAttribute(MARKERS.oledButtons)).toBe(
       false
     );
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
   });
 
   it("applies OLED on Chess.com's current numeric live-game route", async () => {

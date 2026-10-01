@@ -264,24 +264,29 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const gameSettings = document.createElement("section");
   gameSettings.className = "chesscom-vinf-settings-card";
   const dotLabel = document.createElement("label");
+  dotLabel.className = "chesscom-vinf-settings-row";
   dotLabel.textContent = "Turn indicator size (px) ";
   const turnDotSizeInput = document.createElement("input");
   turnDotSizeInput.type = "number";
   turnDotSizeInput.min = "4"; turnDotSizeInput.max = "24"; turnDotSizeInput.step = "1";
   turnDotSizeInput.style.width = "64px";
   dotLabel.append(turnDotSizeInput); gameSettings.append(dotLabel);
+  const animationLabel = document.createElement("label");
+  animationLabel.className = "chesscom-vinf-settings-row";
+  animationLabel.textContent = "Animation duration (ms) ";
+  const turnAnimationDurationInput = document.createElement("input");
+  turnAnimationDurationInput.id = "chesscom-vinf-userscript-turn-animation-duration";
+  turnAnimationDurationInput.type = "number";
+  turnAnimationDurationInput.min = "0"; turnAnimationDurationInput.max = "5000"; turnAnimationDurationInput.step = "100";
+  turnAnimationDurationInput.style.width = "80px";
+  animationLabel.append(turnAnimationDurationInput); gameSettings.append(animationLabel);
   const appearance = document.createElement("section");
   appearance.className = "chesscom-vinf-settings-card";
   appearance.setAttribute("aria-label", "OLED settings");
   const oledModeInput = createToggle(
     appearance,
     "chesscom-vinf-userscript-oled-mode",
-    "OLED background"
-  );
-  const oledButtonColorsInput = createToggle(
-    appearance,
-    "chesscom-vinf-userscript-oled-button-colors",
-    "OLED play buttons"
+    "OLED mode"
   );
 
   const extremeOledInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled",
@@ -922,8 +927,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     enabledInput.checked = settings.enabled;
     extremeOledInput.checked = settings.extremeOled;
     turnDotSizeInput.value = String(settings.turnDotSize);
+    turnAnimationDurationInput.value = String(settings.turnAnimationDuration);
     oledModeInput.checked = settings.oledMode;
-    oledButtonColorsInput.checked = settings.oledButtonColors;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
     homepageCardEditor.render(
       settings.homepageSidebarOrder,
@@ -964,8 +969,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         enabled: enabledInput.checked,
         extremeOled: extremeOledInput.checked,
         turnDotSize: Number(turnDotSizeInput.value),
+        turnAnimationDuration: Number(turnAnimationDurationInput.value),
         oledMode: oledModeInput.checked,
-        oledButtonColors: oledButtonColorsInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,
         profilePlacement: homepageCardEditor.getProfilePlacement(),
         profileVisiblePlacement:

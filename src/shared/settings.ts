@@ -37,9 +37,9 @@ export const SETTINGS_STORAGE_KEY = "vinfSettings";
 export const DEFAULT_SETTINGS: ExtensionSettings = {
   enabled: true,
   oledMode: false,
-  oledButtonColors: false,
   extremeOled: false,
   turnDotSize: 12,
+  turnAnimationDuration: 1000,
   showNativePlayPanel: false,
   profilePlacement: "hidden",
   profileVisiblePlacement: "main",
@@ -257,6 +257,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     oledButtonColors?: unknown;
     extremeOled?: unknown;
     turnDotSize?: unknown;
+    turnAnimationDuration?: unknown;
     showNativePlayPanel?: unknown;
     profilePlacement?: unknown;
     profileVisiblePlacement?: unknown;
@@ -432,15 +433,13 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
         : DEFAULT_SETTINGS.enabled,
     turnDotSize: typeof candidate.turnDotSize === "number" && Number.isFinite(candidate.turnDotSize)
       ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize,
+    turnAnimationDuration: typeof candidate.turnAnimationDuration === "number" && Number.isFinite(candidate.turnAnimationDuration)
+      ? Math.min(5000, Math.max(0, Math.round(candidate.turnAnimationDuration))) : DEFAULT_SETTINGS.turnAnimationDuration,
     extremeOled: typeof candidate.extremeOled === "boolean" ? candidate.extremeOled : false,
     oledMode:
       typeof candidate.oledMode === "boolean"
         ? candidate.oledMode
-        : DEFAULT_SETTINGS.oledMode,
-    oledButtonColors:
-      typeof candidate.oledButtonColors === "boolean"
-        ? candidate.oledButtonColors
-        : DEFAULT_SETTINGS.oledButtonColors,
+        : candidate.oledButtonColors === true, // Legacy button-only records; oledMode wins when present.
     showNativePlayPanel:
       typeof candidate.showNativePlayPanel === "boolean"
         ? candidate.showNativePlayPanel

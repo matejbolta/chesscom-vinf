@@ -43,6 +43,7 @@ export function readClockSeconds(text: string): number | null {
 export class ExtremeOledController {
   private normalClocks = false;
   private dotSize = 12;
+  private animationDuration = 1000;
   private activePlayer = "";
   private turnStarted = 0;
   private geometryDirty = true;
@@ -86,6 +87,11 @@ export class ExtremeOledController {
 
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, normalGameClocks = false): boolean {
     this.dotSize = settings.turnDotSize;
+    if (this.animationDuration !== settings.turnAnimationDuration) {
+      this.overlay?.querySelectorAll<HTMLElement>(".chesscom-vinf-extreme-turn").forEach(turn =>
+        turn.getAnimations?.().forEach(animation => animation.cancel()));
+    }
+    this.animationDuration = settings.turnAnimationDuration;
     const normal = normalGameClocks && !settings.extremeOled;
     if (normal !== this.normalClocks) this.cleanup(document);
     this.normalClocks = normal;
@@ -263,10 +269,10 @@ export class ExtremeOledController {
       const text = clock?.querySelector('[role="timer"]')?.textContent ?? "";
       const seconds = readClockSeconds(text);
       setAttribute(turn, "data-low", String(!inactive && (slowMove || seconds !== null && seconds < 60)));
-      if (!inactive && switched && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      if (!inactive && switched && this.animationDuration > 0 && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         turn.getAnimations?.().forEach(animation => animation.cancel());
         turn.animate?.([{ transform: "scale(2)" }, { transform: "scale(1)" }],
-          { duration: 1000, easing: "ease-out" });
+          { duration: this.animationDuration, easing: "ease-out" });
       }
       const time = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-time.${side}`)!;
       if (rowClocks && clock && rect) {

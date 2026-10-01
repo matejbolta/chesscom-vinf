@@ -141,7 +141,7 @@ export function startVinfRuntime(
     }
     if (
       currentSettings.enabled &&
-      currentSettings.oledButtonColors &&
+      currentSettings.oledMode &&
       isTargetRoute()
     ) {
       document.documentElement.setAttribute(MARKERS.oledButtons, "true");
