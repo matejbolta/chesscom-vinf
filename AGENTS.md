@@ -48,8 +48,11 @@ directory.
 - Keep Chess.com's main navigation except the active-game phone toolbar and
   explicitly enabled Extreme OLED live games; hide the native Game Review
   homepage card. Normal phone gameplay refinements never apply to Game Review.
-- Extreme OLED is a separate opt-in live-game setting, never active in Game Review.
-  Leave homepage appearance
+- Extreme OLED uses separate live-game and move-by-move Review presentations
+  (user-authorized 2026-10-02). Never run live-game controls, clocks, turn dots or
+  visibility sweeps on Review. Normal Review also hides identities/decorative
+  chrome while retaining native coach text, classification, clocks, material,
+  graph and actions. Keep the initial report native. Leave homepage appearance
   unchanged, preserve native board input, and never simulate clocks or game state.
 - Expose 0, 1, 2, 3, 4, 6, or 8 user-selected time controls. Zero removes the
   Quick Play module entirely. Default to the original six recorded in
@@ -64,7 +67,8 @@ directory.
 - Prefer semantic landmarks and URLs over generated class names.
 - Keep DOM reconciliation idempotent and safe when optional modules are absent.
 - Below 600 CSS pixels, keep the native move-review evaluation graph immediately
-  below the board; leave the initial report and tablet/desktop layouts native.
+  below the board; leave the initial report and tablet/desktop graph placement
+  native. Review cleanup is separately scoped across all three layouts.
 - Keep the toolbar popup as the default settings entry point. The optional
   Chromium side panel must reuse the same local autosaving UI and fail safely
   when a browser does not expose `chrome.sidePanel`.

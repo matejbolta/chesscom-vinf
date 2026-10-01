@@ -97,7 +97,7 @@ describe("settings popup", () => {
     const oledGroup = extreme.closest("section")!;
     expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(-2)).toBe(oledGroup);
     expect([...oledGroup.querySelectorAll("strong")].map(e => e.textContent)).toEqual([
-      "OLED mode", "Extreme OLED mode (in-game)"
+      "OLED mode", "Extreme OLED mode (play & review)"
     ]);
     expect(oledGroup.querySelector("small")).toBeNull();
     for (const on of [true, false]) {

@@ -1,3 +1,4 @@
+import { ReviewPresentationController } from "../../src/content/review-presentation";
 import { installAnnotationFixture } from "../helpers/native-annotations";
 import { TouchAnnotationsController } from "../../src/content/touch-annotations";
 import { PhoneGameActionsController } from "../../src/content/phone-game-actions";
@@ -279,6 +280,7 @@ if (window.location.pathname === "/extreme-oled") {
 
 // Native-shaped phone scenarios are local and never invoke Chess.com services.
 if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
+  const reviewStyle = new ReviewPresentationController();
   const phone = new PhoneExperienceController();
   const clocks = new ExtremeOledController();
   const annotationBoard = document.querySelector<HTMLElement>("#board-single");
@@ -309,6 +311,8 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     const phoneActions = window.innerWidth <= 599 && !searchParams.has("desktop");
     if (phoneActions) actions.reconcile(document, route, settings, true);
     clocks.reconcile(document, route, settings, game, searchParams.has("desktop"));
+    reviewStyle.reconcile(document, route, settings, window.innerWidth <= 599);
+    if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
     if (!phoneActions) actions.reconcile(document, route, settings, false, true);
     androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
     annotations.reconcile(document, route, settings, !searchParams.has("desktop"));
@@ -357,6 +361,8 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     });
   }
   document.addEventListener("keydown", event => {
+    if (!game && event.key === "x") settings.extremeOled = !settings.extremeOled;
+    if (!game && event.key === "n") document.querySelectorAll('.move-feedback-speech-text-component').forEach(node => node.textContent = 'This move leaves your knight unprotected. Look for a way to develop while keeping it safe.');
     if (event.key === "m") {
       const rows = document.querySelector("wc-simple-move-list > div");
       const row = rows?.lastElementChild?.cloneNode(true) as HTMLElement | undefined;

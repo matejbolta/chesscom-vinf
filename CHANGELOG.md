@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-10-02
+
+- Simplify move-by-move Game Review on phone, tablet and desktop: remove player identities, coach portraits and decorative headings while retaining commentary, classification/evaluation, captured material, recorded clocks, graph and native controls.
+- Add a separate Extreme OLED review presentation with dark board/pieces and readable coach/evaluation information; live-game controls and countdowns remain excluded.
+- Extend desktop E to Review and update desktop/Android setting labels. Mute the native coach on wider layouts before hiding the audio button.
+- Keep the initial report and homepage unchanged; disabling VINF restores native review presentation.
+
 ## [2.9.3] - 2026-10-02
 
 - Align wide Extreme OLED Draw/Resign and time on one board-relative row; retain native buttons and confirmations.

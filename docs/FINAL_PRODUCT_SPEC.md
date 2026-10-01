@@ -1895,3 +1895,27 @@ visible neutral gray while preserving static and animated native shapes. Phone
 newest-first lists follow each new ply and settle native post-render scrolling
 for 500ms, yielding immediately to deliberate input. Review, desktop/tablet move
 lists and the page's own scroll position are unchanged.
+
+## 2.10.0 — Focused normal and Extreme Game Review
+
+User explicitly superseded the earlier ban on any Extreme styling in Review.
+Use a distinct review presentation; never enable live-game overlays there.
+On phones, tablets and desktop, active move-by-move Review hides player identities,
+portraits, flags/ratings, coach portraits/tails, decorative header title, skills
+promotion row and emoji control. Keep the native coach sentence and move
+classification/evaluation, board, captured material, recorded clocks, graph,
+move table and review actions (including Back, Settings, Analysis, hint, Best,
+next key move and previous/next). Phone also hides the site toolbar. Keep the
+initial report native and retain native desktop/tablet navigation.
+
+Normal/OLED Review uses native board colors and existing OLED preference.
+Extreme uses the existing setting with a separate marker, shared dark board
+paint, black surfaces, readable gray text and preserved evaluation/classification
+colors. E now toggles Extreme in play or Review; both settings UIs say
+“Extreme OLED mode (play & review)”. No live countdown bars, turn dots, last-move
+indicators, draw/resign actions or gameplay spacers are added to Review.
+
+Native coach controls mute before hiding on all layouts. Unknown audio state
+stays visible. No audio is automatically re-enabled on cleanup. Native content
+and handlers stay in place; all presentation markers restore on disable, route
+change or leaving move-by-move view. Phone graph/dock improvements remain.

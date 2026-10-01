@@ -1,3 +1,4 @@
+import { ReviewPresentationController } from "./review-presentation";
 import { hasGamePresentation, isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
 import type { AnnotationApiResolver } from "./native-annotations";
 import { TouchAnnotationsController } from "./touch-annotations";
@@ -52,6 +53,7 @@ export function startVinfRuntime(
   const controller = new LayoutController(new NativeLaunchAdapter());
   const extremeOledController = new ExtremeOledController();
   const gameReviewController = new GameReviewLayoutController();
+  const reviewPresentation = new ReviewPresentationController();
   const phoneExperienceController = new PhoneExperienceController();
   const phoneGameReviewMedia = window.matchMedia?.(
     PHONE_GAME_REVIEW_MEDIA_QUERY
@@ -222,6 +224,7 @@ export function startVinfRuntime(
     phoneExperienceController.reconcile(document, window.location, settings, phone, android && phone);
     if (android && phone) phoneActions.reconcile(document, window.location, settings, true);
     extremeOledController.reconcile(document, window.location, settings, desktop || android, desktop);
+    reviewPresentation.reconcile(document, window.location, settings, phone);
     if (!(android && phone)) phoneActions.reconcile(document, window.location, settings, false, desktop || android);
     touchAnnotations.reconcile(document, window.location, settings, android);
     androidGameControls.reconcile(document, window.location, settings, android);
@@ -258,8 +261,7 @@ export function startVinfRuntime(
       settings.enabled &&
       (isTargetRoute() || isChessComGame(window.location) ||
         isGameBootstrapRoute() ||
-        (isChessComLiveGameReview(window.location) &&
-          (phoneGameReviewMedia?.matches ?? window.innerWidth <= 599)))
+        isChessComLiveGameReview(window.location))
     ) {
       attachObserver();
     } else {
@@ -458,7 +460,7 @@ export function startVinfRuntime(
     }
     if (event.repeat || event.target.closest("button")) return;
     if ((key !== "o" && key !== "e") || !settingsSource.save) return;
-    if (key === "e" && !isChessComGame(window.location)) return;
+    if (key === "e" && !isChessComGame(window.location) && !isChessComLiveGameReview(window.location)) return;
     event.preventDefault();
     shortcutWrites = shortcutWrites.then(async () => {
       if (!settings?.enabled) return;

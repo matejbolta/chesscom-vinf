@@ -282,10 +282,11 @@ const server = createServer(async (request, response) => {
     return;
   }
   if (pathname === "/game-review-phone-preview") {
+    const params = new URL(request.url, "http://localhost").searchParams;
+    const width = params.has("tablet") ? 800 : 390;
+    const query = ["extreme", "native", "overview", "oled"].filter(key => params.has(key)).map(key => `${key}=1`).join("&");
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    response.end(
-      '<!doctype html><html><body style="background:#171614;margin:0;padding:20px"><iframe title="VINF phone Game Review preview" src="/game-review-mobile?oled=1" style="border:0;height:844px;width:390px"></iframe></body></html>'
-    );
+    response.end(`<!doctype html><html><body style="background:#171614;margin:0"><iframe title="VINF phone Game Review preview" src="/game-review-mobile?${query}" style="border:0;height:844px;width:${width}px"></iframe></body></html>`);
     return;
   }
   if (pathname === "/live-game-controls-mobile") {

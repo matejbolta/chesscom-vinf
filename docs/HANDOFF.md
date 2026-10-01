@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.9.3.
+Current source version: 2.10.0.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,43 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Focused Review / Review Extreme (2.10.0)
+
+User approved normal and Extreme review cleanup for all three device classes,
+keeping native coach sentence, classification/evaluation, board, material,
+recorded clocks, graph and review controls. This explicitly supersedes the older
+“Extreme never in Review” presentation rule below. Live Extreme remains strictly
+live-route-only; a new ReviewPresentationController owns separate review markers.
+Only board paint selectors are shared. No live overlays/clock bars/dots/actions.
+
+Clean review requires exact signed-in Review route, #board-analysis-board and
+move-by-move component. Hide identities (preserve captured material), coach
+portraits/tails, decorative header center, skills row and emoji control. Phone
+site toolbar also hides. Compact coach containers remove fixed-height whitespace
+without extracting/replacing the sentence; hidden native animation spans stay
+native. Keep initial report, homepage, native wide navigation and review actions.
+Existing phone graph relocation/dock/entry scroll remain independent. Native
+recorded clocks are compact and read-only. Wider coach mute handling checks the
+native glyph before clicking/hiding; phone uses its existing controller.
+
+Desktop E now supports Review. Desktop/Android labels say Extreme OLED mode
+(play & review). CSS review Extreme themes known surfaces and native speech
+variables; preserve classification, graph and evaluation semantics. Unknown
+renderers/audio states fail open. See DOM_AUDIT 2.10.0 for saved source evidence.
+
+Verification: typecheck, 192 tests and desktop/Android builds passed. Fixtures
+checked in IAB at 390×844, 800×844 and 1280×800: normal/OLED/Extreme appearance,
+longer native-like coach updates, retained controls/material/clocks/graph, lower
+moves reachable above the dock, and disable restoring identity/board style.
+Native fixture board width/height unchanged (348px phone, 352px tablet, 528px
+desktop). Unit checks cover route/overview cleanup and native mute-before-hide.
+One known IAB MutationObserver/Node error appeared at initial preview setup;
+fixture error capture remained empty, with no subsequent fixture errors.
+Evidence is ignored under fixtures/raw/review-clean-2026-10-02/.
+No real game or live browser reload, network calls, push or Store artifacts.
+Built 2.10.0 awaits loading. Actual Firefox Android/tablet and live Review
+integration need user testing.
 
 ## Board-edge clock and move-follow corrections (2.9.3)
 

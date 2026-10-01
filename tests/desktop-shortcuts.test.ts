@@ -3,7 +3,7 @@ import { expect, it, vi } from "vitest";
 import { startVinfRuntime } from "../src/content/runtime";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
 
-it("synchronizes desktop O/E, leaves T unhandled, and ignores typing, modifiers and Review E/T", async () => {
+it("synchronizes desktop O/E, leaves T unhandled, and ignores typing, modifiers; supports Review E and leaves T unhandled", async () => {
   vi.useFakeTimers();
   const fixture = new DOMParser().parseFromString(readFileSync("tests/fixtures/phone-game.html", "utf8"), "text/html");
   document.documentElement.innerHTML = fixture.documentElement.innerHTML;
@@ -33,7 +33,8 @@ it("synchronizes desktop O/E, leaves T unhandled, and ignores typing, modifiers 
   window.history.replaceState({}, "", "/analysis/game/123456/review");
   window.dispatchEvent(new PopStateEvent("popstate"));
   await press("e"); await press("t");
-  expect(save).toHaveBeenCalledTimes(2);
+  expect(save).toHaveBeenCalledTimes(3);
+  expect(saved.extremeOled).toBe(false);
   expect(document.querySelector('.chesscom-vinf-extreme-controls')).toBeNull();
   document.body.insertAdjacentHTML('beforeend', readFileSync('tests/fixtures/review-desktop-controls.html', 'utf8'));
   const best = document.querySelector<HTMLButtonElement>('.flow-buttons-component button:has([data-glyph="circle-fill-star"])')!;

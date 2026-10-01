@@ -303,7 +303,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   );
 
   const extremeOledInput = createToggle(appearance, "chesscom-vinf-userscript-extreme-oled",
-    "Extreme OLED mode (in-game)");
+    "Extreme OLED mode (play & review)");
 
   const presets = document.createElement("section");
   presets.className = "chesscom-vinf-settings-card";

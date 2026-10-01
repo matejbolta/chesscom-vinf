@@ -1047,3 +1047,35 @@ borders and dynamic .circle variants. Extreme overrides that token locally rathe
 than replacing shapes or animations. Native red highlight is #eb6150; preserve
 hues with brightness(.8)/opacity(.65), instead of grayscale. Local visual hints
 are sanitized representative markup, not a live native board integration test.
+
+## 2.10.0 — Independent Review presentation (2026-10-02)
+
+Evidence: saved first-party Review HTML/CSS from 2026-09-10/18, plus the desktop
+coach control contract audited 2026-10-01. Review player rows use .player-component,
+.player-avatar, .player-tagline > .cc-user-block-component and wc-captured-pieces;
+recorded clocks use .move-time-time.player-clock > .move-time-content. Hide only
+identity siblings, never the tagline/material container. No synthetic clocks.
+
+Coach DOM: .mobile-top-section-container on phones; .move-by-move-coach-section
+on wider layouts. Both use .move-feedback-component, .move-feedback-wrapper,
+.bot-speech-content-botMessage and .bot-speech-content-content-container with
+.move-feedback-box-description/score and .move-feedback-speech-text-component.
+Saved shared.mqpKaKugST.css and mobile-top-section.BTAGogi_RW.css explain native
+fixed/min/max heights, portrait/tail overlap and speech colors. Override those
+containers; preserve native text nodes, animated/hidden word spans, score links,
+classifications and flow-buttons-component. Never hide generic images or buttons.
+
+A separate data-chesscom-vinf-review-clean marker requires the exact signed-in
+review route, #board-analysis-board and the native move-by-move component.
+Review Extreme adds its own marker and shares ONLY board paint rules with live
+Extreme. Live visibility/overlay/input logic stays live-route-only. Existing phone
+graph relocation/dock behavior remains; wider graph placement remains native.
+Overview/pending/unknown renderer fails open. Header Back/Settings/Analysis actions
+survive without the decorative center title; phone top toolbar is hidden only
+while the clean marker is active. Coach audio-off uses the known native speaker
+state before hiding; unknown/failed states remain visible.
+
+The sanitized review fixture now models native player/coach/board shapes and
+wide coach controls; its piece graphics and graph are illustrative, not native
+rendering implementation. Added update/disable/theme fixture keys. Device and
+live integration must not be inferred from local fixture checks.
