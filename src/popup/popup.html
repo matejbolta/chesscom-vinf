@@ -29,7 +29,7 @@
             <path d="M10 7v6"></path>
           </svg>
         </button>
-        <span class="version">v2.9.0</span>
+        <span class="version">v2.9.1</span>
         <button
           id="close-side-panel"
           class="side-panel-button side-panel-close-button"
@@ -138,6 +138,9 @@
       <section class="settings-card" aria-label="Game settings">
         <label class="setting-row"><strong>Turn indicator size (px)</strong>
           <input id="turn-dot-size" type="number" min="4" max="24" step="1" style="width:64px">
+        </label>
+        <label class="setting-row"><span><strong>Pulse size (×)</strong><small>Maximum pulse diameter: 48 px</small></span>
+          <input id="turn-pulse-scale" type="number" min="1" max="12" step="0.1" style="width:80px">
         </label>
         <label class="setting-row"><strong>Animation duration (ms)</strong>
           <input id="turn-animation-duration" type="number" min="0" max="5000" step="100" style="width:80px">

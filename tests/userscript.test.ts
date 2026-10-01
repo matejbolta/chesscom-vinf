@@ -68,6 +68,14 @@ describe("Android userscript shell", () => {
       expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({extremeOled: on}));
     }
 
+    const pulse = document.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-turn-pulse-scale")!;
+    expect(pulse.value).toBe("2");
+    pulse.value = "5"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({turnPulseScale: 5}));
+    pulse.value = "2"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
+    await vi.advanceTimersByTimeAsync(0);
+
     const duration = dialog!.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-turn-animation-duration")!;
     expect(duration.value).toBe("1000");
     duration.value = "1500"; duration.dispatchEvent(new Event("change", {bubbles: true}));

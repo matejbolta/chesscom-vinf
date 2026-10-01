@@ -82,6 +82,7 @@ export interface ExtensionSettings {
   extremeOled: boolean;
   turnDotSize: number;
   turnAnimationDuration: number;
+  turnPulseScale: number;
   showNativePlayPanel: boolean;
   profilePlacement: ProfilePlacement;
   profileVisiblePlacement: ProfileVisiblePlacement;

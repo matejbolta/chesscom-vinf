@@ -271,6 +271,19 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   turnDotSizeInput.min = "4"; turnDotSizeInput.max = "24"; turnDotSizeInput.step = "1";
   turnDotSizeInput.style.width = "64px";
   dotLabel.append(turnDotSizeInput); gameSettings.append(dotLabel);
+  const pulseLabel = document.createElement("label");
+  pulseLabel.className = "chesscom-vinf-settings-row";
+  const pulseCopy = document.createElement("span");
+  pulseCopy.textContent = "Pulse size (×)";
+  const pulseHelp = document.createElement("small");
+  pulseHelp.textContent = "Maximum pulse diameter: 48 px";
+  pulseCopy.append(pulseHelp);
+  const turnPulseScaleInput = document.createElement("input");
+  turnPulseScaleInput.id = "chesscom-vinf-userscript-turn-pulse-scale";
+  turnPulseScaleInput.type = "number";
+  turnPulseScaleInput.min = "1"; turnPulseScaleInput.max = "12"; turnPulseScaleInput.step = "0.1";
+  turnPulseScaleInput.style.width = "80px";
+  pulseLabel.append(pulseCopy, turnPulseScaleInput); gameSettings.append(pulseLabel);
   const animationLabel = document.createElement("label");
   animationLabel.className = "chesscom-vinf-settings-row";
   animationLabel.textContent = "Animation duration (ms) ";
@@ -927,6 +940,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     enabledInput.checked = settings.enabled;
     extremeOledInput.checked = settings.extremeOled;
     turnDotSizeInput.value = String(settings.turnDotSize);
+    turnPulseScaleInput.value = String(settings.turnPulseScale);
     turnAnimationDurationInput.value = String(settings.turnAnimationDuration);
     oledModeInput.checked = settings.oledMode;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -969,6 +983,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         enabled: enabledInput.checked,
         extremeOled: extremeOledInput.checked,
         turnDotSize: Number(turnDotSizeInput.value),
+        turnPulseScale: Number(turnPulseScaleInput.value),
         turnAnimationDuration: Number(turnAnimationDurationInput.value),
         oledMode: oledModeInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,

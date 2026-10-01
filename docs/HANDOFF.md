@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.9.0.
+Current source version: 2.9.1.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,23 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Configurable pulse scale (2.9.1)
+
+turnPulseScale is persisted independently of resting dot size/duration: default2,
+range1–12, tenth increments. Popup/Android rows say Pulse size (×), with explicit
+48px diameter limit. Animation start scale=min(requested scale,48/dotSize), so
+8px at5× gives40px, while16px at5× caps at48px. Cap preserves the previous maximum
+24px×2 and never enlarges input targets. Applies to all shared game overlays;
+last-move text remains at resting size. Setting changes cancel in-flight pulses.
+Existing zero-duration/reduced-motion behavior remains.
+
+Typecheck,187 tests, desktop/Android builds pass; updated settings normalization,
+both editor autosaves and actual animation keyframe/cap checks. IAB popup fixture
+visually checked at390px: row fits, 5× entry works; pre-existing preview
+MutationObserver/Node console error remains. Screenshot ignored under
+fixtures/raw/pulse-2026-10-02/settings.png. No live game/Brave interaction or reload;
+built2.9.1 still awaits loading after user's game. No push/Store work.
 
 ## Last-move indicator (2.9.0)
 

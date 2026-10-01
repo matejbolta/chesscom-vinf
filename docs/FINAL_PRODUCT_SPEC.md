@@ -1858,3 +1858,11 @@ move at the inactive side's dot position. The active side keeps its turn dot.
 Notation matches the active dot's color, including warning red, follows board
 flips, and never changes moves or appears in Game Review. If native notation or
 color cannot be reliably read, omit the label rather than guess.
+
+
+## 2.9.1 — Independent pulse size
+
+Pulse size (×) is available beside resting size and animation duration in desktop
+and Android settings. Default2×; range1×–12×. Rendered peak diameter is capped at
+48px. Thus smaller resting dots can use stronger pulses without increasing their
+normal size; timing and reduced-motion handling remain independent.

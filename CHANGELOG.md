@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.9.1] - 2026-10-02
+
+- Added Pulse size (×) beside turn indicator size and duration on desktop/Android. Defaults to 2×, configurable from 1× to 12×, with a 48px rendered diameter cap.
+
 ## [2.9.0] - 2026-10-02
 
 - Show the latest native move on the inactive player's side, opposite the turn dot, in normal/OLED/Extreme gameplay on desktop, tablet and phone.

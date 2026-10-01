@@ -47,6 +47,7 @@ export class ExtremeOledController {
   private desktop = false;
   private dotSize = 12;
   private animationDuration = 1000;
+  private pulseScale = 2;
   private activePlayer = "";
   private turnStarted = 0;
   private geometryDirty = true;
@@ -91,11 +92,12 @@ export class ExtremeOledController {
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, normalGameClocks = false, desktop = false): boolean {
     if (this.desktop !== desktop) this.cleanup(document);
     this.desktop = desktop;
-    this.dotSize = settings.turnDotSize;
-    if (this.animationDuration !== settings.turnAnimationDuration) {
+    if (this.animationDuration !== settings.turnAnimationDuration || this.pulseScale !== settings.turnPulseScale || this.dotSize !== settings.turnDotSize) {
       this.overlay?.querySelectorAll<HTMLElement>(".chesscom-vinf-extreme-turn").forEach(turn =>
         turn.getAnimations?.().forEach(animation => animation.cancel()));
     }
+    this.dotSize = settings.turnDotSize;
+    this.pulseScale = settings.turnPulseScale;
     this.animationDuration = settings.turnAnimationDuration;
     const normal = normalGameClocks && !settings.extremeOled;
     if (normal !== this.normalClocks) this.cleanup(document);
@@ -291,7 +293,9 @@ export class ExtremeOledController {
       setAttribute(turn, "data-low", String(!inactive && (slowMove || seconds !== null && seconds < 60)));
       if (!inactive && switched && this.animationDuration > 0 && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         turn.getAnimations?.().forEach(animation => animation.cancel());
-        turn.animate?.([{ transform: "scale(2)" }, { transform: "scale(1)" }],
+        // Bound the rendered diameter, independently of the resting dot size.
+        const scale = Math.min(this.pulseScale, 48 / this.dotSize);
+        turn.animate?.([{ transform: `scale(${scale})` }, { transform: "scale(1)" }],
           { duration: this.animationDuration, easing: "ease-out" });
       }
       const time = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-time.${side}`)!;

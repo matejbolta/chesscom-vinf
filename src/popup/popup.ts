@@ -54,6 +54,7 @@ const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
 )!;
 const enabledInput = document.querySelector<HTMLInputElement>("#enabled")!;
 const turnDotSizeInput = document.querySelector<HTMLInputElement>("#turn-dot-size")!;
+const turnPulseScaleInput = document.querySelector<HTMLInputElement>("#turn-pulse-scale")!;
 const turnAnimationDurationInput = document.querySelector<HTMLInputElement>("#turn-animation-duration")!;
 const extremeOledInput = document.querySelector<HTMLInputElement>("#extreme-oled")!;
 const oledModeInput = document.querySelector<HTMLInputElement>("#oled-mode")!;
@@ -699,6 +700,7 @@ function renderSettings(settings: ExtensionSettings): void {
   enabledInput.checked = settings.enabled;
   extremeOledInput.checked = settings.extremeOled;
   turnDotSizeInput.value = String(settings.turnDotSize);
+  turnPulseScaleInput.value = String(settings.turnPulseScale);
   turnAnimationDurationInput.value = String(settings.turnAnimationDuration);
   oledModeInput.checked = settings.oledMode;
   showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -781,6 +783,7 @@ function readSettings(): ExtensionSettings {
     enabled: enabledInput.checked,
     extremeOled: extremeOledInput.checked,
     turnDotSize: Number(turnDotSizeInput.value),
+    turnPulseScale: Number(turnPulseScaleInput.value),
     turnAnimationDuration: Number(turnAnimationDurationInput.value),
     oledMode: oledModeInput.checked,
     showNativePlayPanel: showNativePlayPanelInput.checked,

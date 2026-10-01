@@ -40,6 +40,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   extremeOled: false,
   turnDotSize: 12,
   turnAnimationDuration: 1000,
+  turnPulseScale: 2,
   showNativePlayPanel: false,
   profilePlacement: "hidden",
   profileVisiblePlacement: "main",
@@ -258,6 +259,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     extremeOled?: unknown;
     turnDotSize?: unknown;
     turnAnimationDuration?: unknown;
+    turnPulseScale?: unknown;
     showNativePlayPanel?: unknown;
     profilePlacement?: unknown;
     profileVisiblePlacement?: unknown;
@@ -435,6 +437,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize,
     turnAnimationDuration: typeof candidate.turnAnimationDuration === "number" && Number.isFinite(candidate.turnAnimationDuration)
       ? Math.min(5000, Math.max(0, Math.round(candidate.turnAnimationDuration))) : DEFAULT_SETTINGS.turnAnimationDuration,
+    turnPulseScale: typeof candidate.turnPulseScale === "number" && Number.isFinite(candidate.turnPulseScale)
+      ? Math.min(12, Math.max(1, Math.round(candidate.turnPulseScale * 10) / 10)) : DEFAULT_SETTINGS.turnPulseScale,
     extremeOled: typeof candidate.extremeOled === "boolean" ? candidate.extremeOled : false,
     oledMode:
       typeof candidate.oledMode === "boolean"

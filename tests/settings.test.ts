@@ -17,6 +17,10 @@ describe("settings", () => {
     expect(normalizeSettings({turnAnimationDuration: -1}).turnAnimationDuration).toBe(0);
     expect(normalizeSettings({turnAnimationDuration: 6000}).turnAnimationDuration).toBe(5000);
     expect(normalizeSettings({turnAnimationDuration: NaN}).turnAnimationDuration).toBe(1000);
+    expect(normalizeSettings({turnPulseScale: 5}).turnPulseScale).toBe(5);
+    expect(normalizeSettings({turnPulseScale: -1}).turnPulseScale).toBe(1);
+    expect(normalizeSettings({turnPulseScale: 99}).turnPulseScale).toBe(12);
+    expect(normalizeSettings({turnPulseScale: NaN}).turnPulseScale).toBe(2);
     expect(DEFAULT_SETTINGS.oledMode).toBe(false);
     expect(normalizeSettings({turnDotSize: 16}).turnDotSize).toBe(16);
     expect(normalizeSettings({turnDotSize: 100}).turnDotSize).toBe(24);
