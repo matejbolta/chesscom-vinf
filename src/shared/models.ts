@@ -81,6 +81,7 @@ export interface ExtensionSettings {
   oledMode: boolean;
   oledButtonColors: boolean;
   extremeOled: boolean;
+  turnDotSize: number;
   showNativePlayPanel: boolean;
   profilePlacement: ProfilePlacement;
   profileVisiblePlacement: ProfileVisiblePlacement;

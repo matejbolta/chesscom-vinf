@@ -33,7 +33,9 @@ it("captures annotation gestures separately, toggles marks, cancels and restores
   expect(board.querySelectorAll(".highlight")).toHaveLength(1);
   pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);
   expect(board.querySelectorAll(".highlight")).toHaveLength(0);
-  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointermove", 175, 325); pointer(layer, "pointerup", 175, 325);
+  pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointermove", 175, 325);
+  expect(board.querySelectorAll(".arrow, .highlight")).toHaveLength(0);
+  pointer(layer, "pointerup", 175, 325);
   expect(board.querySelectorAll(".arrow")).toHaveLength(1);
   pointer(layer, "pointerdown", 75, 175); pointer(layer, "pointercancel", 75, 175); pointer(layer, "pointerup", 75, 175);
   expect(board.querySelectorAll(".highlight")).toHaveLength(0);
@@ -89,13 +91,13 @@ it("uses native factories, preserves unrelated marks, handles flip/cancel/API fa
   const layer = document.querySelector<HTMLElement>(".chesscom-vinf-annotations")!;
   api.addOne(api.factory.buildStandardArrow("a1", "h8"));
   button.click();
-  // Previewing an existing arrow must not create a duplicate native visual.
+  // No preview or duplicate while dragging, even across existing native marks.
   pointer(layer, "pointerdown", 25, 475); pointer(layer, "pointermove", 375, 125);
   expect(board.querySelectorAll(".arrow")).toHaveLength(1);
   pointer(layer, "pointercancel", 375, 125);
   expect(api.getOne("arrow|a1h8")).toBeDefined();
   pointer(layer, "pointerdown", 75, 475); pointer(layer, "pointermove", 125, 375);
-  expect(arrow).toHaveBeenLastCalledWith("b1", "c3");
+  expect(arrow).toHaveBeenCalledTimes(1); // only the unrelated native arrow
   pointer(layer, "pointercancel", 125, 375);
   expect(board.querySelectorAll(".arrow")).toHaveLength(1); // only pre-existing native arrow
   pointer(layer, "pointerdown", 25, 125); pointer(layer, "pointerup", 25, 125);

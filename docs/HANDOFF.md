@@ -2,8 +2,8 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-09-28.
-Current source version: 2.7.2.
+Last updated: 2026-10-01.
+Current source version: 2.8.0.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
 
@@ -29,7 +29,7 @@ sidebar by default, and removes homepage cards that the user does not need.
 The extension is implemented and functional. `PRODUCT_BRIEF.md` is the original
 historical brief; its old “implementation not started” state is not current.
 `FINAL_PRODUCT_SPEC.md` preserves the original detailed specification and the
-chronological amendments through version 2.7.2. This handoff is the shortest
+chronological amendments through version 2.8.0. This handoff is the shortest
 canonical statement of the current product.
 
 ## Current Development and Distribution Policy
@@ -61,6 +61,49 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Game controls and review refinements (2.8.0)
+
+Supersedes conflicting 2.7.x presentation details below. Tablet uses desktop
+layout with touch annotations; desktop additionally has keyboard shortcuts.
+Normal live-game clocks now stay visible and noninteractive on desktop/tablet/
+phone, without pill borders. Runtime enables shared clocks on Android tablets
+as well. Extreme OLED retains hidden-by-default paired clocks and T toggling.
+Desktop B on exact Review routes clicks an enabled, rendered native Best control
+inside game-controls-view-component; absent/hidden Best is a no-op. Capture-phase
+handling suppresses native bubbling B effects in Review. Typing/modifier guards
+remain. The popup shortcut guide reflects B and Extreme-only T.
+
+Touch gestures retain the native markings factories/toggle/ownership cleanup but
+no longer create previews or measure board bounds on pointermove. Native arrows
+and red squares commit only on pointerup; cancellation commits nothing. Pencil
+uses a filled SVG, active #b65b5b, matching low-time numerals. Normal visibility
+and Extreme inactive hiding remain.
+
+turnDotSize is persisted in both settings surfaces: integer 4–24px, default12.
+Dot uses the native active-clock class, tracks color identity across flips where
+available, and pulses from 2x to 1x over one second only on confirmed switches.
+Reduced-motion skips pulse. Red means active time <60s or the same native turn
+has been observed for >=60s using performance.now. Initial late attachment cannot
+recover elapsed move time before VINF observed it. No new polling loop: existing
+clock events/lifecycle fallback update color. Route/board teardown resets tracking.
+
+Phone-only material rows use six equal grid tracks: material left half; draw,
+flag, clock centers across the right half. Bottom clock matches top and pencil
+bisects the distance from midpoint to clock. Native board geometry unchanged.
+Removed 2.7.2 captured-material gray filter at user request; native dark pieces
+may be subtle on black by deliberate preference. Align native score vertically.
+
+ReviewEntryScroll is phone Review only: first native mobile-gr-footer-primary
+click arms a bounded 2.5s settle window. After matching graph positions 150ms apart,
+scroll minimally to clear the bottom dock plus8px. Subsequent primary clicks do
+nothing; touch/wheel/key cancels pending work. Disable/route change cleans listeners
+and timers. Existing graph relocation, coach, board and dock structure remain.
+
+Verification: 183 tests/25 files, typecheck and desktop/Android builds; performance
+budgets retained. Browser fixture checks and limitations are recorded in DOM_AUDIT.
+Actual Firefox Android/tablet and live desktop Review remain unverified; no real
+game actions, push, Store package/listing/upload or Store screenshots.
 
 ## Gameplay performance correction (2.7.2)
 

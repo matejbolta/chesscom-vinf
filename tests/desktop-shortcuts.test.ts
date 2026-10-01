@@ -19,8 +19,8 @@ it("synchronizes desktop O/E, shares T clock state, and ignores typing, modifier
   };
   const time = () => document.querySelector('.chesscom-vinf-extreme-time.bottom')!;
   expect(document.documentElement.hasAttribute("data-chesscom-vinf-normal-clocks")).toBe(true);
-  expect(time().getAttribute("aria-pressed")).toBe("true");
-  await press("t"); expect(time().getAttribute("aria-pressed")).toBe("false");
+  expect(time().getAttribute("aria-pressed")).toBeNull();
+  await press("t"); expect(time().textContent).toBe("10:00");
   await press("o"); expect(saved.oledMode).toBe(true);
   await press("e"); expect(saved.extremeOled).toBe(true);
   const input = document.createElement("textarea"); document.body.append(input);
@@ -34,6 +34,17 @@ it("synchronizes desktop O/E, shares T clock state, and ignores typing, modifier
   await press("e"); await press("t");
   expect(save).toHaveBeenCalledTimes(2);
   expect(document.querySelector('.chesscom-vinf-extreme-controls')).toBeNull();
+  document.body.insertAdjacentHTML('beforeend', '<div class="game-controls-view-component"><button aria-label="Best">Best</button></div>');
+  const best = document.querySelector<HTMLButtonElement>('[aria-label="Best"]')!;
+  vi.spyOn(best, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList);
+  const click = vi.fn(); best.addEventListener('click', click);
+  await press('b'); expect(click).toHaveBeenCalledTimes(1);
+  await press('b', best); expect(click).toHaveBeenCalledTimes(2); // native control may retain keyboard focus
+  await press('b', document.body, {repeat:true}); expect(click).toHaveBeenCalledTimes(2);
+  best.hidden = true; await press('b'); expect(click).toHaveBeenCalledTimes(2);
+  best.hidden = false; best.disabled = true; await press('b');
+  best.disabled = false; await press('b', input); await press('b', document.body, {ctrlKey:true});
+  expect(click).toHaveBeenCalledTimes(2);
   window.history.replaceState({}, "", "/home");
   window.dispatchEvent(new PopStateEvent("popstate"));
   vi.clearAllTimers(); vi.useRealTimers();

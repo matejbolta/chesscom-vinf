@@ -45,7 +45,8 @@ it('measures VINF work during native drag frames and unchanged-square drawing', 
   expect(drag.bounds).toBeLessThanOrEqual(12);
   expect(drag.phone).toBeLessThanOrEqual(2);
   expect(drag.clocks).toBeLessThanOrEqual(2);
-  expect(previews).toBe(1);
+  expect(previews).toBe(0);
+  expect(factory).toHaveBeenCalledTimes(1); // release only
   bounds.mockClear(); phone.mockClear(); clocks.mockClear();
   const timer = document.querySelector('#board-layout-player-bottom [role="timer"]')!;
   for (let i=0;i<10;i++) { timer.textContent = `9:${59-i}`; await vi.advanceTimersByTimeAsync(100); }

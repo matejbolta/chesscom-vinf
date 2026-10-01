@@ -296,7 +296,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
     actions.reconcile(document, route, settings, window.innerWidth <= 599 && !searchParams.has("desktop"));
-    clocks.reconcile(document, route, settings, game && (window.innerWidth <= 599 || searchParams.has("desktop")));
+    clocks.reconcile(document, route, settings, game);
     androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
     annotations.reconcile(document, route, settings, !searchParams.has("desktop"));
   };
@@ -306,6 +306,9 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     svg.setAttribute("data-glyph", svg.getAttribute("data-glyph") === "media-audio-speaker-mute"
       ? "media-audio-speaker" : "media-audio-speaker-mute");
     document.body.dataset.audioClicks = String(Number(document.body.dataset.audioClicks ?? 0) + 1);
+  });
+  document.querySelector('.mobile-gr-footer-primary')?.addEventListener('click', () => {
+    if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
   });
   if (searchParams.has("audio-on")) audio?.querySelector("svg")?.setAttribute("data-glyph", "media-audio-speaker");
   document.querySelectorAll('.mobile-gr-footer-footer button, .game-buttons-container-component button').forEach(button => {

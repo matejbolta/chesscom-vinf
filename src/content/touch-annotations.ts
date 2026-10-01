@@ -16,7 +16,7 @@ export class TouchAnnotationsController {
   private route = "";
   private finished = false;
   private signature = "";
-  private gesture: { id: number; start: Square; end: Square } | null = null;
+  private gesture: { id: number; start: Square } | null = null;
   private annotations: NativeAnnotations | null = null;
   private failedApi: object | null = null;
 
@@ -57,7 +57,6 @@ export class TouchAnnotationsController {
       this.signature = signature;
       this.gesture = null;
       this.clearMarks();
-      this.render();
     }
   }
 
@@ -71,7 +70,7 @@ export class TouchAnnotationsController {
     button.className = "chesscom-vinf-annotation-toggle";
     button.setAttribute("aria-label", "Draw arrows and red squares");
     button.title = "Draw arrows and red squares";
-    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16-1 4 4-1L20 7l-3-3Z M14 7l3 3"/></svg>';
+    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75ZM20.71 7.04a1 1 0 0 0 0-1.42l-2.34-2.33a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75Z"/></svg>';
     button.setAttribute("data-chesscom-vinf-owned", "annotations");
     button.addEventListener("click", event => {
       event.stopPropagation();
@@ -80,7 +79,6 @@ export class TouchAnnotationsController {
       this.enabled = !this.enabled;
       this.gesture = null;
       if (!this.enabled) this.clearMarks();
-      this.render();
       this.position();
     });
     this.layer = layer;
@@ -95,20 +93,14 @@ export class TouchAnnotationsController {
       block(event);
       this.refreshApi();
       if (!this.enabled || event.button !== 0) return;
-      if (this.gesture) { this.gesture = null; this.render(); return; }
+      if (this.gesture) { this.gesture = null; return; }
       const square = this.square(event);
       if (!square) return;
-      this.gesture = { id: event.pointerId, start: square, end: square };
+      this.gesture = { id: event.pointerId, start: square };
       layer.setPointerCapture?.(event.pointerId);
     });
-    layer.addEventListener("pointermove", event => {
-      block(event);
-      if (this.gesture?.id !== event.pointerId) return;
-      const square = this.square(event);
-      if (!square || square[0] === this.gesture.end[0] && square[1] === this.gesture.end[1]) return;
-      this.gesture.end = square;
-      this.render();
-    });
+    // No geometry reads or native marks while dragging: commit on release only.
+    layer.addEventListener("pointermove", block);
     layer.addEventListener("pointerup", event => {
       block(event);
       this.refreshApi();
@@ -118,11 +110,9 @@ export class TouchAnnotationsController {
       if (gesture?.id === event.pointerId && square) {
         this.useNative(api => api.toggle(this.notation(gesture.start), this.notation(square)));
       }
-      this.render();
     });
     for (const type of ["pointercancel", "lostpointercapture"]) layer.addEventListener(type, () => {
       this.gesture = null;
-      this.render();
     });
     const position = () => this.position();
     const view = document.defaultView!;
@@ -153,7 +143,6 @@ export class TouchAnnotationsController {
       view.removeEventListener("resize", position);
       view.visualViewport?.removeEventListener("resize", position);
     };
-    this.render();
   }
 
   private square(event: PointerEvent): Square | null {
@@ -229,13 +218,6 @@ export class TouchAnnotationsController {
 
   private clearMarks(): void {
     try { this.annotations?.clear(); } catch { /* Detached/replaced native API. */ }
-  }
-
-  private render(): void {
-    this.useNative(api => {
-      if (this.gesture) api.showPreview(this.notation(this.gesture.start), this.notation(this.gesture.end));
-      else api.clearPreview();
-    });
   }
 
   private cleanup(): void {

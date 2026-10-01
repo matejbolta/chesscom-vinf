@@ -14,6 +14,10 @@ describe("settings", () => {
   it("uses the requested defaults", () => {
     expect(normalizeSettings(undefined)).toEqual(DEFAULT_SETTINGS);
     expect(DEFAULT_SETTINGS.oledMode).toBe(false);
+    expect(normalizeSettings({turnDotSize: 16}).turnDotSize).toBe(16);
+    expect(normalizeSettings({turnDotSize: 100}).turnDotSize).toBe(24);
+    expect(normalizeSettings({turnDotSize: 0}).turnDotSize).toBe(4);
+    expect(normalizeSettings({turnDotSize: NaN}).turnDotSize).toBe(12);
     expect(DEFAULT_SETTINGS.oledButtonColors).toBe(false);
     expect(Object.values(DEFAULT_SETTINGS.statsRatingStates)).toEqual([
       "retracted",

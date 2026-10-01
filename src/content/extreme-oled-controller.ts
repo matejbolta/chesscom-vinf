@@ -42,6 +42,9 @@ export function readClockSeconds(text: string): number | null {
 
 export class ExtremeOledController {
   private normalClocks = false;
+  private dotSize = 12;
+  private activePlayer = "";
+  private turnStarted = 0;
   private geometryDirty = true;
   private board: HTMLElement | null = null;
   private stage: HTMLElement | null = null;
@@ -83,18 +86,15 @@ export class ExtremeOledController {
     this.cleanup(this.document);
   };
 
-  private fixedPhoneTimes(): boolean {
-    return this.normalClocks && !!this.document?.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
-  }
-
   toggleTimes(): boolean {
-    if (!this.overlay || !this.document || this.fixedPhoneTimes()) return false;
+    if (!this.overlay || !this.document || this.normalClocks) return false;
     if (!this.forcedTimes) this.revealTimes = !(this.revealTimes ?? this.normalClocks);
     this.update(this.document);
     return true;
   }
 
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, normalGameClocks = false): boolean {
+    this.dotSize = settings.turnDotSize;
     const normal = normalGameClocks && !settings.extremeOled;
     if (normal !== this.normalClocks) {
       const forced = this.forcedTimes;
@@ -237,6 +237,8 @@ export class ExtremeOledController {
       document.body.append(this.scrollRoom);
     }
     setAttribute(document.documentElement, this.normalClocks ? NORMAL : ACTIVE, "true");
+    const dotSize = `${this.dotSize}px`;
+    if (this.overlay.style.getPropertyValue("--vinf-turn-size") !== dotSize) this.overlay.style.setProperty("--vinf-turn-size", dotSize);
     const rect = this.geometryDirty ? board.getBoundingClientRect() : null;
     const view = document.defaultView;
     // Follow native geometry; never resize/reposition the board or intercept input.
@@ -251,12 +253,25 @@ export class ExtremeOledController {
     const activeClocks = document.querySelectorAll(
       "#board-layout-player-top .clock-player-turn, #board-layout-player-bottom .clock-player-turn"
     );
+    // Identify the player by color across flips. Do not pulse on initial mount
+    // or transient ambiguous native turn state; only a confirmed player change.
+    const active = activeClocks.length === 1 ? activeClocks[0] : null;
+    const identity = active ? (active.classList.contains("clock-white") ? "white" :
+      active.classList.contains("clock-black") ? "black" :
+      active.closest("#board-layout-player-top") ? "top" : "bottom") : "";
+    const switched = !!identity && !!this.activePlayer && identity !== this.activePlayer;
+    const now = view?.performance.now() ?? 0;
+    if (identity && identity !== this.activePlayer) {
+      this.activePlayer = identity;
+      this.turnStarted = now;
+    }
+    const slowMove = !!identity && now - this.turnStarted >= 60_000;
     const clockSeconds = ["top", "bottom"].map(side => readClockSeconds(
       document.querySelector(`#board-layout-player-${side} .clock-component [role="timer"]`)?.textContent ?? ""
     ));
     // Latch for this game: an increment back over a minute must not hide urgency.
     if (clockSeconds.some(seconds => seconds !== null && seconds < 60)) this.forcedTimes = true;
-    const fixedTimes = this.fixedPhoneTimes();
+    const fixedTimes = this.normalClocks;
     const showTimes = fixedTimes || (this.revealTimes ?? this.normalClocks) || this.forcedTimes;
     for (const side of ["top", "bottom"]) {
       const bar = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-clock.${side}`)!;
@@ -266,6 +281,12 @@ export class ExtremeOledController {
       if (turn.hidden !== inactive) turn.hidden = inactive;
       const text = clock?.querySelector('[role="timer"]')?.textContent ?? "";
       const seconds = readClockSeconds(text);
+      setAttribute(turn, "data-low", String(!inactive && (slowMove || seconds !== null && seconds < 60)));
+      if (!inactive && switched && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+        turn.getAnimations?.().forEach(animation => animation.cancel());
+        turn.animate?.([{ transform: "scale(2)" }, { transform: "scale(1)" }],
+          { duration: 1000, easing: "ease-out" });
+      }
       const time = this.overlay.querySelector<HTMLButtonElement>(`.chesscom-vinf-extreme-time.${side}`)!;
       if (this.normalClocks && clock && rect) {
         const clockRect = clock.getBoundingClientRect();
@@ -318,6 +339,8 @@ export class ExtremeOledController {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.maxima.clear();
+    this.activePlayer = "";
+    this.turnStarted = 0;
   }
 
   cleanup(document: Document): void {

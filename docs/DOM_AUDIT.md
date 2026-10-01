@@ -934,3 +934,45 @@ whole layout reconciliation. Native material `.captured-pieces-cpiece` sprites
 receive a neutral-gray filter only under normal phone OLED, preserving shape,
 score and updates. New operation-count regression uses the real runtime and
 sanitized native marking contract, never a real game.
+
+
+## 2026-10-01 — 2.8.0 controls and Review entry
+
+Reused saved native evidence rather than touching live games. September18 Review
+capture has button[aria-label="Best"] and native Next button with
+mobile-gr-footer-primary inside game-controls-view-component. Saved analysis.js
+constructs the desktop review best-move action with tooltip Best, conditional on
+available review controls. B clicks only rendered/enabled matching buttons; unknown
+or translated controls fail open as no-op. Initial phone primary click is captured
+before native transition and waits for the relocated graph in
+#charts > [data-chesscom-vinf-review-graph="moved"]. No other review controls are moved.
+
+Shared clocks now include Android tablet. Native clock-white/clock-black identity
+prevents a board flip from masquerading as a turn switch; sanitized phone fixture
+now includes these classes. Same player for60s is measured from observation, not
+inferred game history. Dot settings never change native clock or board state.
+Phone material layout uses six minmax(0,1fr) tracks: ordinary 1fr tracks preserved
+the native minimum clock width and caused unequal spacing. Captured score is
+center-aligned in the native wrapper; native sprite colors remain unfiltered.
+
+Browser visual fixture evidence (Codex IAB, default scale, OLED):
+- /phone-game-preview?oled=1:390x844 iframe; draw/flag/clock centers224.83,
+  284.50,344.16px (equal59.67px gaps). Lower clock344.16, pencil269.58,
+  halfway between row midpoint195 andclock344.16.44px icon touch targets.
+- Same preview with narrow=1:320x844; centers184/232/280, pencil220;
+  body scrollWidth320 and native board320. No horizontal overflow.
+- tablet=1:800x844; desktop-style identity/navigation intact, native board528,
+  both normal clocks disabled/noninteractive, border0, filled pencil present.
+- Native-contract fixture drag creates one arrow on release; active pencil,
+  low clock and active dot all compute rgb(182,91,91). Disable removes all
+  VINF game controls, restores native Draw to sidebar and preserves390px board.
+- /game-review-mobile?oled=1:390x640 viewport; first Next click scrolls57px,
+  graph bottom551.89 vs dock top560 (8px clearance). Coach/board/native controls
+  retained; repeated clicks/cancellation/route teardown covered automatically.
+- Existing preview MutationObserver "parameter1 is not Node" error was present
+  before edits and unchanged after; no claim of a clean browser console.
+Private fixture screenshot: fixtures/raw/refinements-2026-10-01/phone.png.
+Automated:183 tests/25 files, typecheck, desktop and Android builds. Performance
+regression budget still passes; dragging now produces zero preview factory calls,
+then one native arrow factory call on release. These are sanitized fixtures,
+not Firefox Android touch/scroll timing or live desktop verification.

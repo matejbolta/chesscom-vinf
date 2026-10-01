@@ -53,6 +53,7 @@ const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
   "#close-side-panel"
 )!;
 const enabledInput = document.querySelector<HTMLInputElement>("#enabled")!;
+const turnDotSizeInput = document.querySelector<HTMLInputElement>("#turn-dot-size")!;
 const extremeOledInput = document.querySelector<HTMLInputElement>("#extreme-oled")!;
 const oledModeInput = document.querySelector<HTMLInputElement>("#oled-mode")!;
 const oledButtonColorsInput = document.querySelector<HTMLInputElement>(
@@ -699,6 +700,7 @@ function renderPresetSelects(
 function renderSettings(settings: ExtensionSettings): void {
   enabledInput.checked = settings.enabled;
   extremeOledInput.checked = settings.extremeOled;
+  turnDotSizeInput.value = String(settings.turnDotSize);
   oledModeInput.checked = settings.oledMode;
   oledButtonColorsInput.checked = settings.oledButtonColors;
   showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -780,6 +782,7 @@ function readSettings(): ExtensionSettings {
   return {
     enabled: enabledInput.checked,
     extremeOled: extremeOledInput.checked,
+    turnDotSize: Number(turnDotSizeInput.value),
     oledMode: oledModeInput.checked,
     oledButtonColors: oledButtonColorsInput.checked,
     showNativePlayPanel: showNativePlayPanelInput.checked,

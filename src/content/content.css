@@ -779,15 +779,15 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
 }
 .chesscom-vinf-extreme-turn {
   position: absolute;
-  left: calc(50% - 2px);
-  width: 4px;
-  height: 4px;
+  left: calc(50% - var(--vinf-turn-size, 12px) / 2);
+  width: var(--vinf-turn-size, 12px);
+  height: var(--vinf-turn-size, 12px);
   border-radius: 50%;
   background: #777;
   pointer-events: none;
 }
-.chesscom-vinf-extreme-turn.top { top: -14px; }
-.chesscom-vinf-extreme-turn.bottom { bottom: -14px; }
+.chesscom-vinf-extreme-turn.top { top: calc(-10px - var(--vinf-turn-size, 12px)); }
+.chesscom-vinf-extreme-turn.bottom { bottom: calc(-10px - var(--vinf-turn-size, 12px)); }
 .chesscom-vinf-extreme-controls [hidden] { display: none !important; }
 
 /* Normal phone play: no board sizing, transforms or input overlays. */
@@ -1001,8 +1001,9 @@ html[data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component { v
   padding: 10px; border: 1px solid #777; border-radius: 50%; background: #302e2b;
   color: #bbb; place-items: center; touch-action: manipulation; cursor: pointer;
 }
-.chesscom-vinf-annotation-toggle svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-.chesscom-vinf-annotation-toggle[aria-pressed="true"] { background: #46552f; color: #fff; border-color: #c6d6a2; }
+.chesscom-vinf-annotation-toggle svg { width: 22px; height: 22px; fill: currentColor; stroke: none; }
+.chesscom-vinf-annotation-toggle[aria-pressed="true"],
+.chesscom-vinf-annotation-toggle[data-extreme="true"][aria-pressed="true"] { background: transparent; color: #b65b5b; border-color: #b65b5b; }
 .chesscom-vinf-annotation-toggle[data-extreme="true"] { background: #000; color: #777; border-color: #444; }
 .chesscom-vinf-annotation-toggle[data-extreme="true"][aria-pressed="false"] { opacity: 0; }
 .chesscom-vinf-annotation-toggle:focus-visible { opacity: 1 !important; outline: 2px solid #aaa; }
@@ -1019,7 +1020,7 @@ html[data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component { v
     content: ""; position: absolute; inset: 6px; border: 1px solid #666; border-radius: 50%; pointer-events: none;
   }
   .chesscom-vinf-annotation-toggle[data-flow="true"] svg { position: relative; width: 20px; height: 20px; }
-  .chesscom-vinf-annotation-toggle[data-flow="true"][aria-pressed="true"]::before { border-color: #c6d6a2; background: #46552f; }
+  .chesscom-vinf-annotation-toggle[data-flow="true"][aria-pressed="true"]::before { border-color: #b65b5b; background: transparent; }
 }
 html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .chesscom-vinf-annotation-toggle) { visibility: visible !important; }
 .chesscom-vinf-annotations[data-extreme="false"] { z-index: 11; }
@@ -1086,7 +1087,7 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
     border: 0; border-radius: 0; color: #bbb;
   }
   html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"]::before { content: none; }
-  html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"][aria-pressed="true"] { color: #b9d88d; }
+  html[data-chesscom-vinf-phone-game] .chesscom-vinf-annotation-toggle[data-flow="true"][aria-pressed="true"] { color: #b65b5b; }
   html[data-chesscom-vinf-phone-game] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time {
     border-color: transparent;
     border-radius: 0;
@@ -1096,9 +1097,6 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
   html[data-chesscom-vinf-phone-game] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time[data-low="true"] { color: #b65b5b; }
   html[data-chesscom-vinf-phone-game] #board-layout-player-bottom { margin-bottom: 0; }
   html[data-chesscom-vinf-phone-game] #board-layout-sidebar { margin-top: 0; }
-}
-.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-turn {
-  width: 6px; height: 6px; left: calc(50% - 3px);
 }
 
 /* Phone-only material rows. Keep the complete native path to captured pieces,
@@ -1123,11 +1121,35 @@ html[data-chesscom-vinf-extreme-oled="true"] :is(.chesscom-vinf-annotations, .ch
   html[data-chesscom-vinf-phone-material] .chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled[data-low="true"] { color: #b65b5b; }
 }
 
-/* Native black captured-piece sprites otherwise disappear on the OLED page.
-   Tint only material icons, never board pieces or the Extreme presentation. */
+/* Shared game indicators; normal clocks are always visible and not buttons. */
+.chesscom-vinf-extreme-turn[data-low="true"] { background: #b65b5b; }
+.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled {
+  border: 0; border-radius: 0; background: transparent;
+  color: #bbb; opacity: 1; cursor: default; pointer-events: none;
+}
+.chesscom-vinf-normal-clock-controls .chesscom-vinf-extreme-time:disabled[data-low="true"] { color: #b65b5b; }
 @media (max-width: 599px) {
-  html[data-chesscom-vinf-phone-material][data-chesscom-vinf-oled="true"] wc-captured-pieces .captured-pieces-cpiece {
-    filter: brightness(0) invert(.7);
+  /* Right-half centers: draw 58.33%, flag 75%, clock 91.67%.
+     Pencil lies halfway from the midpoint to the clock: 70.83%. */
+  html[data-chesscom-vinf-phone-material] .player-component:not(.player-theatre) {
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0; position: relative;
   }
-  html[data-chesscom-vinf-phone-material][data-chesscom-vinf-oled="true"] wc-captured-pieces .captured-pieces-score { color: #b3b3b3; }
+  html[data-chesscom-vinf-phone-material] .player-playerContent { grid-column: 1 / 4; grid-row: 1; align-self: center; }
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-phone-actions {
+    grid-column: 4 / 6; grid-row: 1; width: 100%; justify-content: space-around;
+  }
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-phone-actions > div,
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-phone-actions > div > :is(button, [role="button"]) {
+    width: 44px; min-width: 44px;
+  }
+  html[data-chesscom-vinf-phone-material][data-chesscom-vinf-normal-clocks] .board-layout-player .clock-component:not(.clock-theatre) {
+    grid-column: 6; grid-row: 1; justify-self: center; min-width: 0; width: 64px; max-width: 100%; padding: 0;
+  }
+  html[data-chesscom-vinf-phone-material] .chesscom-vinf-annotation-toggle[data-flow="true"] {
+    grid-column: 4 / 6; grid-row: 1; justify-self: start;
+    margin-left: calc(62.5% - 22px); width: 44px; min-width: 44px;
+  }
+  html[data-chesscom-vinf-phone-material] wc-captured-pieces > div { display: flex; align-items: center; }
+  html[data-chesscom-vinf-phone-material] wc-captured-pieces .captured-pieces-score { align-self: center; line-height: 1; margin-top: 0; }
 }

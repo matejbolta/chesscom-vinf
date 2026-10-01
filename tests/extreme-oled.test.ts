@@ -220,7 +220,7 @@ it.each([["9:00",540],["0:09.8",9.8],["1:02:03",3723],["8,5",8.5],["Disconnected
   expect(readClockSeconds(String(text))).toBe(seconds);
 });
 
-it("keeps normal phone clocks visible without changing Extreme or desktop toggles", () => {
+it("keeps normal clocks fixed on every layout, leaving Extreme toggleable", () => {
   document.documentElement.setAttribute('data-chesscom-vinf-phone-material', '');
   controller.reconcile(document, location, DEFAULT_SETTINGS, true);
   const phoneTime = document.querySelector<HTMLButtonElement>('.chesscom-vinf-extreme-time.bottom')!;
@@ -231,10 +231,44 @@ it("keeps normal phone clocks visible without changing Extreme or desktop toggle
   expect(phoneTime.textContent).not.toBe('');
   document.documentElement.removeAttribute('data-chesscom-vinf-phone-material');
   controller.reconcile(document, location, DEFAULT_SETTINGS, true);
-  expect(phoneTime.disabled).toBe(false);
-  expect(controller.toggleTimes()).toBe(true);
-  expect(phoneTime.textContent).toBe('');
+  expect(phoneTime.disabled).toBe(true);
+  expect(controller.toggleTimes()).toBe(false);
+  expect(phoneTime.textContent).not.toBe('');
   controller.reconcile(document, location, settings);
   expect(controller.toggleTimes()).toBe(true);
   expect(document.querySelector('.chesscom-vinf-extreme-time.bottom')!.textContent).not.toBe('');
+});
+
+it("sizes the turn dot, pulses only on a player change, and warns for low time or a long move", async () => {
+  const animate = vi.fn();
+  let now = 0;
+  const nowSpy = vi.spyOn(window.performance, "now").mockImplementation(() => now);
+  vi.stubGlobal('matchMedia', () => ({matches: false}));
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 16}, true);
+  const top = document.querySelector<HTMLElement>('.chesscom-vinf-extreme-turn.top')!;
+  const bottom = document.querySelector<HTMLElement>('.chesscom-vinf-extreme-turn.bottom')!;
+  Object.assign(top, {animate}); Object.assign(bottom, {animate});
+  expect(top.parentElement!.style.getPropertyValue('--vinf-turn-size')).toBe('16px');
+  now = 60_001;
+  await vi.advanceTimersByTimeAsync(60_001);
+  clock('bottom').textContent = '8:59';
+  await vi.advanceTimersByTimeAsync(20);
+  expect(bottom.dataset.low).toBe('true'); expect(animate).not.toHaveBeenCalled();
+  clock('bottom').parentElement!.classList.remove('clock-player-turn');
+  clock('top').parentElement!.classList.add('clock-player-turn');
+  await vi.advanceTimersByTimeAsync(20);
+  expect(top.dataset.low).toBe('false'); expect(animate).toHaveBeenCalledTimes(1);
+  clock('top').textContent = '0:59';
+  await vi.advanceTimersByTimeAsync(20);
+  expect(top.dataset.low).toBe('true'); expect(animate).toHaveBeenCalledTimes(1);
+  // Native board flip repositions the same color, not a new turn.
+  const topClock = clock('top').parentElement!;
+  const bottomClock = clock('bottom').parentElement!;
+  document.querySelector('#board-layout-player-bottom')!.append(topClock);
+  document.querySelector('#board-layout-player-top')!.append(bottomClock);
+  await vi.advanceTimersByTimeAsync(20);
+  expect(bottom.hidden).toBe(false);
+  expect(animate).toHaveBeenCalledTimes(1);
+  nowSpy.mockRestore();
+  vi.unstubAllGlobals();
 });

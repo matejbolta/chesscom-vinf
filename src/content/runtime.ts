@@ -221,7 +221,7 @@ export function startVinfRuntime(
     const phone = phoneGameReviewMedia?.matches ?? window.innerWidth <= 599;
     phoneExperienceController.reconcile(document, window.location, settings, phone, android && phone);
     phoneActions.reconcile(document, window.location, settings, android && phone);
-    extremeOledController.reconcile(document, window.location, settings, desktop || (android && phone));
+    extremeOledController.reconcile(document, window.location, settings, desktop || android);
     touchAnnotations.reconcile(document, window.location, settings, android);
     androidGameControls.reconcile(document, window.location, settings, android);
   }
@@ -434,13 +434,26 @@ export function startVinfRuntime(
   let shortcutWrites = Promise.resolve();
   document.addEventListener("keydown", event => {
     if (!desktop || !settings?.enabled ||
-        event.defaultPrevented || event.repeat || event.isComposing ||
+        event.defaultPrevented || event.isComposing ||
         event.ctrlKey || event.metaKey || event.altKey || event.shiftKey ||
         !(event.target instanceof Element) ||
-        event.target.closest('input, textarea, select, button, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"], [role="searchbox"]') ||
+        event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"], [role="searchbox"]') ||
         document.querySelector('.chesscom-vinf-settings-dialog[open]') ||
         !(isTargetRoute() || isChessComGame(window.location) || isChessComLiveGameReview(window.location))) return;
     const key = event.key.toLowerCase();
+    if (key === "b" && isChessComLiveGameReview(window.location)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (event.repeat) return;
+      const best = [...document.querySelectorAll<HTMLButtonElement>(
+        '.game-controls-view-component button[aria-label="Best"]'
+      )].find(button => !button.disabled && button.getAttribute("aria-disabled") !== "true" &&
+        !button.closest('[hidden], [aria-hidden="true"], .cc-button-disabled') &&
+        button.getClientRects().length > 0 && window.getComputedStyle(button).visibility === "visible");
+      best?.click();
+      return;
+    }
+    if (event.repeat || event.target.closest("button")) return;
     if (key === "t") {
       if (isChessComGame(window.location) && extremeOledController.toggleTimes()) event.preventDefault();
       return;
@@ -456,7 +469,7 @@ export function startVinfRuntime(
       settings = next;
       reconcileImmediately();
     }).catch(() => { /* Failed storage writes leave the current settings intact. */ });
-  });
+  }, true);
 
   window.addEventListener("popstate", reconcileImmediately);
   window.addEventListener("hashchange", reconcileImmediately);

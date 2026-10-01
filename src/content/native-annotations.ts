@@ -32,8 +32,6 @@ export function readNativeMarkings(board: unknown): NativeMarkings | null {
  * a userscript sandbox. Only strings cross into native factory/removal calls. */
 export class NativeAnnotations {
   private readonly owned = new Map<string, NativeMark>();
-  private preview: string | null = null;
-  private readonly previewKey = `vinf-touch-preview-${crypto.randomUUID()}`;
   constructor(readonly api: NativeMarkings) {}
 
   private build(from: string, to: string): NativeMark {
@@ -41,22 +39,7 @@ export class NativeAnnotations {
       : this.api.factory.buildStandardArrow(from, to);
   }
 
-  showPreview(from: string, to: string): void {
-    this.clearPreview();
-    // Native highlights are pooled by square; a second temporary highlight can
-    // otherwise remove an existing square's visual when the preview is cleared.
-    if (from === to) return;
-    const mark = this.build(from, to);
-    // This is the native default key contract. Do not overlay a duplicate arrow.
-    if (this.api.getOne(mark.key ?? `${mark.type}|${from}${to}`)) return;
-    mark.key = this.previewKey;
-    mark.persistent = false;
-    const key = this.api.addOne(mark);
-    if (typeof key === "string") { this.remember(key); this.preview = key; }
-  }
-
   toggle(from: string, to: string): void {
-    this.clearPreview();
     const key = this.api.toggleOne(this.build(from, to));
     if (typeof key === "string") this.remember(key);
   }
@@ -74,13 +57,7 @@ export class NativeAnnotations {
     this.owned.delete(key);
   }
 
-  clearPreview(): void {
-    if (this.preview) this.removeOwned(this.preview);
-    this.preview = null;
-  }
-
   clear(): void {
     for (const key of this.owned.keys()) this.removeOwned(key);
-    this.preview = null;
   }
 }

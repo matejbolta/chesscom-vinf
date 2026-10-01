@@ -261,6 +261,15 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     "chesscom-vinf-userscript-native-play-panel",
     "Native play panel"
   );
+  const gameSettings = document.createElement("section");
+  gameSettings.className = "chesscom-vinf-settings-card";
+  const dotLabel = document.createElement("label");
+  dotLabel.textContent = "Turn indicator size (px) ";
+  const turnDotSizeInput = document.createElement("input");
+  turnDotSizeInput.type = "number";
+  turnDotSizeInput.min = "4"; turnDotSizeInput.max = "24"; turnDotSizeInput.step = "1";
+  turnDotSizeInput.style.width = "64px";
+  dotLabel.append(turnDotSizeInput); gameSettings.append(dotLabel);
   const appearance = document.createElement("section");
   appearance.className = "chesscom-vinf-settings-card";
   appearance.setAttribute("aria-label", "OLED settings");
@@ -906,12 +915,13 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   status.className = "chesscom-vinf-settings-status";
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
-  form.append(header, master, homepage, presets, stats, appearance, status);
+  form.append(header, master, homepage, presets, stats, gameSettings, appearance, status);
   dialog.append(form);
 
   function render(settings: ExtensionSettings): void {
     enabledInput.checked = settings.enabled;
     extremeOledInput.checked = settings.extremeOled;
+    turnDotSizeInput.value = String(settings.turnDotSize);
     oledModeInput.checked = settings.oledMode;
     oledButtonColorsInput.checked = settings.oledButtonColors;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -953,6 +963,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       await store.save({
         enabled: enabledInput.checked,
         extremeOled: extremeOledInput.checked,
+        turnDotSize: Number(turnDotSizeInput.value),
         oledMode: oledModeInput.checked,
         oledButtonColors: oledButtonColorsInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,

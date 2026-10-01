@@ -9,6 +9,21 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-10-01
+
+- Desktop B activates the visible native Best move control in Game Review.
+- Normal desktop/tablet clocks stay visible without a border or hide interaction;
+  Extreme OLED retains paired clock toggling.
+- Touch annotations now commit on release without drag previews. The pencil is
+  filled and uses the low-time red when selected.
+- Added a 4–24px turn-dot setting (12px default), a one-second turn-change pulse,
+  and red warnings for low time or a move observed for at least 60 seconds.
+- Distributed phone controls across the right half of each material row, aligned
+  the clocks and material score, and restored native captured-piece colors.
+- Phone Review scrolls just enough to reveal the graph after the first green
+  primary action; later moves do not reposition the page.
+
+
 ## [2.7.2] - 2026-09-28
 
 - Removed repeated overlay layout measurements during native piece dragging.

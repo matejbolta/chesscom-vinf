@@ -39,6 +39,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   oledMode: false,
   oledButtonColors: false,
   extremeOled: false,
+  turnDotSize: 12,
   showNativePlayPanel: false,
   profilePlacement: "hidden",
   profileVisiblePlacement: "main",
@@ -255,6 +256,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     oledMode?: unknown;
     oledButtonColors?: unknown;
     extremeOled?: unknown;
+    turnDotSize?: unknown;
     showNativePlayPanel?: unknown;
     profilePlacement?: unknown;
     profileVisiblePlacement?: unknown;
@@ -428,6 +430,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       typeof candidate.enabled === "boolean"
         ? candidate.enabled
         : DEFAULT_SETTINGS.enabled,
+    turnDotSize: typeof candidate.turnDotSize === "number" && Number.isFinite(candidate.turnDotSize)
+      ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize,
     extremeOled: typeof candidate.extremeOled === "boolean" ? candidate.extremeOled : false,
     oledMode:
       typeof candidate.oledMode === "boolean"

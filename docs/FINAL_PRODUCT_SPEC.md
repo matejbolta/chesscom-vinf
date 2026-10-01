@@ -1810,3 +1810,16 @@ Separate native board paint and clock ticks from structural layout work. Keep
 native piece input and rendering untouched, update drawing previews only when
 the destination square changes, and preserve resize/hydration/cleanup behavior.
 Ensure captured-material sprites remain readable on normal phone OLED black.
+
+### 2.8.0 — Game controls and Review entry
+
+Tablet follows desktop layout with touch drawing; desktop has keyboard shortcuts.
+Normal game clocks are always visible without borders on all three platforms;
+Extreme alone retains clock hiding. Desktop B invokes the available native Best
+review action. Touch marks commit only on release; filled pencil is red when on.
+Turn dot defaults to12px, adjustable4–24px, doubles briefly on confirmed turn
+switch then eases down over1s (respects reduced motion). Active dot turns red below
+60s remaining or after observing the same turn for60s. Phone material keeps native
+piece colors. Place upper draw/flag/clock evenly across right half; lower pencil
+halfway from center to aligned clock. First primary phone Review action reveals
+the full evaluation graph above the dock once, yielding to manual scrolling.

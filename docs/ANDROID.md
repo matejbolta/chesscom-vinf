@@ -450,3 +450,13 @@ Native moves, annotations, clock state and board sizing remain site-owned.
 Dark captured material is gray on normal phone OLED for readability.
 Fixture operation counts improved substantially; actual Firefox Android FPS and
 touch latency have not been profiled or verified for this build.
+
+
+## 2.8.0 — October 2026 local update
+
+Reinstall the rebuilt dist-android/chesscom-vinf.user.js for release-only native
+annotations, a filled red active pencil, configurable turn dot, fixed normal
+clocks on both phone/tablet and the refined phone material rows. Phone Review's
+first green action now reveals its graph once. Tablet retains desktop layout;
+keyboard shortcuts remain desktop-only. Extreme retains paired clock hiding.
+This update passed sanitized browser checks, not a new Firefox Android device run.
