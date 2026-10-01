@@ -301,8 +301,10 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     extremeOled: searchParams.has("extreme") };
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
-    actions.reconcile(document, route, settings, window.innerWidth <= 599 && !searchParams.has("desktop"));
+    const phoneActions = window.innerWidth <= 599 && !searchParams.has("desktop");
+    if (phoneActions) actions.reconcile(document, route, settings, true);
     clocks.reconcile(document, route, settings, game, searchParams.has("desktop"));
+    if (!phoneActions) actions.reconcile(document, route, settings, false, true);
     androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
     annotations.reconcile(document, route, settings, !searchParams.has("desktop"));
   };

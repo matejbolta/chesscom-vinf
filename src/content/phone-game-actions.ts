@@ -5,11 +5,13 @@ import type { ExtensionSettings, LocationLike } from "../shared/models";
 /** Move native component roots, retaining their handlers and confirmation state. */
 export class PhoneGameActionsController {
   private row: HTMLElement | null = null;
+  private wideParent: HTMLElement | null = null;
   private originals = new Map<HTMLElement, Comment>();
 
-  reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, phoneAndroid: boolean): void {
-    if (!phoneAndroid || !settings.enabled || !isChessComGame(location) ||
-        !document.documentElement.hasAttribute("data-chesscom-vinf-phone-game") || nativeGameHasEnded(document)) {
+  reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, phoneAndroid: boolean, wideExtreme = false): void {
+    const wide = wideExtreme && settings.extremeOled && document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled");
+    if ((!phoneAndroid && !wide) || !settings.enabled || !isChessComGame(location) ||
+        (!wide && !document.documentElement.hasAttribute("data-chesscom-vinf-phone-game")) || nativeGameHasEnded(document)) {
       this.restore(); return;
     }
     for (const [action, anchor] of this.originals) {
@@ -21,19 +23,25 @@ export class PhoneGameActionsController {
         this.originals.delete(action);
       }
     }
-    const clock = document.querySelector("#board-layout-player-top .player-component > .clock-component");
+    const clock = document.querySelector<HTMLElement>("#board-layout-player-top .player-component > .clock-component");
     const actions = ["draw", "resign"].map(kind => document.querySelector<HTMLElement>(
       `#board-layout-sidebar .${kind}-button-component`
     ) ?? [...this.originals.keys()].find(action => action.matches(`.${kind}-button-component`)));
     if (!clock || actions.some(action => !action || action.closest('[role="dialog"], .draw-offer-component'))) {
       this.restore(); return;
     }
+    if (this.row && (this.row.parentElement !== clock.parentElement || this.row.classList.contains("chesscom-vinf-wide-actions") !== wide)) this.restore();
     if (!this.row?.isConnected) {
       this.restore();
       this.row = document.createElement("div");
       this.row.className = "chesscom-vinf-phone-actions";
       this.row.dataset.chesscomVinfOwned = "game-actions";
       clock.before(this.row);
+      if (wide) {
+        this.row.classList.add("chesscom-vinf-wide-actions");
+        this.wideParent = clock.parentElement;
+        this.wideParent?.setAttribute("data-chesscom-vinf-wide-actions", "true");
+      }
     }
     // Native hydration can replace a component while its original anchor survives.
     for (const [action, anchor] of this.originals) {
@@ -57,6 +65,7 @@ export class PhoneGameActionsController {
   }
 
   private restore(): void {
+    this.wideParent?.removeAttribute("data-chesscom-vinf-wide-actions"); this.wideParent = null;
     for (const [action, anchor] of this.originals) {
       if (anchor.isConnected && action.isConnected) anchor.replaceWith(action);
       else anchor.remove();

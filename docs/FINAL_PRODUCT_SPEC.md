@@ -1866,3 +1866,10 @@ Pulse size (×) is available beside resting size and animation duration in deskt
 and Android settings. Default2×; range1×–12×. Rendered peak diameter is capped at
 48px. Thus smaller resting dots can use stronger pulses without increasing their
 normal size; timing and reduced-motion handling remain independent.
+
+
+## 2.9.2 — Wide Extreme actions and desktop clock alignment
+
+Desktop/tablet Extreme exposes native Draw/Resign above the board, with44px
+icon targets and12px spacing. Confirmation remains native and explicit. Desktop
+Extreme clock text has equal12px board/right-edge insets. Phone layout retained.

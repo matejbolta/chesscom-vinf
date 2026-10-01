@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.9.2] - 2026-10-02
+
+- Added original native Draw/Resign controls above the board in desktop/tablet Extreme OLED, with compact icons and native confirmation behavior.
+- Desktop Extreme clock text now has equal 12px board/right-edge insets.
+
 ## [2.9.1] - 2026-10-02
 
 - Added Pulse size (×) beside turn indicator size and duration on desktop/Android. Defaults to 2×, configurable from 1× to 12×, with a 48px rendered diameter cap.

@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.9.1.
+Current source version: 2.9.2.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,25 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Wide Extreme actions and clock insets (2.9.2)
+
+PhoneGameActionsController also relocates original draw/resign roots for wide
+Extreme gameplay. Runtime runs wide relocation after the Extreme controller so
+its active marker gates Escape/finished/disable restoration. Row sits absolutely
+in the native top player component: two44px targets,12px gap,64px right clock
+allowance. Native board/player dimensions are untouched; original comment anchors
+restore exact order. Buttons remain native, including Abort/Resign state and
+confirmation; portalled native confirmation/draw components stay visible in
+Extreme on all widths. Phone layout unchanged. Desktop Extreme numeric clocks
+use content width and12px board/right insets; tablet clock presentation retained.
+
+188 tests/typecheck and both builds pass;40 relevant tests rerun after CSS and
+controller simplification. IAB wide fixture verified visible Draw/Resign, explicit
+fixture confirmation/Cancel, and both desktop clock gaps exactly12px. Tablet
+Extreme shows actions and retains nav. No live game interaction/reload. Screenshot
+ignored under fixtures/raw/actions-2026-10-02/desktop.png. Built2.9.2 awaits loading;
+no push/Store work. No extra observers or polling added.
 
 ## Configurable pulse scale (2.9.1)
 

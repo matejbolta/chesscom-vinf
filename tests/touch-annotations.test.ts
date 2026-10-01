@@ -156,3 +156,26 @@ it("shares phone material/actions in Extreme while keeping its sidebar and entry
   expect(document.querySelector('.resign-button-component')!.parentElement).toBe(original);
   phone.cleanup(document);
 });
+
+it("reuses wide Extreme native actions, restores after Escape/disable, and never auto-confirms", () => {
+  fixture(); const controller = new PhoneGameActionsController();
+  document.documentElement.removeAttribute('data-chesscom-vinf-phone-game');
+  document.documentElement.setAttribute('data-chesscom-vinf-extreme-oled', 'true');
+  const resign = document.querySelector<HTMLButtonElement>('.resign-button-component')!;
+  const original = resign.parentNode!; const before = [...original.childNodes];
+  const open = vi.fn(); resign.addEventListener('click', open);
+  const settings = {...DEFAULT_SETTINGS, extremeOled: true};
+  controller.reconcile(document, game, settings, false, true);
+  controller.reconcile(document, game, settings, false, true);
+  expect(document.querySelectorAll('.chesscom-vinf-wide-actions')).toHaveLength(1);
+  expect(document.querySelector('#board-layout-player-top .chesscom-vinf-wide-actions')!.contains(resign)).toBe(true);
+  expect(open).not.toHaveBeenCalled(); resign.click(); expect(open).toHaveBeenCalledOnce();
+  document.documentElement.removeAttribute('data-chesscom-vinf-extreme-oled'); // Escape/native end cleanup
+  controller.reconcile(document, game, settings, false, true);
+  expect([...original.childNodes]).toEqual(before);
+  expect(document.querySelector('[data-chesscom-vinf-wide-actions]')).toBeNull();
+  document.documentElement.setAttribute('data-chesscom-vinf-extreme-oled', 'true');
+  controller.reconcile(document, game, settings, false, true);
+  controller.reconcile(document, game, {...settings, enabled: false}, false, true);
+  expect([...original.childNodes]).toEqual(before);
+});

@@ -1178,3 +1178,37 @@ html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] .chessc
 .chesscom-vinf-last-move.top { bottom: calc(100% + 10px + var(--vinf-turn-size, 12px) / 2); transform: translate(-50%, 50%); }
 .chesscom-vinf-last-move.bottom { top: calc(100% + 10px + var(--vinf-turn-size, 12px) / 2); transform: translate(-50%, -50%); }
 .chesscom-vinf-last-move[data-low="true"] { color: #b65b5b; }
+
+/* Wide Extreme controls retain native handlers, without taking layout space. */
+[data-chesscom-vinf-wide-actions] { position: relative; }
+.chesscom-vinf-phone-actions.chesscom-vinf-wide-actions {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  right: 64px;
+  width: 100px; height: 44px; padding: 0; gap: 12px;
+  z-index: 1000; pointer-events: auto;
+}
+.chesscom-vinf-wide-actions > div { width: 44px; max-width: none; }
+.chesscom-vinf-wide-actions > div > :is(button, [role="button"]) {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; min-width: 44px; height: 44px; padding: 0; margin: 0;
+  border: 0; border-radius: 0; background: transparent; color: #bbb; font-size: 0; gap: 0;
+}
+.chesscom-vinf-wide-actions > div > :is(button, [role="button"]) * { font-size: 0; }
+.chesscom-vinf-wide-actions > div > :is(button, [role="button"]) :is(svg, [data-glyph], .icon-font-chess, [aria-hidden="true"]) {
+  width: 20px; height: 20px; font-size: 20px;
+}
+html[data-chesscom-vinf-extreme-oled] body :is(
+  .chesscom-vinf-wide-actions, .chesscom-vinf-wide-actions *,
+  [role="dialog"], [role="dialog"] *, [role="alertdialog"], [role="alertdialog"] *,
+  .cc-confirmation-popover-popover, .cc-confirmation-popover-popover *,
+  .cc-confirmation-modal-modal, .cc-confirmation-modal-modal *,
+  .draw-offer-component, .draw-offer-component *, .draw-request-component, .draw-request-component *
+) { visibility: visible !important; }
+html[data-chesscom-vinf-extreme-oled] body :is([role="dialog"], [role="alertdialog"], .cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) { color: #bbb; }
+
+/* Equal 12px gaps from desktop Extreme clock text to board and right edge. */
+.chesscom-vinf-desktop-extreme-controls .chesscom-vinf-extreme-time {
+  left: auto; right: 12px; width: max-content; height: auto; padding: 0;
+}
+.chesscom-vinf-desktop-extreme-controls .chesscom-vinf-extreme-time.top { top: auto; bottom: calc(100% + 12px); }
+.chesscom-vinf-desktop-extreme-controls .chesscom-vinf-extreme-time.bottom { top: calc(100% + 12px); }

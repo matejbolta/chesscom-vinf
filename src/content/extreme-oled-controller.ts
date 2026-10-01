@@ -240,6 +240,8 @@ export class ExtremeOledController {
     setAttribute(document.documentElement, this.normalClocks ? NORMAL : ACTIVE, "true");
     const rowClocks = this.normalClocks || this.desktop || document.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
     this.overlay.classList.toggle("chesscom-vinf-row-clock-controls", rowClocks);
+    const desktopExtreme = this.desktop && !this.normalClocks;
+    this.overlay.classList.toggle("chesscom-vinf-desktop-extreme-controls", desktopExtreme);
     const dotSize = `${this.dotSize}px`;
     if (this.overlay.style.getPropertyValue("--vinf-turn-size") !== dotSize) this.overlay.style.setProperty("--vinf-turn-size", dotSize);
     const rect = this.geometryDirty ? board.getBoundingClientRect() : null;
@@ -299,14 +301,14 @@ export class ExtremeOledController {
           { duration: this.animationDuration, easing: "ease-out" });
       }
       const time = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-time.${side}`)!;
-      if (rowClocks && clock && rect) {
+      if (rowClocks && !desktopExtreme && clock && rect) {
         const clockRect = clock.getBoundingClientRect();
         const width = Math.min(80, clockRect.width);
         time.style.width = `${width}px`;
         time.style.left = `${clockRect.left - rect.left + (clockRect.width - width) / 2}px`;
         time.style.top = `${clockRect.top - rect.top + (clockRect.height - 44) / 2}px`;
       }
-      if (!rowClocks && time.style.width) {
+      if ((!rowClocks || desktopExtreme) && time.style.width) {
         // Phone -> tablet resize restores Extreme's separate clock positions.
         for (const property of ["width", "left", "top"]) time.style.removeProperty(property);
       }

@@ -61,7 +61,7 @@ describe("Extreme OLED", () => {
     expect(board.outerHTML).toBe(original);
     expect(document.querySelector(".chesscom-vinf-extreme-controls")).toBeNull();
   });
-  it("uses normal clock positions and omits navigation only on desktop Extreme", () => {
+  it("uses edge-inset clocks and omits navigation only on desktop Extreme", () => {
     const board = document.querySelector<HTMLElement>("wc-chess-board")!;
     vi.spyOn(board, "getBoundingClientRect").mockReturnValue({left: 100, top: 100, width: 560, height: 560} as DOMRect);
     for (const side of ["top", "bottom"]) {
@@ -70,10 +70,10 @@ describe("Extreme OLED", () => {
     }
     const positions = () => [...document.querySelectorAll<HTMLElement>('.chesscom-vinf-extreme-time')].map(time => time.style.cssText);
     controller.reconcile(document, location, DEFAULT_SETTINGS, true, true);
-    const normalPositions = positions();
+    expect(positions().every(position => position.includes("left: 480px"))).toBe(true);
     controller.reconcile(document, location, settings, true, true);
-    expect(positions()).toEqual(normalPositions);
-    expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.top')!.style.left).toBe('480px');
+    expect(document.querySelector('.chesscom-vinf-desktop-extreme-controls')).not.toBeNull();
+    expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.top')!.style.left).toBe('');
     expect(document.querySelector('.chesscom-vinf-extreme-controls nav')).toBeNull();
     controller.reconcile(document, location, settings, true, false);
     expect(document.querySelectorAll('.chesscom-vinf-extreme-controls nav button')).toHaveLength(2);
