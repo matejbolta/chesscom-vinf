@@ -42,6 +42,7 @@ export function readClockSeconds(text: string): number | null {
 
 export class ExtremeOledController {
   private normalClocks = false;
+  private desktop = false;
   private dotSize = 12;
   private animationDuration = 1000;
   private activePlayer = "";
@@ -85,7 +86,9 @@ export class ExtremeOledController {
     this.cleanup(this.document);
   };
 
-  reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, normalGameClocks = false): boolean {
+  reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, normalGameClocks = false, desktop = false): boolean {
+    if (this.desktop !== desktop) this.cleanup(document);
+    this.desktop = desktop;
     this.dotSize = settings.turnDotSize;
     if (this.animationDuration !== settings.turnAnimationDuration) {
       this.overlay?.querySelectorAll<HTMLElement>(".chesscom-vinf-extreme-turn").forEach(turn =>
@@ -216,7 +219,7 @@ export class ExtremeOledController {
         });
         controls.append(button);
       }
-      if (!this.normalClocks) this.overlay.append(controls);
+      if (!this.normalClocks && !this.desktop) this.overlay.append(controls);
       boardOverlayHost(board).append(this.overlay);
     }
     if (!this.normalClocks && !this.scrollRoom?.isConnected) {
@@ -226,7 +229,7 @@ export class ExtremeOledController {
       document.body.append(this.scrollRoom);
     }
     setAttribute(document.documentElement, this.normalClocks ? NORMAL : ACTIVE, "true");
-    const rowClocks = this.normalClocks || document.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
+    const rowClocks = this.normalClocks || this.desktop || document.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
     this.overlay.classList.toggle("chesscom-vinf-row-clock-controls", rowClocks);
     const dotSize = `${this.dotSize}px`;
     if (this.overlay.style.getPropertyValue("--vinf-turn-size") !== dotSize) this.overlay.style.setProperty("--vinf-turn-size", dotSize);

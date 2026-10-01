@@ -1842,3 +1842,10 @@ button setting is only a fallback for records without a background preference.
 Animation duration (ms) sits below Turn indicator size (px): default 1000,
 0–5000 ms, with zero disabling pulses. Applies to all gameplay presentations;
 respects reduced motion and leaves native game timing untouched.
+
+
+## 2.8.7 — Desktop Extreme OLED controls
+
+Desktop Extreme OLED has no on-screen previous/next arrows; use native keyboard
+navigation. Numeric clocks follow the normal player-row positions on the right.
+Phone and tablet controls stay unchanged, independent of viewport width.

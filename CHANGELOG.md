@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.8.7] - 2026-10-02
+
+- Desktop Extreme OLED omits previous/next arrow buttons and places clocks at the normal player-row positions on the right. Phone/tablet presentation is unchanged.
+
 ## [2.8.6] - 2026-10-01
 
 - Combined OLED background and play-button colors into one OLED mode toggle on desktop and Android; O toggles both.

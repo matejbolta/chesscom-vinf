@@ -221,7 +221,7 @@ export function startVinfRuntime(
     const phone = phoneGameReviewMedia?.matches ?? window.innerWidth <= 599;
     phoneExperienceController.reconcile(document, window.location, settings, phone, android && phone);
     phoneActions.reconcile(document, window.location, settings, android && phone);
-    extremeOledController.reconcile(document, window.location, settings, desktop || android);
+    extremeOledController.reconcile(document, window.location, settings, desktop || android, desktop);
     touchAnnotations.reconcile(document, window.location, settings, android);
     androidGameControls.reconcile(document, window.location, settings, android);
   }

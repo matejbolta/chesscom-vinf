@@ -227,7 +227,7 @@ if (window.location.pathname === "/extreme-oled") {
   const extreme = new ExtremeOledController();
   const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme") };
   const apply = () => extreme.reconcile(document,
-    { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings);
+    { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings, searchParams.has("desktop"), searchParams.has("desktop"));
   const fixtureBoard = document.querySelector<HTMLElement>("wc-chess-board")!;
   const initialBounds = fixtureBoard.getBoundingClientRect();
   document.body.dataset.nativeBoardBounds = JSON.stringify({x:initialBounds.x,y:initialBounds.y,width:initialBounds.width,height:initialBounds.height});
@@ -296,7 +296,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
     actions.reconcile(document, route, settings, window.innerWidth <= 599 && !searchParams.has("desktop"));
-    clocks.reconcile(document, route, settings, game);
+    clocks.reconcile(document, route, settings, game, searchParams.has("desktop"));
     androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
     annotations.reconcile(document, route, settings, !searchParams.has("desktop"));
   };

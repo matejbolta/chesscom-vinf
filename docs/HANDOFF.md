@@ -2,8 +2,8 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-10-01.
-Current source version: 2.8.6.
+Last updated: 2026-10-02.
+Current source version: 2.8.7.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,25 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Desktop Extreme OLED controls (2.8.7)
+
+Runtime passes its existing desktop device classification into the shared clock
+controller. Desktop Extreme omits the owned previous/next nav and uses the same
+native player-row clock geometry/style as normal mode. Phone/tablet retain their
+previous navigation/presentation; this is device-based, not a width breakpoint.
+Native keyboard handling and board geometry are untouched. Device-mode changes
+clean up the overlay before recreation so positions/nav cannot remain stale.
+
+Typecheck, 185 tests and desktop/Android builds pass. IAB sanitized Extreme
+fixture (1280x768): board bounds remain x360/y126/560x560; clocks move to the
+right edge x920, no nav; non-desktop fixture retains both buttons. No console
+errors in that fixture. Test compares normal vs desktop Extreme clock positions,
+touch restoration and disable cleanup. Evidence is ignored under
+fixtures/raw/desktop-extreme-2026-10-02/after.png.
+User was actively playing: Brave and the real game were not touched, and the
+extension was NOT reloaded. Built 2.8.7 must be loaded after play ends. No push,
+Store work, or actual live-game verification.
 
 ## Unified OLED and turn animation settings (2.8.6)
 
