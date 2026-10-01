@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-01.
-Current source version: 2.8.4.
+Current source version: 2.8.5.
+2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
 2.8.2 removes only the desktop Alt promotion-shortcut help row; annotation color help remains.
@@ -64,6 +65,24 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Desktop Review B selector correction (2.8.5)
+
+The 2.8.0 selector covered only the narrow footer, so B was a no-op on the actual
+wide desktop Review. Read-only DOM inspection of Analysis 2026.9.8 found an
+unlabelled native button under `.move-by-move-coach-section .flow-buttons-component`,
+identified by `svg[data-glyph="circle-fill-star"]`. B now clicks that button, with
+the narrow `aria-label="Best"` control retained as a fallback. Existing route,
+visibility, disabled, typing, modifier and repeat guards remain. No layout change.
+
+Actual signed-in Brave verification: reproduced failure on 2.8.4, compared native
+Best click, reloaded 2.8.5, and confirmed B opens the same native best variation.
+A second B with Best absent did nothing. Returned to the originally selected move;
+closed DevTools and the temporary extensions tab. Only a completed game's Review
+was used. Sanitized markup lives in `tests/fixtures/review-desktop-controls.html`;
+private screenshot is ignored under `fixtures/raw/desktop-best-2026-10-01/after-b.png`.
+Typecheck, all 184 tests and desktop/Android builds pass. No device verification,
+real live-game actions, GitHub push or Store work.
 
 ## Extreme rows and retired clock toggle (2.8.1)
 

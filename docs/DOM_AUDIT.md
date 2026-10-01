@@ -14,6 +14,23 @@ desktop window narrow enough to activate Chess.com's phone layout
 Responsive coverage: sanitized homepage and Game Review fixtures; live signed-in
 Android capture was unavailable in this session
 
+## Desktop Best move control — 2026-10-01 (2.8.5)
+
+Actual signed-in Brave desktop Game Review, native Analysis package 2026.9.8:
+`.move-by-move-coach-section .flow-buttons-component` contains Explain / Best /
+Next native buttons. Best has no aria-label; its child SVG has
+`data-glyph="circle-fill-star"`, and its label span is `.flow-buttons-label`.
+Scope the icon lookup to this coach flow group; do not select arbitrary star
+buttons or depend on the English label. The narrow footer uses the previously
+recorded `.game-controls-view-component button[aria-label="Best"]` variant.
+The desktop button disappears when showing the best variation. Keep visibility
+and enabled guards, and do nothing when absent. This corrects 2.8.0's unverified
+assumption that the narrow selector also covered desktop.
+
+Sanitized contract: `tests/fixtures/review-desktop-controls.html`. Live B on 2.8.5
+reproduced native Best click behavior; B with the button absent was a no-op.
+No live match was altered. Internal classes/glyphs remain subject to site changes.
+
 ## Route and homepage guard
 
 - Verified URL: `https://www.chess.com/home`

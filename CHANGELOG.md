@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.8.5] - 2026-10-01
+
+- Fixed desktop Review B to activate the native Best move control beneath the coach.
+
 ## [2.8.4] - 2026-10-01
 
 - Aligned the Desktop shortcuts heading with other settings titles by removing double padding.

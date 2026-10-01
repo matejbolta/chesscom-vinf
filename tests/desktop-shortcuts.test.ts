@@ -35,8 +35,8 @@ it("synchronizes desktop O/E, leaves T unhandled, and ignores typing, modifiers 
   await press("e"); await press("t");
   expect(save).toHaveBeenCalledTimes(2);
   expect(document.querySelector('.chesscom-vinf-extreme-controls')).toBeNull();
-  document.body.insertAdjacentHTML('beforeend', '<div class="game-controls-view-component"><button aria-label="Best">Best</button></div>');
-  const best = document.querySelector<HTMLButtonElement>('[aria-label="Best"]')!;
+  document.body.insertAdjacentHTML('beforeend', readFileSync('tests/fixtures/review-desktop-controls.html', 'utf8'));
+  const best = document.querySelector<HTMLButtonElement>('.flow-buttons-component button:has([data-glyph="circle-fill-star"])')!;
   vi.spyOn(best, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList);
   const click = vi.fn(); best.addEventListener('click', click);
   await press('b'); expect(click).toHaveBeenCalledTimes(1);
@@ -46,6 +46,16 @@ it("synchronizes desktop O/E, leaves T unhandled, and ignores typing, modifiers 
   best.hidden = false; best.disabled = true; await press('b');
   best.disabled = false; await press('b', input); await press('b', document.body, {ctrlKey:true});
   expect(click).toHaveBeenCalledTimes(2);
+  best.remove(); // Best is absent when the played move is already best.
+  const otherClicks = vi.fn();
+  document.querySelectorAll('.flow-buttons-component button').forEach(button => button.addEventListener('click', otherClicks));
+  await press('b'); expect(otherClicks).not.toHaveBeenCalled();
+  // Retain the native narrow-layout variant without requiring English desktop text.
+  document.body.insertAdjacentHTML('beforeend', '<div class="game-controls-view-component"><button aria-label="Best">Best</button></div>');
+  const narrowBest = document.querySelector<HTMLButtonElement>('[aria-label="Best"]')!;
+  vi.spyOn(narrowBest, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList);
+  narrowBest.addEventListener('click', click);
+  await press('b'); expect(click).toHaveBeenCalledTimes(3);
   window.history.replaceState({}, "", "/home");
   window.dispatchEvent(new PopStateEvent("popstate"));
   vi.clearAllTimers(); vi.useRealTimers();

@@ -446,6 +446,8 @@ export function startVinfRuntime(
       event.stopImmediatePropagation();
       if (event.repeat) return;
       const best = [...document.querySelectorAll<HTMLButtonElement>(
+        // Desktop coach controls have no aria-label; the native star identifies Best.
+        '.move-by-move-coach-section .flow-buttons-component button:has(svg[data-glyph="circle-fill-star"]), ' +
         '.game-controls-view-component button[aria-label="Best"]'
       )].find(button => !button.disabled && button.getAttribute("aria-disabled") !== "true" &&
         !button.closest('[hidden], [aria-hidden="true"], .cc-button-disabled') &&
