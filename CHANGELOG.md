@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-10-02
+
+- Match the phone Review dock to the four-slot playing dock: optional Hint, Previous, Start/Next, and optional Best move. Keep the two larger middle controls fixed when optional actions disappear.
+- Use the native Start Review action in the next-arrow slot until Review starts, then show native single-move Next. Retain first-entry graph positioning, native handlers, disabled states and safe-area clearance.
+
 ## [2.10.2] - 2026-10-02
 
 - Fix turn/last-move alignment at the exact board midpoint. Give last moves the clock's font size and own-side clock color, independent of dot settings.

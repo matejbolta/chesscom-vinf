@@ -1348,3 +1348,41 @@ html[data-chesscom-vinf-review-extreme] .game-arc-component { filter: brightness
 html:is([data-chesscom-vinf-phone-material], [data-chesscom-vinf-review-clean]) wc-captured-pieces .captured-pieces-cpiece[class*="captured-pieces-b-"] {
   filter: brightness(1.65);
 }
+
+/* Phone Review mirrors the live dock's four-slot geometry. Keep native DOM
+   order/handlers; fixed columns don't shift when Hint or Best is absent. */
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-review] .game-controls-view-component > [data-chesscom-vinf-review-dock] {
+    --chesscom-vinf-nav-gap: 5px;
+    display: grid;
+    grid-template-columns: calc((100% - 20px) / 5) minmax(0, 1fr) minmax(0, 1fr) calc((100% - 20px) / 5);
+    column-gap: var(--chesscom-vinf-nav-gap);
+    width: min(100%, 400px); left: 50%; transform: translateX(-50%);
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] :is(.mobile-gr-footer-group-start, .mobile-gr-footer-group-end) {
+    display: contents;
+  }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button {
+    grid-row: 1; width: 100%; min-width: 0; height: 60px; min-height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; margin: 0; border: 1px solid var(--color-border-default, #444);
+    border-radius: 12px; box-shadow: none;
+    background: var(--color-bg-tertiary, #393734); color: var(--color-text-default, #ededed);
+  }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Explain"] { grid-column: 1; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Previous Move"] { grid-column: 2; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:is([aria-label="Next Move"], [aria-label="Start Review"]) { grid-column: 3; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Best"] { grid-column: 4; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] .mobile-gr-footer-primary:not([aria-label="Start Review"]),
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock]:has(.mobile-gr-footer-primary[aria-label="Start Review"]) button[aria-label="Next Move"] {
+    display: none !important;
+  }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:is([aria-label="Previous Move"], [aria-label="Next Move"]) svg { width: 32px; height: 32px; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:disabled { opacity: .35; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:focus-visible { outline: 2px solid #aaa; outline-offset: -3px; }
+  html[data-chesscom-vinf-phone-review]:is([data-chesscom-vinf-oled="true"], [data-chesscom-vinf-review-extreme]) [data-chesscom-vinf-review-dock] button {
+    background: #0a0a0a; border-color: #1c1c1c !important; color: #ededed !important;
+  }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Start Review"] { color: #95bb4a !important; }
+}

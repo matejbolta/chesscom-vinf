@@ -1,10 +1,14 @@
 import { expect, it, vi } from 'vitest';
 import { ReviewEntryScroll } from '../src/content/review-entry-scroll';
 
-it('reveals a graph without coach text, follows late layout, survives another tap, and yields to manual scroll', async () => {
+it.each([false, true])('reveals a graph from primary or next-arrow entry (%s), follows late layout and yields to manual scroll', async arrow => {
   vi.useFakeTimers();
   document.body.innerHTML = '<div id="charts"><div data-chesscom-vinf-review-graph="moved"></div></div><div class="game-controls-view-component"><div class="mobile-gr-footer-footer"><button class="mobile-gr-footer-primary">Next</button></div></div>';
   const button = document.querySelector('button')!;
+  if (arrow) {
+    button.className = ''; button.setAttribute('aria-label', 'Next Move');
+    button.parentElement!.setAttribute('data-chesscom-vinf-review-dock', '');
+  }
   let y = 0, bottom = 800;
   vi.spyOn(window, 'scrollY', 'get').mockImplementation(() => y);
   vi.spyOn(document.querySelector('#charts > div')!, 'getBoundingClientRect').mockImplementation(() => ({height:100,bottom:bottom-y} as DOMRect));

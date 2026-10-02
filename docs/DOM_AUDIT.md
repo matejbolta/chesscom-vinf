@@ -1116,3 +1116,20 @@ root internal cause unverified. Fallback deliberately checks this narrow state
 and retries native Start once, never Next. Tests cover changed board, manual
 second tap, unknown/Next, cancellation, missing speech, and late graph geometry.
 Native speech hidden words use visibility:hidden; retain that behavior.
+
+
+## 2.11.0 — Four-slot phone Review dock
+
+Saved native mobile-gr-footer CSS and before/in-moves HTML establish direct
+`.game-controls-view-component > .mobile-gr-footer-footer`, group-start/end,
+Explain, Best, Previous Move, Next Move, and the primary Start Review/Next labels.
+The exact known schema receives data-chesscom-vinf-review-dock; unknown button
+labels fail open. CSS flattens groups visually with display:contents and assigns
+fixed columns without changing native DOM or handlers. Start occupies column 3
+until its native label changes; ordinary Next Move then becomes visible there.
+No synthetic Next action or checkpoint action is substituted. Optional Explain
+and Best leave empty outer slots. Share remains hidden by the existing rule.
+Sanitized visual harness models native Start star, delayed Start transition,
+optional-action removal (h/b) and disable restoration (d). ReviewDock unit test
+checks original handlers, disabled state, optional actions and unknown-schema
+cleanup; graph-reveal regression covers ordinary Next as well as primary Start.

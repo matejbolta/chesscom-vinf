@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.10.2.
+Current source version: 2.11.0.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,26 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Phone Review dock (2.11.0)
+
+Phone only: four fixed slots match the native playing dock geometry (400px max,
+10px padding, 5px gaps, larger middle buttons). Order is optional Explain/Hint,
+Previous Move, Start Review/Next Move, optional Best. “Pass move” was interpreted
+as conditional Best move; user clarification was requested, with no reply before
+implementation. Native Start occupies slot 3 until Chess.com changes its label;
+then native Next Move replaces it. The separate Next-key-move primary is hidden.
+No controls are cloned or reparented; native handlers/disabled states remain.
+ReviewDock marks only the known footer/button schema and fails open on unknown
+actions. Cleanup removes the marker. First ordinary Next also arms the existing
+one-time graph reveal when opening directly into move-by-move Review.
+
+Typecheck and 199 tests passed. Local browser fixture checks cover native
+Start-to-Next transition, exact fixed-slot geometry at 390px, 320px reflow,
+optional Hint/Best removal without arrow movement, native Next activation and
+disable restoration. No browser console warnings/errors were captured.
+Actual Firefox Android remains unverified. Desktop/tablet layouts are unchanged.
+No push, Store package, upload, or listing changes.
 
 ## Follow-up corrections (2.10.2)
 
@@ -174,7 +194,7 @@ One known IAB MutationObserver/Node error appeared at initial preview setup;
 fixture error capture remained empty, with no subsequent fixture errors.
 Evidence is ignored under fixtures/raw/review-clean-2026-10-02/.
 No real game or live browser reload, network calls, push or Store artifacts.
-Built 2.10.2 awaits loading. Actual Firefox Android/tablet and live Review
+Built 2.11.0 awaits loading. Actual Firefox Android/tablet and live Review
 integration need user testing.
 
 ## Board-edge clock and move-follow corrections (2.9.3)

@@ -33,7 +33,7 @@ export class ReviewEntryScroll {
 
   private readonly click = (event: MouseEvent): void => {
     const button = (event.target as Element | null)?.closest<HTMLButtonElement>(
-      '.game-controls-view-component .mobile-gr-footer-primary');
+      '.game-controls-view-component .mobile-gr-footer-primary, [data-chesscom-vinf-review-dock] button[aria-label="Next Move"]');
     if (!button || button.disabled || button.getAttribute('aria-disabled') === 'true') return;
     if (this.used) { this.start = null; return; }
     this.used = true;

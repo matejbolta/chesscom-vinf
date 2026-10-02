@@ -347,7 +347,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   if (pendingReview) {
     reviewMoves?.classList.remove('move-by-move-component');
     primaryReview?.setAttribute('aria-label', 'Start Review');
-    primaryReview?.insertAdjacentHTML('beforeend', '<svg data-glyph="move-circle-best"></svg>');
+    if (primaryReview) primaryReview.innerHTML = '<span><svg data-glyph="move-circle-best" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/></svg></span>';
   }
   document.querySelector('.mobile-gr-footer-primary')?.addEventListener('click', () => {
     if (pendingReview && startClicks < 2) {
@@ -388,6 +388,8 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     });
   }
   document.addEventListener("keydown", event => {
+    if (!game && event.key === "b") document.querySelector('.mobile-gr-footer-footer [aria-label="Best"]')?.remove();
+    if (!game && event.key === "h") document.querySelector('.mobile-gr-footer-footer [aria-label="Explain"]')?.remove();
     if (!game && event.key === "x") settings.extremeOled = !settings.extremeOled;
     if (!game && event.key === "p") document.querySelectorAll('.move-feedback-speech-text-component').forEach(node => {
       node.textContent = '';
