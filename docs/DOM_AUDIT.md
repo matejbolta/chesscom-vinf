@@ -1133,3 +1133,20 @@ Sanitized visual harness models native Start star, delayed Start transition,
 optional-action removal (h/b) and disable restoration (d). ReviewDock unit test
 checks original handlers, disabled state, optional actions and unknown-schema
 cleanup; graph-reveal regression covers ordinary Next as well as primary Start.
+
+
+## 2.11.1 — Resume and native startup evidence (2026-10-03)
+
+Saved native eager.js (September 28 capture) flow descriptor Resume uses
+`game-review-resume-btn`, label Resume and returns to bestModeReturnMoveNumber.
+Start descriptor calls t9(true); t9 chooses first checkpoint then O8 delegates
+to Syt, whose walk schedules steps at 200ms. This invalidates treating changed
+summary text as sufficient evidence to replay Start. No new network request or
+private runtime call was introduced. Device video shows old footer immediately
+after Best; the previous allowlist omitted this native Resume state.
+
+Sanitized harness now models asynchronous single-click Start and Best/Resume,
+plus material-edge / extra-piece width boundaries. Native captured-pieces-score
+remains a sibling of sprites; final sibling selection uses :has(+ score), not a
+new wrapper that could interfere with Vue. Geometry tests cover single reveal,
+manual cancellation, no replay, and unchanged same-route game entry behavior.

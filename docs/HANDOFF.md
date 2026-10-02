@@ -2,8 +2,8 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-10-02.
-Current source version: 2.11.0.
+Last updated: 2026-10-03.
+Current source version: 2.11.1.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,44 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Phone regression correction (2.11.1)
+
+October 3 device recording (70.1984s) inspected at 2s intervals, 250ms around
+8–16s and 100ms around Best/Resume at 32–35s. Coach appears at ~12.8s and pushes
+the board down; later sentence heights continue changing it. Best at ~34s brings
+back the old footer. Saved native eager source explicitly supplies Resume and
+returns to bestModeReturnMoveNumber. Add Resume to the audited schema and slot 4;
+do not remove the whole dock marker for that valid state. Honor hidden buttons.
+
+Phone coach now reserves 88px (smaller than the rejected old 128px), including
+empty/transient speech, with local overflow. Review disables browser scroll
+anchoring. Entry waits for native Start to disappear and stable graph geometry,
+then scrolls at most once, cancels on manual scrolling and never rearms on moves.
+Remove the earlier automatic Start retry: report text is not a readiness signal.
+Native source Start -> first checkpoint -> animated walk schedules one ply per
+200ms, so loading/that native animation can still take time. Do not claim actual
+Android startup latency is eliminated or invent private state changes to skip it.
+
+Phone game entry uses the native clock center and board top to balance viewport
+space against board space (target = 2*clockCenter - boardTop in document coords,
+accounting for visualViewport offset). Preserve native board/row sizing and input
+cancellation. Bottom sidebar padding/margins removed. Material lane permits a
+16px score suffix, reclaiming 12px of the left inset without widening into
+the indicator lane; final native sprite reserves the suffix width, score uses
+negative margin, so it cannot wrap alone. No Vue child reparenting or cloned text.
+
+Validation: typecheck/full 196 tests (obsolete Start-retry cases replaced); builds
+for desktop and Android. IAB 390x740 game fixture: board top56, top clock center28,
+bottom center474 between board bottom446 and tabs top502. Boundary fixture keeps
++2 on first row, then wraps final sprite group and score together after addition.
+Review Best/Resume fixed columns; empty/long/delayed text retains board top132 at
+390x740. At 390x650 graph bottom562 stays 8px above dock570, no further scrolling
+through Best/Resume or delayed text; Extreme same geometry. Very short screens
+cannot show all coach content plus an unchanged native board and graph at once;
+manual scrolling/local coach overflow remain available. No console errors seen.
+Actual new Firefox Android build remains unverified; supplied video is baseline.
+Pokémon concept is brainstorming only. No push, Store package or screenshots.
 
 ## Phone Review dock (2.11.0)
 
@@ -194,7 +232,7 @@ One known IAB MutationObserver/Node error appeared at initial preview setup;
 fixture error capture remained empty, with no subsequent fixture errors.
 Evidence is ignored under fixtures/raw/review-clean-2026-10-02/.
 No real game or live browser reload, network calls, push or Store artifacts.
-Built 2.11.0 awaits loading. Actual Firefox Android/tablet and live Review
+Built 2.11.1 awaits loading. Actual Firefox Android/tablet and live Review
 integration need user testing.
 
 ## Board-edge clock and move-follow corrections (2.9.3)

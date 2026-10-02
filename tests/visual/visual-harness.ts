@@ -293,6 +293,10 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   if (searchParams.has("full-material")) document.querySelectorAll('wc-captured-pieces > div').forEach((row, i) => {
     row.innerHTML = `<span class="captured-pieces-cpiece captured-pieces-${i ? 'w' : 'b'}-8-pawns" style="font-size:18px;color:${i ? '#eee' : '#333'}">♟♟♟♟♟♟♟♟</span><span class="captured-pieces-cpiece">♞♞</span><span class="captured-pieces-cpiece">♜♜</span><span class="captured-pieces-cpiece">♛</span><span class="captured-pieces-score">+3</span>`;
   });
+  if (searchParams.has("material-edge")) document.querySelectorAll('wc-captured-pieces > div').forEach(row => {
+    const lastWidth = searchParams.has('extra-piece') ? 48 : 24;
+    row.innerHTML = `<span class="captured-pieces-cpiece" style="width:60px">♟♟♟♟</span><span class="captured-pieces-cpiece" style="width:28px">♞♞</span><span class="captured-pieces-cpiece" style="width:28px">♝♝</span><span class="captured-pieces-cpiece" style="width:${lastWidth}px">♜${lastWidth > 24 ? '♜' : ''}</span><span class="captured-pieces-score">+2</span>`;
+  });
   const annotationEvents: string[] = [];
   for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture"]) {
     document.addEventListener(type, event => {
@@ -350,19 +354,16 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     if (primaryReview) primaryReview.innerHTML = '<span><svg data-glyph="move-circle-best" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/></svg></span>';
   }
   document.querySelector('.mobile-gr-footer-primary')?.addEventListener('click', () => {
-    if (pendingReview && startClicks < 2) {
+    if (pendingReview && startClicks === 0) {
       startClicks++; document.body.dataset.startClicks = String(startClicks);
-      if (startClicks === 1) setTimeout(() => {
-        document.querySelectorAll('.move-feedback-speech-text-component').forEach(node => node.textContent = 'Your completed report is ready. Let us review the key moves.');
-      }, 400);
-      else {
+      setTimeout(() => {
         reviewMoves?.classList.add('move-by-move-component');
         primaryReview?.setAttribute('aria-label', 'Next');
         primaryReview?.querySelector('svg[data-glyph]')?.setAttribute('data-glyph', 'arrow-triangle-point-right');
         const pawn = document.querySelector<HTMLElement>('#board-analysis-board .wp');
         if (pawn) { pawn.classList.add('fixture-checkpoint'); pawn.style.top = '50%'; }
         apply();
-      }
+      }, 1200);
     }
 
     if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
@@ -387,6 +388,18 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
       document.body.dataset[kind] = `${Math.floor((event.clientX - rect.left) / rect.width * 8)},${Math.floor((event.clientY - rect.top) / rect.height * 8)}`;
     });
   }
+  const bestFixture = document.querySelector<HTMLButtonElement>('.mobile-gr-footer-footer [aria-label="Best"]');
+  bestFixture?.addEventListener('click', () => {
+    bestFixture.hidden = true;
+    primaryReview?.setAttribute('aria-label', 'Resume');
+    apply();
+  });
+  primaryReview?.addEventListener('click', () => {
+    if (primaryReview.getAttribute('aria-label') !== 'Resume') return;
+    primaryReview.setAttribute('aria-label', 'Next');
+    if (bestFixture) bestFixture.hidden = false;
+    apply();
+  });
   document.addEventListener("keydown", event => {
     if (!game && event.key === "b") document.querySelector('.mobile-gr-footer-footer [aria-label="Best"]')?.remove();
     if (!game && event.key === "h") document.querySelector('.mobile-gr-footer-footer [aria-label="Explain"]')?.remove();

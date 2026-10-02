@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.11.1] - 2026-10-03
+
+- Keep the phone four-slot Review dock when Best move becomes native Resume; retain its return-to-played-line action in the rightmost slot.
+- Stabilize the phone coach at a compact 88px with local overflow, disable Review scroll anchoring, and reveal the graph once after native entry settles instead of repeatedly correcting scroll.
+- Remove the automatic Start Review re-click; preserve the native single-click checkpoint animation without replaying or guessing readiness.
+- Balance phone game entry around the top control row, trim sidebar spacing below the bottom row, and keep material scores with the final captured-piece group when wrapping.
+
 ## [2.11.0] - 2026-10-02
 
 - Match the phone Review dock to the four-slot playing dock: optional Hint, Previous, Start/Next, and optional Best move. Keep the two larger middle controls fixed when optional actions disappear.

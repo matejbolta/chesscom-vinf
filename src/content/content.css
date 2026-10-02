@@ -1296,10 +1296,10 @@ html[data-chesscom-vinf-review-clean] .evaluation-bar-bar { isolation: isolate; 
   html[data-chesscom-vinf-review-clean] #mobile-toolbar { display: none !important; }
   /* Remove the hidden navigation's native body offset as well as the coach's
      fixed-height shell. Do not change native board geometry variables. */
-  html[data-chesscom-vinf-review-clean] body { padding-top: 0 !important; }
+  html[data-chesscom-vinf-review-clean] body { padding-top: 0 !important; overflow-anchor: none; }
   html[data-chesscom-vinf-phone-game] body { padding-top: 0 !important; overflow-anchor: none; }
   html[data-chesscom-vinf-review-clean][data-chesscom-vinf-phone-review] .mobile-top-section-container {
-    box-sizing: border-box; height: auto; min-height: 0; max-height: 120px;
+    box-sizing: border-box; height: 88px; min-height: 88px; max-height: 88px;
     padding: 4px 8px; overflow-y: auto; overflow-anchor: none;
   }
   html[data-chesscom-vinf-review-clean] .move-feedback-box-speech-placeholder { height: 0; min-height: 0; }
@@ -1373,16 +1373,28 @@ html:is([data-chesscom-vinf-phone-material], [data-chesscom-vinf-review-clean]) 
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Explain"] { grid-column: 1; }
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Previous Move"] { grid-column: 2; }
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:is([aria-label="Next Move"], [aria-label="Start Review"]) { grid-column: 3; }
-  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Best"] { grid-column: 4; }
-  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] .mobile-gr-footer-primary:not([aria-label="Start Review"]),
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:is([aria-label="Best"], [aria-label="Resume"]) { grid-column: 4; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] .mobile-gr-footer-primary:not([aria-label="Start Review"]):not([aria-label="Resume"]),
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock]:has(.mobile-gr-footer-primary[aria-label="Start Review"]) button[aria-label="Next Move"] {
     display: none !important;
   }
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:is([aria-label="Previous Move"], [aria-label="Next Move"]) svg { width: 32px; height: 32px; }
+  html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[hidden] { display: none !important; }
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:disabled { opacity: .35; }
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button:focus-visible { outline: 2px solid #aaa; outline-offset: -3px; }
   html[data-chesscom-vinf-phone-review]:is([data-chesscom-vinf-oled="true"], [data-chesscom-vinf-review-extreme]) [data-chesscom-vinf-review-dock] button {
     background: #0a0a0a; border-color: #1c1c1c !important; color: #ededed !important;
   }
   html[data-chesscom-vinf-phone-review] [data-chesscom-vinf-review-dock] button[aria-label="Start Review"] { color: #95bb4a !important; }
+}
+
+@media (max-width: 599px) {
+  /* Native row already centers its controls; remove the extra sidebar gap. */
+  html[data-chesscom-vinf-phone-material] #board-layout-sidebar :is(.sidebar-component, .sidebar-content) { padding-top: 0; margin-top: 0; }
+  html[data-chesscom-vinf-phone-material] #board-layout-sidebar .underlined-tabs-component { margin-top: 0; }
+  /* Reserve the score with the final sprite; permit that short suffix to use
+     the left inset rather than encroaching on the centered move indicator. */
+  html[data-chesscom-vinf-phone-material] wc-captured-pieces > div:has(> .captured-pieces-score) { width: calc(100% + 12px); margin-left: -12px; column-gap: 0; }
+  html[data-chesscom-vinf-phone-material] wc-captured-pieces .captured-pieces-cpiece:has(+ .captured-pieces-score) { margin-right: 18px; }
+  html[data-chesscom-vinf-phone-material] wc-captured-pieces .captured-pieces-score { flex: 0 0 16px; margin-left: -16px; white-space: nowrap; }
 }

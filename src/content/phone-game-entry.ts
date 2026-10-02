@@ -24,7 +24,8 @@ export class PhoneGameEntry {
       if (Date.now() >= deadline) { cancel(); return; }
       const player = document.querySelector('#board-layout-player-top');
       const board = document.querySelector('#board-layout-chessboard #board-single');
-      const height = board?.getBoundingClientRect().height ?? 0;
+      const boardRect = board?.getBoundingClientRect();
+      const height = boardRect?.height ?? 0;
       if (document.documentElement.hasAttribute('data-chesscom-vinf-phone-game') &&
           player && height > 0) {
         const top = player.getBoundingClientRect().top + view.scrollY;
@@ -33,8 +34,10 @@ export class PhoneGameEntry {
         stable = geometry === previous ? stable + 1 : 0;
         previous = geometry;
         if (stable >= 2) {
-          const room = 48;
-          const target = Math.max(0, top - room);
+          const clock = player.querySelector('.clock-component')?.getBoundingClientRect();
+          // Equal space on either side of the row's center: viewport -> row -> board.
+          const center = clock?.height ? clock.top + clock.height / 2 : player.getBoundingClientRect().top + 28;
+          const target = Math.max(0, 2 * center - (boardRect?.top ?? center + 28) + view.scrollY - (view.visualViewport?.offsetTop ?? 0));
           // Native hydration and browser restoration can occur after an early
           // stable sample. Settle within this bounded entry window only.
           if (Math.abs(view.scrollY - target) > 1 && corrections < 3) {
