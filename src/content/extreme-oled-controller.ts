@@ -278,8 +278,6 @@ export class ExtremeOledController {
       document.querySelector(`#board-layout-player-${side} .clock-component [role="timer"]`)?.textContent ?? ""
     ));
     const lastMove = this.lastMove.read(document);
-    const activeSeconds = readClockSeconds(active?.querySelector('[role="timer"]')?.textContent ?? "");
-    const activeLow = slowMove || activeSeconds !== null && activeSeconds < 60;
     for (const side of ["top", "bottom"]) {
       const bar = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-clock.${side}`)!;
       const clock = document.querySelector<HTMLElement>(`#board-layout-player-${side} .clock-component`);
@@ -292,9 +290,9 @@ export class ExtremeOledController {
       const notation = showLast ? lastMove!.notation : "";
       if (last.textContent !== notation) last.textContent = notation;
       setAttribute(last, "aria-label", notation ? `Last move: ${notation}` : "Last move");
-      setAttribute(last, "data-low", String(activeLow));
       const text = clock?.querySelector('[role="timer"]')?.textContent ?? "";
       const seconds = readClockSeconds(text);
+      setAttribute(last, "data-low", String(seconds !== null && seconds < 60));
       setAttribute(turn, "data-low", String(!inactive && (slowMove || seconds !== null && seconds < 60)));
       if (!inactive && switched && this.animationDuration > 0 && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         turn.getAnimations?.().forEach(animation => animation.cancel());
@@ -308,11 +306,9 @@ export class ExtremeOledController {
         const clockRect = clock.getBoundingClientRect();
         if (document.documentElement.hasAttribute("data-chesscom-vinf-phone-material")) {
           for (const indicator of [turn, last]) {
-            // Native clock slot follows the two 44px actions and half of the
-            // reserved 64px indicator lane. Reuse its already-read geometry.
-            const x = `${clockRect.left - rect.left - 120}px`;
+            // Keep vertical alignment with the native clock; CSS owns the
+            // fixed board midpoint independently of the other row contents.
             const y = `${clockRect.top - rect.top + clockRect.height / 2}px`;
-            if (indicator.style.getPropertyValue("--vinf-row-x") !== x) indicator.style.setProperty("--vinf-row-x", x);
             if (indicator.style.getPropertyValue("--vinf-row-y") !== y) indicator.style.setProperty("--vinf-row-y", y);
           }
         }

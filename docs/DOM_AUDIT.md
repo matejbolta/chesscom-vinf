@@ -1097,3 +1097,22 @@ Native inactive `.move-time-content` may be dark; inherit the explicitly readabl
 recorded-clock color. Sanitized fixture includes opening/course modules and dark
 inactive child color; harness p simulates delayed coach text, n long text,
 full-material/large-dot parameters exercise phone row density.
+
+
+## 2.10.2 — Native padding and Start Review transition
+
+Saved `chessboard-layout.Cn7fJCzylQ.css` sets body padding using
+`--boardOffsetTop`, including `--horizontalNavHeight`, even when toolbar hides.
+Override actual phone body padding-top only; never change native board geometry
+variables. The old fixture lacked this reservation and underestimated blank area.
+
+Saved before-move HTML identifies Start as an actual button with aria-label
+"Start Review" and svg data-glyph "move-circle-best"; move-by-move button is
+"Next" with "arrow-triangle-point-right". Saved analysis.js maps start-review to
+Du(true) (first key move), next-key-move to a different handler. Saved eager
+source export er calls the first-key selection routine and its animated walk.
+Video first tap changes commentary but leaves Start and initial pieces intact;
+root internal cause unverified. Fallback deliberately checks this narrow state
+and retries native Start once, never Next. Tests cover changed board, manual
+second tap, unknown/Next, cancellation, missing speech, and late graph geometry.
+Native speech hidden words use visibility:hidden; retain that behavior.

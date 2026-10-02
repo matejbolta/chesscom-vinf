@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.10.2] - 2026-10-02
+
+- Fix turn/last-move alignment at the exact board midpoint. Give last moves the clock's font size and own-side clock color, independent of dot settings.
+- Remove reserved navigation padding from active phone games and focused Review. Keep game entry alignment briefly active for late hydration/restoration, with a strict limit and immediate cancellation on user input.
+- Replace the oversized phone coach shell with compact content height; reveal the graph without waiting for speech or cancelling on a second control tap.
+- Honour a stalled first Start Review intent with one guarded native Start retry after changed commentary settles; never replay Next or retry after the board has advanced.
+
 ## [2.10.1] - 2026-10-02
 
 - Give phone game entry a consistent settled position after pairing, reload or returning to an open game; yield to user input.

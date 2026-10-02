@@ -176,12 +176,13 @@ it("corrects inherited clipping once, yields to input, and cancels pending entry
   vi.useFakeTimers(); fixture();
   const entry = new PhoneGameEntry();
   document.documentElement.setAttribute(marker, 'true');
+  let scrollY = 400;
   vi.spyOn(document.querySelector('#board-layout-player-top')!, 'getBoundingClientRect')
-    .mockReturnValue({ top: -200 } as DOMRect);
+    .mockImplementation(() => ({ top: 200 - scrollY } as DOMRect));
   vi.spyOn(document.querySelector('#board-single')!, 'getBoundingClientRect')
     .mockReturnValue({ height: 390, bottom: 250 } as DOMRect);
-  vi.spyOn(window, 'scrollY', 'get').mockReturnValue(400);
-  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+  vi.spyOn(window, 'scrollY', 'get').mockImplementation(() => scrollY);
+  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(options => { scrollY = (options as ScrollToOptions).top!; });
   entry.reconcile(document, '/game/1');
   await vi.advanceTimersByTimeAsync(700);
   expect(scroll).toHaveBeenCalledWith({ top: 152, behavior: 'instant' });
@@ -202,18 +203,23 @@ it('waits for hydration and uses the same target for an already visible row and 
   const entry = new PhoneGameEntry();
   document.documentElement.setAttribute(marker, 'true');
   const rowRect = vi.spyOn(document.querySelector('#board-layout-player-top')!, 'getBoundingClientRect');
-  rowRect.mockReturnValue({top:100} as DOMRect);
+  let top = 100, scrollY = 0;
+  vi.spyOn(window, 'scrollY', 'get').mockImplementation(() => scrollY);
+  rowRect.mockImplementation(() => ({top:top-scrollY} as DOMRect));
   const boardRect = vi.spyOn(document.querySelector('#board-single')!, 'getBoundingClientRect');
   boardRect.mockReturnValue({height:0} as DOMRect);
-  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(options => { scrollY = (options as ScrollToOptions).top!; });
   entry.reconcile(document, '/game/1');
   await vi.advanceTimersByTimeAsync(700); expect(scroll).not.toHaveBeenCalled();
   boardRect.mockReturnValue({height:390} as DOMRect);
   await vi.advanceTimersByTimeAsync(500);
   expect(scroll).toHaveBeenLastCalledWith({top:52,behavior:'instant'});
-  entry.cleanup(); rowRect.mockReturnValue({top:150} as DOMRect);
+  top = 130; // late native layout shift after the first correction
+  await vi.advanceTimersByTimeAsync(600);
+  expect(scroll).toHaveBeenLastCalledWith({top:82,behavior:'instant'});
+  entry.cleanup(); top = 150;
   entry.reconcile(document, '/game/1'); await vi.advanceTimersByTimeAsync(700);
   expect(scroll).toHaveBeenLastCalledWith({top:102,behavior:'instant'});
-  expect(scroll).toHaveBeenCalledTimes(2);
+  expect(scroll).toHaveBeenCalledTimes(3);
   entry.cleanup(); vi.restoreAllMocks(); vi.useRealTimers();
 });

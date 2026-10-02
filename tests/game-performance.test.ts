@@ -24,6 +24,8 @@ it('measures VINF work during native drag frames and unchanged-square drawing', 
   startVinfRuntime({load: async () => DEFAULT_SETTINGS, subscribe: fn => { settingsChanged = fn; }});
   await vi.advanceTimersByTimeAsync(1000);
   const piece = board.querySelector<HTMLElement>('.piece')!;
+  // A real drag begins with input, which also cancels bounded entry settling.
+  piece.dispatchEvent(new MouseEvent('pointerdown', {bubbles:true}));
   bounds.mockClear(); phone.mockClear(); clocks.mockClear();
   for (let i=0;i<60;i++) {
     piece.style.transform = `translate(${i}px, ${i}px)`;

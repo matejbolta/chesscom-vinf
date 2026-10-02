@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.10.1.
+Current source version: 2.10.2.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -65,6 +65,46 @@ synchronize GitHub or the Store unless the user explicitly replaces this
 policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
+
+## Follow-up corrections (2.10.2)
+
+Actual device evidence rejected parts of 2.10.1: phone indicators were left of
+board center, reload landed ~32 CSS px above pairing, and the fixed coach shell
+left the graph offscreen. Do not treat the old simplified fixture passes as
+proof against that evidence. Native chessboard-layout CSS reserves body padding
+for hidden navigation; phone active game/clean Review now override only body
+padding-top (not board dimension variables). Review fixture now models this.
+
+Indicators use exact board 50% midpoint. Phone rows have equal flexible sides
+around a 64px center lane; draw/flag and clock occupy the right side, material
+wraps on the left. Last-move font is 18px phone/16px wide, same family/weight as
+clock; own-side low-time color, independent of dot/slow-turn settings.
+
+Entry samples for at most 5s and allows at most 3 corrections for late native
+layout/restoration, cancelled on pointer/touch/wheel/key input. Active phone
+body disables scroll anchoring to avoid move updates shifting page position.
+Phone Review coach is auto-height capped at 120px with local overflow, with no
+128px minimum. First graph reveal is independent of coach text; control taps do
+not cancel it, but touchmove/wheel/key do. Account for visualViewport and dock.
+Settling stops after a quiet startup (4s minimum, 10s maximum); no persistent
+move-following scroll lock.
+
+New recording shows first green tap changes report commentary but retains the
+initial board/Start star. Audited native source maps Start to the first key move
+and Next to the next key move. A single fallback retries only an enabled exact
+aria-label="Start Review" + data-glyph="move-circle-best", with unchanged piece
+signature, changed/stable report text, and no move-by-move presentation. Minimum
+2s delay; a second user tap or observed board change cancels fallback. Never
+replay Next; unknown markup fails open. This is a bounded workaround for the
+observed native pending-report state, not proof of its internal root cause.
+
+Verification: 197 tests (full suite plus targeted performance rerun with real
+pointerdown before simulated drag), typecheck, desktop/Android builds. IAB phone
+fixture checks center=195 on a 390px board; 4px dot retains 18px notation matching
+clock; late restoration returns 48px; compact 78/102px coach leaves graph visible;
+stalled-start fixture reaches checkpoint on one user tap + one native Start
+retry; no browser errors. Actual Firefox Android fixes still need verification.
+No live games, push, Store package or uploads. See DOM_AUDIT for selectors.
 
 ## Phone entry and Review stability (2.10.1)
 
@@ -134,7 +174,7 @@ One known IAB MutationObserver/Node error appeared at initial preview setup;
 fixture error capture remained empty, with no subsequent fixture errors.
 Evidence is ignored under fixtures/raw/review-clean-2026-10-02/.
 No real game or live browser reload, network calls, push or Store artifacts.
-Built 2.10.1 awaits loading. Actual Firefox Android/tablet and live Review
+Built 2.10.2 awaits loading. Actual Firefox Android/tablet and live Review
 integration need user testing.
 
 ## Board-edge clock and move-follow corrections (2.9.3)

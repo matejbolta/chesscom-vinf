@@ -226,7 +226,7 @@ if (window.location.pathname === "/game-review-mobile") {
 
 if (window.location.pathname === "/extreme-oled") {
   const extreme = new ExtremeOledController();
-  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : DEFAULT_SETTINGS.turnDotSize };
+  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => extreme.reconcile(document,
     { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings, searchParams.has("desktop"), searchParams.has("desktop"));
   if (searchParams.has("last-move")) {
@@ -308,7 +308,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const route = { protocol: "https:", hostname: "www.chess.com",
     pathname: game ? "/game/123456" : "/analysis/game/live/123456/review" };
   const settings = { ...DEFAULT_SETTINGS, enabled: !searchParams.has("native"),
-    extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : DEFAULT_SETTINGS.turnDotSize };
+    extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
     const phoneActions = window.innerWidth <= 599 && !searchParams.has("desktop");
@@ -340,7 +340,31 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
       ? "media-audio-speaker" : "media-audio-speaker-mute");
     document.body.dataset.audioClicks = String(Number(document.body.dataset.audioClicks ?? 0) + 1);
   });
+  const pendingReview = !game && searchParams.has('pending-start');
+  const reviewMoves = document.querySelector('.move-by-move-component');
+  const primaryReview = document.querySelector('.mobile-gr-footer-primary');
+  let startClicks = 0;
+  if (pendingReview) {
+    reviewMoves?.classList.remove('move-by-move-component');
+    primaryReview?.setAttribute('aria-label', 'Start Review');
+    primaryReview?.insertAdjacentHTML('beforeend', '<svg data-glyph="move-circle-best"></svg>');
+  }
   document.querySelector('.mobile-gr-footer-primary')?.addEventListener('click', () => {
+    if (pendingReview && startClicks < 2) {
+      startClicks++; document.body.dataset.startClicks = String(startClicks);
+      if (startClicks === 1) setTimeout(() => {
+        document.querySelectorAll('.move-feedback-speech-text-component').forEach(node => node.textContent = 'Your completed report is ready. Let us review the key moves.');
+      }, 400);
+      else {
+        reviewMoves?.classList.add('move-by-move-component');
+        primaryReview?.setAttribute('aria-label', 'Next');
+        primaryReview?.querySelector('svg[data-glyph]')?.setAttribute('data-glyph', 'arrow-triangle-point-right');
+        const pawn = document.querySelector<HTMLElement>('#board-analysis-board .wp');
+        if (pawn) { pawn.classList.add('fixture-checkpoint'); pawn.style.top = '50%'; }
+        apply();
+      }
+    }
+
     if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
   });
   if (searchParams.has("audio-on")) audio?.querySelector("svg")?.setAttribute("data-glyph", "media-audio-speaker");
@@ -402,5 +426,6 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   });
   window.addEventListener("resize", apply);
   if (searchParams.has("entry")) window.scrollTo(0, 250);
+  if (searchParams.has("late-entry")) setTimeout(() => window.scrollTo(0, 5), 1500);
   apply();
 }

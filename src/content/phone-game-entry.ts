@@ -1,4 +1,4 @@
-/** One settled entry position for pairing, reload and open-game navigation.
+/** Bounded entry alignment for pairing, reload and open-game navigation.
  * User input cancels; moves/clock ticks never rearm a completed entry. */
 export class PhoneGameEntry {
   private route = '';
@@ -15,26 +15,33 @@ export class PhoneGameEntry {
     const cancel = () => { this.done = true; this.cancelPending?.(); };
     const inputs = ['pointerdown', 'touchstart', 'wheel', 'keydown'];
     for (const type of inputs) document.addEventListener(type, cancel, { capture: true, passive: true });
-    const deadline = Date.now() + 2500;
+    const deadline = Date.now() + 5000;
     let previous = '';
     let stable = 0;
     let timer = 0;
+    let corrections = 0;
     const check = () => {
       if (Date.now() >= deadline) { cancel(); return; }
       const player = document.querySelector('#board-layout-player-top');
       const board = document.querySelector('#board-layout-chessboard #board-single');
+      const height = board?.getBoundingClientRect().height ?? 0;
       if (document.documentElement.hasAttribute('data-chesscom-vinf-phone-game') &&
-          player && board && board.getBoundingClientRect().height > 0) {
+          player && height > 0) {
         const top = player.getBoundingClientRect().top + view.scrollY;
-        const geometry = [top, board.getBoundingClientRect().height, view.innerHeight, view.scrollY]
+        const geometry = [top, height, view.innerHeight, view.scrollY]
           .map(Math.round).join(':');
         stable = geometry === previous ? stable + 1 : 0;
         previous = geometry;
         if (stable >= 2) {
-          cancel();
-          const room = Math.min(48, view.innerHeight * .07);
-          view.scrollTo({ top: Math.max(0, top - room), behavior: 'instant' });
-          return;
+          const room = 48;
+          const target = Math.max(0, top - room);
+          // Native hydration and browser restoration can occur after an early
+          // stable sample. Settle within this bounded entry window only.
+          if (Math.abs(view.scrollY - target) > 1 && corrections < 3) {
+            view.scrollTo({ top: target, behavior: 'instant' });
+            corrections++;
+            stable = 0;
+          }
         }
       } else { stable = 0; previous = ''; }
       timer = view.setTimeout(check, 150);
