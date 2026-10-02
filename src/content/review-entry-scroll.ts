@@ -22,7 +22,7 @@ export class ReviewEntryScroll {
     );
     if (!button || button.disabled || button.getAttribute("aria-disabled") === "true" || this.used) return;
     this.used = true;
-    this.deadline = Date.now() + 2500;
+    this.deadline = Date.now() + 5000;
     this.schedule();
   };
 
@@ -37,7 +37,8 @@ export class ReviewEntryScroll {
     const graph = document.querySelector<HTMLElement>('#charts > [data-chesscom-vinf-review-graph="moved"]');
     const footer = document.querySelector<HTMLElement>('.game-controls-view-component > .mobile-gr-footer-footer');
     const rect = graph?.getBoundingClientRect();
-    if (!rect?.height || !footer) { this.schedule(); return; }
+    const speech = document.querySelector('.mobile-top-section-container .move-feedback-speech-text-component');
+    if (!rect?.height || !footer || !speech?.textContent?.trim()) { this.schedule(); return; }
     // Wait for two matching document-space positions after native view changes.
     const view = document.defaultView!;
     const bottom = rect.bottom + view.scrollY;

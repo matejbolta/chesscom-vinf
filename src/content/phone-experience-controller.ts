@@ -81,14 +81,13 @@ export class PhoneExperienceController {
     }
     document.documentElement.setAttribute(GAME, "true");
     document.documentElement.toggleAttribute("data-chesscom-vinf-phone-material", phoneAndroid);
+    this.entry.reconcile(document, route);
     if (settings.extremeOled) {
-      // Share only the player rows; retain Extreme's own spacing and hidden sidebar.
-      this.entry.cleanup();
+      // Share entry positioning and player rows; keep Extreme's scroll room/sidebar.
       this.clearRows();
       this.restoreOpening();
       return;
     }
-    this.entry.reconcile(document, route);
     this.updateRows(document);
     this.moveOpening(document);
   }

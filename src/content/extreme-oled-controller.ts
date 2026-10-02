@@ -306,6 +306,16 @@ export class ExtremeOledController {
       const time = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-time.${side}`)!;
       if (!wideExtreme && clock && rect) {
         const clockRect = clock.getBoundingClientRect();
+        if (document.documentElement.hasAttribute("data-chesscom-vinf-phone-material")) {
+          for (const indicator of [turn, last]) {
+            // Native clock slot follows the two 44px actions and half of the
+            // reserved 64px indicator lane. Reuse its already-read geometry.
+            const x = `${clockRect.left - rect.left - 120}px`;
+            const y = `${clockRect.top - rect.top + clockRect.height / 2}px`;
+            if (indicator.style.getPropertyValue("--vinf-row-x") !== x) indicator.style.setProperty("--vinf-row-x", x);
+            if (indicator.style.getPropertyValue("--vinf-row-y") !== y) indicator.style.setProperty("--vinf-row-y", y);
+          }
+        }
         const width = Math.min(80, clockRect.width);
         time.style.width = `${width}px`;
         time.style.left = `${clockRect.left - rect.left + (clockRect.width - width) / 2}px`;

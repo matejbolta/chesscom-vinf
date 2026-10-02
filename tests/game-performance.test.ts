@@ -8,6 +8,7 @@ import { installAnnotationFixture } from './helpers/native-annotations';
 
 it('measures VINF work during native drag frames and unchanged-square drawing', async () => {
   vi.useFakeTimers();
+  vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
   vi.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue('Mozilla Android Mobile Firefox/130.0');
   vi.stubGlobal('matchMedia', () => ({ matches: true, addEventListener() {} }));
   document.documentElement.innerHTML = new DOMParser().parseFromString(readFileSync('tests/fixtures/phone-game.html', 'utf8'), 'text/html').documentElement.innerHTML;

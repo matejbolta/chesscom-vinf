@@ -1,5 +1,5 @@
-/** One entry correction for the inherited matchmaking scroll, never a scroll
- * lock. Any user input cancels it; clock ticks, moves and resize cannot rearm it. */
+/** One settled entry position for pairing, reload and open-game navigation.
+ * User input cancels; moves/clock ticks never rearm a completed entry. */
 export class PhoneGameEntry {
   private route = '';
   private done = false;
@@ -15,21 +15,31 @@ export class PhoneGameEntry {
     const cancel = () => { this.done = true; this.cancelPending?.(); };
     const inputs = ['pointerdown', 'touchstart', 'wheel', 'keydown'];
     for (const type of inputs) document.addEventListener(type, cancel, { capture: true, passive: true });
-    const timer = view.setTimeout(() => {
-      this.done = true;
-      this.cancelPending?.();
+    const deadline = Date.now() + 2500;
+    let previous = '';
+    let stable = 0;
+    let timer = 0;
+    const check = () => {
+      if (Date.now() >= deadline) { cancel(); return; }
       const player = document.querySelector('#board-layout-player-top');
       const board = document.querySelector('#board-layout-chessboard #board-single');
-      if (!document.documentElement.hasAttribute('data-chesscom-vinf-phone-game') ||
-          !player || !board || board.getBoundingClientRect().height <= 0) return;
-      const top = player.getBoundingClientRect().top;
-      const room = Math.min(48, view.innerHeight * .07);
-      // Leave an already usable position alone. Correct only a clipped player
-      // row/board or an entry position that pushes the board off the bottom.
-      if (top < 0 || board.getBoundingClientRect().bottom > view.innerHeight - 100) {
-        view.scrollTo({ top: Math.max(0, view.scrollY + top - room), behavior: 'instant' });
-      }
-    }, 350);
+      if (document.documentElement.hasAttribute('data-chesscom-vinf-phone-game') &&
+          player && board && board.getBoundingClientRect().height > 0) {
+        const top = player.getBoundingClientRect().top + view.scrollY;
+        const geometry = [top, board.getBoundingClientRect().height, view.innerHeight, view.scrollY]
+          .map(Math.round).join(':');
+        stable = geometry === previous ? stable + 1 : 0;
+        previous = geometry;
+        if (stable >= 2) {
+          cancel();
+          const room = Math.min(48, view.innerHeight * .07);
+          view.scrollTo({ top: Math.max(0, top - room), behavior: 'instant' });
+          return;
+        }
+      } else { stable = 0; previous = ''; }
+      timer = view.setTimeout(check, 150);
+    };
+    timer = view.setTimeout(check, 350);
     this.cancelPending = () => {
       view.clearTimeout(timer);
       for (const type of inputs) document.removeEventListener(type, cancel, true);
@@ -37,5 +47,5 @@ export class PhoneGameEntry {
     };
   }
 
-  cleanup(): void { this.cancelPending?.(); this.done = true; }
+  cleanup(): void { this.cancelPending?.(); this.route = ''; this.done = false; }
 }

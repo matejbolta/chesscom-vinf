@@ -1079,3 +1079,21 @@ The sanitized review fixture now models native player/coach/board shapes and
 wide coach controls; its piece graphics and graph are illustrative, not native
 rendering implementation. Added update/disable/theme fixture keys. Device and
 live integration must not be inferred from local fixture checks.
+
+
+## 2.10.1 — Phone row / Review stability (2026-10-02)
+
+User recording: board jumps when last-book content appears (~15.60s), then shifts
+with typewritten sentences/material. Saved first-party `shared.DiTIVfCzZW.css`
+identifies `.move-feedback-last-book-move-component`, `.recommend-box-container`,
+`.recommend-box-label`, `.recommend-box-divider`; hide only inside
+`.move-feedback-component` during focused Review. `mobile-top-section` CSS used
+fixed speech height before 2.10.0 removed it; reserve a stable 128px phone host with
+local overflow rather than making page height depend on animated coach text.
+Native `.move-feedback-box-speech-placeholder` no longer dictates phone height.
+`analysis.css` supplies `.captured-pieces-cpiece.captured-pieces-b-*` sprites;
+brightness 1.65 applies only these, retaining white sprites and score semantics.
+Native inactive `.move-time-content` may be dark; inherit the explicitly readable
+recorded-clock color. Sanitized fixture includes opening/course modules and dark
+inactive child color; harness p simulates delayed coach text, n long text,
+full-material/large-dot parameters exercise phone row density.

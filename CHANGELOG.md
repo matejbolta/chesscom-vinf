@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.10.1] - 2026-10-02
+
+- Give phone game entry a consistent settled position after pairing, reload or returning to an open game; yield to user input.
+- Reserve a separate phone row slot for turn dots/last moves, align actions and clocks, and wrap long captured material without covering controls. Slightly brighten only dark captured pieces.
+- Halve the paused-clock endcap height.
+- Stabilize phone Review coach/player heights, remove opening/course promotions and restore recorded-clock contrast. Wait for coach content before the first graph reveal; keep longer commentary locally scrollable.
+
 ## [2.10.0] - 2026-10-02
 
 - Simplify move-by-move Game Review on phone, tablet and desktop: remove player identities, coach portraits and decorative headings while retaining commentary, classification/evaluation, captured material, recorded clocks, graph and native controls.

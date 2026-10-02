@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-02.
-Current source version: 2.10.0.
+Current source version: 2.10.1.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
@@ -66,6 +66,40 @@ policy. Existing remote, published-version, and Store-package references below
 are retained only as historical state. All other product, validation, privacy,
 fixture, and handoff rules remain active.
 
+## Phone entry and Review stability (2.10.1)
+
+The user's October 2 recording shows a large board jump at ~15.60s when opening
+statistics/course recommendations mount, then smaller jumps as coach text and
+captured material change. Inspected at 250ms intervals over 47.47s and consecutive
+~30fps frames around 15.5–16s. This is evidence of layout changes, not proof of
+multiple explicit scroll calls. Prior fixtures missed these native modules.
+
+Phone Review now reserves 128px for the coach and 44px for each player row.
+Long commentary scrolls inside the coach area. Hide the audited last-book-move
+module/recommend boxes within coach content; keep sentence, classification and
+all actions. No scroll locking or repeated move-following page scroll. The first
+primary action waits (bounded 5s) for native coach text and a settled moved graph.
+Recorded clocks explicitly inherit a readable text color instead of the native
+dark inactive glyph color. Overview and disabled presentation remain native.
+
+Phone game entry now waits for three matching geometry samples (starting 350ms,
+150ms apart, max 2.5s), then targets top player row at min(48px,7vh). Applies normal
+and Extreme; user input cancels; route cleanup allows same-game re-entry. No
+board sizing/transforms. Phone rows use material + 64px indicator + 44px draw + 44px
+flag + 64px clock slots; pencil spans the two action slots. Material wraps within
+its own slot. Indicator geometry reuses the native clock bounds already read;
+last-move font caps at 14px on phones, independently of dot size. Only native
+black captured sprites get brightness 1.65. Paused endcap is 3.5px rather than 7px.
+
+Checks: typecheck; 194 tests passed; desktop/Android builds. IAB fixtures at
+390×844/700, 800×844, 1280×800: normal/Extreme rows, 24px dot/full material,
+consistent entry 48px, Review graph 8px above dock on short screen, stable board
+through empty/delayed/long coach text, readable clocks, promotions hidden,
+disable restoring identity/promos, no live overlays in Review. Board sizes remain
+native fixture 390px game / 348px phone review / 352px tablet / 528px desktop. No browser console
+errors in revised fixture. Firefox Android with the new userscript remains
+unverified; recording is pre-fix evidence. No real game touched, push or package.
+
 ## Focused Review / Review Extreme (2.10.0)
 
 User approved normal and Extreme review cleanup for all three device classes,
@@ -100,7 +134,7 @@ One known IAB MutationObserver/Node error appeared at initial preview setup;
 fixture error capture remained empty, with no subsequent fixture errors.
 Evidence is ignored under fixtures/raw/review-clean-2026-10-02/.
 No real game or live browser reload, network calls, push or Store artifacts.
-Built 2.10.0 awaits loading. Actual Firefox Android/tablet and live Review
+Built 2.10.1 awaits loading. Actual Firefox Android/tablet and live Review
 integration need user testing.
 
 ## Board-edge clock and move-follow corrections (2.9.3)

@@ -226,7 +226,7 @@ if (window.location.pathname === "/game-review-mobile") {
 
 if (window.location.pathname === "/extreme-oled") {
   const extreme = new ExtremeOledController();
-  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme") };
+  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => extreme.reconcile(document,
     { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings, searchParams.has("desktop"), searchParams.has("desktop"));
   if (searchParams.has("last-move")) {
@@ -290,6 +290,9 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     if (api) api.addOne(api.factory.buildStandardAnalysisHighlight("e4"));
     annotationBoard.insertAdjacentHTML("beforeend", '<div class="hint" style="position:absolute;left:50%;top:62.5%;width:12.5%;height:12.5%;padding:4.2%;box-sizing:border-box;border-radius:50%;background:var(--color-transparent-black-14,rgba(0,0,0,.14));background-clip:content-box;pointer-events:none"></div><div class="capture-hint" style="position:absolute;left:50%;top:12.5%;width:12.5%;height:12.5%;box-sizing:border-box;border:5px solid var(--color-transparent-black-14,rgba(0,0,0,.14));border-radius:50%;pointer-events:none"></div>');
   }
+  if (searchParams.has("full-material")) document.querySelectorAll('wc-captured-pieces > div').forEach((row, i) => {
+    row.innerHTML = `<span class="captured-pieces-cpiece captured-pieces-${i ? 'w' : 'b'}-8-pawns" style="font-size:18px;color:${i ? '#eee' : '#333'}">♟♟♟♟♟♟♟♟</span><span class="captured-pieces-cpiece">♞♞</span><span class="captured-pieces-cpiece">♜♜</span><span class="captured-pieces-cpiece">♛</span><span class="captured-pieces-score">+3</span>`;
+  });
   const annotationEvents: string[] = [];
   for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture"]) {
     document.addEventListener(type, event => {
@@ -305,7 +308,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const route = { protocol: "https:", hostname: "www.chess.com",
     pathname: game ? "/game/123456" : "/analysis/game/live/123456/review" };
   const settings = { ...DEFAULT_SETTINGS, enabled: !searchParams.has("native"),
-    extremeOled: searchParams.has("extreme") };
+    extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
     const phoneActions = window.innerWidth <= 599 && !searchParams.has("desktop");
@@ -362,6 +365,10 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   }
   document.addEventListener("keydown", event => {
     if (!game && event.key === "x") settings.extremeOled = !settings.extremeOled;
+    if (!game && event.key === "p") document.querySelectorAll('.move-feedback-speech-text-component').forEach(node => {
+      node.textContent = '';
+      setTimeout(() => { node.textContent = 'A longer sentence arrives after native coach processing. Develop your knight and protect the center.'; }, 800);
+    });
     if (!game && event.key === "n") document.querySelectorAll('.move-feedback-speech-text-component').forEach(node => node.textContent = 'This move leaves your knight unprotected. Look for a way to develop while keeping it safe.');
     if (event.key === "m") {
       const rows = document.querySelector("wc-simple-move-list > div");

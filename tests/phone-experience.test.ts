@@ -183,7 +183,7 @@ it("corrects inherited clipping once, yields to input, and cancels pending entry
   vi.spyOn(window, 'scrollY', 'get').mockReturnValue(400);
   const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
   entry.reconcile(document, '/game/1');
-  await vi.advanceTimersByTimeAsync(350);
+  await vi.advanceTimersByTimeAsync(700);
   expect(scroll).toHaveBeenCalledWith({ top: 152, behavior: 'instant' });
   entry.reconcile(document, '/game/1'); await vi.advanceTimersByTimeAsync(1000);
   expect(scroll).toHaveBeenCalledTimes(1);
@@ -195,4 +195,25 @@ it("corrects inherited clipping once, yields to input, and cancels pending entry
   entry.reconcile(document, '/game/3'); entry.cleanup();
   await vi.advanceTimersByTimeAsync(400); expect(scroll).toHaveBeenCalledTimes(1);
   scroll.mockRestore(); vi.restoreAllMocks();
+});
+
+it('waits for hydration and uses the same target for an already visible row and same-route re-entry', async () => {
+  vi.useFakeTimers(); fixture();
+  const entry = new PhoneGameEntry();
+  document.documentElement.setAttribute(marker, 'true');
+  const rowRect = vi.spyOn(document.querySelector('#board-layout-player-top')!, 'getBoundingClientRect');
+  rowRect.mockReturnValue({top:100} as DOMRect);
+  const boardRect = vi.spyOn(document.querySelector('#board-single')!, 'getBoundingClientRect');
+  boardRect.mockReturnValue({height:0} as DOMRect);
+  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+  entry.reconcile(document, '/game/1');
+  await vi.advanceTimersByTimeAsync(700); expect(scroll).not.toHaveBeenCalled();
+  boardRect.mockReturnValue({height:390} as DOMRect);
+  await vi.advanceTimersByTimeAsync(500);
+  expect(scroll).toHaveBeenLastCalledWith({top:52,behavior:'instant'});
+  entry.cleanup(); rowRect.mockReturnValue({top:150} as DOMRect);
+  entry.reconcile(document, '/game/1'); await vi.advanceTimersByTimeAsync(700);
+  expect(scroll).toHaveBeenLastCalledWith({top:102,behavior:'instant'});
+  expect(scroll).toHaveBeenCalledTimes(2);
+  entry.cleanup(); vi.restoreAllMocks(); vi.useRealTimers();
 });
