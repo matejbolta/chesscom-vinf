@@ -23,7 +23,7 @@ export class ReviewPresentationController {
     else document.querySelectorAll(`[${MUTED}]`).forEach(button => button.removeAttribute(MUTED));
     const board = document.querySelector<HTMLElement>("#board-layout-chessboard wc-chess-board#board-analysis-board");
     const reviewing = !!document.querySelector(".sidebar-view-content > .move-by-move-container > .move-by-move-component");
-    const active = reviewing && !!board;
+    const active = !!board && (reviewing || phone);
     document.documentElement.toggleAttribute(CLEAN, active);
     document.documentElement.toggleAttribute(EXTREME, active && settings.extremeOled);
     if (this.board !== board || !active) this.board?.removeAttribute(BOARD);

@@ -1467,15 +1467,32 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
     margin: 0; padding: 0; width: 100%; text-align: center; font: inherit;
   }
   .chesscom-vinf-review-row-actions {
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column: 3; grid-row: 1; width: calc(100% - 60px);
+    display: grid; place-items: center; grid-column: 2; grid-row: 1; width: 100%;
   }
   .chesscom-vinf-review-row-actions button {
     display: flex; align-items: center; justify-content: center; justify-self: center; width: min(44px, 100%); min-width: 0;
     height: 44px; padding: 0; margin: 0; background: transparent; border: 0; color: #bbb; cursor: pointer;
   }
-  .chesscom-vinf-review-row-actions button:nth-child(2) { grid-column: 2; }
   .chesscom-vinf-review-row-actions svg { width: 24px; height: 24px; fill: currentColor; }
   .chesscom-vinf-review-row-actions button:disabled { opacity: .35; }
   .chesscom-vinf-review-row-actions button:focus-visible { outline: 2px solid currentColor; border-radius: 6px; }
   .chesscom-vinf-review-row-actions button[hidden], [data-chesscom-vinf-review-action-source] { display: none !important; }
+}
+
+@media (max-width: 599px) {
+  /* Allow descenders to paint without changing the settled coach/board geometry.
+     The outer 88px coach remains scrollable for genuinely long commentary. */
+  html[data-chesscom-vinf-review-clean] .move-feedback-speech-text-component {
+    overflow: visible; clip-path: none;
+    padding-bottom: 3px; margin-bottom: -3px;
+  }
+  html[data-chesscom-vinf-review-clean][data-chesscom-vinf-oled="true"] .bot-speech-content-botMessage {
+    background: #000 !important; color: #bbb;
+  }
+  html[data-chesscom-vinf-review-clean] .move-feedback-box-description { color: var(--color-text-default, #bbb); }
+  html[data-chesscom-vinf-oled="true"][data-chesscom-vinf-phone-game] :is(.cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component),
+  html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] :is(.cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) {
+    background: #000 !important; color: #bbb;
+    --color-bg-primary: #000; --color-bg-secondary: #000; --color-text-default: #bbb;
+  }
 }

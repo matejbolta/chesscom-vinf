@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.14.0] - 2026-10-03
+
+- Center phone Review's rounded New Game plus above the board and Analysis magnifier below it.
+- Apply the phone Review presentation before entering moves as well, including hidden navigation and OLED coach surfaces.
+- Allow coach-text descenders to paint without changing the settled layout; improve classification label contrast.
+- Apply OLED surfaces to phone draw/resign confirmation containers while preserving native confirmation actions.
+
 ## [2.13.2] - 2026-10-03
 
 - Generate popup and side-panel version badges from the package version; reject mismatched manifest versions during the desktop build.

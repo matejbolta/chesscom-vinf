@@ -3,7 +3,7 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-03.
-Current source version: 2.13.2.
+Current source version: 2.14.0.
 2.13.2 replaces the hard-coded popup version with a build template shared by popup/side panel. Desktop build rejects package/manifest version mismatches; never manually bump the HTML badge again.
 2.13.1 removes duplicate heading padding in the desktop Pokémon settings card, matching the existing shortcut-heading fix; Android styling is unchanged.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
@@ -12,6 +12,12 @@ Current source version: 2.13.2.
 2.8.2 removes only the desktop Alt promotion-shortcut help row; annotation color help remains.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
+
+## 2.14.0 — Phone Review polish (2026-10-03)
+
+User changed Review action positions: New Game plus centered in the top player row, Analysis magnifier centered in the bottom row. ReviewRowActions owns two independent wrappers and retains native forwarding/restoration. Plus uses a round-capped stroke. Phone Review clean styling now includes the pre-move report when the audited analysis board exists; larger layouts retain the move-by-move gate. Existing graph placement and native Start Review behavior are unchanged. Coach text gets visible overflow and 3px descender paint allowance offset by a negative bottom margin, preserving layout. Phone OLED confirmation shells use black surfaces without altering handlers or confirmations.
+
+Verification for 2.14.0: TypeScript, 204 tests and both builds passed. IAB fixture at 390×740 verified both action centers at x195, pre-review navigation hidden and coach background black; no console warnings/errors. Native Android descender clipping and real confirmation surfaces still need device verification; no real game actions were used.
 
 ## 2.13.0 — Phone material and Review stability (2026-10-03)
 

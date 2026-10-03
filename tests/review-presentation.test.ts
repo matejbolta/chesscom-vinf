@@ -39,6 +39,8 @@ it('keeps native review nodes and actions; independently styles Extreme and rest
   moves.remove(); controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled:true},false);
   expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(false);
   expect(board.outerHTML).toBe(original);
+  controller.reconcile(document,location,DEFAULT_SETTINGS,true);
+  expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(true);
   document.querySelector('.sidebar-view-content')!.append(moves);
   for (const [route,settings] of [[location,{...DEFAULT_SETTINGS,enabled:false}], [{...location,pathname:'/game/123456'},DEFAULT_SETTINGS]] as const) {
     controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled:true},false);

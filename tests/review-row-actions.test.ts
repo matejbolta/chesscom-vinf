@@ -1,13 +1,16 @@
 import { expect, it, vi } from 'vitest';
 import { ReviewRowActions } from '../src/content/review-row-actions';
 it('forwards to current native actions without changing their nodes or time control; restores and ignores unknown buttons', () => {
-  document.body.innerHTML = '<div id="board-layout-player-top"><div class="player-component"></div></div><div class="sidebar-header-header"><button aria-label="Go to Analysis">Engine</button></div><div class="move-by-move-buttons"><button>Highlights</button><button>New 10 min</button></div>';
+  document.body.innerHTML = '<div id="board-layout-player-top"><div class="player-component"></div></div><div id="board-layout-player-bottom"><div class="player-component"></div></div><div class="sidebar-header-header"><button aria-label="Go to Analysis">Engine</button></div><div class="move-by-move-buttons"><button>Highlights</button><button>New 10 min</button></div>';
   const nativeNew = document.querySelector<HTMLButtonElement>('.move-by-move-buttons button:last-child')!;
   const nativeEngine = document.querySelector<HTMLButtonElement>('[aria-label="Go to Analysis"]')!;
   const play = vi.fn(), engine = vi.fn(); nativeNew.addEventListener('click',play); nativeEngine.addEventListener('click',engine);
   const controller = new ReviewRowActions(); controller.reconcile(document,true); controller.reconcile(document,true);
-  expect(document.querySelectorAll('.chesscom-vinf-review-row-actions')).toHaveLength(1);
-  const proxy = document.querySelector('.chesscom-vinf-review-row-actions')!;
+  expect(document.querySelectorAll('.chesscom-vinf-review-row-actions')).toHaveLength(2);
+  const proxies = document.querySelectorAll('.chesscom-vinf-review-row-actions button');
+  const proxy = { children: proxies };
+  expect(proxies[0].closest('#board-layout-player-top')).not.toBeNull();
+  expect(proxies[1].closest('#board-layout-player-bottom')).not.toBeNull();
   (proxy.children[0] as HTMLButtonElement).click(); (proxy.children[1] as HTMLButtonElement).click();
   expect(play).toHaveBeenCalledOnce(); expect(engine).toHaveBeenCalledOnce();
   expect(nativeNew.textContent).toBe('New 10 min');

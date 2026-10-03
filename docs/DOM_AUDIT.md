@@ -1167,3 +1167,7 @@ Native captured sprites are inline-block groups, and `.captured-pieces-score` al
 Saved native eager source shows Best awaiting undo/suggested-move playback before setting Resume state; its intermediate retry action is Hint. Keep Hint in the four-slot dock allowlist. Native `.move-time-iconless .move-time-content` adds an auto margin, while the clock shell has intrinsic minimum widths and space-between alignment; phone Review explicitly normalizes these inside its fixed clock slot.
 
 Audited English move-by-move Review sources: `.move-by-move-buttons button` whose text starts with New plus a number or Game, and `.sidebar-header-header button[aria-label="Go to Analysis"]`. Top-row proxies resolve these at activation, retain native handlers and disabled states, and hide originals reversibly. They never construct a matchmaking URL. Missing/unknown sources are omitted. Fixture verification is not actual Firefox Android verification.
+
+## Phone Review refinements — 2.14.0
+
+Review action wrappers now live independently in top/bottom `.player-component`, centered in grid column 2. Phone clean presentation applies before the move-by-move component appears when the audited analysis board exists. `.move-feedback-speech-text-component` retains geometry with a small descender paint allowance. Existing audited `.cc-confirmation-popover-popover`, `.cc-confirmation-modal-modal`, `.draw-offer-component`, `.draw-request-component` receive phone-only OLED surface tokens; native buttons remain untouched.
