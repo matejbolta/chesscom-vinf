@@ -29,7 +29,12 @@ export class AnalysisRowActions {
         });
         host.append(proxy); this.controls[index] = proxy;
       }
-      proxy.hidden = !source; proxy.disabled = !!source?.disabled;
+      const destination = index === 0 ? host : document.querySelector<HTMLElement>('.analysis-options-bar');
+      if (destination && proxy.parentElement !== destination) destination.append(proxy);
+      proxy.classList.toggle('chesscom-vinf-analysis-settings-action', index === 1);
+      if (index === 1) { proxy.style.removeProperty('left'); proxy.style.removeProperty('width'); proxy.setAttribute('aria-label','Board settings'); proxy.title = 'Board settings'; }
+      proxy.hidden = !source || !destination; proxy.disabled = !!source?.disabled;
+      if (!destination) { source?.removeAttribute('data-vinf-analysis-source'); return; }
       if (source) {
         if (proxy.innerHTML !== source.innerHTML) proxy.innerHTML = source.innerHTML;
         source.setAttribute('data-vinf-analysis-source',''); this.sources.add(source);
@@ -40,14 +45,12 @@ export class AnalysisRowActions {
   private align(): void {
     const board = this.board?.getBoundingClientRect(), host = this.host?.getBoundingClientRect();
     if (!board?.width || !host?.width) return;
-    const flipped = this.board!.classList.contains('flipped');
-    this.controls.forEach((button,index) => {
-      const fraction = (flipped ? 4.5 - index : 3.5 + index) / 8;
-      const left = `${board.left + board.width * fraction - host.left}px`;
+    const button = this.controls[0];
+    if (button) {
+      const left = `${board.left + board.width / 2 - host.left}px`;
       if (button.style.left !== left) button.style.left = left;
-      const width = `${Math.min(44, board.width / 8)}px`;
-      if (button.style.width !== width) button.style.width = width;
-    });
+      button.style.width = '44px';
+    }
   }
   cleanup(): void {
     this.observer?.disconnect(); this.observer = null;

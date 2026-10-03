@@ -1179,3 +1179,5 @@ Read-only public completed-game inspection on 2026-10-03 confirms `wc-chess-boar
 ## Analysis compact rows — 2.16.0
 
 Read-only native engine inspection confirms `.sidebar-tabs-container` and `.analysis-options-component` within `.engine-lines-with-options-component`; lines use `.engine-lines-with-options-lines`. Phone CSS hides tabs and visually orders options after lines without moving native DOM. Header Back/Settings proxies target exact aria labels within `.sidebar-header-header` and omit absent sources; positions use actual board bounds and orientation, not viewport midpoint.
+
+2.16.1: native Analysis options inspection confirms bar → left/right containers, with depth and engine gear in right. Phone grid flattens right visually; board-settings proxy occupies column 2, engine gear column 3, depth row 2. Back uses board midpoint. Original native actions remain in place.

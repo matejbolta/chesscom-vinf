@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.16.1] - 2026-10-03
+
+- Center phone Analysis Back under the board; place board settings alongside engine settings and the Analysis toggle in a compact strip, with depth/engine details below.
+
 ## [2.16.0] - 2026-10-03
 
 - Tighten phone engine Analysis: add top breathing room, place Back/Settings under the D/E files, and hide the redundant Analysis/Games/Explore tab row.
