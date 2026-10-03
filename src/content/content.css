@@ -1530,3 +1530,23 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
     background: #0a0a0a; color: #ededed; border-color: #1c1c1c;
   }
 }
+
+@media (max-width: 599px) {
+  /* Add the missing outer half-gap without moving/sizing the native board. */
+  html[data-chesscom-vinf-phone-analysis] #board-layout-player-top { margin-top: 10px; }
+  html[data-chesscom-vinf-phone-analysis] #board-layout-player-bottom .player-component { position: relative; }
+  html[data-chesscom-vinf-phone-analysis] .chesscom-vinf-analysis-row-action {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; padding: 0; margin: 0; border: 0;
+    background: transparent; color: #bbb; cursor: pointer; font-size: 24px;
+  }
+  html[data-chesscom-vinf-phone-analysis] .chesscom-vinf-analysis-row-action :is(svg,span) { width: 24px; height: 24px; }
+  html[data-chesscom-vinf-phone-analysis] .chesscom-vinf-analysis-row-action:focus-visible { outline: 2px solid currentColor; border-radius: 6px; }
+  html[data-chesscom-vinf-phone-analysis] :is([data-vinf-analysis-source],.chesscom-vinf-analysis-row-action[hidden],.sidebar-tabs-container) { display: none !important; }
+  html[data-chesscom-vinf-phone-analysis] .sidebar-header-header:not(:has(button:not([data-vinf-analysis-source]))) { display: none !important; }
+  html[data-chesscom-vinf-phone-analysis] #board-layout-sidebar { margin-top: 0; }
+  html[data-chesscom-vinf-phone-analysis] .engine-lines-with-options-component { display: flex; flex-direction: column; }
+  html[data-chesscom-vinf-phone-analysis] .engine-lines-with-options-lines { order: 0; }
+  html[data-chesscom-vinf-phone-analysis] .analysis-options-component { order: 1; }
+}

@@ -1,3 +1,4 @@
+import { AnalysisRowActions } from "./analysis-row-actions";
 import { ReviewRowActions } from "./review-row-actions";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { isChessComLiveGameReview, isChessComGameAnalysis } from "./game-review-layout-controller";
@@ -9,6 +10,7 @@ const MUTED = "data-chesscom-vinf-review-muted";
 
 /** Review styling is independent of live-game state, input and clock overlays. */
 export class ReviewPresentationController {
+  private analysisActions = new AnalysisRowActions();
   private rowActions = new ReviewRowActions();
   private board: HTMLElement | null = null;
   private attemptedMute: HTMLButtonElement | null = null;
@@ -32,6 +34,7 @@ export class ReviewPresentationController {
     this.board = active ? board : null;
     this.board?.toggleAttribute(BOARD, settings.extremeOled);
     this.rowActions.reconcile(document, active && phone && !analysis);
+    this.analysisActions.reconcile(document, active && analysis);
   }
 
   private muteCoach(document: Document): void {
@@ -54,6 +57,7 @@ export class ReviewPresentationController {
 
   cleanup(document: Document): void {
     this.rowActions.cleanup();
+    this.analysisActions.cleanup();
     document.documentElement.removeAttribute("data-chesscom-vinf-phone-analysis");
     document.documentElement.removeAttribute(CLEAN);
     document.documentElement.removeAttribute(EXTREME);

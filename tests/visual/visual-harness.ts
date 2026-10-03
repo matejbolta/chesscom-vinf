@@ -211,9 +211,11 @@ if (window.location.pathname === "/game-review-mobile" && searchParams.has("eval
 }
 if (window.location.pathname === "/game-review-mobile" && searchParams.has("engine")) {
   document.querySelector('.mobile-top-section-container')?.remove();
+  document.querySelector('.sidebar-header-header')!.innerHTML = '<button aria-label="Back">←</button><button aria-label="Settings">⚙</button>';
+
   document.querySelector('.move-by-move-container')?.remove();
   const panel = document.querySelector('.sidebar-view-content')!;
-  panel.insertAdjacentHTML('afterbegin', '<section class="analysis-view-component"><nav>Analysis · Games · Explore</nav><div class="engine-lines-with-options-component"><div class="analysis-options-component">Analysis · depth 16 · Stockfish <button aria-label="Engine settings">⚙</button></div><div class="engine-lines-with-options-lines"><p>+5.07 · Nxe7 is best</p><p>+6.23 · 24. Ne4 Nf5 25. Qg6+</p><p>+6.02 · 24. Nf1 e2 25. Qh5+</p><p>+5.97 · 24. Nc4 e2 25. Qh5+</p></div></div></section>');
+  panel.insertAdjacentHTML('afterbegin', '<section class="analysis-view-component"><nav class="sidebar-tabs-container">Analysis · Games · Explore</nav><div class="engine-lines-with-options-component"><div class="analysis-options-component">Analysis · depth 16 · Stockfish <button aria-label="Engine settings">⚙</button></div><div class="engine-lines-with-options-lines"><p>+5.07 · Nxe7 is best</p><p>+6.23 · 24. Ne4 Nf5 25. Qg6+</p><p>+6.02 · 24. Nf1 e2 25. Qh5+</p><p>+5.97 · 24. Nc4 e2 25. Qh5+</p></div></div></section>');
   document.querySelector('.game-controls-view-component')!.innerHTML = '<div class="game-controls-primary-component">'+['First Move','Previous Move','Next Move','Last Move'].map((name,i)=>`<button aria-label="${name}">${['|‹','‹','›','›|'][i]}</button>`).join('')+'</div><button>Game Review</button>';
 }
 if (window.location.pathname === "/game-review-mobile" && searchParams.has("overview")) {

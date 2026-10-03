@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.16.0] - 2026-10-03
+
+- Tighten phone engine Analysis: add top breathing room, place Back/Settings under the D/E files, and hide the redundant Analysis/Games/Explore tab row.
+- Show engine variations before the depth/settings strip; preserve native engine actions and board geometry.
+
 ## [2.15.0] - 2026-10-03
 
 - Add a first phone presentation for saved-game engine Analysis routes: OLED surfaces, hidden site navigation/player identities, retained captured material, and compact stationary clocks.

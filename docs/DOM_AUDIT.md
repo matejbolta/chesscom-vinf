@@ -1175,3 +1175,7 @@ Review action wrappers now live independently in top/bottom `.player-component`,
 ## Phone engine Analysis — 2.15.0
 
 Read-only public completed-game inspection on 2026-10-03 confirms `wc-chess-board#board-analysis-board`, native player rows, `.analysis-view-component`, `.engine-lines-with-options-component`, `.analysis-options-component`, `.engine-lines-with-options-lines`. Navigation is `.game-controls-view-component > .game-controls-primary-component` with First Move / Previous Move / Next Move / Last Move buttons. No cloning or handler replacement. Only exact saved-game analysis route and phone viewport receive new presentation; sanitized `?engine=1` fixture models these containers.
+
+## Analysis compact rows — 2.16.0
+
+Read-only native engine inspection confirms `.sidebar-tabs-container` and `.analysis-options-component` within `.engine-lines-with-options-component`; lines use `.engine-lines-with-options-lines`. Phone CSS hides tabs and visually orders options after lines without moving native DOM. Header Back/Settings proxies target exact aria labels within `.sidebar-header-header` and omit absent sources; positions use actual board bounds and orientation, not viewport midpoint.
