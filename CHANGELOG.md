@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.12.0] - 2026-10-03
+
+- Add opt-in Pokémon mode, mutually exclusive with Extreme OLED across settings and the desktop E shortcut; ordinary OLED remains compatible.
+- Replace the live turn dot with a Poké Ball that opens to reveal the completed move. Reuse indicator size, pulse and duration settings; honor reduced motion and animate only on confirmed turn changes.
+- Offer all 151 Generation I Pokémon for each of the six chess roles, with local previews and a reset team action in desktop and Android settings. Pieces can be switched off independently for a ball-only mode.
+- Skin native game and Review pieces with bundled offline sprites, dimmer dark-team artwork and contrasting chess-role badges. Preserve native geometry, movement, promotion classes and annotations; captured-material symbols stay native.
+
 ## [2.11.1] - 2026-10-03
 
 - Keep the phone four-slot Review dock when Best move becomes native Resume; retain its return-to-played-line action in the rightmost slot.

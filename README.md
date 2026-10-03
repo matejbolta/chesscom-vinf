@@ -19,6 +19,13 @@ device. It recognizes current RCN and legacy live games; otherwise it prefers
 an exact eligible game link already on the page and deliberately falls back to the latest Game History link. The UUID and
 result remain in page memory and are never stored or logged.
 
+Pokémon mode optionally adds a Poké Ball turn indicator and Generation I piece
+artwork on the game and Review boards. Choose any of the original 151 Pokémon
+for each chess role, or switch pieces off to keep only the ball. The ball opens
+to reveal the last move; existing size, pulse and animation-duration settings
+apply. Pokémon and Extreme OLED switch each other off; ordinary OLED can be
+combined with Pokémon. Artwork is bundled locally with [attribution](assets/pokemon/README.md).
+
 ![Sanitized ChessComVINF homepage](docs/reference-homepage.png)
 
 ChessComVINF is an independent, unofficial extension and is not affiliated with,

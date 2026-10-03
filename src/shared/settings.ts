@@ -1,3 +1,4 @@
+import { DEFAULT_POKEMON_PIECES, normalizePokemonPieces } from "./pokemon";
 import type {
   ExtensionSettings,
   HomepageSidebarCardId,
@@ -38,6 +39,9 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   enabled: true,
   oledMode: false,
   extremeOled: false,
+  pokemonMode: false,
+  pokemonPiecesEnabled: true,
+  pokemonPieces: { ...DEFAULT_POKEMON_PIECES },
   turnDotSize: 12,
   turnAnimationDuration: 1000,
   turnPulseScale: 2,
@@ -79,6 +83,7 @@ const validStatsRatingIds = new Set<StatsRatingId>(
 function cloneDefaultSettings(): ExtensionSettings {
   return {
     ...DEFAULT_SETTINGS,
+    pokemonPieces: { ...DEFAULT_SETTINGS.pokemonPieces },
     homepageSidebarOrder: [...DEFAULT_SETTINGS.homepageSidebarOrder],
     homepageSidebarVisible: [...DEFAULT_SETTINGS.homepageSidebarVisible],
     timeControlIds: [...DEFAULT_SETTINGS.timeControlIds],
@@ -257,6 +262,9 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     oledMode?: unknown;
     oledButtonColors?: unknown;
     extremeOled?: unknown;
+    pokemonMode?: unknown;
+    pokemonPiecesEnabled?: unknown;
+    pokemonPieces?: unknown;
     turnDotSize?: unknown;
     turnAnimationDuration?: unknown;
     turnPulseScale?: unknown;
@@ -439,6 +447,10 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       ? Math.min(5000, Math.max(0, Math.round(candidate.turnAnimationDuration))) : DEFAULT_SETTINGS.turnAnimationDuration,
     turnPulseScale: typeof candidate.turnPulseScale === "number" && Number.isFinite(candidate.turnPulseScale)
       ? Math.min(12, Math.max(1, Math.round(candidate.turnPulseScale * 10) / 10)) : DEFAULT_SETTINGS.turnPulseScale,
+    // On conflicting imported records, Extreme wins; explicit UI choices clear the other mode.
+    pokemonMode: candidate.pokemonMode === true && candidate.extremeOled !== true,
+    pokemonPiecesEnabled: candidate.pokemonPiecesEnabled !== false,
+    pokemonPieces: normalizePokemonPieces(candidate.pokemonPieces),
     extremeOled: typeof candidate.extremeOled === "boolean" ? candidate.extremeOled : false,
     oledMode:
       typeof candidate.oledMode === "boolean"

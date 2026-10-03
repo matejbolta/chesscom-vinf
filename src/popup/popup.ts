@@ -1,3 +1,4 @@
+import { createPokemonEditor } from "../shared/pokemon-editor";
 import type {
   DailyGamesPlacement,
   DailyGamesVisiblePlacement,
@@ -57,6 +58,8 @@ const turnDotSizeInput = document.querySelector<HTMLInputElement>("#turn-dot-siz
 const turnPulseScaleInput = document.querySelector<HTMLInputElement>("#turn-pulse-scale")!;
 const turnAnimationDurationInput = document.querySelector<HTMLInputElement>("#turn-animation-duration")!;
 const extremeOledInput = document.querySelector<HTMLInputElement>("#extreme-oled")!;
+const pokemonEditor = createPokemonEditor(document, extremeOledInput);
+document.querySelector('[aria-label="OLED settings"]')!.before(pokemonEditor.element);
 const oledModeInput = document.querySelector<HTMLInputElement>("#oled-mode")!;
 const showNativePlayPanelInput = document.querySelector<HTMLInputElement>(
   "#show-native-play-panel"
@@ -699,6 +702,7 @@ function renderPresetSelects(
 function renderSettings(settings: ExtensionSettings): void {
   enabledInput.checked = settings.enabled;
   extremeOledInput.checked = settings.extremeOled;
+  pokemonEditor.set(settings);
   turnDotSizeInput.value = String(settings.turnDotSize);
   turnPulseScaleInput.value = String(settings.turnPulseScale);
   turnAnimationDurationInput.value = String(settings.turnAnimationDuration);
@@ -782,6 +786,7 @@ function readSettings(): ExtensionSettings {
   return {
     enabled: enabledInput.checked,
     extremeOled: extremeOledInput.checked,
+    ...pokemonEditor.get(),
     turnDotSize: Number(turnDotSizeInput.value),
     turnPulseScale: Number(turnPulseScaleInput.value),
     turnAnimationDuration: Number(turnAnimationDurationInput.value),

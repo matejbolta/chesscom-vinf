@@ -1,3 +1,4 @@
+import { revealPokemonMove } from "./pokemon-controller";
 import { LastMoveReader } from "./last-move";
 import { ClockBarReference } from "./clock-bar-reference";
 import { isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
@@ -49,6 +50,9 @@ export class ExtremeOledController {
   private dotSize = 12;
   private animationDuration = 1000;
   private pulseScale = 2;
+  private pokemon = false;
+  private revealedMove = "";
+  private pendingPokemonReveal = false;
   private activePlayer = "";
   private turnStarted = 0;
   private geometryDirty = true;
@@ -93,8 +97,10 @@ export class ExtremeOledController {
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, normalGameClocks = false, desktop = false): boolean {
     if (this.desktop !== desktop) this.cleanup(document);
     this.desktop = desktop;
+    const pokemon = settings.pokemonMode && !settings.extremeOled;
+    if (this.pokemon !== pokemon) { this.clearPresentation(document); this.pokemon = pokemon; }
     if (this.animationDuration !== settings.turnAnimationDuration || this.pulseScale !== settings.turnPulseScale || this.dotSize !== settings.turnDotSize) {
-      this.overlay?.querySelectorAll<HTMLElement>(".chesscom-vinf-extreme-turn").forEach(turn =>
+      this.overlay?.querySelectorAll<HTMLElement>(".chesscom-vinf-extreme-turn, .vinf-move-label, .vinf-ball-top, .vinf-ball-bottom").forEach(turn =>
         turn.getAnimations?.().forEach(animation => animation.cancel()));
     }
     this.dotSize = settings.turnDotSize;
@@ -182,6 +188,7 @@ export class ExtremeOledController {
       this.overlay = document.createElement("div");
       this.overlay.className = `${OWNER}${this.normalClocks ? " chesscom-vinf-normal-clock-controls" : ""}`;
       this.overlay.setAttribute("data-chesscom-vinf-owned", "extreme-oled");
+      this.overlay.toggleAttribute("data-pokemon", this.pokemon);
       for (const side of ["top", "bottom"]) {
         const bar = document.createElement("div");
         bar.className = `chesscom-vinf-extreme-clock ${side}`;
@@ -206,6 +213,11 @@ export class ExtremeOledController {
         const lastMove = document.createElement("span");
         lastMove.className = `chesscom-vinf-last-move ${side}`;
         lastMove.hidden = true;
+        for (const className of ["vinf-move-label", "vinf-ball-top", "vinf-ball-bottom"]) {
+          const part = document.createElement("span"); part.className = className;
+          if (className !== "vinf-move-label") part.setAttribute("aria-hidden", "true");
+          lastMove.append(part);
+        }
         this.overlay.append(lastMove);
       }
       const controls = document.createElement("nav");
@@ -268,6 +280,7 @@ export class ExtremeOledController {
       active.classList.contains("clock-black") ? "black" :
       active.closest("#board-layout-player-top") ? "top" : "bottom") : "";
     const switched = !!identity && !!this.activePlayer && identity !== this.activePlayer;
+    if (switched) this.pendingPokemonReveal = true;
     const now = view?.performance.now() ?? 0;
     if (identity && identity !== this.activePlayer) {
       this.activePlayer = identity;
@@ -288,7 +301,14 @@ export class ExtremeOledController {
       const showLast = !!active && inactive && !!lastMove && !!clock?.classList.contains(`clock-${lastMove.color}`);
       if (last.hidden === showLast) last.hidden = !showLast;
       const notation = showLast ? lastMove!.notation : "";
-      if (last.textContent !== notation) last.textContent = notation;
+      const label = last.querySelector<HTMLElement>(".vinf-move-label")!;
+      if (label.textContent !== notation) label.textContent = notation;
+      const moveKey = showLast ? `${lastMove!.color}:${notation}` : "";
+      if (moveKey && moveKey !== this.revealedMove) {
+        if (this.pokemon && this.pendingPokemonReveal) revealPokemonMove(last, this.animationDuration);
+        this.pendingPokemonReveal = false;
+        this.revealedMove = moveKey;
+      }
       setAttribute(last, "aria-label", notation ? `Last move: ${notation}` : "Last move");
       const text = clock?.querySelector('[role="timer"]')?.textContent ?? "";
       const seconds = readClockSeconds(text);
@@ -361,6 +381,8 @@ export class ExtremeOledController {
     this.resizeObserver = null;
     this.activePlayer = "";
     this.turnStarted = 0;
+    this.revealedMove = "";
+    this.pendingPokemonReveal = false;
   }
 
   cleanup(document: Document): void {

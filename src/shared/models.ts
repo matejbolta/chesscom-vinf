@@ -1,3 +1,4 @@
+import type { PokemonPieces } from "./pokemon";
 export type TimeControlId =
   | "30s-0"
   | "20s-1"
@@ -80,6 +81,9 @@ export interface ExtensionSettings {
   enabled: boolean;
   oledMode: boolean;
   extremeOled: boolean;
+  pokemonMode: boolean;
+  pokemonPiecesEnabled: boolean;
+  pokemonPieces: PokemonPieces;
   turnDotSize: number;
   turnAnimationDuration: number;
   turnPulseScale: number;

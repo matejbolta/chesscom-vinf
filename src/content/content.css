@@ -1398,3 +1398,54 @@ html:is([data-chesscom-vinf-phone-material], [data-chesscom-vinf-review-clean]) 
   html[data-chesscom-vinf-phone-material] wc-captured-pieces .captured-pieces-cpiece:has(+ .captured-pieces-score) { margin-right: 18px; }
   html[data-chesscom-vinf-phone-material] wc-captured-pieces .captured-pieces-score { flex: 0 0 16px; margin-left: -16px; white-space: nowrap; }
 }
+
+/* Pokémon is a skin on audited native pieces; it never changes their bounds/input. */
+[data-chesscom-vinf-pokemon-board] .piece:is(.wp,.wn,.wb,.wr,.wq,.wk,.bp,.bn,.bb,.br,.bq,.bk) {
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 1px 1px #1119);
+}
+[data-chesscom-vinf-pokemon-board] .piece:is(.wp,.wn,.wb,.wr,.wq,.wk,.bp,.bn,.bb,.br,.bq,.bk)::after {
+  position: absolute; right: 2%; bottom: 2%; width: 29%; height: 29%;
+  display: grid; place-items: center; box-sizing: border-box;
+  border-radius: 50%; font: 700 clamp(9px, 1.6vw, 19px)/1 Georgia, serif;
+  background: #f5f1e8; color: #22252b; border: 1px solid #323740;
+  text-shadow: none; pointer-events: none; image-rendering: auto;
+}
+[data-chesscom-vinf-pokemon-board] .piece:is(.bp,.bn,.bb,.br,.bq,.bk)::after {
+  background: #22252b; color: #fff8e7; border-color: #fff8e7;
+}
+/* Constant-cost CSS ball. Pulse remains governed by the existing indicator settings. */
+.chesscom-vinf-extreme-controls[data-pokemon] .chesscom-vinf-extreme-turn {
+  background: linear-gradient(to bottom, #cf4e4e 0 43%, #252936 43% 57%, #f0eee5 57% 100%);
+  box-shadow: 0 0 0 1px #181b22, 0 0 0 2px #bbb6;
+}
+.chesscom-vinf-extreme-controls[data-pokemon] .chesscom-vinf-extreme-turn::after {
+  content: ""; position: absolute; left: 33%; top: 33%; width: 34%; height: 34%;
+  border-radius: 50%; box-sizing: border-box; background: #fff8e8; border: 1px solid #252936;
+}
+.chesscom-vinf-extreme-controls[data-pokemon] .chesscom-vinf-extreme-turn[data-low="true"] {
+  box-shadow: 0 0 0 2px #b65b5b, 0 0 8px #b65b5b88;
+}
+.vinf-move-label { display: inline-block; }
+.vinf-ball-top, .vinf-ball-bottom {
+  display: none; position: absolute; left: 50%; top: 50%;
+  width: var(--vinf-turn-size, 12px); height: var(--vinf-turn-size, 12px);
+  border-radius: 50%; opacity: 0; pointer-events: none;
+}
+[data-pokemon] .vinf-ball-top, [data-pokemon] .vinf-ball-bottom { display: block; }
+[data-pokemon] .vinf-ball-top { background: #cf4e4e; clip-path: inset(0 0 50% 0); }
+[data-pokemon] .vinf-ball-bottom { background: #f0eee5; clip-path: inset(50% 0 0 0); }
+/* A restrained accent connects the existing controls; native action icons stay clear. */
+html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="true"] {
+  color: #cf4e4e;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vinf-ball-top, .vinf-ball-bottom { display: none !important; }
+}
+
+[data-chesscom-vinf-pokemon-board] .piece:is(.bp,.bn,.bb,.br,.bq,.bk) {
+  filter: brightness(.72) saturate(.85) drop-shadow(0 1px 1px #1119);
+}

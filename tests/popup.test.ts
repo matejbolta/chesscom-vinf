@@ -226,7 +226,7 @@ describe("settings popup", () => {
       Array.from(presetCount.options).map((option) => option.value)
     ).toEqual(QUICK_PLAY_PRESET_COUNTS.map(String));
     expect(selects).toHaveLength(6);
-    expect(document.querySelectorAll("select")).toHaveLength(18);
+    expect(document.querySelectorAll("select")).toHaveLength(24);
     expect(rapidState.value).toBe("retracted");
     expect(rapidState.disabled).toBe(false);
     expect(bulletState.disabled).toBe(true);
@@ -433,7 +433,7 @@ describe("settings popup", () => {
       expect(document.querySelector("#preset-list")?.hasAttribute("hidden")).toBe(
         count === 0
       );
-      expect(document.querySelectorAll("select")).toHaveLength(12 + count);
+      expect(document.querySelectorAll("select")).toHaveLength(18 + count);
       await flushAsyncWork();
     }
     expect(set).toHaveBeenLastCalledWith({

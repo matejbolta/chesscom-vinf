@@ -1150,3 +1150,12 @@ plus material-edge / extra-piece width boundaries. Native captured-pieces-score
 remains a sibling of sprites; final sibling selection uses :has(+ score), not a
 new wrapper that could interfere with Vue. Geometry tests cover single reveal,
 manual cancellation, no replay, and unchanged same-route game entry behavior.
+
+
+## 2.12.0 — Pokémon visual layer (2026-10-03)
+
+- Only `#board-layout-chessboard wc-chess-board#board-single` on supported live-game routes and `#board-layout-chessboard wc-chess-board#board-analysis-board` on supported live-game Review routes receive `data-chesscom-vinf-pokemon-board`.
+- Native `.piece.wp/wn/wb/wr/wq/wk` and `.piece.bp/bn/bb/br/bq/bk` select role-specific background PNGs and contrasting role badges. No piece replacement, geometry, input handlers, square classes, native inline styles or promotion state are changed. Existing sanitized game/Review fixtures cover these classes; dynamic promotion uses the same CSS mapping.
+- `data-chesscom-vinf-pokemon` is removed on disable, Extreme activation, route exit or unsupported canvas rendering. One owned style holds only the six selected sprites; repeated reconciliation leaves it untouched.
+- Live ball styling uses an owned overlay `data-pokemon` attribute. Two decorative opening halves and an SAN label are children of the existing last-move span; native move/clock sources remain unchanged. Never applied to homepage or Review clock overlays.
+- Shared settings previews use bundled PNGs and native selects; all151 names/IDs are local. No new host permissions or network access.

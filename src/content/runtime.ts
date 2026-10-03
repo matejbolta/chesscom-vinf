@@ -1,3 +1,4 @@
+import { PokemonController } from "./pokemon-controller";
 import { ReviewPresentationController } from "./review-presentation";
 import { hasGamePresentation, isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
 import type { AnnotationApiResolver } from "./native-annotations";
@@ -51,6 +52,7 @@ export function startVinfRuntime(
   const phoneActions = new PhoneGameActionsController();
   const androidGameControls = new AndroidGameControlsController();
   const controller = new LayoutController(new NativeLaunchAdapter());
+  const pokemonController = new PokemonController();
   const extremeOledController = new ExtremeOledController();
   const gameReviewController = new GameReviewLayoutController();
   const reviewPresentation = new ReviewPresentationController();
@@ -225,6 +227,7 @@ export function startVinfRuntime(
     if (android && phone) phoneActions.reconcile(document, window.location, settings, true);
     extremeOledController.reconcile(document, window.location, settings, desktop || android, desktop);
     reviewPresentation.reconcile(document, window.location, settings, phone);
+    pokemonController.reconcile(document, window.location, settings);
     if (!(android && phone)) phoneActions.reconcile(document, window.location, settings, false, desktop || android);
     touchAnnotations.reconcile(document, window.location, settings, android);
     androidGameControls.reconcile(document, window.location, settings, android);
@@ -465,6 +468,7 @@ export function startVinfRuntime(
     shortcutWrites = shortcutWrites.then(async () => {
       if (!settings?.enabled) return;
       const next = normalizeSettings({ ...settings,
+        ...(key === "e" && !settings.extremeOled ? { pokemonMode: false } : {}),
         [key === "o" ? "oledMode" : "extremeOled"]: !settings[key === "o" ? "oledMode" : "extremeOled"] });
       await settingsSource.save!(next);
       settings = next;

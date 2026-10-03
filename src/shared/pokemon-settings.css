@@ -1,0 +1,12 @@
+.vinf-pokemon-settings { color: inherit; padding: 14px; }
+.vinf-pokemon-settings h2 { margin: 0 0 12px; font-size: 15px; }
+.vinf-pokemon-settings p { margin: 8px 0 12px; font-size: 12px; line-height: 1.45; opacity: .72; }
+.vinf-pokemon-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; }
+.vinf-pokemon-toggle input { flex: 0 0 auto; }
+.vinf-pokemon-team { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.vinf-pokemon-choice { display: grid; grid-template-columns: 1fr 48px; align-items: center; gap: 4px; padding: 8px; border: 1px solid #6665; border-radius: 10px; background: #8881; min-width: 0; }
+.vinf-pokemon-choice > span { font-size: 13px; font-weight: 600; }
+.vinf-pokemon-choice img { width: 48px; height: 48px; image-rendering: pixelated; }
+.vinf-pokemon-choice select { grid-column: 1 / -1; width: 100%; min-width: 0; min-height: 36px; font: inherit; font-size: 12px; }
+.vinf-pokemon-settings [hidden] { display: none !important; }
+.vinf-pokemon-settings button { min-height: 36px; padding: 6px 12px; border: 1px solid #6668; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }

@@ -1,3 +1,4 @@
+import { PokemonController } from "../../src/content/pokemon-controller";
 import { ReviewPresentationController } from "../../src/content/review-presentation";
 import { installAnnotationFixture } from "../helpers/native-annotations";
 import { TouchAnnotationsController } from "../../src/content/touch-annotations";
@@ -280,6 +281,7 @@ if (window.location.pathname === "/extreme-oled") {
 
 // Native-shaped phone scenarios are local and never invoke Chess.com services.
 if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
+  const pokemon = new PokemonController();
   const reviewStyle = new ReviewPresentationController();
   const phone = new PhoneExperienceController();
   const clocks = new ExtremeOledController();
@@ -311,7 +313,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const game = window.location.pathname === "/phone-game";
   const route = { protocol: "https:", hostname: "www.chess.com",
     pathname: game ? "/game/123456" : "/analysis/game/live/123456/review" };
-  const settings = { ...DEFAULT_SETTINGS, enabled: !searchParams.has("native"),
+  const settings = { ...DEFAULT_SETTINGS, pokemonMode: searchParams.has("pokemon"), enabled: !searchParams.has("native"),
     extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
@@ -319,6 +321,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     if (phoneActions) actions.reconcile(document, route, settings, true);
     clocks.reconcile(document, route, settings, game, searchParams.has("desktop"));
     reviewStyle.reconcile(document, route, settings, window.innerWidth <= 599);
+    pokemon.reconcile(document, route, settings);
     if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
     if (!phoneActions) actions.reconcile(document, route, settings, false, true);
     androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
@@ -409,6 +412,21 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
       setTimeout(() => { node.textContent = 'A longer sentence arrives after native coach processing. Develop your knight and protect the center.'; }, 800);
     });
     if (!game && event.key === "n") document.querySelectorAll('.move-feedback-speech-text-component').forEach(node => node.textContent = 'This move leaves your knight unprotected. Look for a way to develop while keeping it safe.');
+    if (game && event.key === "t" && settings.pokemonMode) {
+      const top = document.querySelector('#board-layout-player-top .clock-component')!;
+      const bottom = document.querySelector('#board-layout-player-bottom .clock-component')!;
+      const wasBottom = bottom.classList.contains('clock-player-turn');
+      top.classList.toggle('clock-player-turn', wasBottom);
+      bottom.classList.toggle('clock-player-turn', !wasBottom);
+      const rows = document.querySelector('wc-simple-move-list > div')!;
+      const nodes = [...rows.querySelectorAll('[data-node]')];
+      const ply = Math.max(...nodes.map(node => Number(node.getAttribute('data-node')!.slice(2)))) + 1;
+      const row = document.createElement('div'); row.className = 'main-line-row';
+      const node = document.createElement('div');
+      node.className = `node main-line-ply ${wasBottom ? 'white' : 'black'}-move`;
+      node.setAttribute('data-node', `0-${ply}`); node.textContent = wasBottom ? 'Nf3' : 'Nc6';
+      row.append(node); rows.append(row);
+    }
     if (event.key === "m") {
       const rows = document.querySelector("wc-simple-move-list > div");
       const row = rows?.lastElementChild?.cloneNode(true) as HTMLElement | undefined;

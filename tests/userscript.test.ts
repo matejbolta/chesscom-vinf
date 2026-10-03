@@ -84,7 +84,7 @@ describe("Android userscript shell", () => {
     duration.value = "1000"; duration.dispatchEvent(new Event("change", {bubbles: true}));
     await vi.advanceTimersByTimeAsync(0);
 
-    expect(dialog?.querySelectorAll("select")).toHaveLength(18);
+    expect(dialog?.querySelectorAll("select")).toHaveLength(24);
     expect(dialog?.textContent).toContain("Android settings · v2.2.1");
     expect(
       dialog?.querySelector<HTMLSelectElement>(

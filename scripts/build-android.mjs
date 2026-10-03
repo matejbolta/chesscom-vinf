@@ -4,6 +4,8 @@ import { mkdir, readFile, rm } from "node:fs/promises";
 const packageJson = JSON.parse(await readFile("package.json", "utf8"));
 const pageCss = await readFile("src/content/content.css", "utf8");
 const settingsCss = await readFile("src/userscript/userscript.css", "utf8");
+const pokemonSettingsCss = await readFile("src/shared/pokemon-settings.css", "utf8");
+const pokemonNotice = await readFile("assets/pokemon/LICENCE.txt", "utf8");
 const outputDirectory = "dist-android";
 
 const metadata = `// ==UserScript==
@@ -36,9 +38,9 @@ await build({
   minify: true,
   sourcemap: false,
   legalComments: "none",
-  banner: { js: metadata },
+  banner: { js: `${metadata}\n/* Pokémon sprite attribution (PokeAPI/sprites):\n${pokemonNotice.replaceAll("*/", "* /")}\n*/` },
   define: {
-    __VINF_USERSCRIPT_CSS__: JSON.stringify(`${pageCss}\n${settingsCss}`),
+    __VINF_USERSCRIPT_CSS__: JSON.stringify(`${pageCss}\n${settingsCss}\n${pokemonSettingsCss}`),
     __VINF_VERSION__: JSON.stringify(packageJson.version)
   }
 });

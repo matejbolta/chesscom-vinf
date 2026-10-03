@@ -3,13 +3,27 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-03.
-Current source version: 2.11.1.
+Current source version: 2.12.0.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
 2.8.2 removes only the desktop Alt promotion-shortcut help row; annotation color help remains.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
+
+## 2.12.0 — Pokémon mode (2026-10-03)
+
+User explicitly authorized implementation and requires Pokémon and Extreme OLED to be mutually exclusive. Ordinary OLED can combine with Pokémon. Both settings surfaces clear the opposing switch; desktop E clears Pokémon when enabling Extreme; normalization resolves conflicting imported records in favor of Extreme. Disabling a mode preserves its piece assignments.
+
+`PokemonController` scopes local sprite CSS to audited primary native DOM boards on live-game and live-game Review routes. No added observer, timer, input overlay, network request or board sizing. Class selectors follow native movement/promotion and restoration removes only owned markers/style. Unsupported canvas boards fail closed. Review gets pieces only, no live turn UI. Native captured-material icons and promotion controls retain chess roles.
+
+Shared `pokemon-editor.ts` provides a mode switch, independent pieces switch, six 151-option Gen I selectors, image previews and Reset team. Default team: Pikachu pawns, Rapidash knights, Alakazam bishops, Snorlax rooks, Mewtwo queen, Dragonite king. Dark-team sprites are dimmer; black/white badges retain chess roles. Settings stay before the bottom OLED section.
+
+Existing clock controller owns the Poké Ball turn indicator and one-shot split-ball/SAN reveal on confirmed turn changes, including the first move. Native SAN may arrive after the clock switches; a pending reveal waits for matching completed-move evidence. It never replays on clock ticks, initial mount or board flip. Dot size/pulse/duration remain configurable, SAN stays clock-sized, reduced-motion skips animation. No review or homepage turn indicators.
+
+Sprites are 151 bundled PNG data URLs (~172 KB total), pinned to PokeAPI/sprites revision in `assets/pokemon/README.md`. Attribution/license included in desktop build and Android script banner; no runtime artwork downloads. Do not claim ownership or interpret the repository CC0 dedication as artwork rights clearance.
+
+Verification: TypeScript, 202 unit/integration tests passed and both builds; sanitized IAB fixtures at 390×740 phone and 1100×800 desktop, Review at phone width. Checked six selectors/preview, mutual exclusion in both directions, team contrast, unchanged board dimensions, native node/input restoration, promotion class mapping and one-shot turn updates. Review fixture retains graph/coach/dock and has no live overlays. No browser console errors observed. The complete test run emitted one jsdom teardown `window is not defined` warning from the runtime MutationObserver after an environment closed; all assertions passed. Firefox Android/live-site behavior remains unverified; no real game actions, push or Store packaging.
 
 ## Start Here
 
@@ -102,7 +116,7 @@ through Best/Resume or delayed text; Extreme same geometry. Very short screens
 cannot show all coach content plus an unchanged native board and graph at once;
 manual scrolling/local coach overflow remain available. No console errors seen.
 Actual new Firefox Android build remains unverified; supplied video is baseline.
-Pokémon concept is brainstorming only. No push, Store package or screenshots.
+Pokémon was brainstorming at 2.11.1; it is now implemented by explicit user authorization in 2.12.0 (see below). No push, Store package or Store screenshots.
 
 ## Phone Review dock (2.11.0)
 

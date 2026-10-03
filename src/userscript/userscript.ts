@@ -1,3 +1,4 @@
+import { createPokemonEditor } from "../shared/pokemon-editor";
 import { readNativeMarkings } from "../content/native-annotations";
 import { MARKERS } from "../shared/constants";
 import type {
@@ -933,12 +934,14 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   status.className = "chesscom-vinf-settings-status";
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
-  form.append(header, master, homepage, presets, stats, gameSettings, appearance, status);
+  const pokemonEditor = createPokemonEditor(document, extremeOledInput);
+  form.append(header, master, homepage, presets, stats, gameSettings, pokemonEditor.element, appearance, status);
   dialog.append(form);
 
   function render(settings: ExtensionSettings): void {
     enabledInput.checked = settings.enabled;
     extremeOledInput.checked = settings.extremeOled;
+    pokemonEditor.set(settings);
     turnDotSizeInput.value = String(settings.turnDotSize);
     turnPulseScaleInput.value = String(settings.turnPulseScale);
     turnAnimationDurationInput.value = String(settings.turnAnimationDuration);
@@ -982,6 +985,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
       await store.save({
         enabled: enabledInput.checked,
         extremeOled: extremeOledInput.checked,
+        ...pokemonEditor.get(),
         turnDotSize: Number(turnDotSizeInput.value),
         turnPulseScale: Number(turnPulseScaleInput.value),
         turnAnimationDuration: Number(turnAnimationDurationInput.value),

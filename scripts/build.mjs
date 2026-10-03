@@ -1,5 +1,5 @@
 import { build, context } from "esbuild";
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, rm, readFile, writeFile } from "node:fs/promises";
 
 const watch = process.argv.includes("--watch");
 
@@ -15,7 +15,9 @@ async function copyStatic() {
   await cp("src/content/content.css", "dist/content.css");
   await cp("src/popup/popup.html", "dist/popup.html");
   await cp("src/popup/popup.html", "dist/sidepanel.html");
-  await cp("src/popup/popup.css", "dist/popup.css");
+  await writeFile("dist/popup.css", (await readFile("src/popup/popup.css", "utf8")) + "\n" + (await readFile("src/shared/pokemon-settings.css", "utf8")));
+  await cp("assets/pokemon/LICENCE.txt", "dist/POKEMON-LICENCE.txt");
+  await cp("assets/pokemon/README.md", "dist/POKEMON-ATTRIBUTION.md");
 }
 
 async function run() {
