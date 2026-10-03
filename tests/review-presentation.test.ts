@@ -65,3 +65,16 @@ it('mutes wide review through the native control before hiding, and leaves unkno
   expect(click).toHaveBeenCalledOnce();
   controller.cleanup(document);
 });
+
+it('applies engine presentation only on phones and exact saved-game analysis routes, without Review proxies', () => {
+  fixture();
+  const engine = {...location,pathname:'/analysis/game/live/123456/analysis'};
+  controller.reconcile(document,engine,DEFAULT_SETTINGS,true);
+  expect(document.documentElement.hasAttribute('data-chesscom-vinf-phone-analysis')).toBe(true);
+  expect(document.querySelector('.chesscom-vinf-review-row-actions')).toBeNull();
+  for (const [route,phone,enabled] of [[engine,false,true],[{...engine,pathname:'/analysis'},true,true],[engine,true,false]] as const) {
+    controller.reconcile(document,route,{...DEFAULT_SETTINGS,enabled},phone);
+    expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(false);
+    expect(document.documentElement.hasAttribute('data-chesscom-vinf-phone-analysis')).toBe(false);
+  }
+});

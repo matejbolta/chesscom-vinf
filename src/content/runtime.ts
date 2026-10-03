@@ -18,7 +18,8 @@ import type { ExtensionSettings } from "../shared/models";
 import { normalizeSettings } from "../shared/settings";
 import {
   GameReviewLayoutController,
-  isChessComLiveGameReview
+  isChessComLiveGameReview,
+  isChessComGameAnalysis
 } from "./game-review-layout-controller";
 import {
   findActiveLiveGameHref,
@@ -95,7 +96,7 @@ export function startVinfRuntime(
   }
 
   function findObservationRoot(): HTMLElement | null {
-    if (isChessComLiveGameReview(window.location) || isChessComGame(window.location) || isGameBootstrapRoute()) {
+    if (isChessComGameAnalysis(window.location) || isChessComLiveGameReview(window.location) || isChessComGame(window.location) || isGameBootstrapRoute()) {
       return document.body ?? document.documentElement;
     }
     return (
@@ -136,6 +137,7 @@ export function startVinfRuntime(
       currentSettings.enabled &&
       currentSettings.oledMode &&
       (isTargetRoute() ||
+        ((phoneGameReviewMedia?.matches ?? window.innerWidth <= 599) && isChessComGameAnalysis(window.location)) ||
         isChessComLiveGameReview(window.location) ||
         isChessComGame(window.location));
     if (shouldUseOled) {
@@ -264,7 +266,7 @@ export function startVinfRuntime(
       settings.enabled &&
       (isTargetRoute() || isChessComGame(window.location) ||
         isGameBootstrapRoute() ||
-        isChessComLiveGameReview(window.location))
+        isChessComGameAnalysis(window.location) || isChessComLiveGameReview(window.location))
     ) {
       attachObserver();
     } else {

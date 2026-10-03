@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-03.
-Current source version: 2.14.1.
+Current source version: 2.15.0.
+2.15.0 adds phone-only saved-game engine Analysis presentation on exact `/analysis/game/(live/)?<id>/analysis` routes. Reuses Review clean player rows/clock styling but never Review action proxies, graph relocation, coach handling, or live clock overlays. Runtime observes the route and enables OLED only at phone width. Native engine lines/tabs/settings/secondary actions stay intact; audited `.game-controls-primary-component` forms a fixed four-button dock with body bottom clearance. Standalone analysis and wide layouts excluded. Public completed-game page inspected read-only for selectors; never started/altered a game. Verification: TypeScript, 206 tests and both builds passed. Sanitized IAB engine fixture at 390×740 shows compact rows, OLED surfaces and fixed four-button dock; no console errors. Firefox Android remains unverified.
 2.14.1 corrects Review action alignment using the native chessboard bounds rather than the full row center. A scoped ResizeObserver watches board/row size, with cleanup on departure/disable; only owned action wrappers translate.
 2.13.2 replaces the hard-coded popup version with a build template shared by popup/side panel. Desktop build rejects package/manifest version mismatches; never manually bump the HTML badge again.
 2.13.1 removes duplicate heading padding in the desktop Pokémon settings card, matching the existing shortcut-heading fix; Android styling is unchanged.

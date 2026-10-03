@@ -1497,3 +1497,36 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
     --color-bg-primary: #000; --color-bg-secondary: #000; --color-text-default: #bbb;
   }
 }
+
+/* Phone engine Analysis: preserve native lines, tabs, settings and actions. */
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-analysis] body {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  html[data-chesscom-vinf-phone-analysis] .game-controls-primary-component {
+    position: fixed; z-index: 30; bottom: 0; left: 50%; transform: translateX(-50%);
+    box-sizing: border-box; width: min(100%, 400px); display: grid;
+    grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 5px;
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: var(--color-bg-primary, #262522);
+  }
+  html[data-chesscom-vinf-phone-analysis] .game-controls-primary-component button {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; min-width: 0; height: 60px; padding: 0; margin: 0;
+    border: 1px solid var(--color-border-default, #444); border-radius: 12px;
+    background: var(--color-bg-tertiary, #393734); box-shadow: none;
+  }
+  html[data-chesscom-vinf-phone-analysis] .game-controls-primary-component button svg { width: 32px; height: 32px; }
+  html[data-chesscom-vinf-phone-analysis] .game-controls-primary-component button:disabled { opacity: .35; }
+  html[data-chesscom-vinf-phone-analysis][data-chesscom-vinf-oled="true"] {
+    --color-bg-primary: #000; --color-bg-secondary: #000; --color-bg-tertiary: #0a0a0a;
+    --color-text-default: #bbb; --color-border-default: #252525;
+  }
+  html[data-chesscom-vinf-phone-analysis][data-chesscom-vinf-oled="true"] :is(
+    .analysis-view-component, .engine-lines-with-options-component, .analysis-options-component,
+    .engine-lines-with-options-lines, .sidebar-view-content, .sidebar-header-header,
+    .game-controls-primary-component) { background: #000 !important; }
+  html[data-chesscom-vinf-phone-analysis][data-chesscom-vinf-oled="true"] .game-controls-primary-component button {
+    background: #0a0a0a; color: #ededed; border-color: #1c1c1c;
+  }
+}

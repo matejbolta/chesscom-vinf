@@ -1171,3 +1171,7 @@ Audited English move-by-move Review sources: `.move-by-move-buttons button` whos
 ## Phone Review refinements — 2.14.0
 
 Review action wrappers now live independently in top/bottom `.player-component`, centered in grid column 2. Phone clean presentation applies before the move-by-move component appears when the audited analysis board exists. `.move-feedback-speech-text-component` retains geometry with a small descender paint allowance. Existing audited `.cc-confirmation-popover-popover`, `.cc-confirmation-modal-modal`, `.draw-offer-component`, `.draw-request-component` receive phone-only OLED surface tokens; native buttons remain untouched.
+
+## Phone engine Analysis — 2.15.0
+
+Read-only public completed-game inspection on 2026-10-03 confirms `wc-chess-board#board-analysis-board`, native player rows, `.analysis-view-component`, `.engine-lines-with-options-component`, `.analysis-options-component`, `.engine-lines-with-options-lines`. Navigation is `.game-controls-view-component > .game-controls-primary-component` with First Move / Previous Move / Next Move / Last Move buttons. No cloning or handler replacement. Only exact saved-game analysis route and phone viewport receive new presentation; sanitized `?engine=1` fixture models these containers.

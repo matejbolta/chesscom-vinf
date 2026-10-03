@@ -209,6 +209,13 @@ if (window.location.pathname === "/game-review-mobile" && searchParams.has("eval
   style.textContent = "#board-layout-chessboard { margin-left: 32px; margin-right: 0; width: calc(100% - 32px); height: auto; aspect-ratio: 1; }";
   document.head.append(style);
 }
+if (window.location.pathname === "/game-review-mobile" && searchParams.has("engine")) {
+  document.querySelector('.mobile-top-section-container')?.remove();
+  document.querySelector('.move-by-move-container')?.remove();
+  const panel = document.querySelector('.sidebar-view-content')!;
+  panel.insertAdjacentHTML('afterbegin', '<section class="analysis-view-component"><nav>Analysis · Games · Explore</nav><div class="engine-lines-with-options-component"><div class="analysis-options-component">Analysis · depth 16 · Stockfish <button aria-label="Engine settings">⚙</button></div><div class="engine-lines-with-options-lines"><p>+5.07 · Nxe7 is best</p><p>+6.23 · 24. Ne4 Nf5 25. Qg6+</p><p>+6.02 · 24. Nf1 e2 25. Qh5+</p><p>+5.97 · 24. Nc4 e2 25. Qh5+</p></div></div></section>');
+  document.querySelector('.game-controls-view-component')!.innerHTML = '<div class="game-controls-primary-component">'+['First Move','Previous Move','Next Move','Last Move'].map((name,i)=>`<button aria-label="${name}">${['|‹','‹','›','›|'][i]}</button>`).join('')+'</div><button>Game Review</button>';
+}
 if (window.location.pathname === "/game-review-mobile" && searchParams.has("overview")) {
   document.querySelector('[aria-label="Back"]')?.remove();
   document.querySelector(".move-by-move-component")?.classList.remove("move-by-move-component");
@@ -219,7 +226,7 @@ if (window.location.pathname === "/game-review-mobile") {
     {
       protocol: "https:",
       hostname: "www.chess.com",
-      pathname: "/analysis/game/live/123456/review"
+      pathname: searchParams.has("engine") ? "/analysis/game/live/123456/analysis" : "/analysis/game/live/123456/review"
     },
     true,
     window.innerWidth <= 599
@@ -326,7 +333,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const androidDock = new AndroidGameControlsController();
   const game = window.location.pathname === "/phone-game";
   const route = { protocol: "https:", hostname: "www.chess.com",
-    pathname: game ? "/game/123456" : "/analysis/game/live/123456/review" };
+    pathname: game ? "/game/123456" : searchParams.has("engine") ? "/analysis/game/live/123456/analysis" : "/analysis/game/live/123456/review" };
   const settings = { ...DEFAULT_SETTINGS, pokemonMode: searchParams.has("pokemon"), enabled: !searchParams.has("native"),
     extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {

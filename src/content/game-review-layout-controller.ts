@@ -17,6 +17,11 @@ export function isChessComLiveGameReview(location: LocationLike): boolean {
   );
 }
 
+export function isChessComGameAnalysis(location: LocationLike): boolean {
+  return location.protocol === "https:" && CHESS_COM_HOSTS.has(location.hostname.toLowerCase()) &&
+    /^\/analysis\/game\/(?:live\/)?\d+\/analysis\/?$/.test(location.pathname);
+}
+
 export class GameReviewLayoutController {
   private readonly originalPositions = new Map<HTMLElement, OriginalPosition>();
 

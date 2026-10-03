@@ -9,6 +9,12 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.15.0] - 2026-10-03
+
+- Add a first phone presentation for saved-game engine Analysis routes: OLED surfaces, hidden site navigation/player identities, retained captured material, and compact stationary clocks.
+- Keep native engine lines, settings, tabs, evaluations and move interactions; present the four native navigation controls in a safe-area-aware bottom dock.
+- Keep standalone Analysis, tablet, desktop and Game Review behavior separate.
+
 ## [2.14.1] - 2026-10-03
 
 - Center phone Review actions on the actual chessboard bounds, excluding the evaluation-bar gutter; update alignment on resize without changing board or clock geometry.
