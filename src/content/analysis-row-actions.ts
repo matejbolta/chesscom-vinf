@@ -1,5 +1,6 @@
 /** Keep Vue-owned header controls in place; proxies forward to the current native buttons. */
 export class AnalysisRowActions {
+  private pendingBoardUntil = 0;
   private controls: HTMLButtonElement[] = [];
   private sources = new Set<HTMLElement>();
   private observer: ResizeObserver | null = null;
@@ -25,7 +26,11 @@ export class AnalysisRowActions {
         proxy.setAttribute('aria-label',name);
         proxy.addEventListener('click', () => {
           const current = document.querySelector<HTMLButtonElement>(`.sidebar-header-header button[aria-label="${name}"]`);
-          if (current && !current.disabled && current.getAttribute('aria-disabled') !== 'true') current.click();
+          if (current && !current.disabled && current.getAttribute('aria-disabled') !== 'true') {
+            if (index === 1) this.pendingBoardUntil = Date.now() + 1500;
+            current.click();
+            this.selectBoardTab(document);
+          }
         });
         host.append(proxy); this.controls[index] = proxy;
       }
@@ -41,6 +46,13 @@ export class AnalysisRowActions {
       }
     });
     this.align();
+    this.selectBoardTab(document);
+  }
+  private selectBoardTab(document: Document): void {
+    if (Date.now() > this.pendingBoardUntil) return;
+    const tab = [...document.querySelectorAll<HTMLButtonElement>('[role="dialog"] [role="tablist"] button')]
+      .find(button => button.textContent?.trim() === 'Board');
+    if (tab && !tab.disabled) { this.pendingBoardUntil = 0; tab.click(); }
   }
   private align(): void {
     const board = this.board?.getBoundingClientRect(), host = this.host?.getBoundingClientRect();
@@ -53,6 +65,7 @@ export class AnalysisRowActions {
     }
   }
   cleanup(): void {
+    this.pendingBoardUntil = 0;
     this.observer?.disconnect(); this.observer = null;
     this.controls.forEach(button=>button.remove()); this.controls=[];
     this.sources.forEach(source=>source.removeAttribute('data-vinf-analysis-source')); this.sources.clear();

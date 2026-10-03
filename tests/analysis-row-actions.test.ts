@@ -11,6 +11,15 @@ it('places native action proxies at the board center and in the engine strip, fo
   const proxies=document.querySelectorAll<HTMLButtonElement>('.chesscom-vinf-analysis-row-action');
   expect(proxies).toHaveLength(2); expect(proxies[0].style.left).toBe('192px'); expect(proxies[1].parentElement?.className).toBe('analysis-options-bar');
   proxies[0].click(); expect(clicked).toHaveBeenCalledOnce();
+  const boardTab = vi.fn();
+  document.querySelector<HTMLButtonElement>('.sidebar-header-header [aria-label="Settings"]')!.addEventListener('click',()=>{
+    const dialog=document.createElement('div'); dialog.setAttribute('role','dialog');
+    dialog.innerHTML='<div role="tablist"><button>Engine</button><button>Board</button></div>';
+    dialog.querySelectorAll('button')[1].addEventListener('click',boardTab); document.body.append(dialog);
+  });
+  proxies[1].click(); expect(boardTab).toHaveBeenCalledOnce();
+  controller.reconcile(document,true); expect(boardTab).toHaveBeenCalledOnce();
+
   board.classList.add('flipped'); controller.reconcile(document,true);
   expect(proxies[0].style.left).toBe('192px');
   controller.reconcile(document,false);

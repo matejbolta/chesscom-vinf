@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.16.2] - 2026-10-03
+
+- Make the phone board-settings gear select the native Board tab, distinct from the engine gear; keep the engine-status symbol out of gear slots.
+- Add 12px spacing after engine variations.
+
 ## [2.16.1] - 2026-10-03
 
 - Center phone Analysis Back under the board; place board settings alongside engine settings and the Analysis toggle in a compact strip, with depth/engine details below.
