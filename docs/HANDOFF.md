@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-03.
-Current source version: 2.13.0.
+Current source version: 2.13.1.
+2.13.1 removes duplicate heading padding in the desktop Pokémon settings card, matching the existing shortcut-heading fix; Android styling is unchanged.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.

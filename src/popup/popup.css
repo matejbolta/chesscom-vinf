@@ -544,7 +544,8 @@ select {
   line-height: 1.5;
 }
 
-.shortcut-guide > h2 {
+.shortcut-guide > h2,
+.vinf-pokemon-settings > h2 {
   padding: 0;
 }
 

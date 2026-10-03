@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.13.1] - 2026-10-03
+
+- Remove doubled padding from the desktop Pokémon settings heading to align it with the other card titles.
+
 ## [2.13.0] - 2026-10-03
 
 - Fix phone captured-material clipping and unnecessary wrapping by restoring native inline sprite flow; keep the advantage score with the final piece group.
