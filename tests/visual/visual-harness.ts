@@ -203,6 +203,12 @@ if (searchParams.has("duplicate-preview")) {
   };
 }
 
+// Model the asymmetric phone evaluation gutter shown in device screenshots.
+if (window.location.pathname === "/game-review-mobile" && searchParams.has("eval-gutter")) {
+  const style = document.createElement("style");
+  style.textContent = "#board-layout-chessboard { margin-left: 32px; margin-right: 0; width: calc(100% - 32px); height: auto; aspect-ratio: 1; }";
+  document.head.append(style);
+}
 if (window.location.pathname === "/game-review-mobile" && searchParams.has("overview")) {
   document.querySelector('[aria-label="Back"]')?.remove();
   document.querySelector(".move-by-move-component")?.classList.remove("move-by-move-component");

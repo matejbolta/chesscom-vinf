@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-03.
-Current source version: 2.14.0.
+Current source version: 2.14.1.
+2.14.1 corrects Review action alignment using the native chessboard bounds rather than the full row center. A scoped ResizeObserver watches board/row size, with cleanup on departure/disable; only owned action wrappers translate.
 2.13.2 replaces the hard-coded popup version with a build template shared by popup/side panel. Desktop build rejects package/manifest version mismatches; never manually bump the HTML badge again.
 2.13.1 removes duplicate heading padding in the desktop Pokémon settings card, matching the existing shortcut-heading fix; Android styling is unchanged.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.

@@ -27,3 +27,20 @@ it('forwards to current native actions without changing their nodes or time cont
   replacement.textContent = 'Unknown action'; nativeEngine.remove(); controller.reconcile(document,true);
   expect(document.querySelector('.chesscom-vinf-review-row-actions')).toBeNull();
 });
+
+it('aligns both actions to board squares rather than the evaluation gutter or viewport', () => {
+  document.body.innerHTML = '<div id="board-layout-player-top"><div class="player-component"></div></div><div id="board-layout-player-bottom"><div class="player-component"></div></div><div id="board-layout-chessboard"><wc-chess-board id="board-analysis-board"></wc-chess-board></div><div class="sidebar-header-header"><button aria-label="Go to Analysis">Engine</button></div><div class="move-by-move-buttons"><button>New 10 min</button></div>';
+  let boardLeft = 32;
+  const board = document.querySelector<HTMLElement>('wc-chess-board')!;
+  board.getBoundingClientRect = () => ({left:boardLeft,width:358} as DOMRect);
+  document.querySelectorAll<HTMLElement>('.player-component').forEach(host => {
+    host.getBoundingClientRect = () => ({left:0,width:390} as DOMRect);
+  });
+  const controller = new ReviewRowActions(); controller.reconcile(document,true);
+  for (const row of document.querySelectorAll<HTMLElement>('.chesscom-vinf-review-row-actions'))
+    expect(row.style.getPropertyValue('--vinf-review-board-offset')).toBe('16px');
+  boardLeft = 16; controller.reconcile(document,true);
+  for (const row of document.querySelectorAll<HTMLElement>('.chesscom-vinf-review-row-actions'))
+    expect(row.style.getPropertyValue('--vinf-review-board-offset')).toBe('0px');
+  controller.cleanup();
+});

@@ -1468,6 +1468,7 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
   }
   .chesscom-vinf-review-row-actions {
     display: grid; place-items: center; grid-column: 2; grid-row: 1; width: 100%;
+    transform: translateX(var(--vinf-review-board-offset, 0px));
   }
   .chesscom-vinf-review-row-actions button {
     display: flex; align-items: center; justify-content: center; justify-self: center; width: min(44px, 100%); min-width: 0;

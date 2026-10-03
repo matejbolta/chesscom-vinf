@@ -4,6 +4,8 @@ const SOURCE = 'data-chesscom-vinf-review-action-source';
 export class ReviewRowActions {
   private rows: HTMLElement[] = [];
   private sources = new Set<HTMLElement>();
+  private resize: ResizeObserver | null = null;
+  private board: HTMLElement | null = null;
 
   reconcile(document: Document, active: boolean): void {
     if (!active) { this.cleanup(); return; }
@@ -33,6 +35,17 @@ export class ReviewRowActions {
         row.append(button); hosts[index]!.append(row); this.rows.push(row);
       }
     }
+    const board = document.querySelector<HTMLElement>('#board-layout-chessboard wc-chess-board#board-analysis-board');
+    if (this.board !== board) {
+      this.resize?.disconnect(); this.resize = null; this.board = board;
+      const Observer = document.defaultView?.ResizeObserver;
+      if (board && Observer) {
+        this.resize = new Observer(() => this.align());
+        this.resize.observe(board);
+        hosts.forEach(host => this.resize!.observe(host!));
+      }
+    }
+    this.align();
     sources.forEach((source, index) => {
       const button = this.rows[index].children[0] as HTMLButtonElement;
       button.hidden = !source;
@@ -44,6 +57,19 @@ export class ReviewRowActions {
     });
   }
 
+  private align(): void {
+    const board = this.board?.getBoundingClientRect();
+    if (!board?.width) return;
+    const center = board.left + board.width / 2;
+    for (const row of this.rows) {
+      const host = row.parentElement?.getBoundingClientRect();
+      if (!host?.width) continue;
+      const shift = `${center - (host.left + host.width / 2)}px`;
+      if (row.style.getPropertyValue('--vinf-review-board-offset') !== shift)
+        row.style.setProperty('--vinf-review-board-offset', shift);
+    }
+  }
+
   private findSources(document: Document): (HTMLElement | null)[] {
     const newGame = [...document.querySelectorAll<HTMLElement>('.move-by-move-buttons button')]
       .find(button => /^New\s+(?:\d|Game\b)/i.test(button.textContent?.trim() ?? '')) ?? null;
@@ -51,6 +77,7 @@ export class ReviewRowActions {
     return [newGame, engine];
   }
   cleanup(): void {
+    this.resize?.disconnect(); this.resize = null; this.board = null;
     this.sources.forEach(source => source.removeAttribute(SOURCE)); this.sources.clear();
     this.rows.forEach(row => row.remove()); this.rows = [];
   }

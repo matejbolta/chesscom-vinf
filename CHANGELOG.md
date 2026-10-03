@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.14.1] - 2026-10-03
+
+- Center phone Review actions on the actual chessboard bounds, excluding the evaluation-bar gutter; update alignment on resize without changing board or clock geometry.
+
 ## [2.14.0] - 2026-10-03
 
 - Center phone Review's rounded New Game plus above the board and Analysis magnifier below it.
