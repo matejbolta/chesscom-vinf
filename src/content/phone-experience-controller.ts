@@ -74,6 +74,7 @@ export class PhoneExperienceController {
       return;
     }
     if (nativeGameHasEnded(document)) this.finished = true;
+    document.documentElement.toggleAttribute("data-chesscom-vinf-phone-postgame", this.finished);
     const board = document.querySelector("#board-layout-chessboard wc-chess-board#board-single");
     const timers = document.querySelectorAll('#board-layout-player-top .clock-component [role="timer"], #board-layout-player-bottom .clock-component [role="timer"]');
     if (this.finished || !board || timers.length !== 2 ||
@@ -225,6 +226,7 @@ export class PhoneExperienceController {
   }
 
   cleanup(document: Document): void {
+    document.documentElement.removeAttribute("data-chesscom-vinf-phone-postgame");
     document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
     this.entry.cleanup();
     this.reviewEntry.cleanup();

@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.17.0] - 2026-10-03
+
+- Give the phone post-game screen compact player/clock rows and hidden site navigation/outer game tabs, preserving the native result card and its actions.
+
 ## [2.16.2] - 2026-10-03
 
 - Make the phone board-settings gear select the native Board tab, distinct from the engine gear; keep the engine-status symbol out of gear slots.

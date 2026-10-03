@@ -1585,3 +1585,25 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
     width: 24px; height: 24px; margin: 0; padding: 0;
   }
 }
+
+/* Result presentation is separate from live-game timers and input overlays. */
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-postgame] #mobile-toolbar,
+  html[data-chesscom-vinf-phone-postgame] #board-layout-sidebar .sidebar-component > .tabs-component,
+  html[data-chesscom-vinf-phone-postgame] .board-layout-player :is(.player-avatar,.cc-user-block-component,.connection-component,.player-game-over-component) {
+    display: none !important;
+  }
+  html[data-chesscom-vinf-phone-postgame] body { padding-top: 0 !important; }
+  html[data-chesscom-vinf-phone-postgame] .player-playerContent > :not(wc-captured-pieces):not(:has(wc-captured-pieces)),
+  html[data-chesscom-vinf-phone-postgame] .player-playerContent :has(wc-captured-pieces) > :not(wc-captured-pieces):not(:has(wc-captured-pieces)) { display: none !important; }
+  html[data-chesscom-vinf-phone-postgame] .board-layout-player .player-component {
+    display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 12px;
+  }
+  html[data-chesscom-vinf-phone-postgame] .board-layout-player .player-tagline { height: auto; margin: 0; }
+  html[data-chesscom-vinf-phone-postgame] .board-layout-player .clock-component {
+    background: transparent !important; border: 0; box-shadow: none;
+    min-width: 60px; padding: 0; margin: 0; font-size: 18px; color: #bbb;
+  }
+  html[data-chesscom-vinf-phone-postgame] .board-layout-player .clock-icon-icon { display: none; }
+  html[data-chesscom-vinf-phone-postgame] #board-layout-sidebar { margin-top: 0; }
+}

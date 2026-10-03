@@ -105,9 +105,14 @@ describe("phone play and review", () => {
     expect(document.documentElement.hasAttribute(marker)).toBe(true);
     const result = document.createElement("div"); result.className = "game-result"; result.textContent = "1-0";
     document.querySelector("#board-layout-sidebar")!.append(result);
-    controller.reconcile(document, game, DEFAULT_SETTINGS, true); result.remove();
+    controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-phone-postgame")).toBe(true);
+    result.remove();
     controller.reconcile(document, game, DEFAULT_SETTINGS, true);
     expect(document.documentElement.hasAttribute(marker)).toBe(false);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-phone-postgame")).toBe(true);
+    controller.reconcile(document, game, {...DEFAULT_SETTINGS,enabled:false}, true);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-phone-postgame")).toBe(false);
   });
 
   it("mutes through the native handler before hiding, watches re-enable and restores presentation", async () => {
