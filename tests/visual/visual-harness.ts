@@ -340,15 +340,15 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
-    const phoneActions = window.innerWidth <= 599 && !searchParams.has("desktop");
+    const phoneActions = window.innerWidth <= 599;
     if (phoneActions) actions.reconcile(document, route, settings, true);
-    clocks.reconcile(document, route, settings, game, searchParams.has("desktop"));
+    clocks.reconcile(document, route, settings, game, searchParams.has("desktop") && window.innerWidth > 599);
     reviewStyle.reconcile(document, route, settings, window.innerWidth <= 599);
     pokemon.reconcile(document, route, settings);
     if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
     if (!phoneActions) actions.reconcile(document, route, settings, false, true);
-    androidDock.reconcile(document, route, settings, !searchParams.has("desktop"));
-    annotations.reconcile(document, route, settings, !searchParams.has("desktop"));
+    androidDock.reconcile(document, route, settings, !searchParams.has("desktop") || window.innerWidth <= 599);
+    annotations.reconcile(document, route, settings, !searchParams.has("desktop") || window.innerWidth <= 599);
   };
   // Sanitized native confirmation shape; never a real game action.
   document.querySelector('.resign-button-component')?.addEventListener('click', () => {

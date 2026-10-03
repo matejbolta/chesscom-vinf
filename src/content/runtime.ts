@@ -225,14 +225,14 @@ export function startVinfRuntime(
   function reconcileGamePresentation(): void {
     if (!settings) return;
     const phone = phoneGameReviewMedia?.matches ?? window.innerWidth <= 599;
-    phoneExperienceController.reconcile(document, window.location, settings, phone, android && phone);
-    if (android && phone) phoneActions.reconcile(document, window.location, settings, true);
-    extremeOledController.reconcile(document, window.location, settings, desktop || android, desktop);
+    phoneExperienceController.reconcile(document, window.location, settings, phone, phone);
+    if (phone) phoneActions.reconcile(document, window.location, settings, true);
+    extremeOledController.reconcile(document, window.location, settings, desktop || android || phone, desktop && !phone);
     reviewPresentation.reconcile(document, window.location, settings, phone);
     pokemonController.reconcile(document, window.location, settings);
-    if (!(android && phone)) phoneActions.reconcile(document, window.location, settings, false, desktop || android);
-    touchAnnotations.reconcile(document, window.location, settings, android);
-    androidGameControls.reconcile(document, window.location, settings, android);
+    if (!phone) phoneActions.reconcile(document, window.location, settings, false, desktop || android);
+    touchAnnotations.reconcile(document, window.location, settings, android || phone);
+    androidGameControls.reconcile(document, window.location, settings, android || phone);
   }
 
   function reconcile(): void {

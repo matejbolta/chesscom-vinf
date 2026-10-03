@@ -1,3 +1,5 @@
+import { PhoneExperienceController } from "../src/content/phone-experience-controller";
+import { AndroidGameControlsController } from "../src/content/android-game-controls";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { startVinfRuntime } from "../src/content/runtime";
 import {
@@ -330,4 +332,23 @@ describe("responsive runtime lifecycle", () => {
       "chess-tv daily-games legend-league"
     );
   });
+});
+
+it('uses phone gameplay presentation on narrow desktop as well as Firefox Android', async () => {
+  vi.useFakeTimers();
+  const width=vi.spyOn(window,'innerWidth','get').mockReturnValue(390);
+  const media=vi.spyOn(window,'matchMedia').mockImplementation(()=>({matches:true,addEventListener:vi.fn(),removeEventListener:vi.fn()}) as unknown as MediaQueryList);
+  const phone=vi.spyOn(PhoneExperienceController.prototype,'reconcile');
+  const dock=vi.spyOn(AndroidGameControlsController.prototype,'reconcile');
+  for (const agent of ['Desktop Chrome','Mozilla Android Firefox/130']) {
+    const ua=vi.spyOn(window.navigator,'userAgent','get').mockReturnValue(agent);
+    window.history.replaceState({},'', '/game/123456');
+    document.documentElement.className='user-logged-in'; document.body.replaceChildren();
+    startVinfRuntime({load:async()=>({...DEFAULT_SETTINGS}),subscribe:()=>{}});
+    await Promise.resolve(); await Promise.resolve();
+    expect(phone.mock.calls.at(-1)?.slice(3)).toEqual([true,true]);
+    expect(dock.mock.calls.at(-1)?.[3]).toBe(true);
+    ua.mockRestore();
+  }
+  width.mockRestore(); media.mockRestore(); phone.mockRestore(); dock.mockRestore();
 });

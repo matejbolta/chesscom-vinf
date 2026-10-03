@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.18.0] - 2026-10-03
+
+- Restore native wide desktop/tablet Review layout and coach audio controls in normal/OLED mode; retain Extreme OLED, Pokémon, and desktop B behavior.
+- Select phone gameplay presentation by the shared 599px breakpoint in both builds, including material/action rows, move dock, and Extreme navigation. Desktop keyboard shortcuts remain available.
+
 ## [2.17.0] - 2026-10-03
 
 - Give the phone post-game screen compact player/clock rows and hidden site navigation/outer game tabs, preserving the native result card and its actions.

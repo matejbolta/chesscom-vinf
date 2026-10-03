@@ -24,7 +24,7 @@ it('keeps native review nodes and actions; independently styles Extreme and rest
   for (const phone of [true,false]) {
     for (const extremeOled of [false,true]) {
       controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled},phone);
-      expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(true);
+      expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(phone || extremeOled);
       expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-extreme')).toBe(extremeOled);
       text.textContent = 'Native coach update'; clock.textContent = '8:40';
       expect(document.querySelector('.game-arc-component')).toBe(graph);
@@ -56,11 +56,11 @@ it('mutes wide review through the native control before hiding, and leaves unkno
   svg.setAttribute('data-glyph','media-audio-speaker');
   const click = vi.fn(() => svg.setAttribute('data-glyph','media-audio-speaker-mute'));
   button.addEventListener('click',click);
-  controller.reconcile(document,location,DEFAULT_SETTINGS,false);
+  controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled:true},false);
   expect(click).toHaveBeenCalledOnce();
   expect(button.hasAttribute('data-chesscom-vinf-review-muted')).toBe(true);
   svg.setAttribute('data-glyph','unknown');
-  controller.reconcile(document,location,DEFAULT_SETTINGS,false);
+  controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled:true},false);
   expect(button.hasAttribute('data-chesscom-vinf-review-muted')).toBe(false);
   expect(click).toHaveBeenCalledOnce();
   controller.cleanup(document);
@@ -77,4 +77,17 @@ it('applies engine presentation only on phones and exact saved-game analysis rou
     expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(false);
     expect(document.documentElement.hasAttribute('data-chesscom-vinf-phone-analysis')).toBe(false);
   }
+});
+
+it('leaves wide normal/OLED Review native, including coach audio', () => {
+  fixture();
+  const audio=document.querySelector<HTMLButtonElement>('[aria-label="Toggle Coach Audio"]')!;
+  audio.querySelector('svg')!.setAttribute('data-glyph','media-audio-speaker');
+  const click=vi.fn(); audio.addEventListener('click',click);
+  for (const oledMode of [false,true]) {
+    controller.reconcile(document,location,{...DEFAULT_SETTINGS,oledMode},false);
+    expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(false);
+    expect(audio.hasAttribute('data-chesscom-vinf-review-muted')).toBe(false);
+  }
+  expect(click).not.toHaveBeenCalled();
 });

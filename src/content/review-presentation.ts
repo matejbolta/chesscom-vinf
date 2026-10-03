@@ -21,6 +21,8 @@ export class ReviewPresentationController {
         !document.documentElement.classList.contains("user-logged-in")) {
       this.cleanup(document); return;
     }
+    // Wide normal/OLED Review stays native; Extreme keeps its existing presentation.
+    if (!phone && !settings.extremeOled) { this.cleanup(document); return; }
     // PhoneExperienceController already handles phone audio, including overview.
     if (!phone) this.muteCoach(document);
     else document.querySelectorAll(`[${MUTED}]`).forEach(button => button.removeAttribute(MUTED));
