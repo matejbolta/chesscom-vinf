@@ -17,6 +17,8 @@ it('keeps native Start/Next nodes and handlers, supports optional controls, fail
   dock.querySelector('[aria-label="Explain"]')!.remove();
   dock.firstElementChild!.insertAdjacentHTML('beforeend', '<button aria-label="Best"></button>');
   controller.reconcile(document); expect(dock.hasAttribute('data-chesscom-vinf-review-dock')).toBe(true);
+  dock.firstElementChild!.insertAdjacentHTML('beforeend', '<button aria-label="Hint" disabled></button>');
+  controller.reconcile(document); expect(dock.hasAttribute('data-chesscom-vinf-review-dock')).toBe(true);
   start.setAttribute('aria-label', 'Resume'); controller.reconcile(document);
   expect(dock.hasAttribute('data-chesscom-vinf-review-dock')).toBe(true);
   start.setAttribute('aria-label', 'Unknown native action'); controller.reconcile(document);

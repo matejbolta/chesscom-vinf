@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="user-logged-in dark-mode" lang="en">
+<html dir="ltr" class="user-logged-in dark-mode" lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -138,6 +138,9 @@
       .move-time-time {background:#45433f;padding:3px 10px;font-size:24px;display:flex}
       .mobile-top-section-container {height:140px;padding:12px}
       .move-time-inactive .move-time-content { color: #222; }
+      .move-time-time { min-width:135px; justify-content:space-between; }
+      .move-time-content { padding:0 10px; }
+      [dir=ltr] .move-time-iconless .move-time-content { margin-left:auto; }
       .move-feedback-last-book-move-component,.recommend-box-container { background:#eee;color:#222;padding:16px;margin-top:12px;min-height:72px; }
       .move-feedback-box-speech-placeholder { min-height:163px; }
 
@@ -193,6 +196,7 @@
                   <div class="fixture-move"><span>4.</span><strong>Nf3</strong><strong>Be7</strong></div>
                   <div class="fixture-move"><span>5.</span><strong>Bd3</strong><strong>Nc6</strong></div>
                 </section>
+                <div class="move-by-move-buttons"><button type="button">Highlights</button><button type="button">New 10 min</button></div>
                 <section class="move-by-move-bottom-section">
                   <div class="game-arc-component">
                     <div class="game-arc-chart" aria-label="Game evaluation graph">

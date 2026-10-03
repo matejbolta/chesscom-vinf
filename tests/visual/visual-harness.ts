@@ -292,6 +292,14 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     if (api) api.addOne(api.factory.buildStandardAnalysisHighlight("e4"));
     annotationBoard.insertAdjacentHTML("beforeend", '<div class="hint" style="position:absolute;left:50%;top:62.5%;width:12.5%;height:12.5%;padding:4.2%;box-sizing:border-box;border-radius:50%;background:var(--color-transparent-black-14,rgba(0,0,0,.14));background-clip:content-box;pointer-events:none"></div><div class="capture-hint" style="position:absolute;left:50%;top:12.5%;width:12.5%;height:12.5%;box-sizing:border-box;border:5px solid var(--color-transparent-black-14,rgba(0,0,0,.14));border-radius:50%;pointer-events:none"></div>');
   }
+  if (searchParams.has("native-material")) document.querySelectorAll('wc-captured-pieces').forEach((material, i) => {
+    const widths = searchParams.has('many-pieces') ? [62,23,23,23,18] : [13,23,16,15,18];
+    const glyphs = ['♟','♝','♞','♜','♛'];
+    material.innerHTML = '<div>' + widths.map((width,j) =>
+      `<span class="captured-pieces-cpiece captured-pieces-${i ? 'b' : 'w'}-${j}" style="display:inline-block;width:${width}px;height:19px;margin-right:3px;background:#8883;vertical-align:middle">${glyphs[j]}</span>`).join('') +
+      `<span class="captured-pieces-cpiece captured-pieces-score">${i ? '+1' : '+12'}</span></div>`;
+    (material.closest('.player-playerContent') as HTMLElement).style.overflow = 'hidden';
+  });
   if (searchParams.has("full-material")) document.querySelectorAll('wc-captured-pieces > div').forEach((row, i) => {
     row.innerHTML = `<span class="captured-pieces-cpiece captured-pieces-${i ? 'w' : 'b'}-8-pawns" style="font-size:18px;color:${i ? '#eee' : '#333'}">♟♟♟♟♟♟♟♟</span><span class="captured-pieces-cpiece">♞♞</span><span class="captured-pieces-cpiece">♜♜</span><span class="captured-pieces-cpiece">♛</span><span class="captured-pieces-score">+3</span>`;
   });
@@ -391,11 +399,20 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
       document.body.dataset[kind] = `${Math.floor((event.clientX - rect.left) / rect.width * 8)},${Math.floor((event.clientY - rect.top) / rect.height * 8)}`;
     });
   }
+  document.querySelector('.move-by-move-buttons button:last-child')?.addEventListener('click', () => { document.body.dataset.fixtureNewGame = 'clicked'; });
+  document.querySelector('.sidebar-header-header [aria-label="Go to Analysis"]')?.addEventListener('click', () => { document.body.dataset.fixtureAnalysis = 'clicked'; });
   const bestFixture = document.querySelector<HTMLButtonElement>('.mobile-gr-footer-footer [aria-label="Best"]');
   bestFixture?.addEventListener('click', () => {
     bestFixture.hidden = true;
-    primaryReview?.setAttribute('aria-label', 'Resume');
+    const hint = document.querySelector('.mobile-gr-footer-footer [aria-label="Explain"]');
+    hint?.setAttribute('aria-label', 'Hint');
+    primaryReview?.setAttribute('aria-label', 'Next');
     apply();
+    document.body.dataset.retryDock = document.querySelector('.mobile-gr-footer-footer')?.hasAttribute('data-chesscom-vinf-review-dock') ? 'stable' : 'lost';
+    setTimeout(() => {
+      hint?.setAttribute('aria-label', 'Explain');
+      primaryReview?.setAttribute('aria-label', 'Resume'); apply();
+    }, 850);
   });
   primaryReview?.addEventListener('click', () => {
     if (primaryReview.getAttribute('aria-label') !== 'Resume') return;
@@ -404,6 +421,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     apply();
   });
   document.addEventListener("keydown", event => {
+    if (!game && event.key === "c") document.querySelectorAll('.move-time-time').forEach(clock => clock.classList.toggle('move-time-iconless'));
     if (!game && event.key === "b") document.querySelector('.mobile-gr-footer-footer [aria-label="Best"]')?.remove();
     if (!game && event.key === "h") document.querySelector('.mobile-gr-footer-footer [aria-label="Explain"]')?.remove();
     if (!game && event.key === "x") settings.extremeOled = !settings.extremeOled;

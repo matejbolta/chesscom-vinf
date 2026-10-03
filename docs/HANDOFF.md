@@ -3,13 +3,21 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-03.
-Current source version: 2.12.0.
+Current source version: 2.13.0.
 2.8.5 fixes desktop Review B using the audited native coach Best control; verified in Brave.
 2.8.4 removes doubled padding on the Desktop shortcuts heading to align it with other settings titles.
 2.8.3 uses the exact requested concise O/E/X/Z/F/B help text; shortcut behavior is unchanged.
 2.8.2 removes only the desktop Alt promotion-shortcut help row; annotation color help remains.
 Latest Store-prepared desktop package: `release/chesscom-vinf-2.2.2.zip`.
 Android artifact: `dist-android/chesscom-vinf.user.js`.
+
+## 2.13.0 — Phone material and Review stability (2026-10-03)
+
+Removed negative material margins, forced flex wrapping and guessed score reservations. Native sprite groups now use inline flow with explicit wrapping; MaterialFlow adds one owned zero-width word joiner before a nonempty score so it stays with the last group. Native score also has the cpiece class. No measurements, native reparenting or extra observer; cleanup restores native nodes.
+
+Best move temporarily enters native Hint while undoing/playing the suggested move, before Resume appears. The dock allowlist now includes Hint in the left slot, and the existing phone observer notices aria-label changes. Phone clean Review clocks use a fixed 60px right slot with native iconless margins reset. ReviewRowActions proxies current native New Game and Go to Analysis buttons into the top row (+ left, magnifier right), preserving native handlers/time control; originals remain in place with reversible hiding. English native labels and audited containers are required; missing sources omit their proxy. Initial report and larger layouts stay native.
+
+Evidence: supplied October 3 video inspected at 2-second intervals and the Best transition at 200ms intervals; private native source confirms Hint during the awaited suggested-move animation. Sanitized IAB phone checks verified sparse/dense sprite geometry, score wrapping, stable Best/Hint/Resume dock and unchanged clock bounds across iconless transitions. Analysis proxy used only a fixture handler; no new game or live-game controls activated. TypeScript and all 204 tests passed, desktop and Android builds generated. Actual Firefox Android verification remains outstanding. No push or Store packaging.
 
 ## 2.12.0 — Pokémon mode (2026-10-03)
 

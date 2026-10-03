@@ -1,3 +1,4 @@
+import { MaterialFlow } from "./material-flow";
 import { ReviewDock } from "./review-dock";
 import { isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
 import type { ExtensionSettings, LocationLike } from "../shared/models";
@@ -18,6 +19,7 @@ export class PhoneExperienceController {
   private entry = new PhoneGameEntry();
   private reviewEntry = new ReviewEntryScroll();
   private reviewDock = new ReviewDock();
+  private materialFlow = new MaterialFlow();
   private route = "";
   private finished = false;
   private observer: MutationObserver | null = null;
@@ -60,10 +62,11 @@ export class PhoneExperienceController {
       });
       this.observer.observe(document.body, {
         subtree: true, childList: true, characterData: true, attributes: true,
-        attributeFilter: ["class", "data-glyph", "disabled", "data-whole-move-number", "data-node", "hidden", "aria-hidden"]
+        attributeFilter: ["class", "data-glyph", "disabled", "data-whole-move-number", "data-node", "hidden", "aria-hidden", "aria-label"]
       });
     }
     if (review) {
+      this.materialFlow.cleanup();
       document.documentElement.setAttribute(REVIEW, "true");
       this.updateReview(document);
       this.reviewDock.reconcile(document);
@@ -77,6 +80,7 @@ export class PhoneExperienceController {
         [...timers].some(timer => readClockSeconds(timer.textContent ?? "") === null)) {
       document.documentElement.removeAttribute(GAME);
       document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
+      this.materialFlow.cleanup();
       if (this.finished) this.entry.cleanup();
       this.clearRows();
       this.restoreOpening();
@@ -84,6 +88,7 @@ export class PhoneExperienceController {
     }
     document.documentElement.setAttribute(GAME, "true");
     document.documentElement.toggleAttribute("data-chesscom-vinf-phone-material", phoneAndroid);
+    if (phoneAndroid) this.materialFlow.reconcile(document); else this.materialFlow.cleanup();
     this.entry.reconcile(document, route);
     if (settings.extremeOled) {
       // Share entry positioning and player rows; keep Extreme's scroll room/sidebar.
@@ -224,6 +229,7 @@ export class PhoneExperienceController {
     this.entry.cleanup();
     this.reviewEntry.cleanup();
     this.reviewDock.cleanup();
+    this.materialFlow.cleanup();
     this.observer?.disconnect();
     this.observer = null;
     if (this.timer !== null) this.document?.defaultView?.clearTimeout(this.timer);

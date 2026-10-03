@@ -9,6 +9,13 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.13.0] - 2026-10-03
+
+- Fix phone captured-material clipping and unnecessary wrapping by restoring native inline sprite flow; keep the advantage score with the final piece group.
+- Keep the four-slot phone Review dock throughout Best move's intermediate Hint and Resume states.
+- Anchor phone Review clocks to the same fixed right-hand slot as gameplay, independent of native clock-icon changes.
+- Add native New Game (+) and Analysis (magnifier) actions above the phone Review board in the draw/resign positions; preserve the native time control and handlers.
+
 ## [2.12.0] - 2026-10-03
 
 - Add opt-in Pokémon mode, mutually exclusive with Extreme OLED across settings and the desktop E shortcut; ordinary OLED remains compatible.

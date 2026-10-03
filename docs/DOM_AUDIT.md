@@ -1159,3 +1159,11 @@ manual cancellation, no replay, and unchanged same-route game entry behavior.
 - `data-chesscom-vinf-pokemon` is removed on disable, Extreme activation, route exit or unsupported canvas rendering. One owned style holds only the six selected sprites; repeated reconciliation leaves it untouched.
 - Live ball styling uses an owned overlay `data-pokemon` attribute. Two decorative opening halves and an SAN label are children of the existing last-move span; native move/clock sources remain unchanged. Never applied to homepage or Review clock overlays.
 - Shared settings previews use bundled PNGs and native selects; all151 names/IDs are local. No new host permissions or network access.
+
+## Phone material and Review transitions — 2026-10-03 (2.13.0)
+
+Native captured sprites are inline-block groups, and `.captured-pieces-score` also has `.captured-pieces-cpiece`. Avoid negative lane offsets and flex-based score reservations. Owned word-joiner spans bind only the last sprite to its nonempty score; sanitized fixtures model native strip widths and overflow.
+
+Saved native eager source shows Best awaiting undo/suggested-move playback before setting Resume state; its intermediate retry action is Hint. Keep Hint in the four-slot dock allowlist. Native `.move-time-iconless .move-time-content` adds an auto margin, while the clock shell has intrinsic minimum widths and space-between alignment; phone Review explicitly normalizes these inside its fixed clock slot.
+
+Audited English move-by-move Review sources: `.move-by-move-buttons button` whose text starts with New plus a number or Game, and `.sidebar-header-header button[aria-label="Go to Analysis"]`. Top-row proxies resolve these at activation, retain native handlers and disabled states, and hide originals reversibly. They never construct a matchmaking URL. Missing/unknown sources are omitted. Fixture verification is not actual Firefox Android verification.

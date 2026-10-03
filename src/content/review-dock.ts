@@ -1,5 +1,5 @@
 const MARKER = 'data-chesscom-vinf-review-dock';
-const LABELS = new Set(['Explain', 'Best', 'Resume', 'Start Review', 'Next', 'Previous Move', 'Next Move', 'Share']);
+const LABELS = new Set(['Explain', 'Hint', 'Best', 'Resume', 'Start Review', 'Next', 'Previous Move', 'Next Move', 'Share']);
 
 /** Style known native phone controls in place; Vue retains every button/handler. */
 export class ReviewDock {
