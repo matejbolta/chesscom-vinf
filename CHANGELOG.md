@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.13.2] - 2026-10-03
+
+- Generate popup and side-panel version badges from the package version; reject mismatched manifest versions during the desktop build.
+
 ## [2.13.1] - 2026-10-03
 
 - Remove doubled padding from the desktop Pokémon settings heading to align it with the other card titles.

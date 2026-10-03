@@ -82,7 +82,7 @@ describe("privacy boundaries", () => {
       default_path: "sidepanel.html"
     });
     expect(builder).toContain(
-      'cp("src/popup/popup.html", "dist/sidepanel.html")'
+      'writeFile("dist/sidepanel.html", popupHtml)'
     );
   });
 
