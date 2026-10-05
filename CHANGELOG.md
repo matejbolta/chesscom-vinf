@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.9] - 2026-10-06
+
+- Pair Pokémon pieces with a minimalist ivory/soft-red board and subtle central Poké Ball emblem.
+
 ## [2.20.8] - 2026-10-06
 
 - Remove Pokémon piece badges and darken Black’s sprites to near-black with a faint amount of original color.

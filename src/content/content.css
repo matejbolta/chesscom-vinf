@@ -1353,6 +1353,12 @@ html:is([data-chesscom-vinf-phone-material], [data-chesscom-vinf-review-clean]) 
 
 }
 
+/* Quiet Poké Ball palette and a center emblem painted beneath native pieces. */
+[data-chesscom-vinf-pokemon-board] {
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20800%22%3E%3Cdefs%3E%3Cpattern%20id%3D%22s%22%20width%3D%22200%22%20height%3D%22200%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Cpath%20fill%3D%22%23e9e5d9%22%20d%3D%22M0%200h200v200H0z%22%2F%3E%3Cpath%20fill%3D%22%23b9827c%22%20d%3D%22M100%200h100v100H100zM0%20100h100v100H0z%22%2F%3E%3C%2Fpattern%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23s%29%22%20d%3D%22M0%200h800v800H0z%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%234b403c%22%20stroke-width%3D%225%22%20opacity%3D%22.16%22%3E%3Ccircle%20cx%3D%22400%22%20cy%3D%22400%22%20r%3D%2276%22%2F%3E%3Cpath%20d%3D%22M324%20400h53m46%200h53%22%2F%3E%3Ccircle%20cx%3D%22400%22%20cy%3D%22400%22%20r%3D%2223%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat !important;
+}
+[data-chesscom-vinf-pokemon-board] .coordinates { color: #54423e; }
+
 /* Pokémon is a skin on audited native pieces; it never changes their bounds/input. */
 [data-chesscom-vinf-pokemon-board] .piece:is(.wp,.wn,.wb,.wr,.wq,.wk,.bp,.bn,.bb,.br,.bq,.bk) {
   background-size: contain !important;
