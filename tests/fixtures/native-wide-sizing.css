@@ -4,15 +4,17 @@
   html { font-size: 10px; }
   body {
     --playerHeight: 4rem;
+    --gutter: 16px; --gutterTopPlayerToJudo: 16px;
+    --gutterBoardToTopPlayer: 10px; --gutterBoardToBottomPlayer: 10px;
     --playersHeight: calc(var(--playerHeight) * 2);
-    --boardMaxHeight: calc(100dvh - var(--playersHeight) - 52px);
+    --boardMaxHeight: calc(100dvh - var(--playersHeight) - 32px - var(--gutterBoardToTopPlayer) - var(--gutterBoardToBottomPlayer));
     --boardWidth: min(calc(100dvw - 720px), var(--boardMaxHeight));
     font-size: 14px;
   }
   #mobile-toolbar { display: none; }
   .board-layout-player { width: var(--boardWidth); margin-inline: 0; }
-  #board-layout-main { width: var(--boardWidth); margin: 16px 0 16px 200px; }
-  #board-layout-chessboard { margin: 10px 0; }
+  #board-layout-main { width: var(--boardWidth); height: calc(100dvh - 32px); margin: 16px 0 16px 200px; }
+  #board-layout-chessboard { margin: var(--gutterBoardToTopPlayer) 0 var(--gutterBoardToBottomPlayer); }
   wc-chess-board#board-single { width: var(--boardWidth); height: var(--boardWidth); }
   #board-layout-sidebar { position: absolute; left: calc(232px + var(--boardWidth)); top: 16px; width: 460px; }
   .game-buttons-container-component { position: fixed; left: calc(232px + var(--boardWidth)); bottom: 24px; width: 460px; transform: none; }

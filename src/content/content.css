@@ -1619,6 +1619,7 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   html[data-chesscom-vinf-wide-rows] .board-layout-player .player-component {
     display: grid; grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr);
     position: relative; gap: 0; width: 100%; height: var(--vinf-wide-row-height);
+    grid-template-rows: minmax(0, 1fr); align-items: center;
   }
   html[data-chesscom-vinf-wide-rows] .board-layout-player :is(.player-avatar,.cc-user-block-component,.connection-component,.player-game-over-component,.clock-icon-icon,.move-time-icon) { display: none !important; }
   html[data-chesscom-vinf-wide-rows] .board-layout-player :is(.player-playerContent,.player-tagline) {
@@ -1672,4 +1673,39 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   }
   html[data-chesscom-vinf-wide-rows] .chesscom-vinf-annotation-toggle[data-flow="true"]::before { content: none; }
   html[data-chesscom-vinf-wide-rows] .chesscom-vinf-annotation-toggle[data-flow="true"] svg { width: 28px; height: 28px; visibility: visible !important; }
+}
+
+/* Wide Extreme keeps the board UI but removes surrounding navigation chrome. */
+@media (min-width: 600px) {
+  html[data-chesscom-vinf-wide-extreme] body {
+    --navWidth: 0px !important;
+    --verticalNavWidth: 0px !important;
+    --horizontalNavHeight: 0px !important;
+    --gutterBoardToNav: 0px !important;
+  }
+  html[data-chesscom-vinf-wide-extreme] :is(#sidebar-main-menu, #mobile-toolbar),
+  html[data-chesscom-vinf-wide-extreme] #board-layout-sidebar > .sidebar-component > .tabs-component {
+    display: none !important;
+  }
+  html[data-chesscom-vinf-wide-extreme] :is([data-chesscom-vinf-four-moves], .chesscom-vinf-wide-review-dock) > button {
+    background: #000 !important; border: 1px solid #383838; box-shadow: none;
+  }
+  html[data-chesscom-vinf-wide-extreme] :is([data-chesscom-vinf-four-moves], .chesscom-vinf-wide-review-dock) > button:not(:disabled):hover {
+    border-color: #888;
+  }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-opponent-rating-intro {
+    grid-column: 1; grid-row: 1; align-self: center;
+    color: #bbb; font-size: 18px; font-weight: 600; white-space: nowrap;
+  }
+  html[data-chesscom-vinf-wide-rows] .player-component:has(> .chesscom-vinf-opponent-rating-intro) > .player-playerContent { opacity: 0; }
+}
+
+@media (min-width: 600px) {
+  html[data-chesscom-vinf-wide-game-rows] body.with-players {
+    --gutterBoardToTopPlayer: var(--gutterTopPlayerToJudo) !important;
+    --gutterBoardToBottomPlayer: var(--gutter) !important;
+  }
+  html[data-chesscom-vinf-wide-game-rows] .board-layout-player { flex: 1 0 var(--vinf-wide-row-height); }
+  html[data-chesscom-vinf-wide-game-rows] .board-layout-player .player-component { height: 100%; }
+  html[data-chesscom-vinf-wide-game-rows] #board-layout-chessboard { flex-shrink: 0; }
 }

@@ -9,6 +9,12 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.2] - 2026-10-05
+
+- Center wide player-row contents and balance board/outer gutters without losing the native viewport fit.
+- Hide side navigation and the Play/New Game/Games/Players selector in wide Extreme OLED; keep move tabs and use black outlined navigation buttons.
+- Show the opponent rating introduction on tablet/desktop, including five seconds after reload.
+
 ## [2.20.1] - 2026-10-05
 
 - Account for larger tablet/desktop player rows in Chess.com's native board sizing so the bottom row remains in the window.
