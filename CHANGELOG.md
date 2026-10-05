@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.7] - 2026-10-06
+
+- Apply black settings surfaces when either regular OLED or Extreme OLED is selected, across popup, side panel and Android settings.
+
 ## [2.20.6] - 2026-10-06
 
 - Match the mobile black coach-card palette in tablet/desktop Extreme OLED without changing native card geometry.

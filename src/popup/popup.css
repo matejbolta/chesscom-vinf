@@ -581,8 +581,8 @@ select {
 }
 
 
-/* Extreme uses the same settings layout, with OLED surfaces. */
-:root:has(#extreme-oled:checked) {
+/* Either OLED mode themes the shared settings surfaces. */
+:root:has(#oled-mode:checked, #extreme-oled:checked) {
   --vinf-settings-bg: #000;
   --vinf-settings-panel: #000;
   --vinf-settings-field: #080808;
@@ -593,9 +593,9 @@ select {
   color-scheme: dark;
 }
 
-:root:has(#extreme-oled:checked) :is(input[type="number"], input[type="text"], select) {
+:root:has(#oled-mode:checked, #extreme-oled:checked) :is(input[type="number"], input[type="text"], select) {
   background-color: #080808; color: #eee; border: 1px solid #383838;
 }
-:root:has(#extreme-oled:checked) :is(input, select, button):focus-visible {
+:root:has(#oled-mode:checked, #extreme-oled:checked) :is(input, select, button):focus-visible {
   outline: 2px solid #a3d160; outline-offset: 2px;
 }

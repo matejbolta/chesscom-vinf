@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.20.6.
+Current source version: 2.20.7.
+2.20.7: screenshot revealed regular OLED settings remained gray because palette selectors only watched Extreme checkbox. Popup/sidepanel and Android dialog now use :has(regular OLED checked, Extreme checked), including field/focus styles. Both-off retains stock theme. No settings persistence or page-layout changes.
 Session closed at user request, 2026-10-06 00:06 Europe/Ljubljana. User confirmed latest change working. No active monitoring remains. All226tests/typecheck and both builds passed; code committed. Live Extreme sidebar retained170px reservation and four nav buttons computed#000/no shadow. Engine Analysis desktop fix implemented/fixture checked; live verification still not captured. Do not claim every possible popup covered. Usage measured account-wide39% at2026-10-05 22:58:26 to58% at2026-10-06 00:06:52:19 percentage points over68m26s, approximately16.7 points/hour; includes other account activity and rounded meter.
 2.20.6: user explicitly requested wide Extreme coach card black like phone. Theme botMessage black, message/classification text #bbb, tip black; native card position/size and score badge retained. Normal wide Review unchanged. Live baseline white card confirmed; local visual check follows.
 2.20.5: live desktop OLED draw confirmation remained rgb(49,46,43): confirmation rules were inside phone media/marker gates. Moved shared native confirmation/draw-request surface styling under OLED root at all widths; secondary actions black outlined, primary/danger retained. Existing toast/game-over rules already all-width. Existing sanitized desktop1280px resign fixture verified black; all226tests/typecheck passed. Live updated popup check awaits manual reload. Do not claim every possible Chess.com popup is covered.
