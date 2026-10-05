@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.6] - 2026-10-06
+
+- Match the mobile black coach-card palette in tablet/desktop Extreme OLED without changing native card geometry.
+
 ## [2.20.5] - 2026-10-06
 
 - Theme draw/resign confirmation popovers, confirmation modals and draw-request panels black at every width in OLED and Extreme OLED. Keep primary/danger action colors; use black outlined secondary actions.

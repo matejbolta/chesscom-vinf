@@ -1230,3 +1230,7 @@ Saved-game engine Analysis uses the existing audited `.analysis-view-component`,
 
 ### 2.20.5 shared confirmation surfaces
 Live desktop OLED draw dialog: `.cc-confirmation-popover-popover.cc-popover-lighter` retained rgb(49,46,43) because styling was phone-scoped. Shared `.cc-confirmation-popover-popover`, `.cc-confirmation-modal-modal`, `.draw-offer-component`, `.draw-request-component` now theme at all widths. Native `.cc-button-secondary` actions receive black outlined surfaces, while primary/danger actions preserve semantics. Sanitized resign fixture includes native secondary button class.
+
+
+### 2.20.6 wide Extreme coach palette
+Live `.bot-speech-content-botMessage` was white with #312e2b text; wide Extreme now shares phone black/#bbb palette. `.move-feedback-box-move`, `.move-feedback-box-description`, `.move-feedback-speech-text-component` need readable text; score badge retains its native contrasting colors. No geometry changes.

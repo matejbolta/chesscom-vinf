@@ -1723,3 +1723,15 @@ html[data-chesscom-vinf-analysis][data-chesscom-vinf-oled="true"] :is(
   .analysis-view-component, .engine-lines-with-options-component, .analysis-options-component,
   .engine-lines-with-options-lines, .sidebar-view-content, .sidebar-header-header,
   .game-controls-primary-component) { background: #000 !important; }
+
+/* Wide Extreme shares the phone coach palette without moving the native card. */
+html[data-chesscom-vinf-wide-extreme] .bot-speech-content-botMessage {
+  background: #000 !important; color: #bbb !important;
+}
+html[data-chesscom-vinf-wide-extreme] .bot-speech-content-botMessage :is(.move-feedback-box-move, .move-feedback-box-description, .move-feedback-speech-text-component) {
+  color: #bbb !important;
+}
+html[data-chesscom-vinf-wide-extreme] .bot-speech-content-tip { color: #000 !important; }
+html[data-chesscom-vinf-wide-extreme] .bot-speech-content-botMessage :is(.move-feedback-last-book-move-component, .recommend-box-container) {
+  background: #000 !important; color: #bbb !important;
+}
