@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.19.3] - 2026-10-05
+
+- Place the phone Review report graph below the board and above settings as soon as it exists, before entering moves.
+- Reveal the initial graph once after layout settles, yielding to manual scrolling.
+
 ## [2.19.2] - 2026-10-05
 
 - Recover live-game presentation when outgoing result components are recreated during a new-game transition.

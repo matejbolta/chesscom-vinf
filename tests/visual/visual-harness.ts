@@ -232,6 +232,8 @@ if (window.location.pathname === "/game-review-mobile" && searchParams.has("engi
 if (window.location.pathname === "/game-review-mobile" && searchParams.has("overview")) {
   document.querySelector('[aria-label="Back"]')?.remove();
   document.querySelector(".move-by-move-component")?.classList.remove("move-by-move-component");
+  const arc = document.querySelector(".game-arc-component");
+  if (arc?.parentElement) arc.parentElement.className = "overview-view-section overview-view-arc";
 }
 if (window.location.pathname === "/game-review-mobile") {
   gameReviewController.reconcile(

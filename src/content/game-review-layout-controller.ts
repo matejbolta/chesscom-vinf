@@ -51,7 +51,6 @@ export class GameReviewLayoutController {
     );
     const analysisHost = chartHost?.parentElement;
     if (
-      !moveByMove ||
       !chartHost ||
       analysisHost?.id !== "board-layout-analysis"
     ) {
@@ -59,8 +58,10 @@ export class GameReviewLayoutController {
       return false;
     }
 
-    const sourceGraph = moveByMove.querySelector<HTMLElement>(
+    const sourceGraph = moveByMove?.querySelector<HTMLElement>(
       ":scope > .move-by-move-bottom-section > .game-arc-component"
+    ) ?? document.querySelector<HTMLElement>(
+      ".sidebar-view-content .overview-view-section.overview-view-arc > .game-arc-component"
     );
     let movedGraph = document.querySelector<HTMLElement>(
       `[${MARKERS.reviewGraph}="moved"]`

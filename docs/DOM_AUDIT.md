@@ -1204,3 +1204,7 @@ Native live body directly owns #board-layout-main, #board-layout-sidebar and #bo
 Live phone-width game body uses block flow. Native `#board-layout-main`, `#board-layout-sidebar`, and `#board-layout-comments` can be appended after the extension link at document start. HomeLink reconciles their document order and moves after them when no native footer exists. No geometry or scrolling changes.
 
 Live transition recovery: `.clock-component.clock-player-turn` and enabled `button.draw-button-component` / `button.resign-button-component`, with no visible native results, identify restored gameplay during a route transition. Used only to release transition contamination, not to clear dismissed same-game results.
+
+## 2026-10-05 — Early phone Review graph
+
+The existing audited `.sidebar-view-content .overview-view-section.overview-view-arc > .game-arc-component` now shares the phone charts host with move Review. This supersedes leaving the initial report graph in place. The native sidebar Settings control follows the relocated graph without reparenting the button. Wide layouts stay native.

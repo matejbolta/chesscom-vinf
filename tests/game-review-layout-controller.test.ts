@@ -63,7 +63,7 @@ describe("phone Game Review layout", () => {
     expect(chartHost.querySelectorAll(".game-arc-component")).toHaveLength(1);
   });
 
-  it("leaves the initial report and wider tablet or desktop layouts untouched", () => {
+  it("moves the initial report graph on phones but leaves wider and signed-out layouts untouched", () => {
     const widerDocument = loadNarrowGameReviewFixture();
     const widerGraph =
       widerDocument.querySelector<HTMLElement>(".game-arc-component")!;
@@ -94,7 +94,9 @@ describe("phone Game Review layout", () => {
 
     expect(
       controller.reconcile(initialDocument, REVIEW_LOCATION, true, true)
-    ).toBe(false);
+    ).toBe(true);
+    expect(initialGraph.parentElement).toBe(initialDocument.querySelector("#charts"));
+    controller.cleanup(initialDocument);
     expect(initialGraph.parentElement).toBe(initialParent);
 
     const signedOutDocument = loadNarrowGameReviewFixture();

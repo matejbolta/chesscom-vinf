@@ -29,3 +29,23 @@ it('cancels entry on manual scroll and never retries a native Start that has not
   expect(clicks).toHaveBeenCalledTimes(1); expect(vi.getTimerCount()).toBe(0);
   entry.cleanup(); vi.restoreAllMocks(); vi.useRealTimers();
 });
+
+it('reveals a late report graph before Start Review and yields to later manual scrolling', () => {
+  vi.useFakeTimers();
+  document.body.innerHTML = '<div id="charts"></div><div class="game-controls-view-component"><div class="mobile-gr-footer-footer"><button aria-label="Start Review">Start</button></div></div>';
+  const entry = new ReviewEntryScroll(); entry.reconcile(document);
+  document.querySelector('#charts')!.innerHTML = '<div data-chesscom-vinf-review-graph="moved"></div>';
+  vi.spyOn(document.querySelector('#charts > div')!, 'getBoundingClientRect').mockReturnValue({height:100,bottom:800} as DOMRect);
+  vi.spyOn(document.querySelector('.mobile-gr-footer-footer')!, 'getBoundingClientRect').mockReturnValue({top:680} as DOMRect);
+  const scroll = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
+  entry.reconcile(document); vi.advanceTimersByTime(650);
+  expect(scroll).toHaveBeenCalledWith({top:128, behavior:'instant'});
+  entry.reconcile(document); vi.advanceTimersByTime(10000);
+  expect(scroll).toHaveBeenCalledTimes(1);
+  entry.cleanup();
+  const cancelled = new ReviewEntryScroll(); cancelled.reconcile(document);
+  document.dispatchEvent(new Event('wheel')); vi.advanceTimersByTime(1000);
+  cancelled.reconcile(document); vi.advanceTimersByTime(1000);
+  expect(scroll).toHaveBeenCalledTimes(1);
+  cancelled.cleanup(); vi.restoreAllMocks(); vi.useRealTimers();
+});
