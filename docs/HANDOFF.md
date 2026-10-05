@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.21.0.
+Current source version: 2.21.1.
+2.21.1: refined terrain to user-supplied FireRed screenshots: mint grass, pale paths, finer1px tufts/flecks and stepped fringe. OUTSTANDING user request: Hunter x Hunter, Avatar The Last Airbender, Steins;Gate, Marvel, Jujutsu Kaisen teams. No teams implemented yet. Imagegen atlas request failed with safety-system output rejection; user informed and suitable supplied sprites requested. Do not present generic placeholders as finished teams. Proposed team picker should preserve Pokémon151 catalog and separate saved per-team role choices, share mobile/desktop/editor/runtime route support, and retain Extreme exclusivity. Initial lineups were asked asynchronously, no response yet.
 2.21.0 replaces visible native Pokémon selects with one inline searchable sprite picker shared by popup/sidepanel/Android. Hidden selects retain persistence contract; native bubbling change saves each choice. Picker opens beside selected role, searches number/name, supports Escape/Close and restores focus. Bundled sprites only, no network. Updated stale badge legend.
 2.20.12: user clarified GBA/FireRed overworld TERRAIN tiles, not merely a palette. Original32px pixel-art grass tufts and sandy path flecks now alternate as board squares, encoded inline vector tile at25% background size (2x2 squares). No Poké Ball, props, network assets or input/geometry changes. This supersedes flat sage/stone design.
 2.20.11: PokemonController route guard now includes exact saved-game engine Analysis via existing isChessComGameAnalysis helper. Reuses audited board-analysis-board, same skin/board marker; no live clocks introduced. Review-to-engine transition regression checks preserved style/node and cleanup on standalone /analysis.

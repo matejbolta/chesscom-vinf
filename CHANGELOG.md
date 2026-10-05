@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.21.1] - 2026-10-06
+
+- Refine Pokémon terrain against supplied GBA references: mint grass, pale yellow paths, finer pixel detail and stepped grass edges.
+
 ## [2.21.0] - 2026-10-06
 
 - Add a shared searchable Pokémon picker with sprites, numbers and names in mobile and desktop settings.
