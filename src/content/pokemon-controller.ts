@@ -2,7 +2,7 @@ import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { PIECE_ROLES } from "../shared/pokemon";
 import { pokemonSprite } from "../shared/pokemon-art";
 import { isChessComGame } from "./game-continuation";
-import { isChessComLiveGameReview } from "./game-review-layout-controller";
+import { isChessComLiveGameReview, isChessComGameAnalysis } from "./game-review-layout-controller";
 
 const ROOT = "data-chesscom-vinf-pokemon";
 const BOARD = "data-chesscom-vinf-pokemon-board";
@@ -17,7 +17,7 @@ export class PokemonController {
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings): void {
     const game = isChessComGame(location);
     if (!settings.enabled || !settings.pokemonMode || settings.extremeOled ||
-        (!game && !isChessComLiveGameReview(location)) ||
+        (!game && !isChessComLiveGameReview(location) && !isChessComGameAnalysis(location)) ||
         !document.documentElement.classList.contains("user-logged-in")) {
       this.cleanup(document); return;
     }

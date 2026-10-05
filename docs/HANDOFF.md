@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.20.10.
+Current source version: 2.20.11.
+2.20.11: PokemonController route guard now includes exact saved-game engine Analysis via existing isChessComGameAnalysis helper. Reuses audited board-analysis-board, same skin/board marker; no live clocks introduced. Review-to-engine transition regression checks preserved style/node and cleanup on standalone /analysis.
 2.20.10 supersedes 2.20.9 board art: user rejected pink/red palette and unnecessary Poké Ball emblem. New direction is plain sage #859985 / pale stone #d9dfce checkerboard, no emblem, texture or decoration. CSS gradient only, same Pokémon board marker; near-black opposing sprites retained.
 2.20.9: custom Pokémon board uses inline vector ivory/soft-red checkerboard with a low-contrast central Poké Ball ring. Background-only: no overlays, DOM nodes, bounds/input changes or network requests. Uses existing Pokémon-piece board marker so disabling pieces/mode restores native board; Extreme remains mutually exclusive.
 2.20.8: user replaces Pokémon side/role circle badges with near-black Black sprites. Removed generated ::after glyph content and badge CSS; Black filter brightness(.12) saturate(.7), retaining faint original color. White sprites unchanged. Shared board style applies across viewport sizes; native piece bounds/input unchanged.

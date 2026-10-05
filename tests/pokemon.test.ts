@@ -116,3 +116,16 @@ it.each([false, true])("opens the ball once for a completed move (first move: %s
   clocks.reconcile(document, location, {...settings,extremeOled:true}, true);
   expect(document.querySelector('[data-pokemon]')).toBeNull();
 });
+
+it("keeps the Pokemon skin through Review to engine Analysis and cleans up on unrelated analysis", () => {
+  const board = document.querySelector<HTMLElement>('wc-chess-board')!;
+  board.id = 'board-analysis-board';
+  skin.reconcile(document, {...location, pathname:'/analysis/game/live/123456/review'}, settings);
+  const style = document.querySelector('[data-chesscom-vinf-owned="pokemon-pieces"]');
+  skin.reconcile(document, {...location, pathname:'/analysis/game/live/123456/analysis'}, settings);
+  expect(board.hasAttribute('data-chesscom-vinf-pokemon-board')).toBe(true);
+  expect(document.querySelector('[data-chesscom-vinf-owned="pokemon-pieces"]')).toBe(style);
+  expect(document.querySelector('.chesscom-vinf-extreme-controls')).toBeNull();
+  skin.reconcile(document, {...location, pathname:'/analysis'}, settings);
+  expect(board.hasAttribute('data-chesscom-vinf-pokemon-board')).toBe(false);
+});
