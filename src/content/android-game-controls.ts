@@ -13,7 +13,7 @@ export class AndroidGameControlsController {
   private docks = new Set<HTMLElement>();
 
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, enabledLayout: boolean): void {
-    const active = enabledLayout && settings.enabled && !settings.extremeOled && (isChessComGame(location) || isChessComGameAnalysis(location)) &&
+    const active = enabledLayout && settings.enabled && (isChessComGame(location) || isChessComGameAnalysis(location)) &&
       document.documentElement.classList.contains("user-logged-in");
     const current = new Set<HTMLElement>();
     if (active) for (const dock of document.querySelectorAll<HTMLElement>(

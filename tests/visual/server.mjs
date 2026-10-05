@@ -216,17 +216,20 @@ const server = createServer(async (request, response) => {
 
   if (pathname === "/phone-game-preview") {
     const params = new URL(request.url, "http://localhost").searchParams;
-    const width = params.has("tablet") ? 800 : params.has("narrow") ? 320 : 390;
-    const query = ["extreme", "no-annotation-api", "entry", "oled", "hints", "rating-intro", "challenge-toast"].filter(key => params.has(key)).map(key => `${key}=1`).join("&");
+    const width = params.has("desktop-fit") ? 1743 : params.has("tablet") ? 800 : params.has("narrow") ? 320 : 390;
+    const height = params.has("desktop-fit") ? 1075 : 844;
+    const query = ["extreme", "no-annotation-api", "entry", "oled", "hints", "rating-intro", "challenge-toast", "desktop-fit"].filter(key => params.has(key)).map(key => `${key}=1`).join("&");
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    response.end(`<!doctype html><html><body style="margin:0;background:#171614"><iframe title="VINF annotation contract fixture" src="/phone-game?${query}" style="border:0;width:${width}px;height:844px"></iframe></body></html>`);
+    response.end(`<!doctype html><html><body style="margin:0;background:#171614"><iframe title="VINF annotation contract fixture" src="/phone-game?${query}" style="border:0;width:${width}px;height:${height}px"></iframe></body></html>`);
     return;
   }
 
   if (pathname === "/phone-game" || pathname === "/extreme-oled") {
     const html = await readFile(new URL(pathname === "/phone-game" ? "../fixtures/phone-game.html" : "../fixtures/extreme-oled.html", import.meta.url), "utf8");
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    response.end(html.replace("</head>", '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>').replace("</body>", '<script src="/chesscom-vinf-visual-harness.js"></script></body>'));
+    const nativeSizing = new URL(request.url, "http://localhost").searchParams.has("desktop-fit")
+      ? await readFile(new URL("../fixtures/native-wide-sizing.css", import.meta.url), "utf8") : "";
+    response.end(html.replace("<body>", '<body class="with-players">').replace("</head>", `<style>${nativeSizing}</style></head>`).replace("</head>", '<link rel="stylesheet" href="/chesscom-vinf-content.css"></head>').replace("</body>", '<script src="/chesscom-vinf-visual-harness.js"></script></body>'));
     return;
   }
 

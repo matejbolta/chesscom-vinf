@@ -1,6 +1,6 @@
 .chesscom-vinf-settings-dialog {
-  background: #262522;
-  border: 1px solid #4a4844;
+  background: var(--vinf-settings-bg, #262522);
+  border: 1px solid var(--vinf-settings-border, #4a4844);
   border-radius: 1.2rem;
   box-sizing: border-box;
   color: #f1f1f1;
@@ -76,7 +76,7 @@
 }
 
 .chesscom-vinf-settings-card {
-  background: #312e2b;
+  background: var(--vinf-settings-panel, #312e2b);
   border: 1px solid #45423e;
   border-radius: 1rem;
   overflow: hidden;
@@ -197,8 +197,8 @@
 .chesscom-vinf-settings-module-select,
 .chesscom-vinf-settings-rating-state {
   appearance: auto;
-  background: #211f1c;
-  border: 1px solid #575552;
+  background: var(--vinf-settings-field, #211f1c);
+  border: 1px solid var(--vinf-settings-switch, #575552);
   border-radius: 0.6rem;
   color: #f1f1f1;
   font: inherit;
@@ -278,8 +278,8 @@
 
 .chesscom-vinf-settings-order-button {
   appearance: none;
-  background: #211f1c;
-  border: 1px solid #575552;
+  background: var(--vinf-settings-field, #211f1c);
+  border: 1px solid var(--vinf-settings-switch, #575552);
   border-radius: 0.6rem;
   color: #f1f1f1;
   font-size: 1.8rem;
@@ -324,4 +324,23 @@
     gap: 0.7rem;
     grid-template-columns: 2.8rem minmax(0, 1fr) 8.8rem 4rem 4rem;
   }
+}
+
+/* Extreme uses the same settings layout, with OLED surfaces. */
+.chesscom-vinf-settings-dialog:has(#chesscom-vinf-userscript-extreme-oled:checked) {
+  --vinf-settings-bg: #000;
+  --vinf-settings-panel: #000;
+  --vinf-settings-field: #080808;
+  --vinf-settings-raised: #141414;
+  --vinf-settings-border: #383838;
+  --vinf-settings-divider: #292929;
+  --vinf-settings-switch: #404040;
+  color-scheme: dark;
+}
+
+.chesscom-vinf-settings-dialog:has(#chesscom-vinf-userscript-extreme-oled:checked) :is(input[type="number"], input[type="text"], select) {
+  background-color: #080808; color: #eee; border: 1px solid #383838;
+}
+.chesscom-vinf-settings-dialog:has(#chesscom-vinf-userscript-extreme-oled:checked) :is(input, select, button):focus-visible {
+  outline: 2px solid #a3d160; outline-offset: 2px;
 }

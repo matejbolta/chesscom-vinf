@@ -94,12 +94,6 @@ export class PhoneExperienceController {
     if (phoneAndroid) this.materialFlow.reconcile(document); else this.materialFlow.cleanup();
     this.entry.reconcile(document, route);
     if (phoneAndroid) this.ratingIntro.reconcile(document, location.pathname);
-    if (settings.extremeOled) {
-      // Share entry positioning and player rows; keep Extreme's scroll room/sidebar.
-      this.clearRows();
-      this.restoreOpening();
-      return;
-    }
     this.updateRows(document);
     this.moveOpening(document);
   }

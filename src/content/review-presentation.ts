@@ -13,48 +13,23 @@ export class ReviewPresentationController {
   private analysisActions = new AnalysisRowActions();
   private rowActions = new ReviewRowActions();
   private board: HTMLElement | null = null;
-  private attemptedMute: HTMLButtonElement | null = null;
 
   reconcile(document: Document, location: LocationLike, settings: ExtensionSettings, phone: boolean): void {
-    const analysis = phone && isChessComGameAnalysis(location);
+    const analysis = isChessComGameAnalysis(location);
     if (!settings.enabled || !(isChessComLiveGameReview(location) || analysis) ||
         !document.documentElement.classList.contains("user-logged-in")) {
       this.cleanup(document); return;
     }
-    // Wide normal/OLED Review stays native; Extreme keeps its existing presentation.
-    if (!phone && !settings.extremeOled) { this.cleanup(document); return; }
-    // PhoneExperienceController already handles phone audio, including overview.
-    if (!phone) this.muteCoach(document);
-    else document.querySelectorAll(`[${MUTED}]`).forEach(button => button.removeAttribute(MUTED));
     const board = document.querySelector<HTMLElement>("#board-layout-chessboard wc-chess-board#board-analysis-board");
-    const reviewing = !!document.querySelector(".sidebar-view-content > .move-by-move-container > .move-by-move-component");
-    const active = !!board && (reviewing || phone);
-    document.documentElement.toggleAttribute(CLEAN, active);
-    document.documentElement.toggleAttribute("data-chesscom-vinf-phone-analysis", active && analysis);
-    document.documentElement.toggleAttribute(EXTREME, active && settings.extremeOled);
+    const active = !!board;
+    document.documentElement.toggleAttribute(CLEAN, active && phone);
+    document.documentElement.toggleAttribute("data-chesscom-vinf-phone-analysis", active && phone && analysis);
+    document.documentElement.toggleAttribute(EXTREME, false);
     if (this.board !== board || !active) this.board?.removeAttribute(BOARD);
     this.board = active ? board : null;
     this.board?.toggleAttribute(BOARD, settings.extremeOled);
     this.rowActions.reconcile(document, active && phone && !analysis);
-    this.analysisActions.reconcile(document, active && analysis);
-  }
-
-  private muteCoach(document: Document): void {
-    const button = document.querySelector<HTMLButtonElement>('.sidebar-header-header button[aria-label="Toggle Coach Audio"]');
-    const glyph = button?.querySelector("svg[data-glyph]")?.getAttribute("data-glyph");
-    if (!button) return;
-    if (glyph === "media-audio-speaker-mute") {
-      button.setAttribute(MUTED, "true"); this.attemptedMute = null;
-    } else {
-      button.removeAttribute(MUTED);
-      if (glyph?.startsWith("media-audio-speaker") && !button.disabled && this.attemptedMute !== button) {
-        this.attemptedMute = button;
-        button.click();
-        if (button.querySelector('[data-glyph="media-audio-speaker-mute"]')) {
-          button.setAttribute(MUTED, "true"); this.attemptedMute = null;
-        }
-      }
-    }
+    this.analysisActions.reconcile(document, active && phone && analysis);
   }
 
   cleanup(document: Document): void {
@@ -65,7 +40,6 @@ export class ReviewPresentationController {
     document.documentElement.removeAttribute(EXTREME);
     this.board?.removeAttribute(BOARD); this.board = null;
     document.querySelectorAll(`[${MUTED}]`).forEach(button => button.removeAttribute(MUTED));
-    this.attemptedMute = null;
     // Retain the native muted preference, never auto-unmute on disable.
   }
 }

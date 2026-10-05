@@ -20,8 +20,10 @@ it("guards supported native dock, preserves handlers/disabled state and restores
   next.click(); expect(click).toHaveBeenCalledOnce();
   next.disabled = true; controller.reconcile(document, location, DEFAULT_SETTINGS, true);
   expect(next.disabled).toBe(true);
-  for (const [path, settings] of [["/game/123456", { ...DEFAULT_SETTINGS, extremeOled: true }],
-    ["/game/123456", { ...DEFAULT_SETTINGS, enabled: false }], ["/analysis/game/123456/review", DEFAULT_SETTINGS]] as const) {
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, extremeOled: true}, true);
+  expect(dock.hasAttribute("data-chesscom-vinf-four-moves")).toBe(true);
+  expect(next.disabled).toBe(true);
+  for (const [path, settings] of [["/game/123456", { ...DEFAULT_SETTINGS, enabled: false }], ["/analysis/game/123456/review", DEFAULT_SETTINGS]] as const) {
     controller.reconcile(document, { ...location, pathname: path }, settings, true);
     expect(dock.hasAttribute("data-chesscom-vinf-four-moves")).toBe(false);
   }

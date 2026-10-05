@@ -24,8 +24,9 @@ it('keeps native review nodes and actions; independently styles Extreme and rest
   for (const phone of [true,false]) {
     for (const extremeOled of [false,true]) {
       controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled},phone);
-      expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(phone || extremeOled);
-      expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-extreme')).toBe(extremeOled);
+      expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(phone);
+      expect(board.hasAttribute('data-chesscom-vinf-review-board')).toBe(extremeOled);
+      expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-extreme')).toBe(false);
       text.textContent = 'Native coach update'; clock.textContent = '8:40';
       expect(document.querySelector('.game-arc-component')).toBe(graph);
       expect(document.querySelector('#board-analysis-board')).toBe(board);
@@ -38,7 +39,7 @@ it('keeps native review nodes and actions; independently styles Extreme and rest
   const moves = document.querySelector('.move-by-move-container')!;
   moves.remove(); controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled:true},false);
   expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(false);
-  expect(board.outerHTML).toBe(original);
+  expect(board.hasAttribute('data-chesscom-vinf-review-board')).toBe(true);
   controller.reconcile(document,location,DEFAULT_SETTINGS,true);
   expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-clean')).toBe(true);
   document.querySelector('.sidebar-view-content')!.append(moves);
@@ -49,7 +50,7 @@ it('keeps native review nodes and actions; independently styles Extreme and rest
     expect(document.documentElement.hasAttribute('data-chesscom-vinf-review-extreme')).toBe(false);
   }
 });
-it('mutes wide review through the native control before hiding, and leaves unknown audio states visible', () => {
+it('keeps wide native coach audio unchanged in Extreme', () => {
   fixture();
   const button = document.querySelector<HTMLButtonElement>('[aria-label="Toggle Coach Audio"]')!;
   const svg = button.querySelector('svg')!;
@@ -57,12 +58,12 @@ it('mutes wide review through the native control before hiding, and leaves unkno
   const click = vi.fn(() => svg.setAttribute('data-glyph','media-audio-speaker-mute'));
   button.addEventListener('click',click);
   controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled:true},false);
-  expect(click).toHaveBeenCalledOnce();
-  expect(button.hasAttribute('data-chesscom-vinf-review-muted')).toBe(true);
+  expect(click).not.toHaveBeenCalled();
+  expect(button.hasAttribute('data-chesscom-vinf-review-muted')).toBe(false);
   svg.setAttribute('data-glyph','unknown');
   controller.reconcile(document,location,{...DEFAULT_SETTINGS,extremeOled:true},false);
   expect(button.hasAttribute('data-chesscom-vinf-review-muted')).toBe(false);
-  expect(click).toHaveBeenCalledOnce();
+  expect(click).not.toHaveBeenCalled();
   controller.cleanup(document);
 });
 

@@ -42,7 +42,7 @@ describe("Extreme OLED", () => {
     document.querySelector("wc-chess-board")!.id = "mini-board";
     expect(controller.reconcile(document, location, settings)).toBe(false);
   });
-  it("keeps the original board and forwards only previous/next native actions", () => {
+  it("keeps the original board and native navigation without a second dock", () => {
     const board = document.querySelector("wc-chess-board")!;
     const original = board.outerHTML;
     const native = document.querySelector<HTMLButtonElement>('.game-buttons-container-component [aria-label="Previous Move"]')!;
@@ -51,18 +51,16 @@ describe("Extreme OLED", () => {
     controller.reconcile(document, location, settings);
     expect(document.querySelector("wc-chess-board")).toBe(board);
     expect(document.querySelectorAll(".chesscom-vinf-extreme-controls")).toHaveLength(1);
-    expect(document.querySelectorAll(".chesscom-vinf-extreme-controls nav button")).toHaveLength(2);
-    const proxy = document.querySelector<HTMLButtonElement>('.chesscom-vinf-extreme-controls [aria-label="Previous Move"]')!;
-    proxy.click(); expect(click).toHaveBeenCalledTimes(1);
-    native.disabled = true;
-    controller.reconcile(document, location, settings);
-    expect(proxy.disabled).toBe(true);
-    proxy.click(); expect(click).toHaveBeenCalledTimes(1);
+    expect(document.querySelector('.chesscom-vinf-extreme-controls nav')).toBeNull();
+    expect(board.hasAttribute('data-chesscom-vinf-extreme-board')).toBe(true);
+    expect(document.documentElement.hasAttribute('data-chesscom-vinf-normal-clocks')).toBe(true);
+    expect(document.documentElement.hasAttribute('data-chesscom-vinf-extreme-oled')).toBe(false);
+    native.click(); expect(click).toHaveBeenCalledOnce();
     controller.cleanup(document);
     expect(board.outerHTML).toBe(original);
     expect(document.querySelector(".chesscom-vinf-extreme-controls")).toBeNull();
   });
-  it("uses edge-inset clocks and omits navigation only on desktop Extreme", () => {
+  it("shares normal clock geometry and native navigation across Extreme screen sizes", () => {
     const board = document.querySelector<HTMLElement>("wc-chess-board")!;
     vi.spyOn(board, "getBoundingClientRect").mockReturnValue({left: 100, top: 100, width: 560, height: 560} as DOMRect);
     for (const side of ["top", "bottom"]) {
@@ -73,12 +71,12 @@ describe("Extreme OLED", () => {
     controller.reconcile(document, location, DEFAULT_SETTINGS, true, true);
     expect(positions().every(position => position.includes("left: 480px"))).toBe(true);
     controller.reconcile(document, location, settings, true, true);
-    expect(document.querySelector('.chesscom-vinf-desktop-extreme-controls')).not.toBeNull();
-    expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.top')!.style.left).toBe('');
+    expect(document.querySelector('.chesscom-vinf-desktop-extreme-controls')).toBeNull();
+    expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.top')!.style.left).toBe('480px');
     expect(document.querySelector('.chesscom-vinf-extreme-controls nav')).toBeNull();
     controller.reconcile(document, location, settings, true, false);
-    expect(document.querySelectorAll('.chesscom-vinf-extreme-controls nav button')).toHaveLength(2);
-    expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.top')!.style.left).toBe('');
+    expect(document.querySelectorAll('.chesscom-vinf-extreme-controls nav button')).toHaveLength(0);
+    expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.top')!.style.left).toBe('480px');
     controller.reconcile(document, location, {...settings, enabled: false}, true, true);
     expect(document.querySelector('.chesscom-vinf-extreme-controls')).toBeNull();
   });
@@ -99,7 +97,7 @@ describe("Extreme OLED", () => {
     expect(bar("bottom").dataset.low).toBe("false");
     clock("top").textContent = "Disconnected";
     await vi.advanceTimersByTimeAsync(20);
-    expect(bar("top").hidden).toBe(true);
+    expect(bar("top")).toBeNull();
   });
   it("preserves the bar reference through reload/mode switches, separates games and follows paused state", async () => {
     controller.reconcile(document, location, settings);
@@ -122,11 +120,11 @@ describe("Extreme OLED", () => {
     expect(bar("bottom").getAttribute("aria-valuemax")).toBe("300");
   });
 
-  it("always shows both valid clock bars and restores the game UI on Escape", () => {
+  it("keeps shared clocks when Escape closes native UI", () => {
     controller.reconcile(document, location, normalizeSettings({ ...settings, extremeOledClocks: false }));
     expect(bar("top").hidden || bar("bottom").hidden).toBe(false);
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-    expect(controller.reconcile(document, location, settings)).toBe(false);
+    expect(controller.reconcile(document, location, settings)).toBe(true);
     controller.reconcile(document, location, { ...settings, extremeOled: false });
     expect(controller.reconcile(document, location, settings)).toBe(true);
   });
@@ -276,7 +274,7 @@ it("uses read-only clocks in both normal and Extreme layouts", () => {
   }
   document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
   controller.reconcile(document, location, settings);
-  expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.bottom')!.style.left).toBe('');
+  expect(document.querySelector<HTMLElement>('.chesscom-vinf-extreme-time.bottom')!.style.left).toBe('0px');
 });
 
 it("sizes the turn dot, pulses only on a player change, and warns for low time or a long move", async () => {

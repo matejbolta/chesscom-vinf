@@ -139,7 +139,7 @@ it("keeps drawing unavailable until the native API exists without blocking the b
   expect(document.querySelector(".chesscom-vinf-annotations")).toBeNull();
 });
 
-it("shares phone material/actions in Extreme while keeping its sidebar and entry separate", () => {
+it("shares phone material, actions and move ordering in Extreme", () => {
   fixture();
   const phone = new PhoneExperienceController(), actions = new PhoneGameActionsController();
   const settings = {...DEFAULT_SETTINGS, extremeOled:true};
@@ -148,7 +148,7 @@ it("shares phone material/actions in Extreme while keeping its sidebar and entry
   actions.reconcile(document, game, settings, true);
   expect(document.documentElement.hasAttribute('data-chesscom-vinf-phone-material')).toBe(true);
   expect(document.querySelector('#board-layout-player-top .resign-button-component')).not.toBeNull();
-  expect(document.querySelector('[data-chesscom-vinf-newest-first]')).toBeNull();
+  expect(document.querySelector('[data-chesscom-vinf-newest-first]')).not.toBeNull();
   const review = {...game, pathname:'/analysis/game/123456/review'};
   phone.reconcile(document, review, settings, true, true);
   actions.reconcile(document, review, settings, true);

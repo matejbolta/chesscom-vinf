@@ -9,6 +9,12 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.1] - 2026-10-05
+
+- Account for larger tablet/desktop player rows in Chess.com's native board sizing so the bottom row remains in the window.
+- Use the normal controls, clocks and layout in Extreme OLED; retain its board and piece styling.
+- Theme popup, side-panel and Android settings with black OLED surfaces when Extreme is selected.
+
 ## [2.20.0] - 2026-10-05
 
 - Share the four-slot game/analysis navigation structure with tablet and desktop.

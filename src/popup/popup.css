@@ -14,7 +14,7 @@ html:not([data-surface="side-panel"]) body {
 }
 
 body {
-  background: #262522;
+  background: var(--vinf-settings-bg, #262522);
   color: #f1f1f1;
   margin: 0;
   min-width: 0;
@@ -63,7 +63,7 @@ h1 {
 }
 
 .version {
-  background: #3a3936;
+  background: var(--vinf-settings-raised, #3a3936);
   border-radius: 999px;
   color: #c8c7c5;
   font-size: 11px;
@@ -73,8 +73,8 @@ h1 {
 .side-panel-button {
   align-items: center;
   appearance: none;
-  background: #312e2b;
-  border: 1px solid #4a4844;
+  background: var(--vinf-settings-panel, #312e2b);
+  border: 1px solid var(--vinf-settings-border, #4a4844);
   border-radius: 7px;
   color: #c8c7c5;
   cursor: pointer;
@@ -94,7 +94,7 @@ h1 {
 }
 
 .side-panel-button:hover:not(:disabled) {
-  background: #3a3936;
+  background: var(--vinf-settings-raised, #3a3936);
   border-color: #81b64c;
   color: #fff;
 }
@@ -148,8 +148,8 @@ html[data-surface="popup"] #close-side-panel {
 }
 
 .settings-card {
-  background: #312e2b;
-  border: 1px solid #3c3a37;
+  background: var(--vinf-settings-panel, #312e2b);
+  border: 1px solid var(--vinf-settings-divider, #3c3a37);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -241,7 +241,7 @@ h2 {
 
 input[role="switch"] {
   appearance: none;
-  background: #575552;
+  background: var(--vinf-settings-switch, #575552);
   border-radius: 999px;
   cursor: pointer;
   flex: 0 0 38px;
@@ -431,8 +431,8 @@ button:focus-visible {
 .order-button {
   align-items: center;
   appearance: none;
-  background: #211f1c;
-  border: 1px solid #4a4844;
+  background: var(--vinf-settings-field, #211f1c);
+  border: 1px solid var(--vinf-settings-border, #4a4844);
   border-radius: 5px;
   color: #d1d0ce;
   cursor: pointer;
@@ -463,10 +463,10 @@ button:focus-visible {
 
 select {
   appearance: none;
-  background: #211f1c
+  background: var(--vinf-settings-field, #211f1c)
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23aaa9a7' d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
     no-repeat right 9px center;
-  border: 1px solid #4a4844;
+  border: 1px solid var(--vinf-settings-border, #4a4844);
   border-radius: 6px;
   color: #f1f1f1;
   font: inherit;
@@ -575,8 +575,27 @@ select {
   padding: 1px 4px;
   border: 1px solid #686660;
   border-radius: 4px;
-  background: #262522;
+  background: var(--vinf-settings-bg, #262522);
   font: inherit;
   text-align: center;
 }
 
+
+/* Extreme uses the same settings layout, with OLED surfaces. */
+:root:has(#extreme-oled:checked) {
+  --vinf-settings-bg: #000;
+  --vinf-settings-panel: #000;
+  --vinf-settings-field: #080808;
+  --vinf-settings-raised: #141414;
+  --vinf-settings-border: #383838;
+  --vinf-settings-divider: #292929;
+  --vinf-settings-switch: #404040;
+  color-scheme: dark;
+}
+
+:root:has(#extreme-oled:checked) :is(input[type="number"], input[type="text"], select) {
+  background-color: #080808; color: #eee; border: 1px solid #383838;
+}
+:root:has(#extreme-oled:checked) :is(input, select, button):focus-visible {
+  outline: 2px solid #a3d160; outline-offset: 2px;
+}

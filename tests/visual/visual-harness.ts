@@ -374,6 +374,8 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const settings = { ...DEFAULT_SETTINGS, pokemonMode: searchParams.has("pokemon"), enabled: !searchParams.has("native"),
     extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {
+    document.documentElement.toggleAttribute("data-chesscom-vinf-oled", settings.extremeOled || searchParams.has("oled"));
+    if (settings.extremeOled || searchParams.has("oled")) document.documentElement.setAttribute("data-chesscom-vinf-oled", "true");
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
     homeLink.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
     const phoneActions = window.innerWidth <= 599;

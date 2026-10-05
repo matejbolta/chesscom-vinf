@@ -1212,3 +1212,8 @@ The existing audited `.sidebar-view-content .overview-view-section.overview-view
 ## 2026-10-05 — Wide shared navigation and rows
 
 Live desktop game has the same five direct native buttons in `.game-buttons-container-component`, labeled First Move / Previous Move / Play / Pause / Next Move / Last Move. Wide Review `.game-controls-view-component > .game-controls-primary-component` also has those buttons; `.move-by-move-coach-section .flow-buttons-component` has native Explain/Best/Next. WideReviewControls proxies current sources into four fixed slots and hides only source groups. Source SVGs are copied for display, never listeners. Start Review resolves inside the native overview component. Wide board rows use the existing `.player-component`, `.player-tagline`, `.clock-component`/`.move-time-time`, and captured-pieces structure. No phone root layout marker is applied at wide sizes. Sanitized 800px previews cover row centers, non-overlapping touch pencil, and fixed Review slots.
+
+## 2026-10-05 — Wide height budget and Extreme UI unification
+
+Live desktop body.with-players owns --playerHeight (4rem) and --playersHeight:calc(var(--playerHeight)*2). Native --boardMaxHeight deducts both rows and gutters; --boardWidth derives from it. Wide row CSS must override --playerHeight at body, where dependent custom properties are defined, not on a descendant. Observed1743x1075 overflow with76px rows/40px budget; sanitized native-wide-sizing.css covers this contract.
+Extreme board markers now directly own board colors/filters; no page-wide visibility marker or separate navigation. Review cleanup is phone-only regardless of mode. Settings theme uses :has(#extreme-oled:checked) in popup/sidepanel and the Android dialog's corresponding checkbox.

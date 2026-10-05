@@ -621,58 +621,38 @@ html[data-chesscom-vinf-oled-buttons="true"]
   }
 }
 
-/* Independent game-only presentation. Preserve native board geometry and input.
-   Removing the marker restores the site's own UI. */
-html[data-chesscom-vinf-extreme-oled="true"],
-html[data-chesscom-vinf-extreme-oled="true"] body {
-  background: #000 !important;
-  color: transparent !important;
-}
-html[data-chesscom-vinf-extreme-oled="true"] body *:not(
-  [data-chesscom-vinf-extreme-board], [data-chesscom-vinf-extreme-board] *,
-  .chesscom-vinf-extreme-controls, .chesscom-vinf-extreme-controls *,
-  .chesscom-vinf-annotations, .chesscom-vinf-annotations *,
-  .chesscom-vinf-annotation-toggle, .chesscom-vinf-annotation-toggle *,
-  .chesscom-vinf-settings-dialog, .chesscom-vinf-settings-dialog *
-) {
-  visibility: hidden !important;
-}
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]),
-html[data-chesscom-vinf-extreme-oled="true"] .chesscom-vinf-extreme-controls,
-html[data-chesscom-vinf-extreme-oled="true"] .chesscom-vinf-settings-dialog {
-  visibility: visible !important;
-}
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) {
+/* Extreme changes only board surfaces and pieces; UI uses the shared layout. */
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) {
   background: conic-gradient(from 90deg, #191919 25%, #050505 0 50%, #191919 0 75%, #050505 0)
     0 0 / 25% 25% !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   color: #777 !important;
 }
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) .coordinates,
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) .coordinates * {
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) .coordinates,
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) .coordinates * {
   visibility: hidden !important;
 }
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
   :is(.wp, .wn, .wb, .wr, .wq, .wk) {
   filter: brightness(0) invert(.4) !important;
 }
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
   :is(.bp, .bn, .bb, .br, .bq, .bk) {
   filter: brightness(0) drop-shadow(1px 0 0 #555) drop-shadow(-1px 0 0 #555)
     drop-shadow(0 1px 0 #555) drop-shadow(0 -1px 0 #555) !important;
 }
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
   :is(.hint, .capture-hint, .hover-square) {
   filter: grayscale(1) brightness(.35) !important;
   opacity: .35 !important;
 }
 /* Keep native marking hues (including red and modifier colors) recognizable. */
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) .highlight {
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) .highlight {
   filter: brightness(.8) !important;
   opacity: .65 !important;
 }
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) :is(.hint, .capture-hint) {
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board]) :is(.hint, .capture-hint) {
   /* Native static padding/borders and dynamic .circle animations share this
      color token. Preserve their shapes and reveal only the actual targets. */
   --color-transparent-black-14: #707070;
@@ -758,41 +738,15 @@ html[data-chesscom-vinf-extreme-oled="true"] .chesscom-vinf-settings-dialog {
   .chesscom-vinf-extreme-fuse { transition: none; }
 }
 
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
   :is(.promotion-window, .promotion-pieces, .promotion-window .close-button),
-:is(html[data-chesscom-vinf-extreme-oled="true"], html[data-chesscom-vinf-review-extreme]) :is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
+:is([data-chesscom-vinf-extreme-board], [data-chesscom-vinf-review-board])
   .promotion-window::before {
   background: #090909 !important;
   box-shadow: none !important;
   color: #777 !important;
 }
 
-/* Native geometry is owned by Chess.com. CSS-only forced sizes can disagree
-   with its drag coordinates and clip pieces. Add scroll extent without reflow. */
-html[data-chesscom-vinf-extreme-oled="true"] {
-  overflow-y: auto !important;
-  scrollbar-width: none;
-}
-html[data-chesscom-vinf-extreme-oled="true"]::-webkit-scrollbar { display: none; }
-html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important; }
-.chesscom-vinf-extreme-scroll-room {
-  position: absolute;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  pointer-events: none;
-}
-@media (max-width: 599px) {
-  /* A normal-flow spacer above the native player/board rows, not a board resize
-     or transform. Roughly 3–4 CSS cm of black room for positioning by scrolling. */
-  html[data-chesscom-vinf-extreme-oled="true"] #board-layout-main::before {
-    content: "";
-    display: block;
-    height: clamp(128px, 18svh, 152px);
-    flex: 0 0 clamp(128px, 18svh, 152px);
-    pointer-events: none;
-  }
-}
 .chesscom-vinf-extreme-controls .chesscom-vinf-extreme-time {
   position: absolute;
   left: 12px;
@@ -1333,34 +1287,6 @@ html[data-chesscom-vinf-review-clean] .evaluation-bar-bar { isolation: isolate; 
   }
 }
 
-/* Review Extreme uses semantic surface tokens, keeping native dialog/selection
-   states, classification colors and evaluation information readable. */
-html[data-chesscom-vinf-review-extreme],
-html[data-chesscom-vinf-review-extreme] :is(body, .dark-mode, #board-layout-main,
-  #board-layout-sidebar, .mobile-top-section-container) {
-  --color-bg-primary: #000; --color-bg-secondary: #000; --color-bg-tertiary: #090909;
-  --color-bg-speech: #000; --color-text-speech: #aaa;
-  --color-text-default: #aaa; --color-text-boldest: #bbb;
-  --color-border-default: #303030;
-  background-color: #000 !important; color: #aaa;
-}
-html[data-chesscom-vinf-review-extreme] :is(.sidebar-component, .sidebar-view-component,
-  .sidebar-view-content, .sidebar-header-header, .game-controls-view-component,
-  .mobile-gr-footer-footer, .move-by-move-component, .move-by-move-bottom-section) {
-  background-color: #000 !important;
-}
-html[data-chesscom-vinf-review-extreme] :is(.mobile-gr-footer-footer, .flow-buttons-component) button {
-  background: #090909; color: #aaa; box-shadow: none; border: 1px solid #333;
-}
-html[data-chesscom-vinf-review-extreme] :is(.mobile-gr-footer-primary, .flow-buttons-component .cc-button-primary) {
-  border-color: #626262 !important; color: #ccc !important;
-}
-html[data-chesscom-vinf-review-extreme] button:disabled { opacity: .35; }
-html[data-chesscom-vinf-review-extreme] button:focus-visible { outline: 2px solid #aaa; outline-offset: -3px; }
-html[data-chesscom-vinf-review-extreme] .evaluation-bar-white { background-color: #888; }
-html[data-chesscom-vinf-review-extreme] .evaluation-bar-black { background-color: #191919; }
-html[data-chesscom-vinf-review-extreme] .game-arc-component { filter: brightness(.7); }
-
 /* Lift only native black captured-piece sprites; retain their relative tones. */
 html:is([data-chesscom-vinf-phone-material], [data-chesscom-vinf-review-clean]) wc-captured-pieces .captured-pieces-cpiece[class*="captured-pieces-b-"] {
   filter: brightness(1.65);
@@ -1684,6 +1610,10 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   }
   .chesscom-vinf-wide-review-dock button[aria-label="Start Review"] { color: #95bb4a !important; }
 
+  /* Feed the actual row size into Chess.com's board fit calculation. */
+  html[data-chesscom-vinf-wide-rows] body.with-players {
+    --playerHeight: var(--vinf-wide-row-height) !important;
+  }
   html[data-chesscom-vinf-wide-rows] { --vinf-wide-row-height: 68px; --vinf-wide-clock-width: 96px; --vinf-wide-row-font: 24px; }
   html[data-chesscom-vinf-wide-rows] .board-layout-player { height: var(--vinf-wide-row-height); min-height: var(--vinf-wide-row-height); margin-block: 0; }
   html[data-chesscom-vinf-wide-rows] .board-layout-player .player-component {
