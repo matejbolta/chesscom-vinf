@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.12] - 2026-10-06
+
+- Replace flat Pokémon squares with original pixel-art grass and sandy path terrain tiles inspired by GBA overworld maps.
+
 ## [2.20.11] - 2026-10-06
 
 - Preserve Pokémon pieces and board when opening saved-game engine Analysis from Review.

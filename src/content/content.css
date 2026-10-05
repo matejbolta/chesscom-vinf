@@ -1353,10 +1353,10 @@ html:is([data-chesscom-vinf-phone-material], [data-chesscom-vinf-review-clean]) 
 
 }
 
-/* Muted handheld-game palette; keep the board free of decorative markings. */
+/* Original 32px grass/path terrain tiles inspired by GBA overworld maps. */
 [data-chesscom-vinf-pokemon-board] {
-  background: conic-gradient(from 90deg, #d9dfce 25%, #859985 0 50%, #d9dfce 0 75%, #859985 0)
-    0 0 / 25% 25% !important;
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%20shape-rendering%3D%22crispEdges%22%3E%3Cdefs%3E%3Cg%20id%3D%22g%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%237eaa68%22%2F%3E%3Cpath%20fill%3D%22%23658f53%22%20d%3D%22M3%206h2v2h2v-3h2v5h-4v-2h-2z%22%2F%3E%3Cpath%20fill%3D%22%2398bd7d%22%20d%3D%22M4%204h2v2h-2zM8%203h2v2h-2z%22%2F%3E%3Cpath%20fill%3D%22%23658f53%22%20d%3D%22M19%205h2v2h2v-3h2v5h-4v-2h-2z%22%2F%3E%3Cpath%20fill%3D%22%2398bd7d%22%20d%3D%22M20%203h2v2h-2zM24%202h2v2h-2z%22%2F%3E%3Cpath%20fill%3D%22%23658f53%22%20d%3D%22M11%2016h2v2h2v-3h2v5h-4v-2h-2z%22%2F%3E%3Cpath%20fill%3D%22%2398bd7d%22%20d%3D%22M12%2014h2v2h-2zM16%2013h2v2h-2z%22%2F%3E%3Cpath%20fill%3D%22%23658f53%22%20d%3D%22M25%2022h2v2h2v-3h2v5h-4v-2h-2z%22%2F%3E%3Cpath%20fill%3D%22%2398bd7d%22%20d%3D%22M26%2020h2v2h-2zM30%2019h2v2h-2z%22%2F%3E%3Cpath%20fill%3D%22%23658f53%22%20d%3D%22M3%2027h2v2h2v-3h2v5h-4v-2h-2z%22%2F%3E%3Cpath%20fill%3D%22%2398bd7d%22%20d%3D%22M4%2025h2v2h-2zM8%2024h2v2h-2z%22%2F%3E%3C%2Fg%3E%3Cg%20id%3D%22p%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23e2cc96%22%2F%3E%3Cpath%20fill%3D%22%23cdb780%22%20d%3D%22M5%205h3v1h-3zM7%206h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%23eedbab%22%20d%3D%22M5%204h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23cdb780%22%20d%3D%22M21%209h3v1h-3zM23%2010h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%23eedbab%22%20d%3D%22M21%208h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23cdb780%22%20d%3D%22M10%2023h3v1h-3zM12%2024h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%23eedbab%22%20d%3D%22M10%2022h3v1h-3z%22%2F%3E%3Cpath%20fill%3D%22%23cdb780%22%20d%3D%22M26%2026h3v1h-3zM28%2027h2v1h-2z%22%2F%3E%3Cpath%20fill%3D%22%23eedbab%22%20d%3D%22M26%2025h3v1h-3z%22%2F%3E%3C%2Fg%3E%3C%2Fdefs%3E%3Cuse%20href%3D%22%23p%22%2F%3E%3Cuse%20href%3D%22%23g%22%20x%3D%2232%22%2F%3E%3Cuse%20href%3D%22%23g%22%20y%3D%2232%22%2F%3E%3Cuse%20href%3D%22%23p%22%20x%3D%2232%22%20y%3D%2232%22%2F%3E%3C%2Fsvg%3E") 0 0 / 25% 25% repeat !important;
+  image-rendering: pixelated;
 }
 [data-chesscom-vinf-pokemon-board] .coordinates { color: #39483d; }
 
