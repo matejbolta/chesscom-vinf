@@ -206,6 +206,22 @@ describe("Extreme OLED", () => {
     expect(controller.reconcile(document, location, settings)).toBe(false);
     expect(controller.reconcile(document, { ...location, pathname: "/game/654321" }, settings)).toBe(true);
   });
+  it("recovers shared clocks after a new URL precedes old result teardown", () => {
+    controller.reconcile(document, location, settings);
+    const result = document.createElement("div");
+    result.className = "game-over-modal-shell-container";
+    document.body.append(result);
+    controller.reconcile(document, location, settings);
+    const nextGame = { ...location, pathname: "/game/700002" };
+    expect(controller.reconcile(document, nextGame, settings)).toBe(false);
+    result.remove();
+    expect(controller.reconcile(document, nextGame, settings)).toBe(true);
+    document.body.append(result);
+    expect(controller.reconcile(document, nextGame, settings)).toBe(false);
+    result.remove();
+    expect(controller.reconcile(document, nextGame, settings)).toBe(false);
+  });
+
   it("does not mistake a hidden result or a zero clock for a finished game", async () => {
     document.body.insertAdjacentHTML("beforeend", '<div hidden><div class="game-over-modal-shell-container"></div></div>');
     clock("bottom").textContent = "0:00";

@@ -15,13 +15,13 @@ function setAttribute(element: Element, name: string, value: string): void {
   if (element.getAttribute(name) !== value) element.setAttribute(name, value);
 }
 
-export function nativeGameHasEnded(document: Document): boolean {
+function nativeGameResults(document: Document): HTMLElement[] {
   // Native result evidence only: zero on a clock is not proof of game over.
   const candidates = document.querySelectorAll<HTMLElement>(
     ".game-over-modal-shell-container, #board-layout-player-top .player-game-over-component," +
     "#board-layout-player-bottom .player-game-over-component, #board-layout-sidebar .game-result"
   );
-  return [...candidates].some(element => {
+  return [...candidates].filter(element => {
     if (element.matches(".game-result") &&
         !/^(1-0|0-1|½-½|1\/2-1\/2)$/.test(element.textContent?.replace(/\s/g, "") ?? "")) return false;
     // Ignore pre-mounted inactive results, but not our own visibility rule.
@@ -31,6 +31,35 @@ export function nativeGameHasEnded(document: Document): boolean {
     }
     return true;
   });
+}
+
+export function nativeGameHasEnded(document: Document): boolean {
+  return nativeGameResults(document).length > 0;
+}
+
+/** Keep a dismissed result latched, without assigning old SPA DOM to a new game. */
+export class NativeGameEndState {
+  private route = "";
+  private ended = false;
+  private visible = new Set<HTMLElement>();
+  private inherited = new Set<HTMLElement>();
+
+  read(document: Document, route: string): boolean {
+    const results = nativeGameResults(document);
+    if (route !== this.route) {
+      this.inherited = new Set(results.filter(element => this.visible.has(element)));
+      this.route = route;
+      this.ended = false;
+    }
+    const current = new Set(results);
+    for (const element of this.inherited) {
+      if (!current.has(element)) this.inherited.delete(element);
+    }
+    if (results.some(element => !this.inherited.has(element))) this.ended = true;
+    this.visible = current;
+    // Retain native result presentation until old result nodes disappear.
+    return this.ended || results.length > 0;
+  }
 }
 
 // Read the site's displayed timer; never invent or run an independent clock.
@@ -66,7 +95,7 @@ export class ExtremeOledController {
   private document: Document | null = null;
   private route = "";
   private suspendedRoute = "";
-  private finishedRoute = "";
+  private gameEnd = new NativeGameEndState();
   private reference = new ClockBarReference();
 
   private readonly schedule = (): void => {
@@ -113,7 +142,6 @@ export class ExtremeOledController {
     if (route !== this.route || !settings.extremeOled) this.suspendedRoute = "";
     if (route !== this.route) {
       this.cleanup(document);
-      this.finishedRoute = "";
     }
     this.route = route;
     if (!settings.enabled || (!settings.extremeOled && !normal) || this.suspendedRoute === route ||
@@ -157,8 +185,7 @@ export class ExtremeOledController {
   }
 
   private update(document: Document): void {
-    if (nativeGameHasEnded(document)) this.finishedRoute = this.route;
-    if (this.finishedRoute === this.route) {
+    if (this.gameEnd.read(document, this.route)) {
       this.clearPresentation(document);
       return;
     }

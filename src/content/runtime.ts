@@ -136,7 +136,7 @@ export function startVinfRuntime(
     const shouldUseOled =
       currentSettings.enabled &&
       currentSettings.oledMode &&
-      (isTargetRoute() ||
+      (isTargetRoute() || isGameBootstrapRoute() ||
         ((phoneGameReviewMedia?.matches ?? window.innerWidth <= 599) && isChessComGameAnalysis(window.location)) ||
         isChessComLiveGameReview(window.location) ||
         isChessComGame(window.location));

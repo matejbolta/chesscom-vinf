@@ -115,6 +115,28 @@ describe("phone play and review", () => {
     expect(document.documentElement.hasAttribute("data-chesscom-vinf-phone-postgame")).toBe(false);
   });
 
+  it("recovers when the new game URL arrives before the old result disappears", () => {
+    fixture();
+    const firstGame = { ...game, pathname: "/game/700001" };
+    const nextGame = { ...game, pathname: "/game/700002" };
+    controller.reconcile(document, firstGame, DEFAULT_SETTINGS, true);
+    const result = document.createElement("div");
+    result.className = "game-over-modal-shell-container";
+    document.body.append(result);
+    controller.reconcile(document, firstGame, DEFAULT_SETTINGS, true);
+    controller.reconcile(document, nextGame, DEFAULT_SETTINGS, true);
+    expect(document.documentElement.hasAttribute(marker)).toBe(false);
+    result.remove();
+    controller.reconcile(document, nextGame, DEFAULT_SETTINGS, true);
+    expect(document.documentElement.hasAttribute(marker)).toBe(true);
+    expect(document.documentElement.hasAttribute("data-chesscom-vinf-phone-postgame")).toBe(false);
+    document.body.append(result); // Native component reuse for the new game's result.
+    controller.reconcile(document, nextGame, DEFAULT_SETTINGS, true);
+    result.remove();
+    controller.reconcile(document, nextGame, DEFAULT_SETTINGS, true);
+    expect(document.documentElement.hasAttribute(marker)).toBe(false);
+  });
+
   it("mutes through the native handler before hiding, watches re-enable and restores presentation", async () => {
     vi.useFakeTimers(); fixture("game-review-narrow");
     const button = document.querySelector<HTMLButtonElement>('[aria-label="Toggle Coach Audio"]')!;

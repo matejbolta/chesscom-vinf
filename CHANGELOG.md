@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.18.1] - 2026-10-05
+
+- Prevent old result nodes persisting across a new-game URL transition from permanently disabling phone presentation and shared clocks.
+- Keep opt-in OLED enabled on the native matchmaking bootstrap route.
+
 ## [2.18.0] - 2026-10-03
 
 - Restore native wide desktop/tablet Review layout and coach audio controls in normal/OLED mode; retain Extreme OLED, Pokémon, and desktop B behavior.

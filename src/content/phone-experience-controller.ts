@@ -4,7 +4,7 @@ import { isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "
 import type { ExtensionSettings, LocationLike } from "../shared/models";
 import { isChessComGame } from "./game-continuation";
 import { isChessComLiveGameReview } from "./game-review-layout-controller";
-import { nativeGameHasEnded, readClockSeconds } from "./extreme-oled-controller";
+import { NativeGameEndState, readClockSeconds } from "./extreme-oled-controller";
 import { ReviewEntryScroll } from "./review-entry-scroll";
 import { PhoneGameEntry } from "./phone-game-entry";
 
@@ -21,7 +21,7 @@ export class PhoneExperienceController {
   private reviewDock = new ReviewDock();
   private materialFlow = new MaterialFlow();
   private route = "";
-  private finished = false;
+  private gameEnd = new NativeGameEndState();
   private observer: MutationObserver | null = null;
   private document: Document | null = null;
   private timer: number | null = null;
@@ -39,7 +39,6 @@ export class PhoneExperienceController {
     if (route !== this.route) {
       this.cleanup(document);
       this.route = route;
-      this.finished = false;
     }
     const signedIn = document.documentElement.classList.contains("user-logged-in");
     const review = isChessComLiveGameReview(location);
@@ -73,16 +72,16 @@ export class PhoneExperienceController {
       this.reviewEntry.reconcile(document);
       return;
     }
-    if (nativeGameHasEnded(document)) this.finished = true;
-    document.documentElement.toggleAttribute("data-chesscom-vinf-phone-postgame", this.finished);
+    const finished = this.gameEnd.read(document, route);
+    document.documentElement.toggleAttribute("data-chesscom-vinf-phone-postgame", finished);
     const board = document.querySelector("#board-layout-chessboard wc-chess-board#board-single");
     const timers = document.querySelectorAll('#board-layout-player-top .clock-component [role="timer"], #board-layout-player-bottom .clock-component [role="timer"]');
-    if (this.finished || !board || timers.length !== 2 ||
+    if (finished || !board || timers.length !== 2 ||
         [...timers].some(timer => readClockSeconds(timer.textContent ?? "") === null)) {
       document.documentElement.removeAttribute(GAME);
       document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
       this.materialFlow.cleanup();
-      if (this.finished) this.entry.cleanup();
+      if (finished) this.entry.cleanup();
       this.clearRows();
       this.restoreOpening();
       return;

@@ -105,7 +105,7 @@ describe("responsive runtime lifecycle", () => {
     expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
   });
 
-  it("applies OLED after the native matchmaking bootstrap becomes a live game", async () => {
+  it("keeps OLED on through matchmaking and removes it on an unsupported route", async () => {
     vi.useFakeTimers();
     window.history.replaceState(
       {},
@@ -121,12 +121,15 @@ describe("responsive runtime lifecycle", () => {
     });
     await Promise.resolve();
 
-    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(true);
 
     window.history.replaceState({}, "", "/game/183987646934");
     await vi.advanceTimersByTimeAsync(ROUTE_CHECK_INTERVAL_MS);
 
     expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
+    window.history.replaceState({}, "", "/puzzles");
+    await vi.advanceTimersByTimeAsync(ROUTE_CHECK_INTERVAL_MS);
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
   });
 
   it("observes a main element when the desktop base container is absent", async () => {

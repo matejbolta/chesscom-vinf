@@ -1181,3 +1181,9 @@ Read-only public completed-game inspection on 2026-10-03 confirms `wc-chess-boar
 Read-only native engine inspection confirms `.sidebar-tabs-container` and `.analysis-options-component` within `.engine-lines-with-options-component`; lines use `.engine-lines-with-options-lines`. Phone CSS hides tabs and visually orders options after lines without moving native DOM. Header Back/Settings proxies target exact aria labels within `.sidebar-header-header` and omit absent sources; positions use actual board bounds and orientation, not viewport midpoint.
 
 2.16.1: native Analysis options inspection confirms bar → left/right containers, with depth and engine gear in right. Phone grid flattens right visually; board-settings proxy occupies column 2, engine gear column 3, depth row 2. Back uses board midpoint. Original native actions remain in place.
+
+## Live transition audit — 2.18.1 (2026-10-05)
+
+Read-only signed-in Brave inspection at 400 CSS px: after a user activated New Game from the native abort card, the new numeric game route retained phone-postgame, lacked phone-game/normal-clocks, and had ticking native clocks with no visible result candidates. User refresh restored phone-game/material/normal-clocks/annotations on the same game. The old result surviving the URL transition is a code-supported causal hypothesis reproduced by regression tests, not a frame-by-frame captured transition. Track existing native result element identity across game routes to prevent inherited evidence from permanently latching the new route. Preserve same-game dismissal and subsequent result component reuse. No selector expansion.
+
+The native matchmaking bootstrap was explicitly excluded from OLED in runtime. User now requests black pairing surfaces, so the existing exact /play/online/new route is included. Actual pairing/rematch nested surfaces still require live verification; no claim all grey flashes are fixed.
