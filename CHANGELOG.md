@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.10] - 2026-10-06
+
+- Replace the rejected red Pokémon board and center emblem with a plain muted sage/stone checkerboard inspired by classic handheld games.
+
 ## [2.20.9] - 2026-10-06
 
 - Pair Pokémon pieces with a minimalist ivory/soft-red board and subtle central Poké Ball emblem.
