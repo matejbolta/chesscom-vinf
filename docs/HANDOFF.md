@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.20.7.
+Current source version: 2.20.8.
+2.20.8: user replaces Pokémon side/role circle badges with near-black Black sprites. Removed generated ::after glyph content and badge CSS; Black filter brightness(.12) saturate(.7), retaining faint original color. White sprites unchanged. Shared board style applies across viewport sizes; native piece bounds/input unchanged.
 2.20.7: screenshot revealed regular OLED settings remained gray because palette selectors only watched Extreme checkbox. Popup/sidepanel and Android dialog now use :has(regular OLED checked, Extreme checked), including field/focus styles. Both-off retains stock theme. No settings persistence or page-layout changes.
 Session closed at user request, 2026-10-06 00:06 Europe/Ljubljana. User confirmed latest change working. No active monitoring remains. All226tests/typecheck and both builds passed; code committed. Live Extreme sidebar retained170px reservation and four nav buttons computed#000/no shadow. Engine Analysis desktop fix implemented/fixture checked; live verification still not captured. Do not claim every possible popup covered. Usage measured account-wide39% at2026-10-05 22:58:26 to58% at2026-10-06 00:06:52:19 percentage points over68m26s, approximately16.7 points/hour; includes other account activity and rounded meter.
 2.20.6: user explicitly requested wide Extreme coach card black like phone. Theme botMessage black, message/classification text #bbb, tip black; native card position/size and score badge retained. Normal wide Review unchanged. Live baseline white card confirmed; local visual check follows.

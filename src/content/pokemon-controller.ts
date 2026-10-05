@@ -1,5 +1,5 @@
 import type { ExtensionSettings, LocationLike } from "../shared/models";
-import { PIECE_ROLES, PIECE_GLYPHS } from "../shared/pokemon";
+import { PIECE_ROLES } from "../shared/pokemon";
 import { pokemonSprite } from "../shared/pokemon-art";
 import { isChessComGame } from "./game-continuation";
 import { isChessComLiveGameReview } from "./game-review-layout-controller";
@@ -44,7 +44,6 @@ export class PokemonController {
       [${BOARD}] .piece:is(.w${role},.b${role}) {
         background-image: url("${pokemonSprite(settings.pokemonPieces[role])}") !important;
       }
-      [${BOARD}] .piece:is(.w${role},.b${role})::after { content: "${PIECE_GLYPHS[role]}"; }
     `).join("\n");
     document.head.append(this.style); this.signature = signature;
   }

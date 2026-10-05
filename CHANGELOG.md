@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.8] - 2026-10-06
+
+- Remove Pokémon piece badges and darken Black’s sprites to near-black with a faint amount of original color.
+
 ## [2.20.7] - 2026-10-06
 
 - Apply black settings surfaces when either regular OLED or Extreme OLED is selected, across popup, side panel and Android settings.
