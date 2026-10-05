@@ -88,7 +88,7 @@ it("shares mode exclusivity, team selection, preview and reset across settings s
   pawn.value = '133'; pawn.dispatchEvent(new Event('change'));
   expect(editor.get().pokemonPieces.p).toBe(133);
   expect(editor.element.querySelector('img')?.src).toBe(pokemonSprite(133));
-  editor.element.querySelector<HTMLButtonElement>('button')!.click();
+  Array.from(editor.element.querySelectorAll<HTMLButtonElement>('button')).find(button => button.textContent === "Reset team")!.click();
   expect(editor.get().pokemonPieces).toEqual(DEFAULT_SETTINGS.pokemonPieces);
 });
 
@@ -128,4 +128,22 @@ it("keeps the Pokemon skin through Review to engine Analysis and cleans up on un
   expect(document.querySelector('.chesscom-vinf-extreme-controls')).toBeNull();
   skin.reconcile(document, {...location, pathname:'/analysis'}, settings);
   expect(board.hasAttribute('data-chesscom-vinf-pokemon-board')).toBe(false);
+});
+
+it("searches sprite choices, saves selection and restores trigger focus", () => {
+  const extreme = document.createElement('input'); extreme.type = 'checkbox';
+  const editor = createPokemonEditor(document, extreme); document.body.append(editor.element); editor.set(settings);
+  const trigger = editor.element.querySelector<HTMLButtonElement>('button[aria-label="Pawn Pokémon"]')!;
+  trigger.click();
+  const search = editor.element.querySelector<HTMLInputElement>('input[type="search"]')!;
+  search.value = 'eevee'; search.dispatchEvent(new Event('input'));
+  const options = editor.element.querySelectorAll<HTMLButtonElement>('.vinf-pokemon-results button');
+  expect(options).toHaveLength(1); expect(options[0].querySelector('img')?.src).toBe(pokemonSprite(133));
+  const changed = vi.fn(); editor.element.addEventListener('change', changed);
+  options[0].click(); expect(editor.get().pokemonPieces.p).toBe(133); expect(changed).toHaveBeenCalledOnce();
+  expect(document.activeElement).toBe(trigger); expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  trigger.click(); search.value = 'not-a-pokemon'; search.dispatchEvent(new Event('input'));
+  expect(editor.element.querySelector('[role="status"]')?.textContent).toBe('No Pokémon found');
+  search.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  expect(document.activeElement).toBe(trigger);
 });

@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.21.0] - 2026-10-06
+
+- Add a shared searchable Pokémon picker with sprites, numbers and names in mobile and desktop settings.
+
 ## [2.20.12] - 2026-10-06
 
 - Replace flat Pokémon squares with original pixel-art grass and sandy path terrain tiles inspired by GBA overworld maps.

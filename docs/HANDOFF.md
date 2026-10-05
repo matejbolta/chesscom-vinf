@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.20.12.
+Current source version: 2.21.0.
+2.21.0 replaces visible native Pokémon selects with one inline searchable sprite picker shared by popup/sidepanel/Android. Hidden selects retain persistence contract; native bubbling change saves each choice. Picker opens beside selected role, searches number/name, supports Escape/Close and restores focus. Bundled sprites only, no network. Updated stale badge legend.
 2.20.12: user clarified GBA/FireRed overworld TERRAIN tiles, not merely a palette. Original32px pixel-art grass tufts and sandy path flecks now alternate as board squares, encoded inline vector tile at25% background size (2x2 squares). No Poké Ball, props, network assets or input/geometry changes. This supersedes flat sage/stone design.
 2.20.11: PokemonController route guard now includes exact saved-game engine Analysis via existing isChessComGameAnalysis helper. Reuses audited board-analysis-board, same skin/board marker; no live clocks introduced. Review-to-engine transition regression checks preserved style/node and cleanup on standalone /analysis.
 2.20.10 supersedes 2.20.9 board art: user rejected pink/red palette and unnecessary Poké Ball emblem. New direction is plain sage #859985 / pale stone #d9dfce checkerboard, no emblem, texture or decoration. CSS gradient only, same Pokémon board marker; near-black opposing sprites retained.
