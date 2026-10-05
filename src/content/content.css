@@ -57,10 +57,10 @@ html[data-chesscom-vinf-oled="true"] .game-buttons-container-mobile {
   background-image: none !important;
 }
 
-html[data-chesscom-vinf-oled="true"]
+html[data-chesscom-vinf-oled="true"]:not([data-chesscom-vinf-wide-extreme])
   .game-buttons-container-component
   > button.cc-button-secondary,
-html[data-chesscom-vinf-oled="true"]
+html[data-chesscom-vinf-oled="true"]:not([data-chesscom-vinf-wide-extreme])
   .game-buttons-container-mobile
   > button.cc-button-secondary {
   background: #0a0a0a !important;
@@ -68,19 +68,19 @@ html[data-chesscom-vinf-oled="true"]
   color: #ededed !important;
 }
 
-html[data-chesscom-vinf-oled="true"]
+html[data-chesscom-vinf-oled="true"]:not([data-chesscom-vinf-wide-extreme])
   .game-buttons-container-component
   > button.cc-button-secondary:not(:disabled):hover,
-html[data-chesscom-vinf-oled="true"]
+html[data-chesscom-vinf-oled="true"]:not([data-chesscom-vinf-wide-extreme])
   .game-buttons-container-mobile
   > button.cc-button-secondary:not(:disabled):hover {
   background: #121212 !important;
 }
 
-html[data-chesscom-vinf-oled="true"]
+html[data-chesscom-vinf-oled="true"]:not([data-chesscom-vinf-wide-extreme])
   .game-buttons-container-component
   > button.cc-button-secondary:not(:disabled):active,
-html[data-chesscom-vinf-oled="true"]
+html[data-chesscom-vinf-oled="true"]:not([data-chesscom-vinf-wide-extreme])
   .game-buttons-container-mobile
   > button.cc-button-secondary:not(:disabled):active {
   background: #171717 !important;
@@ -1688,7 +1688,7 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
     display: none !important;
   }
   html[data-chesscom-vinf-wide-extreme] :is([data-chesscom-vinf-four-moves], .chesscom-vinf-wide-review-dock) > button {
-    background: #000 !important; border: 1px solid #383838; box-shadow: none;
+    background: #000 !important; border: 1px solid #383838; box-shadow: none !important;
   }
   html[data-chesscom-vinf-wide-extreme] :is([data-chesscom-vinf-four-moves], .chesscom-vinf-wide-review-dock) > button:not(:disabled):hover {
     border-color: #888;

@@ -3,7 +3,9 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.20.2.
+Current source version: 2.20.3.
+2.20.3 live buttons exposed a cascade mismatch absent from fixture: native cc-button-secondary had ordinary OLED background#0a0a0a!important and inset shadow winning over wide Extreme. Exclude wide-extreme from those ordinary state rules and force no shadow. Fixture now includes exact native button classes; computed all five source buttons black/no shadow, Play remains hidden.225tests pass before final packaging. 2.20.2 live centered clocks verified with32.5px on each side, left nav and game-selector hidden. Reload Elo not caught within five-second window. User game ended and entered normal/OLED wide Review; graph visible and four-slot proxy dock present. Brief end popup was missed; do not claim seen. Session continues, usage baseline39% at22:58:26 remains.
+
 2.20.2 follow-up user scope: WIDE Extreme hides left site navigation and right Play/NewGame/Games/Players selector, retains Moves/Chat/Info/list; four-slot buttons black with outlines. Root wide-extreme marker is separate from board theme and only wide supported routes. Native body nav-width variables set0 to reclaim space. WideBoardRows now owns OpponentRatingIntro, same30s newgame/5s explicitreload behavior as phone, guarded by native game-end state. No ratings stored.
 Live screenshot exposed top-aligned44px clocks/52px actions in76px grid rows. Set grid align-items:center; wide gameplay matches board gutters to16px outer gutters and lets player rows absorb native board-rounding slack. Native board height-budget fix preserved. Sanitized1743x1075 clock bounds32..76,board108..967,bottomclock999..1043:equal32px above/below both clock boxes. Actual updated live verification awaits manual reload.225tests pass; both builds prepared. Continuous monitoring ongoing; latestlivepagewas2.20.1, Extreme toggled byuser successfully.
 

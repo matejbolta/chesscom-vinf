@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.3] - 2026-10-05
+
+- Prevent ordinary OLED button rules from overriding wide Extreme's pure-black fill and outline-only treatment.
+
 ## [2.20.2] - 2026-10-05
 
 - Center wide player-row contents and balance board/outer gutters without losing the native viewport fit.
