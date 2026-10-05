@@ -126,7 +126,11 @@ describe("phone play and review", () => {
     controller.reconcile(document, firstGame, DEFAULT_SETTINGS, true);
     controller.reconcile(document, nextGame, DEFAULT_SETTINGS, true);
     expect(document.documentElement.hasAttribute(marker)).toBe(false);
-    result.remove();
+    const replacement = result.cloneNode(true) as HTMLElement;
+    result.replaceWith(replacement); // SPA recreates the outgoing result after URL change.
+    controller.reconcile(document, nextGame, DEFAULT_SETTINGS, true);
+    replacement.remove();
+    document.querySelector(".clock-component")!.classList.add("clock-player-turn");
     controller.reconcile(document, nextGame, DEFAULT_SETTINGS, true);
     expect(document.documentElement.hasAttribute(marker)).toBe(true);
     expect(document.documentElement.hasAttribute("data-chesscom-vinf-phone-postgame")).toBe(false);

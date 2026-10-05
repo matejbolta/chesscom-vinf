@@ -1202,3 +1202,5 @@ Native live body directly owns #board-layout-main, #board-layout-sidebar and #bo
 ## 2026-10-05 — Go home late hydration
 
 Live phone-width game body uses block flow. Native `#board-layout-main`, `#board-layout-sidebar`, and `#board-layout-comments` can be appended after the extension link at document start. HomeLink reconciles their document order and moves after them when no native footer exists. No geometry or scrolling changes.
+
+Live transition recovery: `.clock-component.clock-player-turn` and enabled `button.draw-button-component` / `button.resign-button-component`, with no visible native results, identify restored gameplay during a route transition. Used only to release transition contamination, not to clear dismissed same-game results.

@@ -41,12 +41,14 @@ export function nativeGameHasEnded(document: Document): boolean {
 export class NativeGameEndState {
   private route = "";
   private ended = false;
+  private transitioning = false;
   private visible = new Set<HTMLElement>();
   private inherited = new Set<HTMLElement>();
 
   read(document: Document, route: string): boolean {
     const results = nativeGameResults(document);
     if (route !== this.route) {
+      this.transitioning = Boolean(this.route);
       this.inherited = new Set(results.filter(element => this.visible.has(element)));
       this.route = route;
       this.ended = false;
@@ -56,6 +58,14 @@ export class NativeGameEndState {
       if (!current.has(element)) this.inherited.delete(element);
     }
     if (results.some(element => !this.inherited.has(element))) this.ended = true;
+    // SPA teardown may recreate result nodes, so identity alone is insufficient.
+    // Release transition contamination when native live controls/turn return.
+    if (!results.length && this.transitioning && document.querySelector(".clock-component.clock-player-turn") &&
+        document.querySelector("button.draw-button-component:not(:disabled), button.resign-button-component:not(:disabled)")) {
+      this.ended = false;
+      this.transitioning = false;
+    }
+    if (!results.length && !this.ended) this.transitioning = false;
     this.visible = current;
     // Retain native result presentation until old result nodes disappear.
     return this.ended || results.length > 0;

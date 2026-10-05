@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.19.2] - 2026-10-05
+
+- Recover live-game presentation when outgoing result components are recreated during a new-game transition.
+
 ## [2.19.1] - 2026-10-05
 
 - Keep Go home below native game sections when those sections load after the extension.
