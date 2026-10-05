@@ -15,7 +15,7 @@ export function normalizePokemonPieces(value: unknown): PokemonPieces {
   const candidate = value && typeof value === "object" ? value as Partial<PokemonPieces> : {};
   return Object.fromEntries(PIECE_ROLES.map(role => {
     const id = candidate[role];
-    return [role, typeof id === "number" && Number.isInteger(id) && id >= 1 && id <= 151
+    return [role, typeof id === "number" && Number.isInteger(id) && id >= 1 && id <= 386
       ? id : DEFAULT_POKEMON_PIECES[role]];
   })) as PokemonPieces;
 }

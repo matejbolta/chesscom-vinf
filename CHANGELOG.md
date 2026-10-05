@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.22.0] - 2026-10-06
+
+- Expand the Pokémon catalog and offline sprites to all 386 species from Generations I–III.
+
 ## [2.21.1] - 2026-10-06
 
 - Refine Pokémon terrain against supplied GBA references: mint grass, pale yellow paths, finer pixel detail and stepped grass edges.

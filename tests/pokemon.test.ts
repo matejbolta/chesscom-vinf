@@ -25,13 +25,13 @@ afterEach(() => {
   vi.clearAllTimers(); vi.useRealTimers();
 });
 
-it("validates the complete Gen I catalog and conflicting settings without aliasing defaults", () => {
-  expect(POKEMON_CATALOG).toHaveLength(151);
+it("validates the complete Gen I–III catalog and conflicting settings without aliasing defaults", () => {
+  expect(POKEMON_CATALOG).toHaveLength(386);
   for (const { id } of POKEMON_CATALOG) expect(pokemonSprite(id)).toMatch(/^data:image\/png;base64,iVBOR/);
-  expect(new Set(POKEMON_CATALOG.map(({id}) => pokemonSprite(id))).size).toBe(151);
-  const normalized = normalizeSettings({ pokemonMode: true, extremeOled: true, pokemonPieces: {p:151,n:152,b:1.2,r:"9"} });
+  expect(new Set(POKEMON_CATALOG.map(({id}) => pokemonSprite(id))).size).toBe(386);
+  const normalized = normalizeSettings({ pokemonMode: true, extremeOled: true, pokemonPieces: {p:386,n:387,b:1.2,r:"9"} });
   expect(normalized.pokemonMode).toBe(false);
-  expect(normalized.pokemonPieces).toEqual({...DEFAULT_SETTINGS.pokemonPieces,p:151});
+  expect(normalized.pokemonPieces).toEqual({...DEFAULT_SETTINGS.pokemonPieces,p:386});
   normalized.pokemonPieces.p = 1;
   expect(DEFAULT_SETTINGS.pokemonPieces.p).toBe(25);
 });
@@ -84,7 +84,7 @@ it("shares mode exclusivity, team selection, preview and reset across settings s
   mode.checked = true; mode.dispatchEvent(new Event('change'));
   expect(extreme.checked).toBe(false);
   const pawn = editor.element.querySelector<HTMLSelectElement>('[aria-label="Pawn Pokémon"]')!;
-  expect(pawn.options).toHaveLength(151);
+  expect(pawn.options).toHaveLength(386);
   pawn.value = '133'; pawn.dispatchEvent(new Event('change'));
   expect(editor.get().pokemonPieces.p).toBe(133);
   expect(editor.element.querySelector('img')?.src).toBe(pokemonSprite(133));
@@ -146,4 +146,13 @@ it("searches sprite choices, saves selection and restores trigger focus", () => 
   expect(editor.element.querySelector('[role="status"]')?.textContent).toBe('No Pokémon found');
   search.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   expect(document.activeElement).toBe(trigger);
+});
+
+it("accepts Johto and Hoenn starters and the Gen III upper boundary", () => {
+  const team = { p: 155, n: 158, b: 152, r: 252, q: 255, k: 386 };
+  expect(normalizeSettings({ pokemonPieces: team }).pokemonPieces).toEqual(team);
+  for (const [id, name] of [[155, 'Cyndaquil'], [158, 'Totodile'], [252, 'Treecko'], [255, 'Torchic']]) {
+    expect(POKEMON_CATALOG.find(p => p.id === id)?.name).toBe(name);
+    expect(pokemonSprite(Number(id))).not.toBe(pokemonSprite(25));
+  }
 });
