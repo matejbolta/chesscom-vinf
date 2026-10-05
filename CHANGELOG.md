@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.5] - 2026-10-06
+
+- Theme draw/resign confirmation popovers, confirmation modals and draw-request panels black at every width in OLED and Extreme OLED. Keep primary/danger action colors; use black outlined secondary actions.
+
 ## [2.20.4] - 2026-10-05
 
 - Keep the native sidebar space in wide Extreme OLED so toggling the mode does not shift the board or dashboard.

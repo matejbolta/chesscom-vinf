@@ -1226,3 +1226,7 @@ Native game navigation buttons also carry cc-button-secondary. The fixture must 
 ### 2.20.4 wide Analysis and invisible navigation
 
 Saved-game engine Analysis uses the existing audited `.analysis-view-component`, `.engine-lines-with-options-component`, `.analysis-options-component`, `.engine-lines-with-options-lines`, `.sidebar-view-content`, `.sidebar-header-header`, and `.game-controls-primary-component` for OLED surface colors at all widths. Phone layout selectors remain separately gated. Wide Extreme hides `#sidebar-main-menu` / `#mobile-toolbar` with visibility, preserving native geometry; no nav-width overrides. User observed the prior zero-width override shifting the dashboard.
+
+
+### 2.20.5 shared confirmation surfaces
+Live desktop OLED draw dialog: `.cc-confirmation-popover-popover.cc-popover-lighter` retained rgb(49,46,43) because styling was phone-scoped. Shared `.cc-confirmation-popover-popover`, `.cc-confirmation-modal-modal`, `.draw-offer-component`, `.draw-request-component` now theme at all widths. Native `.cc-button-secondary` actions receive black outlined surfaces, while primary/danger actions preserve semantics. Sanitized resign fixture includes native secondary button class.

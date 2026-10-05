@@ -31,6 +31,16 @@ html[data-chesscom-vinf-oled="true"] .tertiary-controls-component-component {
   background-image: none !important;
 }
 
+/* Native game confirmations share one theme at every viewport width. */
+html[data-chesscom-vinf-oled="true"] :is(.cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) {
+  background: #000 !important; color: #bbb;
+  --color-bg-primary: #000; --color-bg-secondary: #000; --color-text-default: #bbb;
+}
+
+html[data-chesscom-vinf-oled="true"] :is(.cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) .cc-button-secondary {
+  background: #000 !important; border: 1px solid #383838; box-shadow: none !important;
+}
+
 /* Native challenge/search notifications share this shell, including rematches. */
 html[data-chesscom-vinf-oled="true"] .toaster-controller-toast-body {
   background: #000 !important;
@@ -1434,11 +1444,7 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
     background: #000 !important; color: #bbb;
   }
   html[data-chesscom-vinf-review-clean] .move-feedback-box-description { color: var(--color-text-default, #bbb); }
-  html[data-chesscom-vinf-oled="true"][data-chesscom-vinf-phone-game] :is(.cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component),
-  html[data-chesscom-vinf-extreme-oled][data-chesscom-vinf-phone-material] :is(.cc-confirmation-popover-popover, .cc-confirmation-modal-modal, .draw-offer-component, .draw-request-component) {
-    background: #000 !important; color: #bbb;
-    --color-bg-primary: #000; --color-bg-secondary: #000; --color-text-default: #bbb;
-  }
+
 }
 
 /* Phone engine Analysis: preserve native lines, tabs, settings and actions. */
