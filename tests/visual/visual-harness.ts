@@ -46,6 +46,16 @@ if (searchParams.has("oled")) {
   document.documentElement.setAttribute(MARKERS.oled, "true");
 }
 
+// Sanitized native notification shell; no account identifiers or game requests.
+if (searchParams.has("challenge-toast")) {
+  const toast = document.createElement("div");
+  toast.className = "toaster-controller-toast-wrapper";
+  toast.style.cssText = "position:fixed;top:8px;left:8px;right:8px;z-index:9999;max-width:400px";
+  toast.innerHTML = `<div class="toaster-controller-toast-body" style="background:rgb(75,72,71);padding:12px;color:#eee;border:1px solid #555;border-radius:4px"><div class="composable-toast-container"><div class="challenge-toast-content-container">Player · 15 + 10 · Challenge</div><div class="composable-toast-actions"><button class="cc-icon-button-secondary" aria-label="Cancel" style="background:#4b4847;color:#ddd">×</button></div></div></div><button class="toaster-controller-dismiss-button" aria-label="Dismiss" style="position:absolute;right:8px;top:8px;background:#262421;color:#ddd">×</button>`;
+  toast.querySelectorAll("button").forEach(button => button.addEventListener("click", () => toast.remove()));
+  document.body.append(toast);
+}
+
 if (searchParams.has("oled-buttons")) {
   document.documentElement.setAttribute(MARKERS.oledButtons, "true");
 }

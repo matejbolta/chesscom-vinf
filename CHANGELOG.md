@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.18.2] - 2026-10-05
+
+- Apply OLED black to native toast notifications, including rematch challenges, with near-black dismiss/cancel controls.
+
 ## [2.18.1] - 2026-10-05
 
 - Prevent old result nodes persisting across a new-game URL transition from permanently disabling phone presentation and shared clocks.

@@ -31,6 +31,22 @@ html[data-chesscom-vinf-oled="true"] .tertiary-controls-component-component {
   background-image: none !important;
 }
 
+/* Native challenge/search notifications share this shell, including rematches. */
+html[data-chesscom-vinf-oled="true"] .toaster-controller-toast-body {
+  background: #000 !important;
+}
+html[data-chesscom-vinf-oled="true"] .toaster-controller-toast-wrapper :is(
+  .toaster-controller-dismiss-button, .composable-toast-actions .cc-icon-button-secondary
+) {
+  background: #0a0a0a !important;
+  color: #ededed !important;
+}
+html[data-chesscom-vinf-oled="true"] .toaster-controller-toast-wrapper :is(
+  .toaster-controller-dismiss-button, .composable-toast-actions .cc-icon-button-secondary
+):hover {
+  background: #171717 !important;
+}
+
 html[data-chesscom-vinf-oled="true"] .game-over-modal-shell-content {
   background-color: #000 !important;
 }
