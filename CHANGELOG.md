@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.19.1] - 2026-10-05
+
+- Keep Go home below native game sections when those sections load after the extension.
+- Show opponent Elo for five seconds on page refresh; retain the 30-second introduction for new games.
+
 ## [2.19.0] - 2026-10-05
 
 - Show the opponent rating and signed rating difference for the first 30 seconds of a newly observed phone game; retain the deadline across page refreshes.

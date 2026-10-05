@@ -16,17 +16,21 @@ export class OpponentRatingIntro {
     const list = document.querySelector('wc-simple-move-list[board-id="board-single"]');
     if (!top || !list) return;
     if (game !== this.game) {
+      const navigation = document.defaultView?.performance.getEntriesByType?.("navigation")[0] as PerformanceNavigationTiming | undefined;
+      const reload = !this.game && navigation?.type === "reload" &&
+        new URL(navigation.name, document.baseURI).pathname === pathname;
       this.cleanup();
       this.game = game;
       this.expires = 0;
       try {
         const saved = JSON.parse(document.defaultView?.sessionStorage.getItem(KEY) ?? "null");
-        if (saved?.game === game && Number.isFinite(saved.expires)) this.expires = saved.expires;
+        if (reload) this.expires = Date.now() + 5_000;
+        else if (saved?.game === game && Number.isFinite(saved.expires)) this.expires = saved.expires;
         else this.expires = list.querySelector('[data-node^="0-"]') ? 0 : Date.now() + DURATION;
         document.defaultView?.sessionStorage.setItem(KEY, JSON.stringify({game, expires: this.expires}));
       } catch {
-        // Storage unavailable: never restart after a reload into existing moves.
-        this.expires = list.querySelector('[data-node^="0-"]') ? 0 : Date.now() + DURATION;
+        // Preserve the explicit reload preview even when session storage is unavailable.
+        this.expires = reload ? Date.now() + 5_000 : list.querySelector('[data-node^="0-"]') ? 0 : Date.now() + DURATION;
       }
     }
     const remaining = this.expires - Date.now();

@@ -22,6 +22,11 @@ export class HomeLink {
     const footer = document.querySelector(".navigation-footer, footer");
     if (footer?.parentElement) {
       if (footer.previousElementSibling !== this.link) footer.before(this.link);
-    } else if (this.link.parentElement !== document.body) document.body.append(this.link);
+    } else {
+      const sections = document.querySelectorAll("#board-layout-main, #board-layout-sidebar, #board-layout-comments");
+      const contentAfterLink = [...sections].some(section =>
+        Boolean(this.link!.compareDocumentPosition(section) & 4)); // DOCUMENT_POSITION_FOLLOWING
+      if (this.link.parentElement !== document.body || contentAfterLink) document.body.append(this.link);
+    }
   }
 }

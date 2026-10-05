@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { HomeLink } from "../src/content/home-link";
 
 it('keeps one native home link before the footer across all phone game/review phases and restores on departure', () => {
@@ -23,4 +23,22 @@ it('keeps one native home link before the footer across all phone game/review ph
   expect(document.body.lastElementChild?.textContent).toBe('Go home');
   controller.reconcile(document, location, false, true);
   expect(document.querySelector('.chesscom-vinf-go-home')).toBeNull();
+});
+
+it('moves below native sections that hydrate after the early document-start link', () => {
+  document.documentElement.className = 'user-logged-in';
+  document.body.replaceChildren();
+  const controller = new HomeLink();
+  const location = { protocol:'https:', hostname:'www.chess.com', pathname:'/game/123' };
+  controller.reconcile(document, location, true, true);
+  const link = document.querySelector('.chesscom-vinf-go-home');
+  document.body.insertAdjacentHTML('beforeend', '<div id="board-layout-main"></div><aside id="board-layout-sidebar"></aside><div id="board-layout-comments"></div>');
+  controller.reconcile(document, location, true, true);
+  expect(document.body.lastElementChild).toBe(link);
+  const mutations = vi.fn();
+  const observer = new MutationObserver(mutations);
+  observer.observe(document.body, { childList:true });
+  controller.reconcile(document, location, true, true);
+  expect(observer.takeRecords()).toHaveLength(0);
+  observer.disconnect();
 });
