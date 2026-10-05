@@ -9,6 +9,10 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.22.1] - 2026-10-06
+
+- Calm Pokémon terrain colors and texture, remove repeated jagged path borders, and reveal slightly more color in Black’s sprites.
+
 ## [2.22.0] - 2026-10-06
 
 - Expand the Pokémon catalog and offline sprites to all 386 species from Generations I–III.

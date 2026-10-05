@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.22.0.
+Current source version: 2.22.1.
+2.22.1: user rejected noisy bright yellow/mint checker terrain on actual mobile. Removed repeated jagged path fringes; softened grass/path colors and texture contrast. Black sprite brightness increased .12→.23, saturation .7→.9 to retain more recognizable color while staying dark. Visual taste still needs user confirmation; do not claim this matches their desired aesthetic conclusively.
 2.22.0 expands Pokemon picker/validation/bundled sprites to National Dex1–386 (Gen I–III). Existing Gen I IDs/defaults preserved; Gen II–III PNGs use same pinned PokeAPI sprites revision and species endpoint names. No runtime fetch. Five other franchise teams remain outstanding as documented below.
 2.21.1: refined terrain to user-supplied FireRed screenshots: mint grass, pale paths, finer1px tufts/flecks and stepped fringe. OUTSTANDING user request: Hunter x Hunter, Avatar The Last Airbender, Steins;Gate, Marvel, Jujutsu Kaisen teams. No teams implemented yet. Imagegen atlas request failed with safety-system output rejection; user informed and suitable supplied sprites requested. Do not present generic placeholders as finished teams. Proposed team picker should preserve Pokémon151 catalog and separate saved per-team role choices, share mobile/desktop/editor/runtime route support, and retain Extreme exclusivity. Initial lineups were asked asynchronously, no response yet.
 2.21.0 replaces visible native Pokémon selects with one inline searchable sprite picker shared by popup/sidepanel/Android. Hidden selects retain persistence contract; native bubbling change saves each choice. Picker opens beside selected role, searches number/name, supports Escape/Close and restores focus. Bundled sprites only, no network. Updated stale badge legend.
