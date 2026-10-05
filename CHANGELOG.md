@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.19.0] - 2026-10-05
+
+- Show the opponent rating and signed rating difference for the first 30 seconds of a newly observed phone game; retain the deadline across page refreshes.
+- Add a full-width Go home link below phone game, result, review and saved-game analysis content, reusing the homepage continuation-button style.
+
 ## [2.18.2] - 2026-10-05
 
 - Apply OLED black to native toast notifications, including rematch challenges, with near-black dismiss/cancel controls.

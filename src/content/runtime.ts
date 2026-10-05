@@ -1,3 +1,4 @@
+import { HomeLink } from "./home-link";
 import { PokemonController } from "./pokemon-controller";
 import { ReviewPresentationController } from "./review-presentation";
 import { hasGamePresentation, isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
@@ -58,6 +59,7 @@ export function startVinfRuntime(
   const gameReviewController = new GameReviewLayoutController();
   const reviewPresentation = new ReviewPresentationController();
   const phoneExperienceController = new PhoneExperienceController();
+  const homeLink = new HomeLink();
   const phoneGameReviewMedia = window.matchMedia?.(
     PHONE_GAME_REVIEW_MEDIA_QUERY
   );
@@ -233,6 +235,7 @@ export function startVinfRuntime(
     if (!phone) phoneActions.reconcile(document, window.location, settings, false, desktop || android);
     touchAnnotations.reconcile(document, window.location, settings, android || phone);
     androidGameControls.reconcile(document, window.location, settings, android || phone);
+    homeLink.reconcile(document, window.location, settings.enabled, phone);
   }
 
   function reconcile(): void {

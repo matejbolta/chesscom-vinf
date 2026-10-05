@@ -1191,3 +1191,9 @@ The native matchmaking bootstrap was explicitly excluded from OLED in runtime. U
 ### 2.18.2 native rematch notification
 
 Live Brave: .toaster-controller-toast-wrapper contains .toaster-controller-toast-body (rgb(75,72,71)), .composable-toast-container, .challenge-toast-content-container, optional .composable-toast-actions > button.cc-icon-button-secondary, and .toaster-controller-dismiss-button (rgb(38,36,33)). Scope colors to existing OLED root; preserve notification semantics and handlers. Sanitized ?challenge-toast=1 visual harness covers shared body/actions with no account identifiers. IAB measured black/on and original grey/off; fixture Dismiss removes the notification. Actual after-fix Rematch/New Game remains user-controlled.
+
+## Phone rating introduction and home link — 2.19.0
+
+Native live inspection found numeric parenthesized ratings in #board-layout-player-top/bottom .cc-user-rating-white under .player-playerContent. Opponent is the normal top player; no account-name lookup, request or rating persistence. Intro starts only when an observed game has an empty wc-simple-move-list[board-id=board-single], using the existing data-node main-line convention to reject mid-game attachment. Timing is local observed hydration and is not claimed server-exact.
+
+Native live body directly owns #board-layout-main, #board-layout-sidebar and #board-layout-comments; no footer in the observed page. Go home is appended in normal flow, spanning grid columns; if .navigation-footer/footer exists it precedes that element. Sanitized fixture covers footer/no-footer, route/width/disable cleanup and shared button palette. No real live Home action was clicked.

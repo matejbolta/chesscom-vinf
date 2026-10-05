@@ -1,3 +1,4 @@
+import { OpponentRatingIntro } from "./opponent-rating-intro";
 import { MaterialFlow } from "./material-flow";
 import { ReviewDock } from "./review-dock";
 import { isBoardPaintMutation, isClockTextMutation, isOwnedGameMutation } from "./game-mutations";
@@ -17,6 +18,7 @@ const AUDIO_BUTTON = '.sidebar-header-header button[aria-label="Toggle Coach Aud
 /** Phone presentation only. Never resize/reparent the board or synthesize game actions. */
 export class PhoneExperienceController {
   private entry = new PhoneGameEntry();
+  private ratingIntro = new OpponentRatingIntro();
   private reviewEntry = new ReviewEntryScroll();
   private reviewDock = new ReviewDock();
   private materialFlow = new MaterialFlow();
@@ -81,6 +83,7 @@ export class PhoneExperienceController {
       document.documentElement.removeAttribute(GAME);
       document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
       this.materialFlow.cleanup();
+      this.ratingIntro.cleanup();
       if (finished) this.entry.cleanup();
       this.clearRows();
       this.restoreOpening();
@@ -90,6 +93,7 @@ export class PhoneExperienceController {
     document.documentElement.toggleAttribute("data-chesscom-vinf-phone-material", phoneAndroid);
     if (phoneAndroid) this.materialFlow.reconcile(document); else this.materialFlow.cleanup();
     this.entry.reconcile(document, route);
+    if (phoneAndroid) this.ratingIntro.reconcile(document, location.pathname);
     if (settings.extremeOled) {
       // Share entry positioning and player rows; keep Extreme's scroll room/sidebar.
       this.clearRows();
@@ -225,6 +229,7 @@ export class PhoneExperienceController {
   }
 
   cleanup(document: Document): void {
+    this.ratingIntro.cleanup();
     document.documentElement.removeAttribute("data-chesscom-vinf-phone-postgame");
     document.documentElement.removeAttribute("data-chesscom-vinf-phone-material");
     this.entry.cleanup();

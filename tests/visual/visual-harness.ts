@@ -1,3 +1,4 @@
+import { HomeLink } from "../../src/content/home-link";
 import { PokemonController } from "../../src/content/pokemon-controller";
 import { ReviewPresentationController } from "../../src/content/review-presentation";
 import { installAnnotationFixture } from "../helpers/native-annotations";
@@ -306,9 +307,20 @@ if (window.location.pathname === "/extreme-oled") {
 
 // Native-shaped phone scenarios are local and never invoke Chess.com services.
 if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
+  if (searchParams.has("rating-intro")) {
+    sessionStorage.removeItem("chesscom-vinf-rating-intro");
+    document.querySelectorAll('wc-simple-move-list [data-node]').forEach(node => node.remove());
+    for (const [side, rating] of [["top", 1400], ["bottom", 1300]]) {
+      const native = document.querySelector<HTMLElement>(`#board-layout-player-${side} .cc-user-rating-white`) ?? document.createElement("div");
+      native.className = "cc-user-rating-white";
+      native.textContent = `(${rating})`;
+      document.querySelector(`#board-layout-player-${side} .player-playerContent`)?.append(native);
+    }
+  }
   const pokemon = new PokemonController();
   const reviewStyle = new ReviewPresentationController();
   const phone = new PhoneExperienceController();
+  const homeLink = new HomeLink();
   const clocks = new ExtremeOledController();
   const annotationBoard = document.querySelector<HTMLElement>("#board-single");
   if (annotationBoard && !searchParams.has("no-annotation-api")) installAnnotationFixture(annotationBoard);
@@ -350,6 +362,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
+    homeLink.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
     const phoneActions = window.innerWidth <= 599;
     if (phoneActions) actions.reconcile(document, route, settings, true);
     clocks.reconcile(document, route, settings, game, searchParams.has("desktop") && window.innerWidth > 599);

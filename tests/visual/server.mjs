@@ -217,7 +217,7 @@ const server = createServer(async (request, response) => {
   if (pathname === "/phone-game-preview") {
     const params = new URL(request.url, "http://localhost").searchParams;
     const width = params.has("tablet") ? 800 : params.has("narrow") ? 320 : 390;
-    const query = ["extreme", "no-annotation-api", "entry", "oled", "hints"].filter(key => params.has(key)).map(key => `${key}=1`).join("&");
+    const query = ["extreme", "no-annotation-api", "entry", "oled", "hints", "rating-intro", "challenge-toast"].filter(key => params.has(key)).map(key => `${key}=1`).join("&");
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(`<!doctype html><html><body style="margin:0;background:#171614"><iframe title="VINF annotation contract fixture" src="/phone-game?${query}" style="border:0;width:${width}px;height:844px"></iframe></body></html>`);
     return;

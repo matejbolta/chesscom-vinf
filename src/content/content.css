@@ -479,7 +479,8 @@ html[data-chesscom-vinf-oled-buttons="true"]
 }
 
 html[data-chesscom-vinf-oled-buttons="true"]
-  .chesscom-vinf-game-continuation {
+  .chesscom-vinf-game-continuation,
+html[data-chesscom-vinf-oled="true"] .chesscom-vinf-go-home {
   --chesscom-vinf-time-edge: color-mix(in srgb, #81b64c 48%, #252824);
   --chesscom-vinf-time-surface: #0b0d0a;
   --chesscom-vinf-time-surface-hovered: #161b13;
@@ -1623,3 +1624,25 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
   html[data-chesscom-vinf-phone-postgame] .board-layout-player .clock-icon-icon { display: none; }
   html[data-chesscom-vinf-phone-postgame] #board-layout-sidebar { margin-top: 0; }
 }
+
+@media (max-width: 599px) {
+  html[data-chesscom-vinf-phone-material] body .chesscom-vinf-opponent-rating-intro {
+    grid-column: 1; grid-row: 1; align-self: center;
+    color: #bbb; font-size: 14px; font-weight: 600; white-space: nowrap;
+    visibility: visible !important;
+  }
+  html[data-chesscom-vinf-phone-material] .player-component:has(> .chesscom-vinf-opponent-rating-intro) > .player-playerContent {
+    opacity: 0;
+  }
+}
+
+.chesscom-vinf-go-home {
+  grid-column: 1 / -1;
+  position: relative;
+  margin: 16px 0 calc(96px + env(safe-area-inset-bottom, 0px));
+  visibility: visible !important;
+  background: var(--chesscom-vinf-time-surface, hsl(91deg 36% 28%));
+}
+.chesscom-vinf-go-home:hover { background: var(--chesscom-vinf-time-surface-hovered, hsl(91deg 39% 32%)); }
+html[data-chesscom-vinf-oled] .chesscom-vinf-go-home:active { background: #070807; }
+html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: visible !important; }
