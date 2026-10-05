@@ -1019,7 +1019,7 @@ html[data-chesscom-vinf-extreme-oled="true"] body { overflow: visible !important
 .chesscom-vinf-normal-clock-controls { z-index: 10; }
 .chesscom-vinf-row-clock-controls .chesscom-vinf-extreme-time { background: transparent; }
 
-/* Android-only marker; outer widths remain one fifth of the original five slots. */
+/* Shared navigation skeleton; outer widths retain one fifth of the five slots. */
 html [data-chesscom-vinf-four-moves] {
   display: grid;
   grid-template-columns: calc((100% - 4 * var(--chesscom-vinf-nav-gap)) / 5) minmax(0, 1fr) minmax(0, 1fr) calc((100% - 4 * var(--chesscom-vinf-nav-gap)) / 5);
@@ -1646,3 +1646,100 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
 .chesscom-vinf-go-home:hover { background: var(--chesscom-vinf-time-surface-hovered, hsl(91deg 39% 32%)); }
 html[data-chesscom-vinf-oled] .chesscom-vinf-go-home:active { background: #070807; }
 html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: visible !important; }
+
+/* Wide navigation shares phone button geometry, retaining native placement. */
+@media (min-width: 600px) {
+  html [data-chesscom-vinf-four-moves] { gap: 5px; --chesscom-vinf-nav-gap: 5px !important; }
+  html [data-chesscom-vinf-four-moves] > button {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; min-width: 0; height: 60px; padding: 0; margin: 0;
+    border: 1px solid var(--color-border-default, #444); border-radius: 12px;
+    background: var(--color-bg-tertiary, #393734); box-shadow: none;
+  }
+  html [data-chesscom-vinf-four-moves] > button svg { width: 32px; height: 32px; }
+  html[data-chesscom-vinf-oled="true"] [data-chesscom-vinf-four-moves] > button {
+    background: #0a0a0a; color: #ededed; border-color: #1c1c1c;
+  }
+}
+
+@media (min-width: 600px) {
+  html [data-chesscom-vinf-wide-control-source] { display: none !important; }
+  .chesscom-vinf-wide-review-dock {
+    display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 5px;
+    width: 100%; padding: 10px 0; box-sizing: border-box;
+  }
+  .chesscom-vinf-wide-review-dock button {
+    grid-row: 1; display: flex; align-items: center; justify-content: center;
+    width: 100%; min-width: 0; height: 60px; padding: 0; margin: 0;
+    border: 1px solid var(--color-border-default, #444); border-radius: 12px;
+    background: var(--color-bg-tertiary, #393734); color: var(--color-text-default, #ededed);
+    font: inherit; cursor: pointer;
+  }
+  .chesscom-vinf-wide-review-dock button svg { width: 32px; height: 32px; fill: currentColor; }
+  .chesscom-vinf-wide-review-dock button[hidden] { display: none; }
+  .chesscom-vinf-wide-review-dock button:disabled { opacity: .35; cursor: default; }
+  .chesscom-vinf-wide-review-dock button:focus-visible { outline: 2px solid #aaa; outline-offset: -3px; }
+  html:is([data-chesscom-vinf-oled="true"], [data-chesscom-vinf-review-extreme]) .chesscom-vinf-wide-review-dock button {
+    background: #0a0a0a; color: #ededed; border-color: #1c1c1c;
+  }
+  .chesscom-vinf-wide-review-dock button[aria-label="Start Review"] { color: #95bb4a !important; }
+
+  html[data-chesscom-vinf-wide-rows] { --vinf-wide-row-height: 68px; --vinf-wide-clock-width: 96px; --vinf-wide-row-font: 24px; }
+  html[data-chesscom-vinf-wide-rows] .board-layout-player { height: var(--vinf-wide-row-height); min-height: var(--vinf-wide-row-height); margin-block: 0; }
+  html[data-chesscom-vinf-wide-rows] .board-layout-player .player-component {
+    display: grid; grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr);
+    position: relative; gap: 0; width: 100%; height: var(--vinf-wide-row-height);
+  }
+  html[data-chesscom-vinf-wide-rows] .board-layout-player :is(.player-avatar,.cc-user-block-component,.connection-component,.player-game-over-component,.clock-icon-icon,.move-time-icon) { display: none !important; }
+  html[data-chesscom-vinf-wide-rows] .board-layout-player :is(.player-playerContent,.player-tagline) {
+    grid-column: 1; grid-row: 1; min-width: 0; width: 100%; margin: 0; align-self: center;
+  }
+  html[data-chesscom-vinf-wide-rows] .board-layout-player wc-captured-pieces { display: block; width: 100%; min-width: 0; }
+  html[data-chesscom-vinf-wide-rows] wc-captured-pieces > div { display: block; margin: 0; line-height: 26px; white-space: normal; }
+  html[data-chesscom-vinf-wide-rows] wc-captured-pieces .captured-pieces-cpiece { vertical-align: middle; }
+  html[data-chesscom-vinf-wide-rows] wc-captured-pieces .captured-pieces-score { margin-top: 0; line-height: 1; }
+  html[data-chesscom-vinf-wide-rows] .board-layout-player :is(.clock-component,.move-time-time) {
+    grid-column: 3; grid-row: 1; justify-self: end; display: flex; align-items: center; justify-content: center;
+    width: var(--vinf-wide-clock-width); min-width: 0; max-width: 100%; height: 44px; box-sizing: border-box;
+    padding: 0; margin: 0; background: transparent; border: 0;
+    font: 500 var(--vinf-wide-row-font)/1 ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+    font-variant-numeric: tabular-nums; color: #bbb;
+  }
+  html[data-chesscom-vinf-wide-rows] .move-time-content { color: inherit !important; opacity: 1; font: inherit; width: 100%; text-align: center; margin: 0; padding: 0; }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-extreme-time { font-size: var(--vinf-wide-row-font); }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-extreme-turn {
+    left: calc(50% - var(--vinf-turn-size, 12px) / 2);
+    top: calc(var(--vinf-row-y) - var(--vinf-turn-size, 12px) / 2); bottom: auto;
+  }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-last-move {
+    left: 50%; top: var(--vinf-row-y); bottom: auto; transform: translate(-50%, -50%); font-size: var(--vinf-wide-row-font);
+  }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-phone-actions {
+    grid-column: 3; grid-row: 1; width: calc(100% - var(--vinf-wide-clock-width)); height: 52px;
+    padding: 0; gap: 0; justify-content: space-around;
+  }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-phone-actions > div { max-width: none; width: 52px; }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-phone-actions > div > :is(button,[role="button"]) {
+    display: flex; align-items: center; justify-content: center; width: 52px; min-width: 0; height: 52px;
+    padding: 0; margin: 0; background: transparent; border: 0; color: #bbb; font-size: 0;
+  }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-phone-actions > div > :is(button,[role="button"]) * { font-size: 0; }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-phone-actions :is(svg,[data-glyph],.icon-font-chess,[aria-hidden="true"]) { width: 28px; height: 28px; font-size: 28px !important; }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-review-row-actions { display: grid; place-items: center; grid-column: 2; grid-row: 1; transform: translateX(var(--vinf-review-board-offset,0px)); }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-review-row-actions button { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; padding: 0; border: 0; background: transparent; color: #bbb; cursor: pointer; }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-review-row-actions svg { width: 30px; height: 30px; fill: currentColor; }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-review-row-actions button[hidden], html[data-chesscom-vinf-wide-rows] [data-chesscom-vinf-review-action-source] { display: none !important; }
+  html[data-chesscom-vinf-wide-rows][data-chesscom-vinf-extreme-oled] .board-layout-player :is(.player-component,.player-playerContent,.player-tagline,wc-captured-pieces,wc-captured-pieces *,.chesscom-vinf-phone-actions,.chesscom-vinf-phone-actions *) { visibility: visible !important; }
+}
+@media (min-width: 1200px) {
+  html[data-chesscom-vinf-wide-rows] { --vinf-wide-row-height: 76px; --vinf-wide-clock-width: 108px; --vinf-wide-row-font: 28px; }
+}
+
+@media (min-width: 600px) {
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-annotation-toggle[data-flow="true"] {
+    grid-column: 3; grid-row: 1; justify-self: center; margin-left: calc(-1 * var(--vinf-wide-clock-width));
+    width: 52px; height: 52px; min-width: 0; padding: 12px; border: 0; border-radius: 0; background: transparent; opacity: 1; visibility: visible !important;
+  }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-annotation-toggle[data-flow="true"]::before { content: none; }
+  html[data-chesscom-vinf-wide-rows] .chesscom-vinf-annotation-toggle[data-flow="true"] svg { width: 28px; height: 28px; visibility: visible !important; }
+}

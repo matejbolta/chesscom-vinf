@@ -12,7 +12,7 @@ export class PhoneGameActionsController {
     if (this.row && !this.row.isConnected) this.restore();
     const wide = wideExtreme && settings.extremeOled && document.documentElement.hasAttribute("data-chesscom-vinf-extreme-oled");
     if ((!phoneAndroid && !wide) || !settings.enabled || !isChessComGame(location) ||
-        (!wide && !document.documentElement.hasAttribute("data-chesscom-vinf-phone-game")) || nativeGameHasEnded(document)) {
+        (!wide && !document.documentElement.hasAttribute("data-chesscom-vinf-phone-game") && !document.documentElement.hasAttribute("data-chesscom-vinf-wide-game-rows")) || nativeGameHasEnded(document)) {
       this.restore(); return;
     }
     for (const [action, anchor] of this.originals) {

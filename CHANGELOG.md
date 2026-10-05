@@ -9,6 +9,12 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.0] - 2026-10-05
+
+- Share the four-slot game/analysis navigation structure with tablet and desktop.
+- Give wide Review fixed Explain/Hint, Previous, Next/Start, and Best/Resume slots using native actions.
+- Apply the phone board-row arrangement to larger layouts, with larger text, controls and row spacing; keep surrounding wide layout native.
+
 ## [2.19.3] - 2026-10-05
 
 - Place the phone Review report graph below the board and above settings as soon as it exists, before entering moves.

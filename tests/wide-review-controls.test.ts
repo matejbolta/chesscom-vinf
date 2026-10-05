@@ -1,0 +1,28 @@
+import { expect, it, vi } from 'vitest';
+import { WideReviewControls } from '../src/content/wide-review-controls';
+import { DEFAULT_SETTINGS } from '../src/shared/settings';
+const location = {protocol:'https:',hostname:'www.chess.com',pathname:'/analysis/game/live/123/review'};
+it('keeps four slots through start, native action replacement and best variation; restores on phone', () => {
+  document.documentElement.className = 'user-logged-in';
+  document.body.innerHTML = '<div class="overview-view-component"><button>Start Review</button></div><div class="game-controls-view-component"></div>';
+  const controller = new WideReviewControls();
+  const start = document.querySelector('button')!; const onStart = vi.fn(); start.addEventListener('click',onStart);
+  controller.reconcile(document,location,DEFAULT_SETTINGS,true);
+  const dock = document.querySelector('.chesscom-vinf-wide-review-dock')!;
+  expect(dock.children).toHaveLength(4);
+  (dock.children[2] as HTMLButtonElement).click(); expect(onStart).toHaveBeenCalledOnce();
+  document.querySelector('.overview-view-component')!.remove();
+  document.body.insertAdjacentHTML('afterbegin','<div class="move-by-move-coach-section"><div class="flow-buttons-component"><button>Explain</button><button>Best</button><button>Next</button></div></div>');
+  document.querySelector('.game-controls-view-component')!.insertAdjacentHTML('afterbegin','<div class="game-controls-primary-component"><button aria-label="Previous Move"></button><button aria-label="Next Move"></button></div>');
+  controller.reconcile(document,location,DEFAULT_SETTINGS,true);
+  expect(document.querySelector('.chesscom-vinf-wide-review-dock')).toBe(dock);
+  const best = document.querySelectorAll('.flow-buttons-component button')[1] as HTMLButtonElement;
+  const onBest = vi.fn(); best.addEventListener('click',onBest);
+  (dock.children[3] as HTMLButtonElement).click(); expect(onBest).toHaveBeenCalledOnce();
+  best.remove(); controller.reconcile(document,location,DEFAULT_SETTINGS,true);
+  expect((dock.children[3] as HTMLButtonElement).hidden).toBe(true);
+  expect((dock.children[2] as HTMLButtonElement).style.gridColumn).toBe('3');
+  controller.reconcile(document,location,DEFAULT_SETTINGS,false);
+  expect(document.querySelector('.chesscom-vinf-wide-review-dock')).toBeNull();
+  expect(document.querySelector('[data-chesscom-vinf-wide-control-source]')).toBeNull();
+});

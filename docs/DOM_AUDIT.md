@@ -1208,3 +1208,7 @@ Live transition recovery: `.clock-component.clock-player-turn` and enabled `butt
 ## 2026-10-05 — Early phone Review graph
 
 The existing audited `.sidebar-view-content .overview-view-section.overview-view-arc > .game-arc-component` now shares the phone charts host with move Review. This supersedes leaving the initial report graph in place. The native sidebar Settings control follows the relocated graph without reparenting the button. Wide layouts stay native.
+
+## 2026-10-05 — Wide shared navigation and rows
+
+Live desktop game has the same five direct native buttons in `.game-buttons-container-component`, labeled First Move / Previous Move / Play / Pause / Next Move / Last Move. Wide Review `.game-controls-view-component > .game-controls-primary-component` also has those buttons; `.move-by-move-coach-section .flow-buttons-component` has native Explain/Best/Next. WideReviewControls proxies current sources into four fixed slots and hides only source groups. Source SVGs are copied for display, never listeners. Start Review resolves inside the native overview component. Wide board rows use the existing `.player-component`, `.player-tagline`, `.clock-component`/`.move-time-time`, and captured-pieces structure. No phone root layout marker is applied at wide sizes. Sanitized 800px previews cover row centers, non-overlapping touch pencil, and fixed Review slots.

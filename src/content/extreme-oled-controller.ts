@@ -289,7 +289,7 @@ export class ExtremeOledController {
       document.body.append(this.scrollRoom);
     }
     setAttribute(document.documentElement, this.normalClocks ? NORMAL : ACTIVE, "true");
-    const wideExtreme = !this.normalClocks && !document.documentElement.hasAttribute("data-chesscom-vinf-phone-material");
+    const wideExtreme = !this.normalClocks && !document.documentElement.hasAttribute("data-chesscom-vinf-phone-material") && !document.documentElement.hasAttribute("data-chesscom-vinf-wide-rows");
     this.overlay.classList.add("chesscom-vinf-row-clock-controls");
     const desktopExtreme = this.desktop && !this.normalClocks;
     this.overlay.classList.toggle("chesscom-vinf-desktop-extreme-controls", desktopExtreme);
@@ -361,7 +361,7 @@ export class ExtremeOledController {
       const time = this.overlay.querySelector<HTMLElement>(`.chesscom-vinf-extreme-time.${side}`)!;
       if (!wideExtreme && clock && rect) {
         const clockRect = clock.getBoundingClientRect();
-        if (document.documentElement.hasAttribute("data-chesscom-vinf-phone-material")) {
+        if (document.documentElement.hasAttribute("data-chesscom-vinf-phone-material") || document.documentElement.hasAttribute("data-chesscom-vinf-wide-rows")) {
           for (const indicator of [turn, last]) {
             // Keep vertical alignment with the native clock; CSS owns the
             // fixed board midpoint independently of the other row contents.

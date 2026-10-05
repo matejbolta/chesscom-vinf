@@ -1,3 +1,5 @@
+import { WideBoardRows } from "./wide-board-rows";
+import { WideReviewControls } from "./wide-review-controls";
 import { HomeLink } from "./home-link";
 import { PokemonController } from "./pokemon-controller";
 import { ReviewPresentationController } from "./review-presentation";
@@ -60,6 +62,8 @@ export function startVinfRuntime(
   const reviewPresentation = new ReviewPresentationController();
   const phoneExperienceController = new PhoneExperienceController();
   const homeLink = new HomeLink();
+  const wideBoardRows = new WideBoardRows();
+  const wideReviewControls = new WideReviewControls();
   const phoneGameReviewMedia = window.matchMedia?.(
     PHONE_GAME_REVIEW_MEDIA_QUERY
   );
@@ -228,13 +232,15 @@ export function startVinfRuntime(
     if (!settings) return;
     const phone = phoneGameReviewMedia?.matches ?? window.innerWidth <= 599;
     phoneExperienceController.reconcile(document, window.location, settings, phone, phone);
+    wideBoardRows.reconcile(document, window.location, settings, !phone);
+    wideReviewControls.reconcile(document, window.location, settings, !phone);
     if (phone) phoneActions.reconcile(document, window.location, settings, true);
     extremeOledController.reconcile(document, window.location, settings, desktop || android || phone, desktop && !phone);
     reviewPresentation.reconcile(document, window.location, settings, phone);
     pokemonController.reconcile(document, window.location, settings);
-    if (!phone) phoneActions.reconcile(document, window.location, settings, false, desktop || android);
+    if (!phone) phoneActions.reconcile(document, window.location, settings, true);
     touchAnnotations.reconcile(document, window.location, settings, android || phone);
-    androidGameControls.reconcile(document, window.location, settings, android || phone);
+    androidGameControls.reconcile(document, window.location, settings, true);
     homeLink.reconcile(document, window.location, settings.enabled, phone);
   }
 

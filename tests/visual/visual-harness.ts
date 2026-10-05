@@ -1,3 +1,5 @@
+import { WideBoardRows } from "../../src/content/wide-board-rows";
+import { WideReviewControls } from "../../src/content/wide-review-controls";
 import { HomeLink } from "../../src/content/home-link";
 import { PokemonController } from "../../src/content/pokemon-controller";
 import { ReviewPresentationController } from "../../src/content/review-presentation";
@@ -229,6 +231,13 @@ if (window.location.pathname === "/game-review-mobile" && searchParams.has("engi
   panel.insertAdjacentHTML('afterbegin', '<section class="analysis-view-component"><nav class="sidebar-tabs-container">Analysis · Games · Explore</nav><div class="engine-lines-with-options-component"><div class="analysis-options-component"><div class="analysis-options-bar"><div class="analysis-options-left"><label><input type="checkbox" checked> Analysis</label> ···</div><div class="analysis-options-right"><div class="analysis-options-depth">depth=16 | Stockfish 19 Lite</div><button class="analysis-options-icon" aria-label="Engine settings">⚙</button></div></div></div><div class="engine-lines-with-options-lines"><p>+5.07 · Nxe7 is best</p><p>+6.23 · 24. Ne4 Nf5 25. Qg6+</p><p>+6.02 · 24. Nf1 e2 25. Qh5+</p><p>+5.97 · 24. Nc4 e2 25. Qh5+</p></div></div></section>');
   document.querySelector('.game-controls-view-component')!.innerHTML = '<div class="game-controls-primary-component">'+['First Move','Previous Move','Next Move','Last Move'].map((name,i)=>`<button aria-label="${name}">${['|‹','‹','›','›|'][i]}</button>`).join('')+'</div><button>Game Review</button>';
 }
+if (window.location.pathname === "/game-review-mobile" && window.innerWidth > 599 && !searchParams.has("engine")) {
+  document.querySelector(".game-controls-view-component")!.innerHTML = '<div class="game-controls-primary-component">'+["First Move","Previous Move","Play / Pause","Next Move","Last Move"].map((name,i)=>`<button aria-label="${name}"><svg viewBox="0 0 24 24"><path d="${i < 2 ? "M16 3 7 12l9 9" : "M8 3l9 9-9 9"}" fill="none" stroke="currentColor" stroke-width="3"/></svg></button>`).join("")+'</div>';
+  document.querySelectorAll(".move-by-move-coach-section > button").forEach(button => button.remove());
+  const flow = document.createElement("div"); flow.className = "flow-buttons-component";
+  flow.innerHTML = "<button>Explain</button><button>Best</button><button>Next</button>";
+  document.querySelector(".move-by-move-coach-section")?.append(flow);
+}
 if (window.location.pathname === "/game-review-mobile" && searchParams.has("overview")) {
   document.querySelector('[aria-label="Back"]')?.remove();
   document.querySelector(".move-by-move-component")?.classList.remove("move-by-move-component");
@@ -357,6 +366,8 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const annotations = new TouchAnnotationsController();
   const actions = new PhoneGameActionsController();
   const androidDock = new AndroidGameControlsController();
+  const wideRows = new WideBoardRows();
+  const wideControls = new WideReviewControls();
   const game = window.location.pathname === "/phone-game";
   const route = { protocol: "https:", hostname: "www.chess.com",
     pathname: game ? "/game/123456" : searchParams.has("engine") ? "/analysis/game/live/123456/analysis" : "/analysis/game/live/123456/review" };
@@ -366,13 +377,15 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     phone.reconcile(document, route, settings, window.innerWidth <= 599);
     homeLink.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
     const phoneActions = window.innerWidth <= 599;
+    wideRows.reconcile(document, route, settings, !phoneActions);
+    wideControls.reconcile(document, route, settings, !phoneActions);
     if (phoneActions) actions.reconcile(document, route, settings, true);
     clocks.reconcile(document, route, settings, game, searchParams.has("desktop") && window.innerWidth > 599);
     reviewStyle.reconcile(document, route, settings, window.innerWidth <= 599);
     pokemon.reconcile(document, route, settings);
     if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
-    if (!phoneActions) actions.reconcile(document, route, settings, false, true);
-    androidDock.reconcile(document, route, settings, !searchParams.has("desktop") || window.innerWidth <= 599);
+    if (!phoneActions) actions.reconcile(document, route, settings, true);
+    androidDock.reconcile(document, route, settings, true);
     annotations.reconcile(document, route, settings, !searchParams.has("desktop") || window.innerWidth <= 599);
   };
   // Sanitized native confirmation shape; never a real game action.

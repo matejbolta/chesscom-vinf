@@ -3,7 +3,7 @@ import { expect, it, vi } from "vitest";
 import { AndroidGameControlsController, isFirefoxAndroid } from "../src/content/android-game-controls";
 import { DEFAULT_SETTINGS } from "../src/shared/settings";
 
-it("guards Android-only native dock, preserves handlers/disabled state and restores on exit", () => {
+it("guards supported native dock, preserves handlers/disabled state and restores on exit", () => {
   const fixture = new DOMParser().parseFromString(readFileSync("tests/fixtures/phone-game.html", "utf8"), "text/html");
   document.documentElement.innerHTML = fixture.documentElement.innerHTML;
   document.documentElement.className = "user-logged-in";
@@ -26,4 +26,13 @@ it("guards Android-only native dock, preserves handlers/disabled state and resto
     expect(dock.hasAttribute("data-chesscom-vinf-four-moves")).toBe(false);
   }
   expect(dock.children).toHaveLength(5);
+});
+
+it.each([false, true])("supports saved analysis navigation with or without native play/pause (%s)", play => {
+  document.documentElement.className = "user-logged-in";
+  const names = ["First Move","Previous Move",...(play ? ["Play / Pause"] : []),"Next Move","Last Move"];
+  document.body.innerHTML = '<div class="game-controls-primary-component">'+names.map(name=>`<button aria-label="${name}"></button>`).join('')+'</div>';
+  const controller = new AndroidGameControlsController();
+  controller.reconcile(document,{protocol:"https:",hostname:"www.chess.com",pathname:"/analysis/game/live/123/analysis"},DEFAULT_SETTINGS,true);
+  expect(document.querySelector('[data-chesscom-vinf-four-moves]')).not.toBeNull();
 });
