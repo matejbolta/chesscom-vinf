@@ -1197,3 +1197,8 @@ Live Brave: .toaster-controller-toast-wrapper contains .toaster-controller-toast
 Native live inspection found numeric parenthesized ratings in #board-layout-player-top/bottom .cc-user-rating-white under .player-playerContent. Opponent is the normal top player; no account-name lookup, request or rating persistence. Intro starts only when an observed game has an empty wc-simple-move-list[board-id=board-single], using the existing data-node main-line convention to reject mid-game attachment. Timing is local observed hydration and is not claimed server-exact.
 
 Native live body directly owns #board-layout-main, #board-layout-sidebar and #board-layout-comments; no footer in the observed page. Go home is appended in normal flow, spanning grid columns; if .navigation-footer/footer exists it precedes that element. Sanitized fixture covers footer/no-footer, route/width/disable cleanup and shared button palette. No real live Home action was clicked.
+
+
+## 2026-10-05 — Go home late hydration
+
+Live phone-width game body uses block flow. Native `#board-layout-main`, `#board-layout-sidebar`, and `#board-layout-comments` can be appended after the extension link at document start. HomeLink reconciles their document order and moves after them when no native footer exists. No geometry or scrolling changes.
