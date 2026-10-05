@@ -23,6 +23,7 @@ export class ReviewPresentationController {
     const board = document.querySelector<HTMLElement>("#board-layout-chessboard wc-chess-board#board-analysis-board");
     const active = !!board;
     document.documentElement.toggleAttribute(CLEAN, active && phone);
+    document.documentElement.toggleAttribute("data-chesscom-vinf-analysis", active && analysis);
     document.documentElement.toggleAttribute("data-chesscom-vinf-phone-analysis", active && phone && analysis);
     document.documentElement.toggleAttribute(EXTREME, false);
     if (this.board !== board || !active) this.board?.removeAttribute(BOARD);
@@ -36,6 +37,7 @@ export class ReviewPresentationController {
     this.rowActions.cleanup();
     this.analysisActions.cleanup();
     document.documentElement.removeAttribute("data-chesscom-vinf-phone-analysis");
+    document.documentElement.removeAttribute("data-chesscom-vinf-analysis");
     document.documentElement.removeAttribute(CLEAN);
     document.documentElement.removeAttribute(EXTREME);
     this.board?.removeAttribute(BOARD); this.board = null;

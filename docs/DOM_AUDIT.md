@@ -1221,3 +1221,8 @@ Extreme board markers now directly own board colors/filters; no page-wide visibi
 Wide Extreme cleanup (2.20.2): live nav#sidebar-main-menu; game selector exact #board-layout-sidebar > .sidebar-component > .tabs-component contains Play/New Game/Games/Players. The underlined move tabs are separate and retained. Body --navWidth/--verticalNavWidth/--horizontalNavHeight/--gutterBoardToNav drive native sizing; zero these only in wide Extreme. Player grid was align-items:normal with fixed-height children top-aligned. Gameplay outer gutters are --gutterTopPlayerToJudo and --gutter, board gutters now match these. Flex player rows absorb native board-size rounding.
 
 Native game navigation buttons also carry cc-button-secondary. The fixture must include that class to exercise ordinary OLED!important background/inset-shadow rules. Wide Extreme is now excluded from those normal/hover/active rules; pure black and no shadow verified in fixture computed styles.
+
+
+### 2.20.4 wide Analysis and invisible navigation
+
+Saved-game engine Analysis uses the existing audited `.analysis-view-component`, `.engine-lines-with-options-component`, `.analysis-options-component`, `.engine-lines-with-options-lines`, `.sidebar-view-content`, `.sidebar-header-header`, and `.game-controls-primary-component` for OLED surface colors at all widths. Phone layout selectors remain separately gated. Wide Extreme hides `#sidebar-main-menu` / `#mobile-toolbar` with visibility, preserving native geometry; no nav-width overrides. User observed the prior zero-width override shifting the dashboard.

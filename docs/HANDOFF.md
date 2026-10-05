@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-05.
-Current source version: 2.20.3.
+Current source version: 2.20.4.
+2.20.4: user corrected wide Extreme sidebar behavior: hide with visibility:hidden/pointer-events:none, retain native nav width/height/gutters. Never reclaim its space or shift board/dashboard on mode toggle. Saved-game engine Analysis OLED route now applies at every width; separate analysis marker themes audited engine surfaces while phone layout remains phone-only. Runtime desktop route regression added; 226 tests/typecheck passed. Live installation verification pending user reload. Includes 2.20.3 pure-black navigation fix.
 2.20.3 live buttons exposed a cascade mismatch absent from fixture: native cc-button-secondary had ordinary OLED background#0a0a0a!important and inset shadow winning over wide Extreme. Exclude wide-extreme from those ordinary state rules and force no shadow. Fixture now includes exact native button classes; computed all five source buttons black/no shadow, Play remains hidden.225tests pass before final packaging. 2.20.2 live centered clocks verified with32.5px on each side, left nav and game-selector hidden. Reload Elo not caught within five-second window. User game ended and entered normal/OLED wide Review; graph visible and four-slot proxy dock present. Brief end popup was missed; do not claim seen. Session continues, usage baseline39% at22:58:26 remains.
 
 2.20.2 follow-up user scope: WIDE Extreme hides left site navigation and right Play/NewGame/Games/Players selector, retains Moves/Chat/Info/list; four-slot buttons black with outlines. Root wide-extreme marker is separate from board theme and only wide supported routes. Native body nav-width variables set0 to reclaim space. WideBoardRows now owns OpponentRatingIntro, same30s newgame/5s explicitreload behavior as phone, guarded by native game-end state. No ratings stored.

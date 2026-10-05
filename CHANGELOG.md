@@ -9,6 +9,11 @@ History before this baseline may not have exact local source snapshots.
 
 ## [Unreleased]
 
+## [2.20.4] - 2026-10-05
+
+- Keep the native sidebar space in wide Extreme OLED so toggling the mode does not shift the board or dashboard.
+- Apply OLED backgrounds to saved-game engine Analysis on tablet and desktop as well as phone.
+
 ## [2.20.3] - 2026-10-05
 
 - Prevent ordinary OLED button rules from overriding wide Extreme's pure-black fill and outline-only treatment.

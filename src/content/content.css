@@ -1677,13 +1677,11 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
 
 /* Wide Extreme keeps the board UI but removes surrounding navigation chrome. */
 @media (min-width: 600px) {
-  html[data-chesscom-vinf-wide-extreme] body {
-    --navWidth: 0px !important;
-    --verticalNavWidth: 0px !important;
-    --horizontalNavHeight: 0px !important;
-    --gutterBoardToNav: 0px !important;
+  /* Preserve native navigation geometry when switching the theme. */
+  html[data-chesscom-vinf-wide-extreme] :is(#sidebar-main-menu, #mobile-toolbar) {
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
-  html[data-chesscom-vinf-wide-extreme] :is(#sidebar-main-menu, #mobile-toolbar),
   html[data-chesscom-vinf-wide-extreme] #board-layout-sidebar > .sidebar-component > .tabs-component {
     display: none !important;
   }
@@ -1709,3 +1707,13 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   html[data-chesscom-vinf-wide-game-rows] .board-layout-player .player-component { height: 100%; }
   html[data-chesscom-vinf-wide-game-rows] #board-layout-chessboard { flex-shrink: 0; }
 }
+
+/* Engine surface colors are shared across widths; only phone layout is compacted. */
+html[data-chesscom-vinf-analysis][data-chesscom-vinf-oled="true"] {
+  --color-bg-primary: #000; --color-bg-secondary: #000; --color-bg-tertiary: #0a0a0a;
+  --color-text-default: #bbb; --color-border-default: #252525;
+}
+html[data-chesscom-vinf-analysis][data-chesscom-vinf-oled="true"] :is(
+  .analysis-view-component, .engine-lines-with-options-component, .analysis-options-component,
+  .engine-lines-with-options-lines, .sidebar-view-content, .sidebar-header-header,
+  .game-controls-primary-component) { background: #000 !important; }

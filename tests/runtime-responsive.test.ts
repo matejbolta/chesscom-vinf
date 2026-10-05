@@ -90,6 +90,21 @@ describe("responsive runtime lifecycle", () => {
     expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
   });
 
+  it("applies OLED on saved engine Analysis at desktop width", async () => {
+    vi.useFakeTimers();
+    window.history.replaceState({}, "", "/analysis/game/live/183987646934/analysis");
+    document.documentElement.className = "user-logged-in";
+    document.body.replaceChildren();
+
+    startVinfRuntime({
+      load: async () => ({ ...DEFAULT_SETTINGS, oledMode: true }),
+      subscribe: () => undefined
+    });
+    await Promise.resolve();
+
+    expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
+  });
+
   it("applies OLED on Chess.com's alternate live-game route", async () => {
     vi.useFakeTimers();
     window.history.replaceState({}, "", "/live/game/183987646934");
