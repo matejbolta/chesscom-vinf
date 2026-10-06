@@ -229,6 +229,12 @@ if (window.location.pathname === "/game-review-mobile" && searchParams.has("engi
   document.querySelector('.move-by-move-container')?.remove();
   const panel = document.querySelector('.sidebar-view-content')!;
   panel.insertAdjacentHTML('afterbegin', '<section class="analysis-view-component"><nav class="sidebar-tabs-container">Analysis · Games · Explore</nav><div class="engine-lines-with-options-component"><div class="analysis-options-component"><div class="analysis-options-bar"><div class="analysis-options-left"><label><input type="checkbox" checked> Analysis</label> ···</div><div class="analysis-options-right"><div class="analysis-options-depth">depth=16 | Stockfish 19 Lite</div><button class="analysis-options-icon" aria-label="Engine settings">⚙</button></div></div></div><div class="engine-lines-with-options-lines"><p>+5.07 · Nxe7 is best</p><p>+6.23 · 24. Ne4 Nf5 25. Qg6+</p><p>+6.02 · 24. Nf1 e2 25. Qh5+</p><p>+5.97 · 24. Nc4 e2 25. Qh5+</p></div></div></section>');
+  const lines = panel.querySelector<HTMLElement>('.engine-lines-with-options-lines')!;
+  const count = Math.max(0, Math.min(8, Number(searchParams.get('line-count') ?? 5)));
+  lines.innerHTML = Array.from({ length: count }, (_, i) => `<div class="engine-line-component">+${i}.12 · 24. Ne4 Nf5 25. Qg6+</div>`).join('');
+  const lineStyle = document.createElement('style');
+  lineStyle.textContent = '.engine-lines-with-options-lines { display:flex; flex-direction:column; gap:.4rem; padding:.8rem 1.2rem; box-sizing:border-box; } .engine-line-component { min-height:2.4rem; line-height:2.4rem; flex-shrink:0; }';
+  document.head.append(lineStyle);
   document.querySelector('.game-controls-view-component')!.innerHTML = '<div class="game-controls-primary-component">'+['First Move','Previous Move','Next Move','Last Move'].map((name,i)=>`<button aria-label="${name}">${['|‹','‹','›','›|'][i]}</button>`).join('')+'</div><button>Game Review</button>';
 }
 if (window.location.pathname === "/game-review-mobile" && window.innerWidth > 599 && !searchParams.has("engine")) {

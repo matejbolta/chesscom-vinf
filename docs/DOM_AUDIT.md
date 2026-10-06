@@ -1255,3 +1255,13 @@ is visible in `.analysis-options-bar`. No forced tab selection. Button sizing
 no longer targets non-button `.analysis-options-icon` status glyphs. Wide
 layouts retain the native controls. Existing sanitized engine fixture covers
 the two native sources and their phone consolidation.
+
+## 2026-10-06 — Phone engine-line height (2.22.4)
+
+Read-only public saved-game Analysis at390px: `.engine-lines-with-options-lines`
+is border-box flex column with4px gap,8px vertical padding; direct
+`.engine-line-component` rows measure24px, root font10px. Three rows total96px.
+Phone-only minimum15.2rem reserves five collapsed rows without capping expanded
+rows or adding fake moves. Sanitized engine fixture now uses that row structure
+and `line-count` parameter. IAB3/4/5-line panels all152px and following options
+at the same position; wide4-line panel remains native124px.

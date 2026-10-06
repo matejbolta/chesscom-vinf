@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.22.4 — Stable phone engine-line space
+
+- Reserve at least five native engine rows on phone Analysis, leaving blank space below fewer legal lines so subsequent controls do not move upward.
+- Preserve expansion and larger line counts; tablet and desktop heights remain native.
+
+
 ## 2.22.3 — One phone Analysis settings gear
 
 - Keep one Settings shortcut in the phone Analysis strip, hiding the duplicate native shortcut only while the replacement is available.

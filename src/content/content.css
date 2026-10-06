@@ -1528,7 +1528,12 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
 }
 
 @media (max-width: 599px) {
-  html[data-chesscom-vinf-phone-analysis] .engine-lines-with-options-lines { margin-bottom: 12px; }
+  html[data-chesscom-vinf-phone-analysis] .engine-lines-with-options-lines {
+    /* Five native 2.4rem rows, four .4rem gaps, and .8rem padding per edge.
+       A minimum preserves expansion without inventing clickable empty lines. */
+    min-height: 15.2rem; box-sizing: border-box; justify-content: flex-start;
+    margin-bottom: 12px;
+  }
   html[data-chesscom-vinf-phone-analysis] .analysis-options-right > :not(button):not(.analysis-options-depth) {
     grid-column: 2; grid-row: 2; justify-self: end; align-self: center;
     width: 24px; height: 24px; margin: 0; padding: 0;
