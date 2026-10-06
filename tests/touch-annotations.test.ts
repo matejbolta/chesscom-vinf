@@ -212,7 +212,9 @@ it("moves the same tablet Mark toggle before native Draw, restores phone positio
   controller.reconcile(document, game, DEFAULT_SETTINGS, true);
   const button = document.querySelector<HTMLButtonElement>(".chesscom-vinf-annotation-toggle")!;
   const draw = document.querySelector(".draw-button-component")!;
-  expect(button.nextElementSibling).toBe(draw);
+  expect(button.nextElementSibling).toBe(draw.closest(".cc-popover-wrapper-legacy-component"));
+  expect(button.parentElement).toBe(draw.closest(".game-icons-container-component"));
+  expect(draw.closest("[data-cy=anchor-draw-confirmation]")?.contains(button)).toBe(false);
   expect(button.textContent).toBe("Mark");
   button.click();
   expect(button.getAttribute("aria-pressed")).toBe("true");
@@ -225,6 +227,5 @@ it("moves the same tablet Mark toggle before native Draw, restores phone positio
   expect(button.getAttribute("aria-pressed")).toBe("true");
   controller.reconcile(document, game, DEFAULT_SETTINGS, false);
   expect(button.isConnected).toBe(false);
-  controller.cleanup();
   Object.defineProperty(window, "innerWidth", {value:width,configurable:true});
 });

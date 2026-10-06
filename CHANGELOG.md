@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.24.4 — Tablet Mark alignment correction
+
+- Place Mark beside the native Draw popover root instead of inside its anchor, preventing a stacked action row. Match the native label typography, color and icon size.
+- Extend the sanitized fixture with the live popover hierarchy and preserve phone placement.
+
 ## 2.24.3 — Tablet annotation control
 
 - Move the existing tablet pen toggle beside the native game actions, labeled Mark before Draw and Resign. Preserve phone placement and drawing behavior.

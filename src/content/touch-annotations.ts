@@ -170,8 +170,16 @@ export class TouchAnnotationsController {
     this.button.dataset.actionRow = String(Boolean(draw));
     this.button.dataset.flow = String(!draw && Boolean(flow));
     if (draw) {
-      if (this.button.nextSibling !== draw) draw.before(this.button);
-      this.button.style.cssText = `display:${visible ? "inline-flex" : "none"}`;
+      // Draw lives inside an anchor and a grid popover wrapper on the live site.
+      // Insert beside that root, never inside its confirmation anchor.
+      const row = draw.closest(".game-icons-container-component, .game-controls");
+      let anchor = draw;
+      if (row) while (anchor.parentElement && anchor.parentElement !== row) anchor = anchor.parentElement;
+      if (this.button.nextSibling !== anchor) anchor.before(this.button);
+      const view = document.defaultView!;
+      const label = view.getComputedStyle(draw.querySelector(".draw-button-label") ?? draw);
+      const icon = view.getComputedStyle(draw.querySelector("svg") ?? draw);
+      this.button.style.cssText = `display:${visible ? "inline-flex" : "none"};--vinf-mark-font:${label.font};--vinf-mark-color:${label.color};--vinf-mark-icon-color:${icon.color};--vinf-mark-icon-size:${draw.querySelector("svg") ? icon.width : "20px"}`;
     } else if (flow && clock) {
       // A real layout slot prevents the pencil from covering player text. The
       // native clock still reserves the space used by the numeric clock target.

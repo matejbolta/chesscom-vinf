@@ -1300,3 +1300,7 @@ Stats, ChessTV, Streaks, Legend League, Daily Puzzle and Friends reuse their exi
 ## Tablet Mark placement — 2026-10-06
 
 The existing touch-only annotation toggle uses the native `.draw-button-component` in `.game-controls`, `.game-icons-container-component`, or `#board-layout-sidebar` as its insertion anchor at widths >=600px. It moves the same button immediately before Draw, preserving native Draw/Resign/Flip controls and handlers. Below600px the existing player-row placement returns. Verified in sanitized OLED/Extreme fixtures; real tablet verification pending.
+
+### 2.24.4 correction from live DOM
+
+Read-only Brave game inspection confirmed Draw is nested in a block anchor span inside `.cc-popover-wrapper-legacy-component` (grid), itself inside `.game-icons-container-component` (flex). Insert Mark before that direct row child, not before the nested button. Match `.draw-button-label` computed font/color and its SVG color/width; no native action handlers or popover nodes are moved. Sanitized phone-game fixture now preserves this nesting.

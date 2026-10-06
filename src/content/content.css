@@ -1752,11 +1752,14 @@ html[data-chesscom-vinf-wide-extreme] .bot-speech-content-botMessage :is(.move-f
 .chesscom-vinf-mark-label { display: none; }
 html body .chesscom-vinf-annotation-toggle[data-action-row="true"] {
   position: static; width: auto; height: auto; min-width: 0;
-  flex: 0 0 auto; align-items: center; justify-content: center; gap: 4px;
-  margin: 0 8px 0 0; padding: 0; border: 0; border-radius: 0;
-  background: transparent; color: inherit; font: inherit; font-weight: 600;
+  flex: 0 0 auto; align-items: center; justify-content: center; gap: 7px;
+  margin: 0 10px 0 0; padding: 0; border: 0; border-radius: 0;
+  background: transparent; color: var(--vinf-mark-color, #bbb); font: var(--vinf-mark-font, inherit);
+  white-space: nowrap; align-self: center; line-height: normal;
   opacity: 1; visibility: visible !important;
 }
-html body .chesscom-vinf-annotation-toggle[data-action-row="true"] svg { width: 18px; height: 18px; }
+html body .chesscom-vinf-annotation-toggle[data-action-row="true"] svg { width: var(--vinf-mark-icon-size, 20px); height: var(--vinf-mark-icon-size, 20px); color: var(--vinf-mark-icon-color, #bbb); flex: 0 0 auto; }
 html body .chesscom-vinf-annotation-toggle[data-action-row="true"] .chesscom-vinf-mark-label { display: inline; }
 html body .chesscom-vinf-annotation-toggle[data-action-row="true"][aria-pressed="true"] { color: #b65b5b; }
+
+html body .chesscom-vinf-annotation-toggle[data-action-row="true"][aria-pressed="true"] svg { color: currentColor; }
