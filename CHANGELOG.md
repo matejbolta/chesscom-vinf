@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.24.3 — Tablet annotation control
+
+- Move the existing tablet pen toggle beside the native game actions, labeled Mark before Draw and Resign. Preserve phone placement and drawing behavior.
+
 ## 2.24.2 — Complete Store artwork refresh
 
 - Replace both promotional tiles and provide five version-free screenshots with descriptive headings, approved defaults and fictional data.

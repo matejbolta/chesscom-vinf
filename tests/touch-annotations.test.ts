@@ -203,3 +203,28 @@ it("restores native labeled actions when widening from phone, including Extreme"
     expect(document.querySelector('.chesscom-vinf-phone-actions')).toBeNull();
   }
 });
+
+it("moves the same tablet Mark toggle before native Draw, restores phone position and removes it for desktop", () => {
+  fixture();
+  const width = window.innerWidth;
+  Object.defineProperty(window, "innerWidth", {value:800,configurable:true});
+  const controller = new TouchAnnotationsController();
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  const button = document.querySelector<HTMLButtonElement>(".chesscom-vinf-annotation-toggle")!;
+  const draw = document.querySelector(".draw-button-component")!;
+  expect(button.nextElementSibling).toBe(draw);
+  expect(button.textContent).toBe("Mark");
+  button.click();
+  expect(button.getAttribute("aria-pressed")).toBe("true");
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(document.querySelectorAll(".chesscom-vinf-annotation-toggle")).toHaveLength(1);
+  Object.defineProperty(window, "innerWidth", {value:390,configurable:true});
+  controller.reconcile(document, game, DEFAULT_SETTINGS, true);
+  expect(button.dataset.actionRow).toBe("false");
+  expect(button.nextElementSibling).not.toBe(draw);
+  expect(button.getAttribute("aria-pressed")).toBe("true");
+  controller.reconcile(document, game, DEFAULT_SETTINGS, false);
+  expect(button.isConnected).toBe(false);
+  controller.cleanup();
+  Object.defineProperty(window, "innerWidth", {value:width,configurable:true});
+});

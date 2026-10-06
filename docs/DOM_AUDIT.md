@@ -1296,3 +1296,7 @@ move handlers. Sanitized responsive sizing fixture verifies on/off parity.
 ## 2.23.0 — All homepage cards can change columns
 
 Stats, ChessTV, Streaks, Legend League, Daily Puzzle and Friends reuse their existing audited landmarks on first discovery, then their data-chesscom-vinf-module markers after relocation. Badge wrappers remain reversible and owned. Existing sanitized modern homepage plus all-cards-main=1 preview covers column widths; layout tests cover moving back, visibility and cleanup without cloning native nodes.
+
+## Tablet Mark placement — 2026-10-06
+
+The existing touch-only annotation toggle uses the native `.draw-button-component` in `.game-controls`, `.game-icons-container-component`, or `#board-layout-sidebar` as its insertion anchor at widths >=600px. It moves the same button immediately before Draw, preserving native Draw/Resign/Flip controls and handlers. Below600px the existing player-row placement returns. Verified in sanitized OLED/Extreme fixtures; real tablet verification pending.

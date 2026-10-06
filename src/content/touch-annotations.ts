@@ -70,7 +70,7 @@ export class TouchAnnotationsController {
     button.className = "chesscom-vinf-annotation-toggle";
     button.setAttribute("aria-label", "Draw arrows and red squares");
     button.title = "Draw arrows and red squares";
-    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75ZM20.71 7.04a1 1 0 0 0 0-1.42l-2.34-2.33a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75Z"/></svg>';
+    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75ZM20.71 7.04a1 1 0 0 0 0-1.42l-2.34-2.33a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75Z"/></svg><span class="chesscom-vinf-mark-label">Mark</span>';
     button.setAttribute("data-chesscom-vinf-owned", "annotations");
     button.addEventListener("click", event => {
       event.stopPropagation();
@@ -164,8 +164,15 @@ export class TouchAnnotationsController {
     const clock = document.querySelector<HTMLElement>("#board-layout-player-bottom .clock-component");
     const flow = (!this.extreme || document.documentElement.hasAttribute("data-chesscom-vinf-phone-material") || document.documentElement.hasAttribute("data-chesscom-vinf-wide-rows")) &&
       clock?.parentElement?.matches(".player-component");
-    this.button.dataset.flow = String(Boolean(flow));
-    if (flow && clock) {
+    const draw = (document.defaultView?.innerWidth ?? 0) >= 600
+      ? document.querySelector<HTMLElement>(".game-controls .draw-button-component, .game-icons-container-component .draw-button-component, #board-layout-sidebar .draw-button-component")
+      : null;
+    this.button.dataset.actionRow = String(Boolean(draw));
+    this.button.dataset.flow = String(!draw && Boolean(flow));
+    if (draw) {
+      if (this.button.nextSibling !== draw) draw.before(this.button);
+      this.button.style.cssText = `display:${visible ? "inline-flex" : "none"}`;
+    } else if (flow && clock) {
       // A real layout slot prevents the pencil from covering player text. The
       // native clock still reserves the space used by the numeric clock target.
       if (this.button.nextSibling !== clock) clock.before(this.button);
@@ -181,7 +188,7 @@ export class TouchAnnotationsController {
     }
     this.button.disabled = !this.annotations;
     this.button.title = this.annotations ? "Draw arrows and red squares" : "Native drawing unavailable on this board";
-    this.button.setAttribute("aria-label", this.button.title);
+    this.button.setAttribute("aria-label", draw ? "Mark" : this.button.title);
     this.button.setAttribute("aria-pressed", String(this.enabled));
     this.button.dataset.extreme = String(this.extreme);
     this.layer.dataset.extreme = String(this.extreme);

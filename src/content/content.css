@@ -1747,3 +1747,16 @@ html[data-chesscom-vinf-wide-extreme] .bot-speech-content-tip { color: #000 !imp
 html[data-chesscom-vinf-wide-extreme] .bot-speech-content-botMessage :is(.move-feedback-last-book-move-component, .recommend-box-container) {
   background: #000 !important; color: #bbb !important;
 }
+
+/* Touch-tablet annotation toggle shares the native Draw / Resign action row. */
+.chesscom-vinf-mark-label { display: none; }
+html body .chesscom-vinf-annotation-toggle[data-action-row="true"] {
+  position: static; width: auto; height: auto; min-width: 0;
+  flex: 0 0 auto; align-items: center; justify-content: center; gap: 4px;
+  margin: 0 8px 0 0; padding: 0; border: 0; border-radius: 0;
+  background: transparent; color: inherit; font: inherit; font-weight: 600;
+  opacity: 1; visibility: visible !important;
+}
+html body .chesscom-vinf-annotation-toggle[data-action-row="true"] svg { width: 18px; height: 18px; }
+html body .chesscom-vinf-annotation-toggle[data-action-row="true"] .chesscom-vinf-mark-label { display: inline; }
+html body .chesscom-vinf-annotation-toggle[data-action-row="true"][aria-pressed="true"] { color: #b65b5b; }
