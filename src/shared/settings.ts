@@ -60,7 +60,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   homepageSidebarOrder: [...DEFAULT_HOMEPAGE_SIDEBAR_ORDER],
   homepageSidebarVisible: [...DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE],
   quickPlayPresetCount: 8,
-  timeControlIds: ["10-0", "15-10", "3-0", "5-5", "10-5", "30-0", "3-2", "1-1"],
+  timeControlIds: ["10-0", "10-5", "15-10", "30-0", "3-0", "3-2", "5-5", "1-1"],
   statsSummaryOrder: [...DEFAULT_STATS_SUMMARY_ORDER],
   statsSummaryVisible: [...DEFAULT_STATS_SUMMARY_VISIBLE],
   statsRatingOrder: [...DEFAULT_STATS_RATING_ORDER],

@@ -327,12 +327,31 @@ const server = createServer(async (request, response) => {
   }
   if (pathname === "/popup" || pathname === "/popup.html") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    response.end(new URL(request.url, "http://localhost").searchParams.has("store-capture") ? popupHtml.replace("</head>", "<style>.version{display:none!important}</style></head>") : popupHtml);
+    const captureParams = new URL(request.url, "http://localhost").searchParams;
+    let captureHtml = captureParams.has("store-capture") ? popupHtml.replace("</head>", "<style>.version{display:none!important}</style></head>") : popupHtml;
+    if (captureParams.has("store-capture") && captureParams.get("section") === "presets") {
+      captureHtml = captureHtml.replace("</body>", '<script>window.addEventListener("load",()=>window.scrollTo(0,document.getElementById("quick-play-heading").getBoundingClientRect().top+window.scrollY-20));</script></body>');
+    }
+    response.end(captureHtml);
     return;
   }
   if (pathname === "/sidepanel.html") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(sidePanelPreviewHtml);
+    return;
+  }
+  if (pathname === "/gallery" || pathname === "/gallery.css") {
+    const file = pathname === "/gallery" ? "gallery.html" : "gallery.css";
+    response.writeHead(200, { "content-type": file.endsWith("css") ? "text/css" : "text/html; charset=utf-8" });
+    response.end(await readFile(new URL(`../../store-listing/source/${file}`, import.meta.url), "utf8"));
+    return;
+  }
+  if (pathname === "/gallery-capture") {
+    const view = new URL(request.url, "http://localhost").searchParams.get("view") || "settings";
+    const safeView = ["presets", "settings", "play", "review", "small", "marquee"].includes(view) ? view : "settings";
+    const [w,h] = safeView === "small" ? [440,280] : safeView === "marquee" ? [1400,560] : [1280,800];
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(`<html><body style="margin:0;width:${w}px;height:${h}px;overflow:hidden"><iframe title="Store ${safeView}" src="/gallery?view=${safeView}" style="border:0;width:${w}px;height:${h}px;display:block"></iframe></body></html>`);
     return;
   }
   if (pathname === "/store-showcase") {

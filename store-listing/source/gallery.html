@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VINF Store gallery</title><link rel="stylesheet" href="/gallery.css"></head><body>
+<main id="scene">
+<header class="brand"><img src="/icons/icon-128.png" alt=""><span>ChessComVINF</span></header>
+<div class="copy"><p class="eyebrow" id="eyebrow"></p><h1 id="headline"></h1><p class="description" id="description"></p><p class="note" id="note"></p></div>
+<div class="preview"><iframe id="preview" title="VINF default interface"></iframe></div>
+<footer><span>HOMEPAGE · GAMES · REVIEW</span><span>VINF</span></footer>
+</main>
+<script>
+const views={
+ presets:{eyebrow:'QUICK PLAY',headline:'Quick Play\npresets',description:'Eight shortcuts on desktop and tablet. Three on phone. Choose a time control for each shortcut.',note:'Default desktop settings shown.',src:'/popup?store-capture=1&section=presets',kind:'settings'},
+ settings:{eyebrow:'SETTINGS',headline:'Homepage\nsettings',description:'Move cards between columns. Choose the stats you see. Changes save automatically.',note:'Default settings · OLED on',src:'/popup?store-capture=1',kind:'settings'},
+ play:{eyebrow:'LIVE GAMES',headline:'Live game\nlayout',description:'A clean black canvas, clear clocks and familiar controls. Adjust the turn indicator to suit you.',note:'Phone layout shown. Android: separate Firefox + Violentmonkey installation.',src:'/phone-game?oled=1&store-capture=1',kind:'phone'},
+ review:{eyebrow:'GAME REVIEW',headline:'Game\nReview',description:'Coach feedback, the evaluation graph and move controls, arranged for a smaller screen.',note:'Phone layout shown. Android: separate Firefox + Violentmonkey installation.',src:'/game-review-mobile?oled=1&store-capture=1',kind:'phone'},
+ small:{eyebrow:'',headline:'Customize\nChess.com',description:'QUICK PLAY · OLED · REVIEW',note:'',src:'',kind:'small'},
+ marquee:{eyebrow:'CHESS.COM EXTENSION',headline:'Chess.com\ncustomization',description:'Quick Play, a focused homepage and OLED game review. Available on desktop and Android.',note:'Desktop · Android via Firefox + Violentmonkey',src:'/store-showcase?view=home6',kind:'marquee'}
+};
+const v=new URL(location.href).searchParams.get('view')||'settings';const c=views[v]||views.settings;
+document.body.dataset.kind=c.kind;document.body.dataset.view=v;
+for(const k of ['eyebrow','headline','description','note'])document.getElementById(k).textContent=c[k];
+if(c.src)document.getElementById('preview').src=c.src;else document.querySelector('.preview').remove();
+</script></body></html>

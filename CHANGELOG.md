@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.24.2 — Complete Store artwork refresh
+
+- Replace both promotional tiles and provide five version-free screenshots with descriptive headings, approved defaults and fictional data.
+- Correct eight-preset storage order for the column-filling grid so the requested top and bottom rows render correctly. Preserve saved selections and phone defaults.
+- Remove the unnecessary defaults paragraph from the README.
+
 ## 2.24.1 — Public release and device-specific presets
 
 - Default desktop/tablet Quick Play to 10, 15+10, 3, 5+5 above 10+5, 30, 3+2, 1+1. Keep the three approved phone presets. Saved selections remain unchanged.

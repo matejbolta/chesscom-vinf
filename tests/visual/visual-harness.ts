@@ -37,6 +37,27 @@ const gameReviewController = new GameReviewLayoutController();
 
 const searchParams = new URL(window.location.href).searchParams;
 
+// Public Store captures use a short, legal fictional opening rather than stress-test rows.
+if (searchParams.has("store-capture") && window.location.pathname === "/phone-game") {
+  const moves = [["e4", "e5"], ["Nf3", "Nc6"], ["Bc4", "Bc5"]];
+  document.querySelectorAll(".main-line-row").forEach((row, i) => {
+    if (i >= moves.length) { row.remove(); return; }
+    row.querySelector(".white-move")!.textContent = moves[i][0];
+    row.querySelector(".black-move")!.textContent = moves[i][1];
+  });
+  for (const [from, to] of [["52","54"],["57","55"],["71","63"],["28","36"],["61","34"],["68","35"]]) {
+    const piece = document.querySelector<HTMLElement>(`.piece.square-${from}`);
+    if (piece) {
+      piece.classList.replace(`square-${from}`, `square-${to}`);
+      piece.style.left = `${(Number(to[0])-1)*12.5}%`;
+      piece.style.top = `${(8-Number(to[1]))*12.5}%`;
+    }
+  }
+  document.querySelectorAll("wc-captured-pieces").forEach(node => node.replaceChildren());
+  document.querySelector(".fixture-tail")?.remove();
+}
+
+
 if (searchParams.has("active-game")) {
   const activeGameLink = document.createElement("a");
   activeGameLink.href = "https://www.chess.com/game/live/123456";
@@ -271,7 +292,7 @@ if (window.location.pathname === "/game-review-mobile") {
 
 if (window.location.pathname === "/extreme-oled") {
   const extreme = new ExtremeOledController();
-  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
+  const settings = { ...DEFAULT_SETTINGS, extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : searchParams.has("store-capture") && window.innerWidth < 600 ? 12 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => extreme.reconcile(document,
     { protocol: "https:", hostname: "www.chess.com", pathname: "/game/123456" }, settings, searchParams.has("desktop"), searchParams.has("desktop"));
   if (searchParams.has("last-move")) {
@@ -379,7 +400,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
   const route = { protocol: "https:", hostname: "www.chess.com",
     pathname: game ? "/game/123456" : searchParams.has("engine") ? "/analysis/game/live/123456/analysis" : "/analysis/game/live/123456/review" };
   const settings = { ...DEFAULT_SETTINGS, pokemonMode: searchParams.has("pokemon"), enabled: !searchParams.has("native"),
-    extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : DEFAULT_SETTINGS.turnDotSize };
+    extremeOled: searchParams.has("extreme"), turnDotSize: searchParams.has("large-dot") ? 24 : searchParams.has("small-dot") ? 4 : searchParams.has("store-capture") && window.innerWidth < 600 ? 12 : DEFAULT_SETTINGS.turnDotSize };
   const apply = () => {
     document.documentElement.toggleAttribute("data-chesscom-vinf-oled", settings.extremeOled || searchParams.has("oled"));
     if (settings.extremeOled || searchParams.has("oled")) document.documentElement.setAttribute("data-chesscom-vinf-oled", "true");

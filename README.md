@@ -9,7 +9,6 @@ A calmer Chess.com experience for playing and reviewing games.
 - Enjoy cleaner game controls and a phone-friendly review layout.
 - Customize the turn indicator, pulse and animation speed.
 
-Settings save automatically. New installations start with OLED enabled and eight desktop/tablet shortcuts: **10, 15+10, 3, 5+5** above **10+5, 30, 3+2, 1+1**. Existing settings are preserved when updating.
 
 ## Desktop
 

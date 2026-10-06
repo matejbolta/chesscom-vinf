@@ -1,13 +1,13 @@
-# Chrome Web Store update — ChessComVINF 2.24.1
+# Chrome Web Store update — ChessComVINF 2.24.2
 
 For the dashboard checklist, use `UPDATE_TLDR.md`. Verify the currently published version in the dashboard before submission.
 
 ## Package
 
-- Upload: `../release/chesscom-vinf-2.24.1.zip`
-- Version: `2.24.1`
+- Upload: `../release/chesscom-vinf-2.24.2.zip`
+- Version: `2.24.2`
 - SHA-256:
-  `fe02624707abf8bc0efef8cac10969e20cfa6f520eb5d48ade51f274b0f465f8`
+  `96566c223efac907e08480e79fd6827a6f3e09a1b80e378900d76bdeaac0d55d`
 
 The package contains only the Manifest V3 extension. The Android userscript,
 private fixtures, source maps, Store assets, and release documentation are not
@@ -41,12 +41,22 @@ ChessComVINF is an independent, unofficial extension and is not affiliated with 
 
 ### Graphic assets
 
-Replace the screenshot gallery with:
+Replace the screenshot gallery with all five images, in this order:
 
-- `assets/screenshot-01-focused-home.jpg` — eight default desktop/tablet presets, fictional account data.
-- `assets/screenshot-03-settings.jpg` — actual default settings UI, version badge omitted only in the capture harness.
+1. `assets/screenshot-01-focused-home.jpg` — default desktop homepage.
+2. `assets/screenshot-02-quick-play.jpg` — default eight-preset grid and stats settings.
+3. `assets/screenshot-03-settings.jpg` — default homepage and OLED settings.
+4. `assets/screenshot-04-live-game.jpg` — phone gameplay layout.
+5. `assets/screenshot-05-game-review.jpg` — phone Game Review layout.
 
-Both are 1280×800 and contain no personal metadata. Remove the obsolete eight-preset screenshot from the previous gallery. Keep the icon and promotional tiles.
+All screenshots are 1280×800, use fictional data/default settings and omit version badges. Phone images explicitly describe the separate Android Firefox + Violentmonkey installation.
+
+Replace both promotional tiles:
+
+- `assets/small-promo-440x280.jpg` (440×280)
+- `assets/marquee-promo-1400x560.jpg` (1400×560)
+
+Keep `assets/store-icon-128.png`. Public images have no personal EXIF metadata. The new gallery and promo sources are `source/gallery.html` and `source/gallery.css`; the homepage scene remains in `source/showcase.html`.
 
 ## Unchanged dashboard fields
 

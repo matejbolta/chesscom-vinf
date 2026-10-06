@@ -152,7 +152,7 @@ export const DEFAULT_TIME_CONTROL_IDS: readonly TimeControlId[] = [
   "5-3"
 ] as const;
 
-export const DEFAULT_EIGHT_TIME_CONTROL_IDS: readonly TimeControlId[] = ["10-0", "15-10", "3-0", "5-5", "10-5", "30-0", "3-2", "1-1"] as const;
+export const DEFAULT_EIGHT_TIME_CONTROL_IDS: readonly TimeControlId[] = ["10-0", "10-5", "15-10", "30-0", "3-0", "3-2", "5-5", "1-1"] as const;
 
 export const QUICK_PLAY_EXPANSION_FALLBACK_IDS: readonly TimeControlId[] = [
   "10-0",
