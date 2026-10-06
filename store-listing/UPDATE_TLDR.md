@@ -1,6 +1,6 @@
-# Chrome Web Store update — 2.24.2
+# Chrome Web Store update — 2.24.4
 
-1. Upload `release/chesscom-vinf-2.24.2.zip`.
+1. Upload `release/chesscom-vinf-2.24.4.zip`.
 2. Replace the description and privacy explanations with `SUBMISSION.md`.
 3. Replace the screenshot gallery with all five numbered screenshots, in order.
 4. Replace both small and marquee promotional tiles. Keep the extension icon.

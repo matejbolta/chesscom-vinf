@@ -1,13 +1,13 @@
-# Chrome Web Store update — ChessComVINF 2.24.2
+# Chrome Web Store update — ChessComVINF 2.24.4
 
 For the dashboard checklist, use `UPDATE_TLDR.md`. Verify the currently published version in the dashboard before submission.
 
 ## Package
 
-- Upload: `../release/chesscom-vinf-2.24.2.zip`
-- Version: `2.24.2`
+- Upload: `../release/chesscom-vinf-2.24.4.zip`
+- Version: `2.24.4`
 - SHA-256:
-  `96566c223efac907e08480e79fd6827a6f3e09a1b80e378900d76bdeaac0d55d`
+  `1ce81ad5206fa050215959ed23582aee1a88fe92ab4a9e723ae6372a52bb8bd7`
 
 The package contains only the Manifest V3 extension. The Android userscript,
 private fixtures, source maps, Store assets, and release documentation are not
