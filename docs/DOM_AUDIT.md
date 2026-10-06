@@ -1280,3 +1280,14 @@ native Draw/Resign component roots at their original sidebar anchors on wide
 layouts; removes2.22.6 Flip hiding. Native labels/handlers remain. Phone action
 relocation unchanged. Sanitized desktop fixture confirms all three buttons in
 `.game-icons-container-component` and zero top actions; phone retains top pair.
+
+## 2026-10-06 — Native wide resizing and move-time text (2.22.8)
+
+Live on/off demonstration at1617x1212: native board1040/sidebar300;
+VINF board992/sidebar351. VINF --playerHeight76px replaced native40px and
+changed board gaps10→16px, reducing square board width and giving spare width
+to sidebar. Remove those overrides; native sizing remains authoritative.
+Native CSS `.toggle-timestamps > .main-line-row .time-white/.time-black`
+sets color transparent and width0, exposing text only on hover. Override color
+and width only for enabled wide rows. Retain native timestamp content/bars and
+move handlers. Sanitized responsive sizing fixture verifies on/off parity.

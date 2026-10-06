@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.22.8 — Native wide resizing and persistent move times
+
+- Restore native desktop/tablet player-row height and board gaps so enabling VINF no longer changes the board/sidebar width allocation.
+- Keep existing per-move time text visible in the compact sidebar instead of hover-only transparency. Phone layout remains unchanged.
+
+
 ## 2.22.7 — Restore native wide-game actions
 
 - Restore Draw, Resign and Flip Board to their original bottom-right locations and labels on desktop/tablet; phone top-row actions stay unchanged.

@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-06.
-Current source version: 2.22.7.
+Current source version: 2.22.8.
+2.22.8 supersedes68/76px wide player rows and equal16px gutters: user requests native resizing identical on/off. Remove native --playerHeight/gutter overrides and flex-growing player rows; consume native --playerHeight for row/clock bounds. Keep simplified content/typography. Native compact .toggle-timestamps makes time text transparent/width0; wide-only rule retains visible text and timestampWidth. Sanitized native sizing fixture now models300–500px sidebar flex range. IAB on/off board/sidebar widths identical at1617x1212 (1069/300),1850x1212(1080/500),1400x900(768/384); time text visible. Actual updated live verification awaits user manual reload.
 2.22.7 supersedes wide action relocation and2.22.6 Flip hiding: desktop/tablet retain native bottom-right Draw/Resign text and Flip. Runtime invokes phone action cleanup on wide; phone presentation unchanged. Native nodes/handlers restored via original anchors on widening. Regression covers normal/Extreme restoration. Desktop T copy now Flick piece. IAB fixtures verified wide sidebar buttons/no top actions and phone top actions retained.
 2.22.6 hides only bottom .game-icons-container-component Flip Board button under wide-game-rows at>=600px; audited native aria-label and flip SVG glyph fallback. Top board settings menu and X untouched; disabled/native layouts restore automatically.
 2.22.5 adds user-specified native T shortcut (Flick hovered piece) at bottom of Chess.com desktop guide, shared popup/sidepanel. Documentation only; no shortcut handler changed.

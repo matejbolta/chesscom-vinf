@@ -8,7 +8,8 @@
     --gutterBoardToTopPlayer: 10px; --gutterBoardToBottomPlayer: 10px;
     --playersHeight: calc(var(--playerHeight) * 2);
     --boardMaxHeight: calc(100dvh - var(--playersHeight) - 32px - var(--gutterBoardToTopPlayer) - var(--gutterBoardToBottomPlayer));
-    --boardWidth: min(calc(100dvw - 720px), var(--boardMaxHeight));
+    --boardWidth: min(calc(100dvw - 548px), var(--boardMaxHeight));
+    --fixture-sidebar-width: clamp(300px, calc(100dvw - 248px - var(--boardWidth)), 500px);
     font-size: 14px;
   }
   #mobile-toolbar { display: none; }
@@ -16,6 +17,11 @@
   #board-layout-main { width: var(--boardWidth); height: calc(100dvh - 32px); margin: 16px 0 16px 200px; }
   #board-layout-chessboard { margin: var(--gutterBoardToTopPlayer) 0 var(--gutterBoardToBottomPlayer); }
   wc-chess-board#board-single { width: var(--boardWidth); height: var(--boardWidth); }
-  #board-layout-sidebar { position: absolute; left: calc(232px + var(--boardWidth)); top: 16px; width: 460px; }
-  .game-buttons-container-component { position: fixed; left: calc(232px + var(--boardWidth)); bottom: 24px; width: 460px; transform: none; }
+  #board-layout-sidebar { position: absolute; left: calc(232px + var(--boardWidth)); top: 16px; width: var(--fixture-sidebar-width); }
+  .game-buttons-container-component { position: fixed; left: calc(232px + var(--boardWidth)); bottom: 24px; width: var(--fixture-sidebar-width); transform: none; }
+}
+
+@media (min-width: 600px) {
+  .board-layout-player { height: var(--playerHeight); flex: 0 0 var(--playerHeight); }
+  .toggle-timestamps > .main-line-row :is(.time-white,.time-black) { color: transparent; width: 0; }
 }

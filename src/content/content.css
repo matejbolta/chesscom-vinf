@@ -1621,15 +1621,11 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   }
   .chesscom-vinf-wide-review-dock button[aria-label="Start Review"] { color: #95bb4a !important; }
 
-  /* Feed the actual row size into Chess.com's board fit calculation. */
-  html[data-chesscom-vinf-wide-rows] body.with-players {
-    --playerHeight: var(--vinf-wide-row-height) !important;
-  }
-  html[data-chesscom-vinf-wide-rows] { --vinf-wide-row-height: 68px; --vinf-wide-clock-width: 96px; --vinf-wide-row-font: 24px; }
-  html[data-chesscom-vinf-wide-rows] .board-layout-player { height: var(--vinf-wide-row-height); min-height: var(--vinf-wide-row-height); margin-block: 0; }
+  html[data-chesscom-vinf-wide-rows] { --vinf-wide-clock-width: 96px; --vinf-wide-row-font: 24px; }
+  html[data-chesscom-vinf-wide-rows] .board-layout-player { height: var(--playerHeight, 4rem); min-height: 0; }
   html[data-chesscom-vinf-wide-rows] .board-layout-player .player-component {
     display: grid; grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr);
-    position: relative; gap: 0; width: 100%; height: var(--vinf-wide-row-height);
+    position: relative; gap: 0; width: 100%; height: 100%;
     grid-template-rows: minmax(0, 1fr); align-items: center;
   }
   html[data-chesscom-vinf-wide-rows] .board-layout-player :is(.player-avatar,.cc-user-block-component,.connection-component,.player-game-over-component,.clock-icon-icon,.move-time-icon) { display: none !important; }
@@ -1642,7 +1638,7 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   html[data-chesscom-vinf-wide-rows] wc-captured-pieces .captured-pieces-score { margin-top: 0; line-height: 1; }
   html[data-chesscom-vinf-wide-rows] .board-layout-player :is(.clock-component,.move-time-time) {
     grid-column: 3; grid-row: 1; justify-self: end; display: flex; align-items: center; justify-content: center;
-    width: var(--vinf-wide-clock-width); min-width: 0; max-width: 100%; height: 44px; box-sizing: border-box;
+    width: var(--vinf-wide-clock-width); min-width: 0; max-width: 100%; height: min(44px, var(--playerHeight, 4rem)); box-sizing: border-box;
     padding: 0; margin: 0; background: transparent; border: 0;
     font: 500 var(--vinf-wide-row-font)/1 ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
     font-variant-numeric: tabular-nums; color: #bbb;
@@ -1674,7 +1670,7 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   html[data-chesscom-vinf-wide-rows][data-chesscom-vinf-extreme-oled] .board-layout-player :is(.player-component,.player-playerContent,.player-tagline,wc-captured-pieces,wc-captured-pieces *,.chesscom-vinf-phone-actions,.chesscom-vinf-phone-actions *) { visibility: visible !important; }
 }
 @media (min-width: 1200px) {
-  html[data-chesscom-vinf-wide-rows] { --vinf-wide-row-height: 76px; --vinf-wide-clock-width: 108px; --vinf-wide-row-font: 28px; }
+  html[data-chesscom-vinf-wide-rows] { --vinf-wide-clock-width: 108px; --vinf-wide-row-font: 28px; }
 }
 
 @media (min-width: 600px) {
@@ -1709,14 +1705,12 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   html[data-chesscom-vinf-wide-rows] .player-component:has(> .chesscom-vinf-opponent-rating-intro) > .player-playerContent { opacity: 0; }
 }
 
+/* Keep native board/sidebar sizing; only reveal already-rendered move times. */
 @media (min-width: 600px) {
-  html[data-chesscom-vinf-wide-game-rows] body.with-players {
-    --gutterBoardToTopPlayer: var(--gutterTopPlayerToJudo) !important;
-    --gutterBoardToBottomPlayer: var(--gutter) !important;
+  html[data-chesscom-vinf-wide-rows] .toggle-timestamps > .main-line-row :is(.time-white, .time-black) {
+    color: var(--color-text-subtle, #999) !important;
+    width: var(--timestampWidth, 42px) !important;
   }
-  html[data-chesscom-vinf-wide-game-rows] .board-layout-player { flex: 1 0 var(--vinf-wide-row-height); }
-  html[data-chesscom-vinf-wide-game-rows] .board-layout-player .player-component { height: 100%; }
-  html[data-chesscom-vinf-wide-game-rows] #board-layout-chessboard { flex-shrink: 0; }
 }
 
 /* Engine surface colors are shared across widths; only phone layout is compacted. */
