@@ -69,12 +69,12 @@ describe("Android userscript shell", () => {
       expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({extremeOled: on}));
     }
 
-    const pulse = document.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-turn-pulse-scale")!;
-    expect(pulse.value).toBe("2");
-    pulse.value = "5"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
+    const pulse = document.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-turn-pulse-diameter")!;
+    expect(pulse.value).toBe("24");
+    pulse.value = "40"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
     await vi.advanceTimersByTimeAsync(0);
-    expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({turnPulseScale: 5}));
-    pulse.value = "2"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
+    expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({turnPulseDiameter: 40}));
+    pulse.value = "24"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
     await vi.advanceTimersByTimeAsync(0);
 
     const duration = dialog!.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-turn-animation-duration")!;

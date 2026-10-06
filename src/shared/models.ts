@@ -86,7 +86,7 @@ export interface ExtensionSettings {
   pokemonPieces: PokemonPieces;
   turnDotSize: number;
   turnAnimationDuration: number;
-  turnPulseScale: number;
+  turnPulseDiameter: number;
   showNativePlayPanel: boolean;
   profilePlacement: ProfilePlacement;
   profileVisiblePlacement: ProfileVisiblePlacement;

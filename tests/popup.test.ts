@@ -69,12 +69,12 @@ describe("settings popup", () => {
     await import("../src/popup/popup");
     await flushAsyncWork();
 
-    const pulse = document.querySelector<HTMLInputElement>("#turn-pulse-scale")!;
-    expect(pulse.value).toBe("2");
-    pulse.value = "5"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
+    const pulse = document.querySelector<HTMLInputElement>("#turn-pulse-diameter")!;
+    expect(pulse.value).toBe("24");
+    pulse.value = "40"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
     await flushAsyncWork();
-    expect(set).toHaveBeenLastCalledWith({[SETTINGS_STORAGE_KEY]: expect.objectContaining({turnPulseScale: 5})});
-    pulse.value = "2"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
+    expect(set).toHaveBeenLastCalledWith({[SETTINGS_STORAGE_KEY]: expect.objectContaining({turnPulseDiameter: 40})});
+    pulse.value = "24"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
     await flushAsyncWork();
 
     const duration = document.querySelector<HTMLInputElement>("#turn-animation-duration")!;

@@ -88,7 +88,7 @@ export class ExtremeOledController {
   private desktop = false;
   private dotSize = 12;
   private animationDuration = 1000;
-  private pulseScale = 2;
+  private pulseDiameter = 24;
   private pokemon = false;
   private revealedMove = "";
   private pendingPokemonReveal = false;
@@ -129,12 +129,12 @@ export class ExtremeOledController {
     this.desktop = desktop;
     const pokemon = settings.pokemonMode && !settings.extremeOled;
     if (this.pokemon !== pokemon) { this.clearPresentation(document); this.pokemon = pokemon; }
-    if (this.animationDuration !== settings.turnAnimationDuration || this.pulseScale !== settings.turnPulseScale || this.dotSize !== settings.turnDotSize) {
+    if (this.animationDuration !== settings.turnAnimationDuration || this.pulseDiameter !== settings.turnPulseDiameter || this.dotSize !== settings.turnDotSize) {
       this.overlay?.querySelectorAll<HTMLElement>(".chesscom-vinf-extreme-turn, .vinf-move-label, .vinf-ball-top, .vinf-ball-bottom").forEach(turn =>
         turn.getAnimations?.().forEach(animation => animation.cancel()));
     }
     this.dotSize = settings.turnDotSize;
-    this.pulseScale = settings.turnPulseScale;
+    this.pulseDiameter = settings.turnPulseDiameter;
     this.animationDuration = settings.turnAnimationDuration;
     const normal = normalGameClocks || settings.extremeOled;
     this.boardTheme = settings.extremeOled;
@@ -294,7 +294,7 @@ export class ExtremeOledController {
       if (!inactive && switched && this.animationDuration > 0 && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         turn.getAnimations?.().forEach(animation => animation.cancel());
         // Bound the rendered diameter, independently of the resting dot size.
-        const scale = Math.min(this.pulseScale, 48 / this.dotSize);
+        const scale = Math.max(1, Math.min(this.pulseDiameter, 48) / this.dotSize);
         turn.animate?.([{ transform: `scale(${scale})` }, { transform: "scale(1)" }],
           { duration: this.animationDuration, easing: "ease-out" });
       }

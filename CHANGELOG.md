@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.22.11 — Pixel-based pulse setting
+
+- Set pulse diameter directly in pixels on desktop and Android. Migrate existing multipliers using the saved dot size, retaining the 48px maximum.
+- Clarify Best move (review) in the desktop B shortcut description.
+
 ## 2.22.10 — Settings order and visual consistency
 
 - Move OLED settings directly below Enable VINF and Pokémon to the bottom across desktop and Android settings.

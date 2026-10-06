@@ -274,15 +274,15 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const pulseLabel = document.createElement("label");
   pulseLabel.className = "chesscom-vinf-settings-row";
   const pulseCopy = document.createElement("span");
-  pulseCopy.textContent = "Pulse size (×)";
+  pulseCopy.textContent = "Pulse diameter (px)";
   const pulseHelp = document.createElement("small");
-  pulseHelp.textContent = "Maximum pulse diameter: 48 px";
+  pulseHelp.textContent = "Maximum 48 px; never smaller than the turn dot";
   pulseCopy.append(pulseHelp);
-  const turnPulseScaleInput = document.createElement("input");
-  turnPulseScaleInput.id = "chesscom-vinf-userscript-turn-pulse-scale";
-  turnPulseScaleInput.type = "number";
-  turnPulseScaleInput.min = "1"; turnPulseScaleInput.max = "12"; turnPulseScaleInput.step = "0.1";
-  pulseLabel.append(pulseCopy, turnPulseScaleInput); gameSettings.append(pulseLabel);
+  const turnPulseDiameterInput = document.createElement("input");
+  turnPulseDiameterInput.id = "chesscom-vinf-userscript-turn-pulse-diameter";
+  turnPulseDiameterInput.type = "number";
+  turnPulseDiameterInput.min = "4"; turnPulseDiameterInput.max = "48"; turnPulseDiameterInput.step = "1";
+  pulseLabel.append(pulseCopy, turnPulseDiameterInput); gameSettings.append(pulseLabel);
   const animationLabel = document.createElement("label");
   animationLabel.className = "chesscom-vinf-settings-row";
   animationLabel.textContent = "Animation duration (ms) ";
@@ -940,7 +940,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     extremeOledInput.checked = settings.extremeOled;
     pokemonEditor.set(settings);
     turnDotSizeInput.value = String(settings.turnDotSize);
-    turnPulseScaleInput.value = String(settings.turnPulseScale);
+    turnPulseDiameterInput.value = String(settings.turnPulseDiameter);
     turnAnimationDurationInput.value = String(settings.turnAnimationDuration);
     oledModeInput.checked = settings.oledMode;
     showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -984,7 +984,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         extremeOled: extremeOledInput.checked,
         ...pokemonEditor.get(),
         turnDotSize: Number(turnDotSizeInput.value),
-        turnPulseScale: Number(turnPulseScaleInput.value),
+        turnPulseDiameter: Number(turnPulseDiameterInput.value),
         turnAnimationDuration: Number(turnAnimationDurationInput.value),
         oledMode: oledModeInput.checked,
         showNativePlayPanel: showNativePlayPanelInput.checked,

@@ -282,7 +282,7 @@ it("sizes the turn dot, pulses only on a player change, and warns for low time o
   let now = 0;
   const nowSpy = vi.spyOn(window.performance, "now").mockImplementation(() => now);
   vi.stubGlobal('matchMedia', () => ({matches: false}));
-  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 16, turnAnimationDuration: 2500, turnPulseScale: 5}, true);
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 16, turnAnimationDuration: 2500, turnPulseDiameter: 48}, true);
   const top = document.querySelector<HTMLElement>('.chesscom-vinf-extreme-turn.top')!;
   const bottom = document.querySelector<HTMLElement>('.chesscom-vinf-extreme-turn.bottom')!;
   Object.assign(top, {animate}); Object.assign(bottom, {animate});
@@ -308,11 +308,11 @@ it("sizes the turn dot, pulses only on a player change, and warns for low time o
   expect(bottom.hidden).toBe(false);
   expect(animate).toHaveBeenCalledTimes(1);
   expect(animate).toHaveBeenLastCalledWith(expect.any(Array), {duration: 2500, easing: "ease-out"});
-  expect(animate.mock.calls[0][0][0].transform).toBe('scale(3)'); // 16 × 5 capped at 48px.
-  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 8, turnPulseScale: 5}, true);
+  expect(animate.mock.calls[0][0][0].transform).toBe('scale(3)'); // 48px diameter / 16px resting dot.
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 8, turnPulseDiameter: 48}, true);
   topClock.classList.remove('clock-player-turn'); bottomClock.classList.add('clock-player-turn');
   await vi.advanceTimersByTimeAsync(20);
-  expect(animate.mock.calls.at(-1)![0][0].transform).toBe('scale(5)'); // Small dot keeps full multiplier.
+  expect(animate.mock.calls.at(-1)![0][0].transform).toBe('scale(6)'); // Same 48px diameter with an 8px resting dot.
   const cancel = vi.fn();
   Object.assign(bottom, {getAnimations: () => [{cancel}]});
   controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnAnimationDuration: 0}, true);

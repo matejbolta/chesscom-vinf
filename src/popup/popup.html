@@ -150,8 +150,8 @@
         <label class="setting-row"><strong>Turn indicator size (px)</strong>
           <input id="turn-dot-size" type="number" min="4" max="24" step="1" >
         </label>
-        <label class="setting-row"><span><strong>Pulse size (×)</strong><small>Maximum pulse diameter: 48 px</small></span>
-          <input id="turn-pulse-scale" type="number" min="1" max="12" step="0.1" >
+        <label class="setting-row"><span><strong>Pulse diameter (px)</strong><small>Maximum 48 px; never smaller than the turn dot</small></span>
+          <input id="turn-pulse-diameter" type="number" min="4" max="48" step="1" >
         </label>
         <label class="setting-row"><strong>Animation duration (ms)</strong>
           <input id="turn-animation-duration" type="number" min="0" max="5000" step="100" >
@@ -171,7 +171,7 @@
           <dt><kbd>X</kbd></dt><dd>Flip the board</dd>
           <dt><kbd>Z</kbd></dt><dd>Focus mode</dd>
           <dt><kbd>F</kbd></dt><dd>Table-slam</dd>
-          <dt><kbd>B</kbd></dt><dd>Boxing-glove or Best move</dd>
+          <dt><kbd>B</kbd></dt><dd>Boxing-glove or Best move (review)</dd>
           <dt><kbd>T</kbd></dt><dd>Flick piece</dd>
         </dl>
         <p>Hold Ctrl or Shift for green, Alt for blue.</p>

@@ -44,7 +44,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   pokemonPieces: { ...DEFAULT_POKEMON_PIECES },
   turnDotSize: 12,
   turnAnimationDuration: 1000,
-  turnPulseScale: 2,
+  turnPulseDiameter: 24,
   showNativePlayPanel: false,
   profilePlacement: "hidden",
   profileVisiblePlacement: "main",
@@ -267,7 +267,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     pokemonPieces?: unknown;
     turnDotSize?: unknown;
     turnAnimationDuration?: unknown;
-    turnPulseScale?: unknown;
+    turnPulseDiameter?: unknown;
+    turnPulseScale?: unknown; // Legacy multiplier, migrated once to rendered pixels.
     showNativePlayPanel?: unknown;
     profilePlacement?: unknown;
     profileVisiblePlacement?: unknown;
@@ -445,8 +446,12 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize,
     turnAnimationDuration: typeof candidate.turnAnimationDuration === "number" && Number.isFinite(candidate.turnAnimationDuration)
       ? Math.min(5000, Math.max(0, Math.round(candidate.turnAnimationDuration))) : DEFAULT_SETTINGS.turnAnimationDuration,
-    turnPulseScale: typeof candidate.turnPulseScale === "number" && Number.isFinite(candidate.turnPulseScale)
-      ? Math.min(12, Math.max(1, Math.round(candidate.turnPulseScale * 10) / 10)) : DEFAULT_SETTINGS.turnPulseScale,
+    turnPulseDiameter: typeof candidate.turnPulseDiameter === "number" && Number.isFinite(candidate.turnPulseDiameter)
+      ? Math.min(48, Math.max(4, Math.round(candidate.turnPulseDiameter)))
+      : Math.round(Math.min(48, (typeof candidate.turnDotSize === "number" && Number.isFinite(candidate.turnDotSize)
+          ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize)
+        * (typeof candidate.turnPulseScale === "number" && Number.isFinite(candidate.turnPulseScale)
+          ? Math.min(12, Math.max(1, Math.round(candidate.turnPulseScale * 10) / 10)) : 2))),
     // On conflicting imported records, Extreme wins; explicit UI choices clear the other mode.
     pokemonMode: candidate.pokemonMode === true && candidate.extremeOled !== true,
     pokemonPiecesEnabled: candidate.pokemonPiecesEnabled !== false,

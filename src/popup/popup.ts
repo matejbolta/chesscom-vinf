@@ -55,7 +55,7 @@ const closeSidePanelButton = document.querySelector<HTMLButtonElement>(
 )!;
 const enabledInput = document.querySelector<HTMLInputElement>("#enabled")!;
 const turnDotSizeInput = document.querySelector<HTMLInputElement>("#turn-dot-size")!;
-const turnPulseScaleInput = document.querySelector<HTMLInputElement>("#turn-pulse-scale")!;
+const turnPulseDiameterInput = document.querySelector<HTMLInputElement>("#turn-pulse-diameter")!;
 const turnAnimationDurationInput = document.querySelector<HTMLInputElement>("#turn-animation-duration")!;
 const extremeOledInput = document.querySelector<HTMLInputElement>("#extreme-oled")!;
 const pokemonEditor = createPokemonEditor(document, extremeOledInput);
@@ -704,7 +704,7 @@ function renderSettings(settings: ExtensionSettings): void {
   extremeOledInput.checked = settings.extremeOled;
   pokemonEditor.set(settings);
   turnDotSizeInput.value = String(settings.turnDotSize);
-  turnPulseScaleInput.value = String(settings.turnPulseScale);
+  turnPulseDiameterInput.value = String(settings.turnPulseDiameter);
   turnAnimationDurationInput.value = String(settings.turnAnimationDuration);
   oledModeInput.checked = settings.oledMode;
   showNativePlayPanelInput.checked = settings.showNativePlayPanel;
@@ -788,7 +788,7 @@ function readSettings(): ExtensionSettings {
     extremeOled: extremeOledInput.checked,
     ...pokemonEditor.get(),
     turnDotSize: Number(turnDotSizeInput.value),
-    turnPulseScale: Number(turnPulseScaleInput.value),
+    turnPulseDiameter: Number(turnPulseDiameterInput.value),
     turnAnimationDuration: Number(turnAnimationDurationInput.value),
     oledMode: oledModeInput.checked,
     showNativePlayPanel: showNativePlayPanelInput.checked,
