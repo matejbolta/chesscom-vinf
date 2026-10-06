@@ -1740,3 +1740,10 @@ html[data-chesscom-vinf-wide-extreme] .bot-speech-content-tip { color: #000 !imp
 html[data-chesscom-vinf-wide-extreme] .bot-speech-content-botMessage :is(.move-feedback-last-book-move-component, .recommend-box-container) {
   background: #000 !important; color: #bbb !important;
 }
+
+/* Wide game actions already live above the board; retain Flip in board settings. */
+@media (min-width: 600px) {
+  html[data-chesscom-vinf-wide-game-rows] .game-icons-container-component button:is([aria-label="Flip Board"], :has(svg[data-glyph="arrow-triangle-flip-vertical"])) {
+    display: none !important;
+  }
+}

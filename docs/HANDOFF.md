@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-06.
-Current source version: 2.22.5.
+Current source version: 2.22.6.
+2.22.6 hides only bottom .game-icons-container-component Flip Board button under wide-game-rows at>=600px; audited native aria-label and flip SVG glyph fallback. Top board settings menu and X untouched; disabled/native layouts restore automatically.
 2.22.5 adds user-specified native T shortcut (Flick hovered piece) at bottom of Chess.com desktop guide, shared popup/sidepanel. Documentation only; no shortcut handler changed.
 2.22.4: phone Analysis engine lines reserve min-height15.2rem (five native2.4rem rows+four.4rem gaps+1.6rem vertical padding), keep12px following margin. Blank space only, no fake moves/handlers; expansion grows naturally. Public native390px DOM measured24px rows/4px gaps/8px padding. Fixture line-count parameter models native geometry. IAB390px3/4/5 rows all152px, following optionsTop610px;1024px4rows124px/min0. Actual phone check pending.
 2.22.3 supersedes two-phone-gear requirement: one header Settings proxy in engine strip; hide native button.analysis-options-icon only when visible proxy exists, preserving fallback. Removed pending forced Board-tab intent. Narrowed icon sizing to buttons; status symbol stays separate. CSS remains <=599px/phone-analysis only. Local390px Analysis fixture verified one gear; wide native controls retained. Both builds/typecheck/235 tests pass; actual Firefox phone awaits user reload.

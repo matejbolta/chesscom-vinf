@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.22.6 — Remove redundant wide-game Flip button
+
+- Hide the bottom-right Flip Board shortcut in tablet/desktop game layouts. The board settings menu and native X shortcut remain available.
+
+
 ## 2.22.5 — Desktop shortcut guide
 
 - Add T — Flick hovered piece to the Chess.com desktop shortcut list.

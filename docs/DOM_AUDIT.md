@@ -1265,3 +1265,10 @@ Phone-only minimum15.2rem reserves five collapsed rows without capping expanded
 rows or adding fake moves. Sanitized engine fixture now uses that row structure
 and `line-count` parameter. IAB3/4/5-line panels all152px and following options
 at the same position; wide4-line panel remains native124px.
+
+## 2026-10-06 — Redundant wide-game Flip shortcut (2.22.6)
+
+Live read-only inspection confirms `.game-icons-container-component button`
+with aria-label `Flip Board` and `svg[data-glyph="arrow-triangle-flip-vertical"]`.
+Hide only this button in active wide-game-rows presentation at>=600px. Native
+board-controls settings menu is outside this selector. Fixture label updated.
