@@ -1,3 +1,4 @@
+import { LEGACY_SETTINGS } from "./legacy-settings";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LayoutController } from "../src/content/layout-controller";
 import { NativeLaunchAdapter } from "../src/content/launch-adapter";
@@ -15,7 +16,7 @@ describe("Quick Play interactions", () => {
     const navigate = vi.fn();
     new LayoutController(new NativeLaunchAdapter(navigate)).reconcile(
       document,
-      HOME_LOCATION
+      HOME_LOCATION, LEGACY_SETTINGS
     );
 
     const button = document.querySelector<HTMLButtonElement>(
@@ -44,7 +45,7 @@ describe("Quick Play interactions", () => {
     document.querySelector('a[href*="createLiveChallenge"]')?.remove();
     new LayoutController(new NativeLaunchAdapter(vi.fn())).reconcile(
       document,
-      HOME_LOCATION
+      HOME_LOCATION, LEGACY_SETTINGS
     );
 
     const buttons = Array.from(

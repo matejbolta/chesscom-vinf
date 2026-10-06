@@ -33,7 +33,7 @@ it("validates the complete Gen I–III catalog and conflicting settings without 
   expect(normalized.pokemonMode).toBe(false);
   expect(normalized.pokemonPieces).toEqual({...DEFAULT_SETTINGS.pokemonPieces,p:386});
   normalized.pokemonPieces.p = 1;
-  expect(DEFAULT_SETTINGS.pokemonPieces.p).toBe(25);
+  expect(DEFAULT_SETTINGS.pokemonPieces.p).toBe(201);
 });
 
 it("preserves native piece nodes, styles, input and promotion classes; restores on disable, route exit and Extreme", () => {

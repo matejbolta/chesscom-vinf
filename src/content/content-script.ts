@@ -7,7 +7,7 @@ import {
 import { startVinfRuntime, type SettingsSource } from "./runtime";
 
 const chromeSettingsSource: SettingsSource = {
-  load: loadSettings,
+  load: () => loadSettings(window.innerWidth < 600),
   save: saveSettings,
   subscribe(listener) {
     if (typeof chrome === "undefined" || !chrome.storage?.onChanged) {
@@ -16,7 +16,7 @@ const chromeSettingsSource: SettingsSource = {
 
     chrome.storage.onChanged.addListener((changes, areaName) => {
       if (areaName === "local" && changes[SETTINGS_STORAGE_KEY]) {
-        listener(normalizeSettings(changes[SETTINGS_STORAGE_KEY].newValue));
+        listener(normalizeSettings(changes[SETTINGS_STORAGE_KEY].newValue, window.innerWidth < 600));
       }
     });
   }

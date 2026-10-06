@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MARKERS, RECONCILE_DELAY_MS } from "../src/shared/constants";
-import { DEFAULT_SETTINGS, SETTINGS_STORAGE_KEY } from "../src/shared/settings";
+import { LEGACY_SETTINGS as DEFAULT_SETTINGS } from "./legacy-settings";
+import { SETTINGS_STORAGE_KEY } from "../src/shared/settings";
 import { loadHomepageFixture } from "./test-utils";
 
 afterEach(() => {

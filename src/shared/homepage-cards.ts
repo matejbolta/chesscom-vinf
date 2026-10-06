@@ -19,13 +19,11 @@ export const HOMEPAGE_SIDEBAR_CARD_CATALOG: readonly HomepageSidebarCard[] = [
   { id: "open-game", label: "Open Game Shortcut" }
 ] as const;
 
-export const DEFAULT_HOMEPAGE_SIDEBAR_ORDER: HomepageSidebarCardId[] =
-  HOMEPAGE_SIDEBAR_CARD_CATALOG.map(({ id }) => id);
+export const DEFAULT_HOMEPAGE_SIDEBAR_ORDER: HomepageSidebarCardId[] = [
+  "game-history", "stats", "open-game", "chess-tv", "profile", "recommended-match",
+  "daily-games", "streaks", "legend-league", "daily-puzzle", "friends"
+];
 
-export const DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE: HomepageSidebarCardId[] =
-  DEFAULT_HOMEPAGE_SIDEBAR_ORDER.filter(
-    (id) =>
-      id !== "profile" &&
-      id !== "recommended-match" &&
-      id !== "game-history"
-  );
+export const DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE: HomepageSidebarCardId[] = [
+  "stats", "open-game", "chess-tv"
+];

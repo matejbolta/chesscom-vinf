@@ -55,8 +55,7 @@ directory.
   graph and actions. Keep the initial report native. Leave homepage appearance
   unchanged, preserve native board input, and never simulate clocks or game state.
 - Expose 0, 1, 2, 3, 4, 6, or 8 user-selected time controls. Zero removes the
-  Quick Play module entirely. Default to the original six recorded in
-  `docs/FINAL_PRODUCT_SPEC.md`; use the per-count defaults in
+  Quick Play module entirely. Default to three (3+2, 10 min, 15+10), as approved on 2026-10-06; use the per-count defaults in
   `src/shared/time-controls.ts`. When the count changes, preserve the leading
   selections and fill only new slots from the documented fallback sequence.
   Repeated selections are valid and must persist.
@@ -76,7 +75,7 @@ directory.
   beyond the documented same-origin current-user presence lookup at homepage
   load and ordinary shortcut activation. Do not broaden that request's host,
   data, frequency, or purpose without an explicit product decision.
-- Keep OLED black opt-in and scoped to exact supported homepage, current
+- Keep OLED black configurable (on by default since 2.24.0) and scoped to exact supported homepage, current
   `/game/<id>`, legacy `/game/live/<id>`, and review routes. The configurable
   homepage `Jump to open game` card prefers a strictly validated current live
   game from Chess.com's same-origin presence response, then an exact native game

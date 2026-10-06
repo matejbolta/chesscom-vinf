@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, it, vi } from "vitest";
 import { startVinfRuntime } from "../src/content/runtime";
-import { DEFAULT_SETTINGS } from "../src/shared/settings";
+import { LEGACY_SETTINGS as DEFAULT_SETTINGS } from "./legacy-settings";
 
 it("synchronizes desktop O/E, leaves T unhandled, and ignores typing, modifiers; supports Review E and leaves T unhandled", async () => {
   vi.useFakeTimers();

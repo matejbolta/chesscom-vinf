@@ -9,7 +9,7 @@ export const PIECE_NAMES: Record<PieceRole, string> = {
 export const PIECE_GLYPHS: Record<PieceRole, string> = {
   p: "♟", n: "♞", b: "♝", r: "♜", q: "♛", k: "♚"
 };
-export const DEFAULT_POKEMON_PIECES: PokemonPieces = { p: 25, n: 78, b: 65, r: 143, q: 150, k: 149 };
+export const DEFAULT_POKEMON_PIECES: PokemonPieces = { p: 201, n: 12, b: 169, r: 208, q: 38, k: 53 };
 export const POKEMON_CATALOG = Object.entries(names).map(([id, name]) => ({ id: Number(id), name }));
 export function normalizePokemonPieces(value: unknown): PokemonPieces {
   const candidate = value && typeof value === "object" ? value as Partial<PokemonPieces> : {};

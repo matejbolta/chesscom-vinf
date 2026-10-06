@@ -7,7 +7,6 @@ export function createPokemonEditor(document: Document, extremeInput: HTMLInputE
   const section = document.createElement("section");
   section.className = "settings-card chesscom-vinf-settings-card vinf-pokemon-settings";
   section.setAttribute("aria-label", "Pokémon settings");
-  const heading = document.createElement("h2"); heading.textContent = "Pokémon";
   const toggle = (text: string) => {
     const label = document.createElement("label"); label.className = "vinf-pokemon-toggle";
     const name = document.createElement("strong"); name.textContent = text;
@@ -112,7 +111,7 @@ export function createPokemonEditor(document: Document, extremeInput: HTMLInputE
     reset.dispatchEvent(new Event("change", { bubbles: true }));
   });
   details.append(pieces.label, grid, legend, reset);
-  section.append(heading, mode.label, note, details);
+  section.append(mode.label, note, details);
   return {
     element: section,
     set(settings: ExtensionSettings) {

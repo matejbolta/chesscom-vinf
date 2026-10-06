@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RECONCILE_DELAY_MS } from "../src/shared/constants";
-import { DEFAULT_SETTINGS } from "../src/shared/settings";
+import { LEGACY_SETTINGS as DEFAULT_SETTINGS } from "./legacy-settings";
 import {
   getQuickPlayGridDimensions,
   QUICK_PLAY_EXPANSION_FALLBACK_IDS,

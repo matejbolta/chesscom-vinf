@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.24.0 — Personal defaults and compact phone Home button
+
+- Match the approved installed profile for new installations: card order/visibility/placement, three Quick Play presets, stats, OLED and turn animation settings. Preserve saved preferences.
+- Phone defaults use a 12px turn indicator and disabled ChessTV; tablet/desktop use 20px and enabled ChessTV.
+- Default Pokémon team: Unown, Butterfree, Crobat, Steelix, Ninetales and Persian; mode remains off. Remove the redundant Pokémon heading.
+- Center a compact Go home button at the bottom of phone pages instead of stretching it across the screen.
+
 ## 2.23.0 — Placement for every homepage card
 
 - Add Main/Right placement to Stats, ChessTV, Streaks, Legend League, Daily Puzzle and Friends in desktop and Android settings. Preserve existing defaults, visibility and ordering.

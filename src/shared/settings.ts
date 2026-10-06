@@ -37,20 +37,20 @@ export const SETTINGS_STORAGE_KEY = "vinfSettings";
 
 export const DEFAULT_SETTINGS: ExtensionSettings = {
   enabled: true,
-  oledMode: false,
+  oledMode: true,
   extremeOled: false,
   pokemonMode: false,
   pokemonPiecesEnabled: true,
   pokemonPieces: { ...DEFAULT_POKEMON_PIECES },
-  turnDotSize: 12,
-  turnAnimationDuration: 1000,
-  turnPulseDiameter: 24,
+  turnDotSize: 20,
+  turnAnimationDuration: 333,
+  turnPulseDiameter: 48,
   showNativePlayPanel: false,
   profilePlacement: "hidden",
   profileVisiblePlacement: "main",
-  dailyGamesPlacement: "sidebar",
+  dailyGamesPlacement: "hidden",
   dailyGamesVisiblePlacement: "sidebar",
-  recommendedMatchPlacement: "main",
+  recommendedMatchPlacement: "hidden",
   recommendedMatchVisiblePlacement: "main",
   gameHistoryPlacement: "main",
   gameHistoryVisiblePlacement: "main",
@@ -59,8 +59,8 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   homepageCardColumns: {},
   homepageSidebarOrder: [...DEFAULT_HOMEPAGE_SIDEBAR_ORDER],
   homepageSidebarVisible: [...DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE],
-  quickPlayPresetCount: 6,
-  timeControlIds: [...DEFAULT_TIME_CONTROL_IDS],
+  quickPlayPresetCount: 3,
+  timeControlIds: ["3-2", "10-0", "15-10"],
   statsSummaryOrder: [...DEFAULT_STATS_SUMMARY_ORDER],
   statsSummaryVisible: [...DEFAULT_STATS_SUMMARY_VISIBLE],
   statsRatingOrder: [...DEFAULT_STATS_RATING_ORDER],
@@ -81,12 +81,14 @@ const validStatsRatingIds = new Set<StatsRatingId>(
   STATS_RATING_CATALOG.map((item) => item.id)
 );
 
-function cloneDefaultSettings(): ExtensionSettings {
+export function getDefaultSettings(phone = false): ExtensionSettings {
   return {
     ...DEFAULT_SETTINGS,
+    turnDotSize: phone ? 12 : 20,
+    homepageCardColumns: {},
     pokemonPieces: { ...DEFAULT_SETTINGS.pokemonPieces },
     homepageSidebarOrder: [...DEFAULT_SETTINGS.homepageSidebarOrder],
-    homepageSidebarVisible: [...DEFAULT_SETTINGS.homepageSidebarVisible],
+    homepageSidebarVisible: DEFAULT_SETTINGS.homepageSidebarVisible.filter(id => !phone || id !== "chess-tv"),
     timeControlIds: [...DEFAULT_SETTINGS.timeControlIds],
     statsSummaryOrder: [...DEFAULT_SETTINGS.statsSummaryOrder],
     statsSummaryVisible: [...DEFAULT_SETTINGS.statsSummaryVisible],
@@ -253,9 +255,10 @@ function normalizeStatsRatingStates(
   ) as StatsRatingStates;
 }
 
-export function normalizeSettings(value: unknown): ExtensionSettings {
+export function normalizeSettings(value: unknown, phone = false): ExtensionSettings {
+  const defaults = getDefaultSettings(phone);
   if (!value || typeof value !== "object") {
-    return cloneDefaultSettings();
+    return defaults;
   }
 
   const candidate = value as {
@@ -311,7 +314,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     rawIds.length === ids.length &&
     isQuickPlayPresetCount(ids.length)
       ? ids.length
-      : DEFAULT_SETTINGS.quickPlayPresetCount;
+      : defaults.quickPlayPresetCount;
   const quickPlayPresetCount = isQuickPlayPresetCount(
     candidate.quickPlayPresetCount
   )
@@ -327,14 +330,14 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     candidate.profilePlacement
   )
     ? (candidate.profilePlacement as ProfilePlacement)
-    : DEFAULT_SETTINGS.profilePlacement;
+    : defaults.profilePlacement;
   const profileVisiblePlacement = isMainColumnCardVisiblePlacement(
     candidate.profileVisiblePlacement
   )
     ? (candidate.profileVisiblePlacement as ProfileVisiblePlacement)
     : isMainColumnCardVisiblePlacement(profilePlacement)
       ? profilePlacement
-      : DEFAULT_SETTINGS.profileVisiblePlacement;
+      : defaults.profileVisiblePlacement;
   const dailyGamesPlacement = isMainColumnCardPlacement(
     candidate.dailyGamesPlacement
   )
@@ -347,19 +350,19 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
         ? candidate.reorderGameHistory
           ? "sidebar"
           : "main"
-        : DEFAULT_SETTINGS.dailyGamesPlacement;
+        : defaults.dailyGamesPlacement;
   const dailyGamesVisiblePlacement = isMainColumnCardVisiblePlacement(
     candidate.dailyGamesVisiblePlacement
   )
     ? candidate.dailyGamesVisiblePlacement
     : isMainColumnCardVisiblePlacement(dailyGamesPlacement)
       ? dailyGamesPlacement
-      : DEFAULT_SETTINGS.dailyGamesVisiblePlacement;
+      : defaults.dailyGamesVisiblePlacement;
   const recommendedMatchPlacement = isMainColumnCardPlacement(
     candidate.recommendedMatchPlacement
   )
     ? candidate.recommendedMatchPlacement
-    : DEFAULT_SETTINGS.recommendedMatchPlacement;
+    : defaults.recommendedMatchPlacement;
   const recommendedMatchVisiblePlacement =
     isMainColumnCardVisiblePlacement(
       candidate.recommendedMatchVisiblePlacement
@@ -367,31 +370,31 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       ? candidate.recommendedMatchVisiblePlacement
       : isMainColumnCardVisiblePlacement(recommendedMatchPlacement)
         ? recommendedMatchPlacement
-        : DEFAULT_SETTINGS.recommendedMatchVisiblePlacement;
+        : defaults.recommendedMatchVisiblePlacement;
   const gameHistoryPlacement = isMainColumnCardPlacement(
     candidate.gameHistoryPlacement
   )
     ? candidate.gameHistoryPlacement
-    : DEFAULT_SETTINGS.gameHistoryPlacement;
+    : defaults.gameHistoryPlacement;
   const gameHistoryVisiblePlacement = isMainColumnCardVisiblePlacement(
     candidate.gameHistoryVisiblePlacement
   )
     ? candidate.gameHistoryVisiblePlacement
     : isMainColumnCardVisiblePlacement(gameHistoryPlacement)
       ? gameHistoryPlacement
-      : DEFAULT_SETTINGS.gameHistoryVisiblePlacement;
+      : defaults.gameHistoryVisiblePlacement;
   const openGamePlacement = isMainColumnCardPlacement(
     candidate.openGamePlacement
   )
     ? candidate.openGamePlacement
-    : DEFAULT_SETTINGS.openGamePlacement;
+    : defaults.openGamePlacement;
   const openGameVisiblePlacement = isMainColumnCardVisiblePlacement(
     candidate.openGameVisiblePlacement
   )
     ? candidate.openGameVisiblePlacement
     : isMainColumnCardVisiblePlacement(openGamePlacement)
       ? openGamePlacement
-      : DEFAULT_SETTINGS.openGameVisiblePlacement;
+      : defaults.openGameVisiblePlacement;
   const hasSidebarVisibility = Array.isArray(
     candidate.homepageSidebarVisible
   );
@@ -401,7 +404,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   const normalizedHomepageSidebarVisible = normalizeVisible(
     candidate.homepageSidebarVisible,
     validHomepageSidebarCardIds,
-    DEFAULT_SETTINGS.homepageSidebarVisible
+    defaults.homepageSidebarVisible
   ).filter((id) => {
     if (id === "chess-tv" && !hasSidebarVisibility) {
       return candidate.showChessTv !== false;
@@ -443,17 +446,18 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     enabled:
       typeof candidate.enabled === "boolean"
         ? candidate.enabled
-        : DEFAULT_SETTINGS.enabled,
+        : defaults.enabled,
     turnDotSize: typeof candidate.turnDotSize === "number" && Number.isFinite(candidate.turnDotSize)
-      ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize,
+      ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : defaults.turnDotSize,
     turnAnimationDuration: typeof candidate.turnAnimationDuration === "number" && Number.isFinite(candidate.turnAnimationDuration)
-      ? Math.min(5000, Math.max(0, Math.round(candidate.turnAnimationDuration))) : DEFAULT_SETTINGS.turnAnimationDuration,
+      ? Math.min(5000, Math.max(0, Math.round(candidate.turnAnimationDuration))) : defaults.turnAnimationDuration,
     turnPulseDiameter: typeof candidate.turnPulseDiameter === "number" && Number.isFinite(candidate.turnPulseDiameter)
       ? Math.min(48, Math.max(0, Math.round(candidate.turnPulseDiameter)))
-      : Math.round(Math.min(48, (typeof candidate.turnDotSize === "number" && Number.isFinite(candidate.turnDotSize)
-          ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize)
+      : typeof candidate.turnPulseScale === "number" && Number.isFinite(candidate.turnPulseScale)
+      ? Math.round(Math.min(48, (typeof candidate.turnDotSize === "number" && Number.isFinite(candidate.turnDotSize)
+          ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : defaults.turnDotSize)
         * (typeof candidate.turnPulseScale === "number" && Number.isFinite(candidate.turnPulseScale)
-          ? Math.min(12, Math.max(1, Math.round(candidate.turnPulseScale * 10) / 10)) : 2))),
+          ? Math.min(12, Math.max(1, Math.round(candidate.turnPulseScale * 10) / 10)) : 2))) : defaults.turnPulseDiameter,
     // On conflicting imported records, Extreme wins; explicit UI choices clear the other mode.
     pokemonMode: candidate.pokemonMode === true && candidate.extremeOled !== true,
     pokemonPiecesEnabled: candidate.pokemonPiecesEnabled !== false,
@@ -466,7 +470,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     showNativePlayPanel:
       typeof candidate.showNativePlayPanel === "boolean"
         ? candidate.showNativePlayPanel
-        : DEFAULT_SETTINGS.showNativePlayPanel,
+        : defaults.showNativePlayPanel,
     profilePlacement,
     profileVisiblePlacement,
     dailyGamesPlacement,
@@ -494,22 +498,22 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     statsSummaryOrder: normalizeCompleteOrder(
       candidate.statsSummaryOrder,
       validStatsSummaryIds,
-      DEFAULT_SETTINGS.statsSummaryOrder
+      defaults.statsSummaryOrder
     ),
     statsSummaryVisible: normalizeVisible(
       candidate.statsSummaryVisible,
       validStatsSummaryIds,
-      DEFAULT_SETTINGS.statsSummaryVisible
+      defaults.statsSummaryVisible
     ),
     statsRatingOrder: normalizeCompleteOrder(
       candidate.statsRatingOrder,
       validStatsRatingIds,
-      DEFAULT_SETTINGS.statsRatingOrder
+      defaults.statsRatingOrder
     ),
     statsRatingVisible: normalizeVisible(
       candidate.statsRatingVisible,
       validStatsRatingIds,
-      DEFAULT_SETTINGS.statsRatingVisible
+      defaults.statsRatingVisible
     ),
     statsRatingStates: normalizeStatsRatingStates(
       candidate.statsRatingStates,
@@ -518,13 +522,13 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   };
 }
 
-export async function loadSettings(): Promise<ExtensionSettings> {
+export async function loadSettings(phone = false): Promise<ExtensionSettings> {
   if (typeof chrome === "undefined" || !chrome.storage?.local) {
-    return normalizeSettings(DEFAULT_SETTINGS);
+    return normalizeSettings(undefined, phone);
   }
 
   const result = await chrome.storage.local.get(SETTINGS_STORAGE_KEY);
-  return normalizeSettings(result[SETTINGS_STORAGE_KEY]);
+  return normalizeSettings(result[SETTINGS_STORAGE_KEY], phone);
 }
 
 export async function saveSettings(settings: ExtensionSettings): Promise<void> {

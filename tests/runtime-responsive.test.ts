@@ -7,7 +7,7 @@ import {
   RECONCILE_DELAY_MS,
   ROUTE_CHECK_INTERVAL_MS
 } from "../src/shared/constants";
-import { DEFAULT_SETTINGS } from "../src/shared/settings";
+import { LEGACY_SETTINGS as DEFAULT_SETTINGS } from "./legacy-settings";
 import { loadResponsiveHomepageFixture } from "./test-utils";
 
 afterEach(() => {

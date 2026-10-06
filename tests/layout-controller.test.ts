@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { LayoutController } from "../src/content/layout-controller";
 import { NativeLaunchAdapter } from "../src/content/launch-adapter";
 import { MARKERS } from "../src/shared/constants";
-import { DEFAULT_SETTINGS } from "../src/shared/settings";
+import { LEGACY_SETTINGS as DEFAULT_SETTINGS } from "./legacy-settings";
 import {
   DEFAULT_EIGHT_TIME_CONTROL_IDS,
   DEFAULT_TIME_CONTROL_IDS_BY_COUNT,
@@ -66,7 +66,7 @@ describe("LayoutController", () => {
     const document = loadModernHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
 
-    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+    expect(controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS)).toBe(true);
 
     const main = document.querySelector<HTMLElement>(
       "#home-main > .main-component"
@@ -109,7 +109,7 @@ describe("LayoutController", () => {
       "unknown-card"
     ]);
 
-    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+    expect(controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS)).toBe(true);
     expect(
       document.querySelectorAll(`[${MARKERS.owned}="quick-play"]`)
     ).toHaveLength(1);
@@ -224,7 +224,7 @@ describe("LayoutController", () => {
     expect(iframe.getAttribute("src")).toBe(
       "https://www.chess.com/tv/sanitized-player"
     );
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     expect(iframe.getAttribute("allow")).toBe("autoplay; fullscreen");
     expect(iframe.getAttribute("src")).toBe(
       "https://www.chess.com/tv/sanitized-player"
@@ -373,7 +373,7 @@ describe("LayoutController", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
 
-    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+    expect(controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS)).toBe(true);
     const firstPanel = document.querySelector(`[${MARKERS.owned}="quick-play"]`);
     expect(firstPanel).not.toBeNull();
     expect(
@@ -432,7 +432,7 @@ describe("LayoutController", () => {
       "legend-league"
     ]);
 
-    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+    expect(controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS)).toBe(true);
     expect(document.querySelector(`[${MARKERS.owned}="quick-play"]`)).toBe(firstPanel);
     expect(
       document.querySelectorAll(`[${MARKERS.owned}="quick-play"]`)
@@ -443,7 +443,7 @@ describe("LayoutController", () => {
     const document = loadHomepageFixture();
     new LayoutController(new NativeLaunchAdapter(vi.fn())).reconcile(
       document,
-      HOME_LOCATION
+      HOME_LOCATION, DEFAULT_SETTINGS
     );
 
     const buttons = Array.from(
@@ -608,7 +608,7 @@ describe("LayoutController", () => {
     const document = loadModernHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
 
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     expect(
       document.querySelector(`[${MARKERS.owned}="quick-play"]`)
     ).not.toBeNull();
@@ -765,7 +765,7 @@ describe("LayoutController", () => {
   it("restores Daily Games immediately when its sidebar setting is disabled", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     controller.reconcile(document, HOME_LOCATION, {
       ...DEFAULT_SETTINGS,
       dailyGamesPlacement: "main"
@@ -848,7 +848,7 @@ describe("LayoutController", () => {
       "daily-games"
     ]);
 
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     expect(visibleModuleOrder(rightColumn)).toEqual([
       "stats",
       "chess-tv",
@@ -868,7 +868,7 @@ describe("LayoutController", () => {
     delayedDaily.remove();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
 
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     expect(
       document.documentElement.getAttribute(MARKERS.dailyPlacement)
     ).toBe("sidebar");
@@ -880,7 +880,7 @@ describe("LayoutController", () => {
       document.documentElement.getAttribute(MARKERS.dailyPlacement)
     ).toBe("sidebar");
 
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     expect(delayedDaily.parentElement).toBe(
       document.querySelector("#vue-sidebar-instance")
     );
@@ -908,7 +908,7 @@ describe("LayoutController", () => {
       ?.classList.remove("game-history-games-component");
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
 
-    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+    expect(controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS)).toBe(true);
 
     const quickPlay = document.querySelector<HTMLElement>(
       `[${MARKERS.owned}="quick-play"]`
@@ -946,7 +946,7 @@ describe("LayoutController", () => {
     original.parentElement?.append(duplicate);
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
 
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
 
     const userInfoModules = Array.from(
       document.querySelectorAll<HTMLElement>(".promo-toolbar-user-info")
@@ -965,7 +965,7 @@ describe("LayoutController", () => {
   it("cleans up owned UI and restores native ordering", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     controller.cleanup(document);
 
     expect(document.querySelector(`[${MARKERS.owned}]`)).toBeNull();
@@ -991,7 +991,7 @@ describe("LayoutController", () => {
     }
 
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
-    expect(() => controller.reconcile(document, HOME_LOCATION)).not.toThrow();
+    expect(() => controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS)).not.toThrow();
     expect(
       document.querySelector(".promo-component")?.getAttribute(MARKERS.layout)
     ).toBe("quick-play-in-main");
@@ -1003,7 +1003,7 @@ describe("LayoutController", () => {
   it("reconciles native modules replaced by a dynamic rerender", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
 
     const oldPuzzles = document.querySelector<HTMLElement>(
       '[data-fixture-module="puzzles"]'
@@ -1039,7 +1039,7 @@ describe("LayoutController", () => {
     oldStats.replaceWith(newStats);
     rightColumn.append(newStats);
 
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
 
     expect(newPuzzles.getAttribute(MARKERS.hidden)).toBe("puzzles");
     expect(newHomepageToolbar.getAttribute(MARKERS.hidden)).toBe("profile");
@@ -1059,7 +1059,7 @@ describe("LayoutController", () => {
   it("keeps online ChessTV and Daily Games between Stats and Legend League", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
 
     const rightColumn = document.querySelector<HTMLElement>("#vue-sidebar-instance")!;
     const tv = document.querySelector<HTMLElement>(
@@ -1069,7 +1069,7 @@ describe("LayoutController", () => {
     tv.prepend(Object.assign(document.createElement("strong"), { textContent: "aftpawn" }));
     rightColumn.append(tv);
 
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
     expect(moduleOrder(rightColumn)).toEqual([
       "stats",
       "chess-tv",
@@ -1092,7 +1092,7 @@ describe("LayoutController", () => {
   it("cleans up when a client-side route leaves the homepage", () => {
     const document = loadHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
-    controller.reconcile(document, HOME_LOCATION);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
 
     expect(
       controller.reconcile(document, {
@@ -1108,7 +1108,7 @@ describe("LayoutController", () => {
     const document = loadResponsiveHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
 
-    expect(controller.reconcile(document, HOME_LOCATION)).toBe(true);
+    expect(controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS)).toBe(true);
     const main = document.querySelector<HTMLElement>("main")!;
     expect(main.getAttribute(MARKERS.layout)).toBe("single-column");
     expect(main.firstElementChild?.getAttribute(MARKERS.owned)).toBe("quick-play");

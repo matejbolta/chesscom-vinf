@@ -190,7 +190,7 @@ export const DEFAULT_TIME_CONTROL_IDS_BY_COUNT: Readonly<
   0: [],
   1: ["10-0"],
   2: ["10-0", "15-10"],
-  3: ["10-0", "15-10", "3-2"],
+  3: ["3-2", "10-0", "15-10"],
   4: ["10-0", "10-5", "15-10", "3-2"],
   6: DEFAULT_TIME_CONTROL_IDS,
   8: DEFAULT_EIGHT_TIME_CONTROL_IDS

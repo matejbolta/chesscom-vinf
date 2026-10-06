@@ -25,7 +25,7 @@ import {
   type HomepageSidebarCard
 } from "../shared/homepage-cards";
 import {
-  DEFAULT_SETTINGS,
+  getDefaultSettings,
   normalizeSettings,
   SETTINGS_STORAGE_KEY
 } from "../shared/settings";
@@ -75,7 +75,7 @@ function createSettingsStore(): UserscriptSettingsStore {
   const listeners = new Set<(settings: ExtensionSettings) => void>();
 
   const notify = (value: unknown): void => {
-    const settings = normalizeSettings(value);
+    const settings = normalizeSettings(value, window.innerWidth < 600);
     for (const listener of listeners) {
       listener(settings);
     }
@@ -96,7 +96,7 @@ function createSettingsStore(): UserscriptSettingsStore {
         try {
           notify(JSON.parse(event.newValue));
         } catch {
-          notify(DEFAULT_SETTINGS);
+          notify(undefined);
         }
       }
     });
@@ -105,12 +105,12 @@ function createSettingsStore(): UserscriptSettingsStore {
   return {
     async load() {
       if (hasUserscriptValueApi) {
-        return normalizeSettings(GM_getValue(SETTINGS_STORAGE_KEY, DEFAULT_SETTINGS));
+        return normalizeSettings(GM_getValue(SETTINGS_STORAGE_KEY, undefined), window.innerWidth < 600);
       }
       try {
-        return normalizeSettings(JSON.parse(localStorage.getItem(localStorageKey) ?? ""));
+        return normalizeSettings(JSON.parse(localStorage.getItem(localStorageKey) ?? ""), window.innerWidth < 600);
       } catch {
-        return normalizeSettings(DEFAULT_SETTINGS);
+        return normalizeSettings(undefined, window.innerWidth < 600);
       }
     },
     subscribe(listener) {
@@ -143,6 +143,7 @@ function optionLabel(label: string): string {
 }
 
 function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement {
+  const defaults = getDefaultSettings(window.innerWidth < 600);
   const dialog = document.createElement("dialog");
   dialog.className = "chesscom-vinf-settings-dialog";
   dialog.dataset.chesscomVinfUserscriptSettings = "";
@@ -345,7 +346,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     const count = Number(presetCountSelect.value);
     return isQuickPlayPresetCount(count)
       ? count
-      : DEFAULT_SETTINGS.quickPlayPresetCount;
+      : defaults.quickPlayPresetCount;
   }
 
   function renderPresetSelects(
@@ -391,8 +392,8 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   }
 
   renderPresetSelects(
-    DEFAULT_SETTINGS.quickPlayPresetCount,
-    DEFAULT_SETTINGS.timeControlIds
+    defaults.quickPlayPresetCount,
+    defaults.timeControlIds
   );
   presets.append(presetList);
 
@@ -879,18 +880,18 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
 
   const homepageCardEditor = createHomepageCardEditor(
     HOMEPAGE_SIDEBAR_CARD_CATALOG,
-    DEFAULT_SETTINGS.homepageSidebarOrder,
-    DEFAULT_SETTINGS.homepageSidebarVisible,
-    DEFAULT_SETTINGS.profilePlacement,
-    DEFAULT_SETTINGS.profileVisiblePlacement,
-    DEFAULT_SETTINGS.dailyGamesPlacement,
-    DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
-    DEFAULT_SETTINGS.recommendedMatchPlacement,
-    DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
-    DEFAULT_SETTINGS.gameHistoryPlacement,
-    DEFAULT_SETTINGS.gameHistoryVisiblePlacement,
-    DEFAULT_SETTINGS.openGamePlacement,
-    DEFAULT_SETTINGS.openGameVisiblePlacement
+    defaults.homepageSidebarOrder,
+    defaults.homepageSidebarVisible,
+    defaults.profilePlacement,
+    defaults.profileVisiblePlacement,
+    defaults.dailyGamesPlacement,
+    defaults.dailyGamesVisiblePlacement,
+    defaults.recommendedMatchPlacement,
+    defaults.recommendedMatchVisiblePlacement,
+    defaults.gameHistoryPlacement,
+    defaults.gameHistoryVisiblePlacement,
+    defaults.openGamePlacement,
+    defaults.openGameVisiblePlacement
   );
   const homepageNote = document.createElement("p");
   homepageNote.className = "chesscom-vinf-settings-note";
@@ -916,15 +917,15 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const statsSummaryEditor = createPreferenceEditor<StatsSummaryId>(
     "Summary",
     STATS_SUMMARY_CATALOG,
-    DEFAULT_SETTINGS.statsSummaryOrder,
-    DEFAULT_SETTINGS.statsSummaryVisible
+    defaults.statsSummaryOrder,
+    defaults.statsSummaryVisible
   );
   const statsRatingEditor = createPreferenceEditor<StatsRatingId>(
     "Ratings",
     STATS_RATING_CATALOG,
-    DEFAULT_SETTINGS.statsRatingOrder,
-    DEFAULT_SETTINGS.statsRatingVisible,
-    DEFAULT_SETTINGS.statsRatingStates
+    defaults.statsRatingOrder,
+    defaults.statsRatingVisible,
+    defaults.statsRatingStates
   );
   const statsNote = document.createElement("p");
   statsNote.className = "chesscom-vinf-settings-note";
@@ -1053,32 +1054,32 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   });
   resetHomepage.addEventListener("click", () => {
     cardColumns = {};
-    showNativePlayPanelInput.checked = DEFAULT_SETTINGS.showNativePlayPanel;
+    showNativePlayPanelInput.checked = defaults.showNativePlayPanel;
     homepageCardEditor.render(
-      DEFAULT_SETTINGS.homepageSidebarOrder,
-      DEFAULT_SETTINGS.homepageSidebarVisible,
-      DEFAULT_SETTINGS.profilePlacement,
-      DEFAULT_SETTINGS.profileVisiblePlacement,
-      DEFAULT_SETTINGS.dailyGamesPlacement,
-      DEFAULT_SETTINGS.dailyGamesVisiblePlacement,
-      DEFAULT_SETTINGS.recommendedMatchPlacement,
-      DEFAULT_SETTINGS.recommendedMatchVisiblePlacement,
-      DEFAULT_SETTINGS.gameHistoryPlacement,
-      DEFAULT_SETTINGS.gameHistoryVisiblePlacement,
-      DEFAULT_SETTINGS.openGamePlacement,
-      DEFAULT_SETTINGS.openGameVisiblePlacement
+      defaults.homepageSidebarOrder,
+      defaults.homepageSidebarVisible,
+      defaults.profilePlacement,
+      defaults.profileVisiblePlacement,
+      defaults.dailyGamesPlacement,
+      defaults.dailyGamesVisiblePlacement,
+      defaults.recommendedMatchPlacement,
+      defaults.recommendedMatchVisiblePlacement,
+      defaults.gameHistoryPlacement,
+      defaults.gameHistoryVisiblePlacement,
+      defaults.openGamePlacement,
+      defaults.openGameVisiblePlacement
     );
     void save("Homepage defaults restored.");
   });
   resetStats.addEventListener("click", () => {
     statsSummaryEditor.render(
-      DEFAULT_SETTINGS.statsSummaryOrder,
-      DEFAULT_SETTINGS.statsSummaryVisible
+      defaults.statsSummaryOrder,
+      defaults.statsSummaryVisible
     );
     statsRatingEditor.render(
-      DEFAULT_SETTINGS.statsRatingOrder,
-      DEFAULT_SETTINGS.statsRatingVisible,
-      DEFAULT_SETTINGS.statsRatingStates
+      defaults.statsRatingOrder,
+      defaults.statsRatingVisible,
+      defaults.statsRatingStates
     );
     void save("Stats defaults restored.");
   });

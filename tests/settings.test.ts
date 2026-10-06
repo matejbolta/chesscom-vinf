@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_SETTINGS,
+  getDefaultSettings,
   normalizeSettings
 } from "../src/shared/settings";
 import {
@@ -11,26 +12,39 @@ import {
 } from "../src/shared/time-controls";
 
 describe("settings", () => {
+  it("matches the approved installed profile with phone-only defaults", () => {
+    const desktop = getDefaultSettings();
+    const phone = getDefaultSettings(true);
+    expect(desktop).toMatchObject({oledMode:true, extremeOled:false, pokemonMode:false,
+      turnDotSize:20,turnPulseDiameter:48,turnAnimationDuration:333,
+      pokemonPieces:{p:201,n:12,b:169,r:208,q:38,k:53},
+      quickPlayPresetCount:3,timeControlIds:["3-2","10-0","15-10"],
+      dailyGamesPlacement:"hidden",recommendedMatchPlacement:"hidden",gameHistoryPlacement:"main"});
+    expect(phone).toEqual({...desktop,turnDotSize:12,homepageSidebarVisible:["stats","open-game"]});
+    expect(normalizeSettings(undefined,true)).toEqual(phone);
+    expect(normalizeSettings({...phone,turnDotSize:18,homepageSidebarVisible:["chess-tv"]},true))
+      .toMatchObject({turnDotSize:18,homepageSidebarVisible:["open-game","chess-tv"]});
+  });
   it("uses the requested defaults", () => {
     expect(normalizeSettings(undefined)).toEqual(DEFAULT_SETTINGS);
     expect(normalizeSettings({turnAnimationDuration: 2500}).turnAnimationDuration).toBe(2500);
     expect(normalizeSettings({turnAnimationDuration: -1}).turnAnimationDuration).toBe(0);
     expect(normalizeSettings({turnAnimationDuration: 6000}).turnAnimationDuration).toBe(5000);
-    expect(normalizeSettings({turnAnimationDuration: NaN}).turnAnimationDuration).toBe(1000);
+    expect(normalizeSettings({turnAnimationDuration: NaN}).turnAnimationDuration).toBe(333);
     expect(normalizeSettings({turnDotSize: 16, turnPulseScale: 5}).turnPulseDiameter).toBe(48);
     expect(normalizeSettings(normalizeSettings({turnDotSize: 7, turnPulseScale: 1.3}))).toEqual(normalizeSettings({turnDotSize: 7, turnPulseScale: 1.3}));
     expect(normalizeSettings({turnDotSize: 8, turnPulseScale: 5}).turnPulseDiameter).toBe(40);
     expect(normalizeSettings({turnPulseDiameter: 32, turnPulseScale: 5}).turnPulseDiameter).toBe(32);
     expect(normalizeSettings({turnPulseDiameter: -1}).turnPulseDiameter).toBe(0);
     expect(normalizeSettings({turnPulseDiameter: 99}).turnPulseDiameter).toBe(48);
-    expect(normalizeSettings({turnPulseDiameter: NaN}).turnPulseDiameter).toBe(24);
+    expect(normalizeSettings({turnPulseDiameter: NaN}).turnPulseDiameter).toBe(48);
     expect(normalizeSettings({homepageCardColumns: {stats: "main", friends: "sidebar", invalid: "main", "chess-tv": "bad"}}).homepageCardColumns).toEqual({stats: "main", friends: "sidebar"});
     expect(normalizeSettings({}).homepageCardColumns).toEqual({});
-    expect(DEFAULT_SETTINGS.oledMode).toBe(false);
+    expect(DEFAULT_SETTINGS.oledMode).toBe(true);
     expect(normalizeSettings({turnDotSize: 16}).turnDotSize).toBe(16);
     expect(normalizeSettings({turnDotSize: 100}).turnDotSize).toBe(24);
     expect(normalizeSettings({turnDotSize: 0}).turnDotSize).toBe(4);
-    expect(normalizeSettings({turnDotSize: NaN}).turnDotSize).toBe(12);
+    expect(normalizeSettings({turnDotSize: NaN}).turnDotSize).toBe(20);
     expect(Object.values(DEFAULT_SETTINGS.statsRatingStates)).toEqual([
       "retracted",
       "retracted",
@@ -64,6 +78,8 @@ describe("settings", () => {
     ).toEqual({
       ...DEFAULT_SETTINGS,
       enabled: false,
+      oledMode: false,
+      quickPlayPresetCount: 6,
       dailyGamesPlacement: "main",
       dailyGamesVisiblePlacement: "main",
       homepageSidebarVisible:
@@ -231,21 +247,13 @@ describe("settings", () => {
       gameHistoryVisiblePlacement: "sidebar",
       showNativePlayPanel: false
     });
-    expect(migrated.homepageSidebarVisible).toEqual([
-      "profile",
-      "stats",
-      "recommended-match",
-      "streaks",
-      "daily-puzzle",
-      "friends",
-      "open-game"
-    ]);
+    expect(migrated.homepageSidebarVisible).toEqual(["stats", "open-game", "profile", "recommended-match"]);
     expect(
       normalizeSettings({
         ...DEFAULT_SETTINGS,
         dailyGamesPlacement: "somewhere"
       }).dailyGamesPlacement
-    ).toBe("sidebar");
+    ).toBe("hidden");
     expect(
       normalizeSettings({
         dailyGamesPlacement: "hidden",
@@ -297,7 +305,6 @@ describe("settings", () => {
     expect(normalized.homepageSidebarVisible).toEqual([
       "friends",
       "stats",
-      "daily-games",
       "open-game"
     ]);
   });

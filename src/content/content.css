@@ -1586,6 +1586,13 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
   visibility: visible !important;
   background: var(--chesscom-vinf-time-surface, hsl(91deg 36% 28%));
 }
+@media (max-width: 599px) {
+  html body .chesscom-vinf-go-home {
+    width: fit-content; max-width: calc(100% - 32px); min-width: 120px;
+    margin-inline: auto; justify-self: center; align-self: center;
+    padding-inline: 24px;
+  }
+}
 .chesscom-vinf-go-home:hover { background: var(--chesscom-vinf-time-surface-hovered, hsl(91deg 39% 32%)); }
 html[data-chesscom-vinf-oled] .chesscom-vinf-go-home:active { background: #070807; }
 html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: visible !important; }

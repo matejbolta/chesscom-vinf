@@ -1,8 +1,9 @@
+import { LEGACY_SETTINGS as DEFAULT_SETTINGS } from "./legacy-settings";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  DEFAULT_SETTINGS,
+  DEFAULT_SETTINGS as INSTALL_DEFAULTS,
   SETTINGS_STORAGE_KEY
 } from "../src/shared/settings";
 import {
@@ -603,6 +604,10 @@ describe("settings popup", () => {
     expect(set).toHaveBeenLastCalledWith({
       [SETTINGS_STORAGE_KEY]: {
         ...DEFAULT_SETTINGS,
+        homepageSidebarOrder: INSTALL_DEFAULTS.homepageSidebarOrder,
+        homepageSidebarVisible: INSTALL_DEFAULTS.homepageSidebarVisible,
+        dailyGamesPlacement: INSTALL_DEFAULTS.dailyGamesPlacement,
+        recommendedMatchPlacement: INSTALL_DEFAULTS.recommendedMatchPlacement,
         enabled: false
       }
     });
