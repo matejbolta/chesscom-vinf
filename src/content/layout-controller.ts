@@ -291,16 +291,28 @@ export class LayoutController {
       "open-game":
         settings.openGamePlacement === "main" ? gameContinuation : null
     };
+    for (const id of ["stats", "chess-tv", "streaks", "legend-league", "daily-puzzle", "friends"] as const) {
+      const card = sidebarCards[id];
+      if (card && settings.homepageCardColumns[id] === "main") {
+        mainCards[id] = card;
+        sidebarCards[id] = null;
+        if (modules.layoutMode === "desktop" && card.parentElement !== quickPlayHost) {
+          this.rememberPosition(card);
+          quickPlayHost.append(card);
+        }
+      }
+    }
     const desiredMainOrder = [
       ...new Set(
         settings.homepageSidebarOrder
           .map((id) => mainCards[id] ?? null)
-          .filter((element): element is HTMLElement => Boolean(element))
+          .filter((element): element is HTMLElement => Boolean(element) && !element!.hasAttribute(MARKERS.hidden))
       )
     ];
 
     if (modules.layoutMode === "responsive") {
       const allResponsiveModules = [
+        ...Object.values(mainCards),
         modules.profile,
         modules.recommendedMatch,
         modules.dailyGames,

@@ -614,3 +614,7 @@ select {
 .settings-card.vinf-pokemon-settings { padding: 12px 14px; }
 .settings-card.vinf-pokemon-settings h2 { font-size: 13px; letter-spacing: .02em; }
 .vinf-pokemon-toggle strong { font-size: 13px; }
+
+.turn-settings > .setting-row { border-top: 0; }
+.turn-settings .pulse-label { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.turn-settings .pulse-label small { white-space: nowrap; }

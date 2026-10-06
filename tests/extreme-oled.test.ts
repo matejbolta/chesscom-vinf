@@ -313,13 +313,17 @@ it("sizes the turn dot, pulses only on a player change, and warns for low time o
   topClock.classList.remove('clock-player-turn'); bottomClock.classList.add('clock-player-turn');
   await vi.advanceTimersByTimeAsync(20);
   expect(animate.mock.calls.at(-1)![0][0].transform).toBe('scale(6)'); // Same 48px diameter with an 8px resting dot.
+  controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnDotSize: 8, turnPulseDiameter: 0}, true);
+  bottomClock.classList.remove('clock-player-turn'); topClock.classList.add('clock-player-turn');
+  await vi.advanceTimersByTimeAsync(20);
+  expect(animate.mock.calls.at(-1)![0][0].transform).toBe('scale(0)');
   const cancel = vi.fn();
   Object.assign(bottom, {getAnimations: () => [{cancel}]});
   controller.reconcile(document, location, {...DEFAULT_SETTINGS, turnAnimationDuration: 0}, true);
   expect(cancel).toHaveBeenCalled();
   bottomClock.classList.remove('clock-player-turn'); topClock.classList.add('clock-player-turn');
   await vi.advanceTimersByTimeAsync(20);
-  expect(animate).toHaveBeenCalledTimes(2);
+  expect(animate).toHaveBeenCalledTimes(3);
   nowSpy.mockRestore();
   vi.unstubAllGlobals();
 });

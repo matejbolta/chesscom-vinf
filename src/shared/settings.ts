@@ -56,6 +56,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   gameHistoryVisiblePlacement: "main",
   openGamePlacement: "sidebar",
   openGameVisiblePlacement: "sidebar",
+  homepageCardColumns: {},
   homepageSidebarOrder: [...DEFAULT_HOMEPAGE_SIDEBAR_ORDER],
   homepageSidebarVisible: [...DEFAULT_HOMEPAGE_SIDEBAR_VISIBLE],
   quickPlayPresetCount: 6,
@@ -280,6 +281,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     gameHistoryVisiblePlacement?: unknown;
     openGamePlacement?: unknown;
     openGameVisiblePlacement?: unknown;
+    homepageCardColumns?: unknown;
     homepageSidebarOrder?: unknown;
     homepageSidebarVisible?: unknown;
     showChessTv?: unknown;
@@ -447,7 +449,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     turnAnimationDuration: typeof candidate.turnAnimationDuration === "number" && Number.isFinite(candidate.turnAnimationDuration)
       ? Math.min(5000, Math.max(0, Math.round(candidate.turnAnimationDuration))) : DEFAULT_SETTINGS.turnAnimationDuration,
     turnPulseDiameter: typeof candidate.turnPulseDiameter === "number" && Number.isFinite(candidate.turnPulseDiameter)
-      ? Math.min(48, Math.max(4, Math.round(candidate.turnPulseDiameter)))
+      ? Math.min(48, Math.max(0, Math.round(candidate.turnPulseDiameter)))
       : Math.round(Math.min(48, (typeof candidate.turnDotSize === "number" && Number.isFinite(candidate.turnDotSize)
           ? Math.min(24, Math.max(4, Math.round(candidate.turnDotSize))) : DEFAULT_SETTINGS.turnDotSize)
         * (typeof candidate.turnPulseScale === "number" && Number.isFinite(candidate.turnPulseScale)
@@ -475,6 +477,13 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     gameHistoryVisiblePlacement,
     openGamePlacement,
     openGameVisiblePlacement,
+    homepageCardColumns: Object.fromEntries(
+      ["stats", "chess-tv", "streaks", "legend-league", "daily-puzzle", "friends"].flatMap(id => {
+        const columns = candidate.homepageCardColumns;
+        const value = columns && typeof columns === "object" ? (columns as Record<string, unknown>)[id] : undefined;
+        return value === "main" || value === "sidebar" ? [[id, value]] : [];
+      })
+    ),
     homepageSidebarOrder,
     homepageSidebarVisible,
     quickPlayPresetCount,

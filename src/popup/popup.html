@@ -51,7 +51,6 @@
         <label class="settings-master-copy" for="enabled">
           <span>
             <strong>Enable VINF</strong>
-            <small>Apply all VINF enhancements</small>
           </span>
         </label>
         <div class="settings-master-actions">
@@ -146,12 +145,12 @@
         </p>
       </section>
 
-      <section class="settings-card" aria-label="Game settings">
+      <section class="settings-card turn-settings" aria-label="Game settings">
         <label class="setting-row"><strong>Turn indicator size (px)</strong>
           <input id="turn-dot-size" type="number" min="4" max="24" step="1" >
         </label>
-        <label class="setting-row"><span><strong>Pulse diameter (px)</strong><small>Maximum 48 px; never smaller than the turn dot</small></span>
-          <input id="turn-pulse-diameter" type="number" min="4" max="48" step="1" >
+        <label class="setting-row"><span class="pulse-label"><strong>Pulse diameter (px)</strong><small>max 48px</small></span>
+          <input id="turn-pulse-diameter" type="number" min="0" max="48" step="1" >
         </label>
         <label class="setting-row"><strong>Animation duration (ms)</strong>
           <input id="turn-animation-duration" type="number" min="0" max="5000" step="100" >

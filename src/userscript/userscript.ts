@@ -168,6 +168,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   titleWrap.append(title, subtitle);
   header.append(titleWrap, close);
 
+  let cardColumns: ExtensionSettings["homepageCardColumns"] = {};
   const master = document.createElement("section");
   master.className =
     "chesscom-vinf-settings-card chesscom-vinf-settings-master-card";
@@ -245,9 +246,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const enabledCopyText = document.createElement("span");
   const enabledStrong = document.createElement("strong");
   enabledStrong.textContent = "Enable VINF";
-  const enabledSmall = document.createElement("small");
-  enabledSmall.textContent = "Apply all VINF enhancements";
-  enabledCopyText.append(enabledStrong, enabledSmall);
+  enabledCopyText.append(enabledStrong);
   enabledCopy.append(enabledCopyText);
   const enabledInput = document.createElement("input");
   enabledInput.id = "chesscom-vinf-userscript-enabled";
@@ -263,7 +262,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     "Native play panel"
   );
   const gameSettings = document.createElement("section");
-  gameSettings.className = "chesscom-vinf-settings-card";
+  gameSettings.className = "chesscom-vinf-settings-card turn-settings";
   const dotLabel = document.createElement("label");
   dotLabel.className = "chesscom-vinf-settings-row";
   dotLabel.textContent = "Turn indicator size (px) ";
@@ -274,14 +273,15 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const pulseLabel = document.createElement("label");
   pulseLabel.className = "chesscom-vinf-settings-row";
   const pulseCopy = document.createElement("span");
+  pulseCopy.className = "pulse-label";
   pulseCopy.textContent = "Pulse diameter (px)";
   const pulseHelp = document.createElement("small");
-  pulseHelp.textContent = "Maximum 48 px; never smaller than the turn dot";
+  pulseHelp.textContent = "max 48px";
   pulseCopy.append(pulseHelp);
   const turnPulseDiameterInput = document.createElement("input");
   turnPulseDiameterInput.id = "chesscom-vinf-userscript-turn-pulse-diameter";
   turnPulseDiameterInput.type = "number";
-  turnPulseDiameterInput.min = "4"; turnPulseDiameterInput.max = "48"; turnPulseDiameterInput.step = "1";
+  turnPulseDiameterInput.min = "0"; turnPulseDiameterInput.max = "48"; turnPulseDiameterInput.step = "1";
   pulseLabel.append(pulseCopy, turnPulseDiameterInput); gameSettings.append(pulseLabel);
   const animationLabel = document.createElement("label");
   animationLabel.className = "chesscom-vinf-settings-row";
@@ -795,7 +795,17 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
               visible.delete(id);
             }
           });
-          row.append(checkbox, label, document.createElement("span"));
+          const select = document.createElement("select");
+          select.className = "chesscom-vinf-settings-rating-state";
+          select.setAttribute("aria-label", `${labelText} placement`);
+          for (const [value, text] of [["main", "Main"], ["sidebar", "Right"]]) {
+            const option = document.createElement("option"); option.value = value; option.textContent = text; select.append(option);
+          }
+          select.value = cardColumns[id] ?? "sidebar";
+          select.disabled = !checkbox.checked;
+          checkbox.addEventListener("change", () => { select.disabled = !checkbox.checked; });
+          select.addEventListener("change", () => { if (select.value === "main") cardColumns[id] = "main"; else delete cardColumns[id]; });
+          row.append(checkbox, label, select);
         }
 
         const createMoveButton = (
@@ -936,6 +946,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   dialog.append(form);
 
   function render(settings: ExtensionSettings): void {
+    cardColumns = {...settings.homepageCardColumns};
     enabledInput.checked = settings.enabled;
     extremeOledInput.checked = settings.extremeOled;
     pokemonEditor.set(settings);
@@ -1006,6 +1017,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
         openGameVisiblePlacement:
           homepageCardEditor.getOpenGameVisiblePlacement(),
         homepageSidebarOrder: homepageCardEditor.getOrder(),
+        homepageCardColumns: {...cardColumns},
         homepageSidebarVisible: homepageCardEditor.getVisible(),
         quickPlayPresetCount: getPresetCount(),
         timeControlIds: ids,
@@ -1040,6 +1052,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
     void save("Defaults restored.");
   });
   resetHomepage.addEventListener("click", () => {
+    cardColumns = {};
     showNativePlayPanelInput.checked = DEFAULT_SETTINGS.showNativePlayPanel;
     homepageCardEditor.render(
       DEFAULT_SETTINGS.homepageSidebarOrder,

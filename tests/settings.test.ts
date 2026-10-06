@@ -21,9 +21,11 @@ describe("settings", () => {
     expect(normalizeSettings(normalizeSettings({turnDotSize: 7, turnPulseScale: 1.3}))).toEqual(normalizeSettings({turnDotSize: 7, turnPulseScale: 1.3}));
     expect(normalizeSettings({turnDotSize: 8, turnPulseScale: 5}).turnPulseDiameter).toBe(40);
     expect(normalizeSettings({turnPulseDiameter: 32, turnPulseScale: 5}).turnPulseDiameter).toBe(32);
-    expect(normalizeSettings({turnPulseDiameter: -1}).turnPulseDiameter).toBe(4);
+    expect(normalizeSettings({turnPulseDiameter: -1}).turnPulseDiameter).toBe(0);
     expect(normalizeSettings({turnPulseDiameter: 99}).turnPulseDiameter).toBe(48);
     expect(normalizeSettings({turnPulseDiameter: NaN}).turnPulseDiameter).toBe(24);
+    expect(normalizeSettings({homepageCardColumns: {stats: "main", friends: "sidebar", invalid: "main", "chess-tv": "bad"}}).homepageCardColumns).toEqual({stats: "main", friends: "sidebar"});
+    expect(normalizeSettings({}).homepageCardColumns).toEqual({});
     expect(DEFAULT_SETTINGS.oledMode).toBe(false);
     expect(normalizeSettings({turnDotSize: 16}).turnDotSize).toBe(16);
     expect(normalizeSettings({turnDotSize: 100}).turnDotSize).toBe(24);

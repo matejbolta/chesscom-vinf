@@ -288,6 +288,12 @@ html[data-chesscom-vinf-sidebar-hidden~="stats"]
   margin-top: 0 !important;
 }
 
+[data-chesscom-vinf-module="stats"],
+[data-chesscom-vinf-module="chess-tv"],
+[data-chesscom-vinf-module="streaks"],
+[data-chesscom-vinf-module="legend-league"],
+[data-chesscom-vinf-module="daily-puzzle"],
+[data-chesscom-vinf-module="friends"],
 [data-chesscom-vinf-module="profile"],
 [data-chesscom-vinf-module="daily-games"],
 [data-chesscom-vinf-module="recommended-match"],

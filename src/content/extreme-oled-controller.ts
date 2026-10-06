@@ -294,7 +294,7 @@ export class ExtremeOledController {
       if (!inactive && switched && this.animationDuration > 0 && !view?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         turn.getAnimations?.().forEach(animation => animation.cancel());
         // Bound the rendered diameter, independently of the resting dot size.
-        const scale = Math.max(1, Math.min(this.pulseDiameter, 48) / this.dotSize);
+        const scale = Math.max(0, Math.min(this.pulseDiameter, 48)) / this.dotSize;
         turn.animate?.([{ transform: `scale(${scale})` }, { transform: "scale(1)" }],
           { duration: this.animationDuration, easing: "ease-out" });
       }

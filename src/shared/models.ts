@@ -98,6 +98,7 @@ export interface ExtensionSettings {
   gameHistoryVisiblePlacement: GameHistoryVisiblePlacement;
   openGamePlacement: OpenGamePlacement;
   openGameVisiblePlacement: OpenGameVisiblePlacement;
+  homepageCardColumns: Partial<Record<HomepageSidebarCardId, MainColumnCardVisiblePlacement>>;
   homepageSidebarOrder: HomepageSidebarCardId[];
   homepageSidebarVisible: HomepageSidebarCardId[];
   quickPlayPresetCount: QuickPlayPresetCount;

@@ -359,3 +359,7 @@
 .chesscom-vinf-settings-form .vinf-pokemon-toggle { min-height: 4.4rem; font-size: 1.4rem; }
 .chesscom-vinf-settings-form .vinf-pokemon-toggle input { accent-color: #81b64c; width: 2.4rem; height: 2.4rem; }
 .chesscom-vinf-settings-form .vinf-pokemon-settings button { min-height: 4.4rem; }
+
+.turn-settings > .chesscom-vinf-settings-row { border-top: 0; }
+.turn-settings .pulse-label { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+.turn-settings .pulse-label small { margin: 0; white-space: nowrap; }

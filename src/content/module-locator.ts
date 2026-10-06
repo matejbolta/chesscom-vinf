@@ -416,12 +416,12 @@ export function locateHomepageModules(document: Document): HomepageModules {
     recommendedMatch,
     gameHistory,
     rightColumn: desktopRightColumn,
-    stats,
-    chessTv,
-    legendLeague,
-    dailyPuzzle,
-    friends,
-    streaks,
+    stats: document.querySelector<HTMLElement>(`[${MARKERS.module}="stats"]`) ?? stats,
+    chessTv: document.querySelector<HTMLElement>(`[${MARKERS.module}="chess-tv"]`) ?? chessTv,
+    legendLeague: document.querySelector<HTMLElement>(`[${MARKERS.module}="legend-league"]`) ?? legendLeague,
+    dailyPuzzle: document.querySelector<HTMLElement>(`[${MARKERS.module}="daily-puzzle"]`) ?? dailyPuzzle,
+    friends: document.querySelector<HTMLElement>(`[${MARKERS.module}="friends"]`) ?? friends,
+    streaks: document.querySelector<HTMLElement>(`[${MARKERS.module}="streaks"]`) ?? streaks,
     badgesContainer
   };
 }

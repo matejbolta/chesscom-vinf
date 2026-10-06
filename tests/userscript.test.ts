@@ -69,6 +69,15 @@ describe("Android userscript shell", () => {
       expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({extremeOled: on}));
     }
 
+    expect(document.querySelectorAll('select[aria-label$=" placement"]')).toHaveLength(11);
+    expect(document.body.textContent).not.toContain("Apply all VINF enhancements");
+    const statsPlacement = document.querySelector<HTMLSelectElement>('select[aria-label="Stats placement"]')!;
+    statsPlacement.value = "main"; statsPlacement.dispatchEvent(new Event("change", {bubbles: true}));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(setValue).toHaveBeenLastCalledWith("vinfSettings", expect.objectContaining({homepageCardColumns: {stats: "main"}}));
+
+    statsPlacement.value = "sidebar"; statsPlacement.dispatchEvent(new Event("change", {bubbles: true}));
+    await vi.advanceTimersByTimeAsync(0);
     const pulse = document.querySelector<HTMLInputElement>("#chesscom-vinf-userscript-turn-pulse-diameter")!;
     expect(pulse.value).toBe("24");
     pulse.value = "40"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
@@ -85,7 +94,7 @@ describe("Android userscript shell", () => {
     duration.value = "1000"; duration.dispatchEvent(new Event("change", {bubbles: true}));
     await vi.advanceTimersByTimeAsync(0);
 
-    expect(dialog?.querySelectorAll("select")).toHaveLength(24);
+    expect(dialog?.querySelectorAll("select")).toHaveLength(30);
     expect(dialog?.textContent).toContain("Android settings · v2.2.1");
     expect(
       dialog?.querySelector<HTMLSelectElement>(

@@ -264,6 +264,7 @@ if (window.location.pathname === "/game-review-mobile") {
 } else {
   controller.reconcile(document, fixtureLocation, {
     ...previewSettings,
+    homepageCardColumns: searchParams.has("all-cards-main") ? Object.fromEntries(["stats", "chess-tv", "streaks", "legend-league", "daily-puzzle", "friends"].map(id => [id, "main" as const])) : {},
     timeControlIds: [...previewSettings.timeControlIds]
   });
 }

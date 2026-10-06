@@ -39,6 +39,29 @@ function visibleModuleOrder(container: Element): string[] {
 }
 
 describe("LayoutController", () => {
+  it("moves every former sidebar-only card both ways and restores native nodes", () => {
+    const document = loadModernHomepageFixture();
+    const ids = ["stats", "chess-tv", "streaks", "legend-league", "daily-puzzle", "friends"] as const;
+    const originals = ids.map(id => {
+      const node = document.querySelector<HTMLElement>(`[data-fixture-module="${id}"]`)!;
+      return {node, parent: node.parentElement};
+    });
+    const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));
+    const settings = {...DEFAULT_SETTINGS, homepageCardColumns: Object.fromEntries(ids.map(id => [id, "main" as const]))};
+    const main = document.querySelector("#home-main > .main-component")!;
+    const sidebar = document.querySelector("#home-sidebar > .sidebar-component")!;
+    for (let pass = 0; pass < 2; pass++) {
+      controller.reconcile(document, HOME_LOCATION, settings);
+      for (const id of ids) expect(document.querySelector(`[${MARKERS.module}="${id}"]`)?.parentElement).toBe(main);
+    }
+    controller.reconcile(document, HOME_LOCATION, {...settings, homepageSidebarVisible: []});
+    for (const id of ids) expect(document.querySelector(`[${MARKERS.module}="${id}"]`)?.hasAttribute(MARKERS.hidden)).toBe(true);
+    controller.reconcile(document, HOME_LOCATION, DEFAULT_SETTINGS);
+    for (const id of ids) expect(document.querySelector(`[${MARKERS.module}="${id}"]`)?.parentElement).toBe(sidebar);
+    controller.cleanup(document);
+    for (const {node, parent} of originals) expect(node.parentElement).toBe(parent);
+  });
+
   it("applies the focused layout to the redesigned desktop shell", () => {
     const document = loadModernHomepageFixture();
     const controller = new LayoutController(new NativeLaunchAdapter(vi.fn()));

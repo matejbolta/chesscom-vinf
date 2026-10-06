@@ -69,6 +69,15 @@ describe("settings popup", () => {
     await import("../src/popup/popup");
     await flushAsyncWork();
 
+    expect(document.querySelectorAll('select[aria-label$=" placement"]')).toHaveLength(11);
+    expect(document.body.textContent).not.toContain("Apply all VINF enhancements");
+    const statsPlacement = document.querySelector<HTMLSelectElement>('select[aria-label="Stats placement"]')!;
+    statsPlacement.value = "main"; statsPlacement.dispatchEvent(new Event("change", {bubbles: true}));
+    await flushAsyncWork();
+    expect(set).toHaveBeenLastCalledWith({[SETTINGS_STORAGE_KEY]: expect.objectContaining({homepageCardColumns: {stats: "main"}})});
+
+    statsPlacement.value = "sidebar"; statsPlacement.dispatchEvent(new Event("change", {bubbles: true}));
+    await flushAsyncWork();
     const pulse = document.querySelector<HTMLInputElement>("#turn-pulse-diameter")!;
     expect(pulse.value).toBe("24");
     pulse.value = "40"; pulse.dispatchEvent(new Event("change", {bubbles: true}));
@@ -227,7 +236,7 @@ describe("settings popup", () => {
       Array.from(presetCount.options).map((option) => option.value)
     ).toEqual(QUICK_PLAY_PRESET_COUNTS.map(String));
     expect(selects).toHaveLength(6);
-    expect(document.querySelectorAll("select")).toHaveLength(24);
+    expect(document.querySelectorAll("select")).toHaveLength(30);
     expect(rapidState.value).toBe("retracted");
     expect(rapidState.disabled).toBe(false);
     expect(bulletState.disabled).toBe(true);
@@ -434,7 +443,7 @@ describe("settings popup", () => {
       expect(document.querySelector("#preset-list")?.hasAttribute("hidden")).toBe(
         count === 0
       );
-      expect(document.querySelectorAll("select")).toHaveLength(18 + count);
+      expect(document.querySelectorAll("select")).toHaveLength(24 + count);
       await flushAsyncWork();
     }
     expect(set).toHaveBeenLastCalledWith({

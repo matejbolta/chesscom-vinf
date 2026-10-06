@@ -1291,3 +1291,8 @@ Native CSS `.toggle-timestamps > .main-line-row .time-white/.time-black`
 sets color transparent and width0, exposing text only on hover. Override color
 and width only for enabled wide rows. Retain native timestamp content/bars and
 move handlers. Sanitized responsive sizing fixture verifies on/off parity.
+
+
+## 2.23.0 — All homepage cards can change columns
+
+Stats, ChessTV, Streaks, Legend League, Daily Puzzle and Friends reuse their existing audited landmarks on first discovery, then their data-chesscom-vinf-module markers after relocation. Badge wrappers remain reversible and owned. Existing sanitized modern homepage plus all-cards-main=1 preview covers column widths; layout tests cover moving back, visibility and cleanup without cloning native nodes.

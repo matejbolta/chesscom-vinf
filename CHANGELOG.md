@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.23.0 — Placement for every homepage card
+
+- Add Main/Right placement to Stats, ChessTV, Streaks, Legend League, Daily Puzzle and Friends in desktop and Android settings. Preserve existing defaults, visibility and ordering.
+- Remove the Enable VINF subtitle and turn-settings dividers; show max 48px inline beside pulse diameter.
+- Allow pulse diameters from 0 to 48px, including smaller than the resting dot.
+
 ## 2.22.13 — Separate B shortcut descriptions
 
 - List B — Best move (review) under VINF after E, and B — Boxing Glove under Chess.com.

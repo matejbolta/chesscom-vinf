@@ -125,6 +125,8 @@ if (
     .catch(() => {});
 }
 
+let cardColumns: ExtensionSettings["homepageCardColumns"] = {};
+
 class HomepageCardEditor {
   private order: HomepageSidebarCardId[];
   private visible: Set<HomepageSidebarCardId>;
@@ -423,7 +425,17 @@ class HomepageCardEditor {
             this.visible.delete(id);
           }
         });
-        row.append(checkbox, label, document.createElement("span"));
+        const select = document.createElement("select");
+        select.className = "homepage-card-placement";
+        select.setAttribute("aria-label", `${labels.get(id) ?? id} placement`);
+        for (const [value, text] of [["main", "Main"], ["sidebar", "Right"]]) {
+          const option = document.createElement("option"); option.value = value; option.textContent = text; select.append(option);
+        }
+        select.value = cardColumns[id] ?? "sidebar";
+        select.disabled = !checkbox.checked;
+        checkbox.addEventListener("change", () => { select.disabled = !checkbox.checked; });
+        select.addEventListener("change", () => { if (select.value === "main") cardColumns[id] = "main"; else delete cardColumns[id]; });
+        row.append(checkbox, label, select);
       }
 
       const moveUp = document.createElement("button");
@@ -700,6 +712,7 @@ function renderPresetSelects(
 }
 
 function renderSettings(settings: ExtensionSettings): void {
+  cardColumns = {...settings.homepageCardColumns};
   enabledInput.checked = settings.enabled;
   extremeOledInput.checked = settings.extremeOled;
   pokemonEditor.set(settings);
@@ -809,6 +822,7 @@ function readSettings(): ExtensionSettings {
     openGameVisiblePlacement:
       homepageCardEditor.getOpenGameVisiblePlacement(),
     homepageSidebarOrder: homepageCardEditor.getOrder(),
+    homepageCardColumns: {...cardColumns},
     homepageSidebarVisible: homepageCardEditor.getVisible(),
     quickPlayPresetCount: getPresetCount(),
     timeControlIds,
@@ -877,6 +891,7 @@ resetButton.addEventListener("click", () => {
 });
 
 resetHomepageButton.addEventListener("click", () => {
+  cardColumns = {};
   showNativePlayPanelInput.checked = DEFAULT_SETTINGS.showNativePlayPanel;
   homepageCardEditor.set(
     DEFAULT_SETTINGS.homepageSidebarOrder,
