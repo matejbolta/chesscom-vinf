@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.22.5 — Desktop shortcut guide
+
+- Add T — Flick hovered piece to the Chess.com desktop shortcut list.
+
+
 ## 2.22.4 — Stable phone engine-line space
 
 - Reserve at least five native engine rows on phone Analysis, leaving blank space below fewer legal lines so subsequent controls do not move upward.
