@@ -182,3 +182,24 @@ it("reuses wide Extreme native actions, restores after Escape/disable, and never
   controller.reconcile(document, game, {...settings, enabled: false}, false, true);
   expect([...original.childNodes]).toEqual(before);
 });
+
+it("restores native labeled actions when widening from phone, including Extreme", () => {
+  fixture();
+  const controller = new PhoneGameActionsController();
+  const resign = document.querySelector<HTMLButtonElement>('.resign-button-component')!;
+  const original = resign.parentNode!;
+  const before = [...original.childNodes];
+  const text = resign.textContent;
+  for (const extremeOled of [false, true]) {
+    const settings = {...DEFAULT_SETTINGS, extremeOled};
+    document.documentElement.setAttribute('data-chesscom-vinf-phone-game', 'true');
+    controller.reconcile(document, game, settings, true);
+    expect(original.contains(resign)).toBe(false);
+    document.documentElement.removeAttribute('data-chesscom-vinf-phone-game');
+    document.documentElement.setAttribute('data-chesscom-vinf-wide-game-rows', '');
+    controller.reconcile(document, game, settings, false);
+    expect([...original.childNodes]).toEqual(before);
+    expect(resign.textContent).toBe(text);
+    expect(document.querySelector('.chesscom-vinf-phone-actions')).toBeNull();
+  }
+});

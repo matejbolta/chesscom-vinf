@@ -1272,3 +1272,11 @@ Live read-only inspection confirms `.game-icons-container-component button`
 with aria-label `Flip Board` and `svg[data-glyph="arrow-triangle-flip-vertical"]`.
 Hide only this button in active wide-game-rows presentation at>=600px. Native
 board-controls settings menu is outside this selector. Fixture label updated.
+
+## 2026-10-06 — Restore wide native actions (2.22.7)
+
+User supersedes previous wide action relocation: shared runtime restores the
+native Draw/Resign component roots at their original sidebar anchors on wide
+layouts; removes2.22.6 Flip hiding. Native labels/handlers remain. Phone action
+relocation unchanged. Sanitized desktop fixture confirms all three buttons in
+`.game-icons-container-component` and zero top actions; phone retains top pair.

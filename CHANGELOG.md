@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.22.7 — Restore native wide-game actions
+
+- Restore Draw, Resign and Flip Board to their original bottom-right locations and labels on desktop/tablet; phone top-row actions stay unchanged.
+- Shorten the desktop T shortcut description to “Flick piece”.
+
+
 ## 2.22.6 — Remove redundant wide-game Flip button
 
 - Hide the bottom-right Flip Board shortcut in tablet/desktop game layouts. The board settings menu and native X shortcut remain available.

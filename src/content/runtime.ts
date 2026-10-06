@@ -239,7 +239,7 @@ export function startVinfRuntime(
     extremeOledController.reconcile(document, window.location, settings, desktop || android || phone, desktop && !phone);
     reviewPresentation.reconcile(document, window.location, settings, phone);
     pokemonController.reconcile(document, window.location, settings);
-    if (!phone) phoneActions.reconcile(document, window.location, settings, true);
+    if (!phone) phoneActions.reconcile(document, window.location, settings, false);
     touchAnnotations.reconcile(document, window.location, settings, android || phone);
     androidGameControls.reconcile(document, window.location, settings, true);
     homeLink.reconcile(document, window.location, settings.enabled, phone);

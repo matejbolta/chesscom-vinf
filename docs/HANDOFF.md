@@ -3,7 +3,8 @@
 This document is the durable project memory for future coding agents.
 
 Last updated: 2026-10-06.
-Current source version: 2.22.6.
+Current source version: 2.22.7.
+2.22.7 supersedes wide action relocation and2.22.6 Flip hiding: desktop/tablet retain native bottom-right Draw/Resign text and Flip. Runtime invokes phone action cleanup on wide; phone presentation unchanged. Native nodes/handlers restored via original anchors on widening. Regression covers normal/Extreme restoration. Desktop T copy now Flick piece. IAB fixtures verified wide sidebar buttons/no top actions and phone top actions retained.
 2.22.6 hides only bottom .game-icons-container-component Flip Board button under wide-game-rows at>=600px; audited native aria-label and flip SVG glyph fallback. Top board settings menu and X untouched; disabled/native layouts restore automatically.
 2.22.5 adds user-specified native T shortcut (Flick hovered piece) at bottom of Chess.com desktop guide, shared popup/sidepanel. Documentation only; no shortcut handler changed.
 2.22.4: phone Analysis engine lines reserve min-height15.2rem (five native2.4rem rows+four.4rem gaps+1.6rem vertical padding), keep12px following margin. Blank space only, no fake moves/handlers; expansion grows naturally. Public native390px DOM measured24px rows/4px gaps/8px padding. Fixture line-count parameter models native geometry. IAB390px3/4/5 rows all152px, following optionsTop610px;1024px4rows124px/min0. Actual phone check pending.

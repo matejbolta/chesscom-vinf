@@ -392,7 +392,7 @@ if (["/phone-game", "/game-review-mobile"].includes(window.location.pathname)) {
     reviewStyle.reconcile(document, route, settings, window.innerWidth <= 599);
     pokemon.reconcile(document, route, settings);
     if (!game) gameReviewController.reconcile(document, route, settings.enabled, window.innerWidth <= 599);
-    if (!phoneActions) actions.reconcile(document, route, settings, true);
+    if (!phoneActions) actions.reconcile(document, route, settings, false);
     androidDock.reconcile(document, route, settings, true);
     annotations.reconcile(document, route, settings, !searchParams.has("desktop") || window.innerWidth <= 599);
   };
