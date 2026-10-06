@@ -17,7 +17,7 @@ export function createPokemonEditor(document: Document, extremeInput: HTMLInputE
   const mode = toggle("Pokémon mode");
   const pieces = toggle("Pokémon pieces");
   const note = document.createElement("p");
-  note.textContent = "Poké Ball turns in play; your team in play and review. Turns off Extreme OLED.";
+  note.textContent = "Turn indicator is a Poké Ball. Turns off Extreme OLED.";
   const details = document.createElement("div");
   const grid = document.createElement("div"); grid.className = "vinf-pokemon-team";
   const selects = new Map<string, HTMLSelectElement>();

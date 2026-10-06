@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.22.12 — Pokémon explanation
+
+- Update the shared Pokémon mode explanation to “Turn indicator is a Poké Ball. Turns off Extreme OLED.”
+
 ## 2.22.11 — Pixel-based pulse setting
 
 - Set pulse diameter directly in pixels on desktop and Android. Migrate existing multipliers using the saved dot size, retaining the 48px maximum.
