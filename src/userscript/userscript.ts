@@ -270,7 +270,6 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   const turnDotSizeInput = document.createElement("input");
   turnDotSizeInput.type = "number";
   turnDotSizeInput.min = "4"; turnDotSizeInput.max = "24"; turnDotSizeInput.step = "1";
-  turnDotSizeInput.style.width = "64px";
   dotLabel.append(turnDotSizeInput); gameSettings.append(dotLabel);
   const pulseLabel = document.createElement("label");
   pulseLabel.className = "chesscom-vinf-settings-row";
@@ -283,7 +282,6 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   turnPulseScaleInput.id = "chesscom-vinf-userscript-turn-pulse-scale";
   turnPulseScaleInput.type = "number";
   turnPulseScaleInput.min = "1"; turnPulseScaleInput.max = "12"; turnPulseScaleInput.step = "0.1";
-  turnPulseScaleInput.style.width = "80px";
   pulseLabel.append(pulseCopy, turnPulseScaleInput); gameSettings.append(pulseLabel);
   const animationLabel = document.createElement("label");
   animationLabel.className = "chesscom-vinf-settings-row";
@@ -292,7 +290,6 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   turnAnimationDurationInput.id = "chesscom-vinf-userscript-turn-animation-duration";
   turnAnimationDurationInput.type = "number";
   turnAnimationDurationInput.min = "0"; turnAnimationDurationInput.max = "5000"; turnAnimationDurationInput.step = "100";
-  turnAnimationDurationInput.style.width = "80px";
   animationLabel.append(turnAnimationDurationInput); gameSettings.append(animationLabel);
   const appearance = document.createElement("section");
   appearance.className = "chesscom-vinf-settings-card";
@@ -935,7 +932,7 @@ function createSettingsDialog(store: UserscriptSettingsStore): HTMLDialogElement
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
   const pokemonEditor = createPokemonEditor(document, extremeOledInput);
-  form.append(header, master, homepage, presets, stats, gameSettings, pokemonEditor.element, appearance, status);
+  form.append(header, master, appearance, homepage, presets, stats, gameSettings, pokemonEditor.element, status);
   dialog.append(form);
 
   function render(settings: ExtensionSettings): void {

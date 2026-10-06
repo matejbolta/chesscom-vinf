@@ -95,11 +95,12 @@ describe("settings popup", () => {
     const extreme = document.querySelector<HTMLInputElement>("#extreme-oled")!;
     expect(document.querySelector('[id$="extreme-oled-clocks"]')).toBeNull();
     const oledGroup = extreme.closest("section")!;
-    expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(-2)).toBe(oledGroup);
+    expect( [...oledGroup.parentElement!.querySelectorAll(":scope > section")].at(1)).toBe(oledGroup);
     expect([...oledGroup.querySelectorAll("strong")].map(e => e.textContent)).toEqual([
       "OLED mode", "Extreme OLED mode (play & review)"
     ]);
     expect(oledGroup.querySelector("small")).toBeNull();
+    expect(oledGroup.parentElement!.querySelector(":scope > section:last-of-type")?.getAttribute("aria-label")).toBe("Pokémon settings");
     for (const on of [true, false]) {
       extreme.checked = on;
       extreme.dispatchEvent(new Event("change", { bubbles: true }));

@@ -77,7 +77,7 @@
 
 .chesscom-vinf-settings-card {
   background: var(--vinf-settings-panel, #312e2b);
-  border: 1px solid #45423e;
+  border: 1px solid var(--vinf-settings-divider, #45423e);
   border-radius: 1rem;
   overflow: hidden;
 }
@@ -90,7 +90,7 @@
 
 .chesscom-vinf-settings-row + .chesscom-vinf-settings-row,
 .chesscom-vinf-settings-section-header + .chesscom-vinf-settings-row {
-  border-top: 1px solid #45423e;
+  border-top: 1px solid var(--vinf-settings-divider, #45423e);
 }
 
 .chesscom-vinf-settings-master-card {
@@ -164,7 +164,7 @@
   --chesscom-vinf-preset-columns: 3;
   --chesscom-vinf-preset-rows: 2;
 
-  border-top: 1px solid #45423e;
+  border-top: 1px solid var(--vinf-settings-divider, #45423e);
   display: grid;
   gap: 1rem;
   grid-auto-flow: column;
@@ -220,7 +220,7 @@
 
 .chesscom-vinf-settings-preference-group {
   border: 0;
-  border-top: 1px solid #45423e;
+  border-top: 1px solid var(--vinf-settings-divider, #45423e);
   margin: 0;
   padding: 1.1rem 1.4rem 1.3rem;
 }
@@ -291,7 +291,7 @@
 }
 
 .chesscom-vinf-settings-note {
-  border-top: 1px solid #45423e;
+  border-top: 1px solid var(--vinf-settings-divider, #45423e);
   color: #aaa9a7;
   font-size: 1.2rem;
   padding: 1.1rem 1.4rem 1.3rem;
@@ -344,3 +344,18 @@
 .chesscom-vinf-settings-dialog:has(#chesscom-vinf-userscript-oled-mode:checked, #chesscom-vinf-userscript-extreme-oled:checked) :is(input, select, button):focus-visible {
   outline: 2px solid #a3d160; outline-offset: 2px;
 }
+
+.chesscom-vinf-settings-row input[type="number"] {
+  flex: 0 0 8rem; width: 8rem; min-width: 0; height: 4.4rem;
+  padding: 0 .8rem; border: 1px solid var(--vinf-settings-border, #4a4844);
+  border-radius: .6rem; background: var(--vinf-settings-field, #211f1c);
+  color: inherit; font: inherit; font-size: 1.4rem;
+}
+.chesscom-vinf-settings-form :is(button,input,select):focus-visible {
+  outline: 2px solid #a3d160; outline-offset: 2px;
+}
+.chesscom-vinf-settings-form .vinf-pokemon-settings { padding: 1.3rem 1.4rem; }
+.chesscom-vinf-settings-form .vinf-pokemon-settings h2 { font-size: 1.5rem; }
+.chesscom-vinf-settings-form .vinf-pokemon-toggle { min-height: 4.4rem; font-size: 1.4rem; }
+.chesscom-vinf-settings-form .vinf-pokemon-toggle input { accent-color: #81b64c; width: 2.4rem; height: 2.4rem; }
+.chesscom-vinf-settings-form .vinf-pokemon-settings button { min-height: 4.4rem; }

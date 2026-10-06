@@ -66,6 +66,17 @@
         </div>
       </section>
 
+      <section class="settings-card" aria-label="OLED settings">
+        <label class="setting-row">
+          <span><strong>OLED mode</strong></span>
+          <input id="oled-mode" type="checkbox" role="switch">
+        </label>
+        <label class="setting-row">
+          <span><strong>Extreme OLED mode (play & review)</strong></span>
+          <input id="extreme-oled" type="checkbox" role="switch">
+        </label>
+      </section>
+
       <section class="settings-card" aria-label="Homepage settings">
         <label class="setting-row">
           <span>
@@ -137,26 +148,16 @@
 
       <section class="settings-card" aria-label="Game settings">
         <label class="setting-row"><strong>Turn indicator size (px)</strong>
-          <input id="turn-dot-size" type="number" min="4" max="24" step="1" style="width:64px">
+          <input id="turn-dot-size" type="number" min="4" max="24" step="1" >
         </label>
         <label class="setting-row"><span><strong>Pulse size (×)</strong><small>Maximum pulse diameter: 48 px</small></span>
-          <input id="turn-pulse-scale" type="number" min="1" max="12" step="0.1" style="width:80px">
+          <input id="turn-pulse-scale" type="number" min="1" max="12" step="0.1" >
         </label>
         <label class="setting-row"><strong>Animation duration (ms)</strong>
-          <input id="turn-animation-duration" type="number" min="0" max="5000" step="100" style="width:80px">
+          <input id="turn-animation-duration" type="number" min="0" max="5000" step="100" >
         </label>
       </section>
 
-      <section class="settings-card" aria-label="OLED settings">
-        <label class="setting-row">
-          <span><strong>OLED mode</strong></span>
-          <input id="oled-mode" type="checkbox" role="switch">
-        </label>
-        <label class="setting-row">
-          <span><strong>Extreme OLED mode (play & review)</strong></span>
-          <input id="extreme-oled" type="checkbox" role="switch">
-        </label>
-      </section>
 
       <section class="settings-card shortcut-guide" aria-labelledby="shortcuts-heading">
         <h2 id="shortcuts-heading">Desktop shortcuts</h2>

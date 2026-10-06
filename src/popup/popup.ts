@@ -59,7 +59,7 @@ const turnPulseScaleInput = document.querySelector<HTMLInputElement>("#turn-puls
 const turnAnimationDurationInput = document.querySelector<HTMLInputElement>("#turn-animation-duration")!;
 const extremeOledInput = document.querySelector<HTMLInputElement>("#extreme-oled")!;
 const pokemonEditor = createPokemonEditor(document, extremeOledInput);
-document.querySelector('[aria-label="OLED settings"]')!.before(pokemonEditor.element);
+document.querySelector("#status")!.before(pokemonEditor.element);
 const oledModeInput = document.querySelector<HTMLInputElement>("#oled-mode")!;
 const showNativePlayPanelInput = document.querySelector<HTMLInputElement>(
   "#show-native-play-panel"

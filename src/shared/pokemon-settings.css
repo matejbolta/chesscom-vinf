@@ -4,21 +4,21 @@
 .vinf-pokemon-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; }
 .vinf-pokemon-toggle input { flex: 0 0 auto; }
 .vinf-pokemon-team { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
-.vinf-pokemon-choice { display: grid; grid-template-columns: 1fr 48px; align-items: center; gap: 4px; padding: 8px; border: 1px solid #6665; border-radius: 10px; background: #8881; min-width: 0; }
+.vinf-pokemon-choice { display: grid; grid-template-columns: 1fr 48px; align-items: center; gap: 4px; padding: 8px; border: 1px solid var(--vinf-settings-divider, #45423e); border-radius: 10px; background: var(--vinf-settings-field, #211f1c); min-width: 0; }
 .vinf-pokemon-choice > span { font-size: 13px; font-weight: 600; }
 .vinf-pokemon-choice img { width: 48px; height: 48px; image-rendering: pixelated; }
 .vinf-pokemon-choice select { grid-column: 1 / -1; width: 100%; min-width: 0; min-height: 36px; font: inherit; font-size: 12px; }
 .vinf-pokemon-settings [hidden] { display: none !important; }
-.vinf-pokemon-settings button { min-height: 36px; padding: 6px 12px; border: 1px solid #6668; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
+.vinf-pokemon-settings button { min-height: 36px; padding: 6px 12px; border: 1px solid var(--vinf-settings-border, #4a4844); border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
 
 .vinf-pokemon-choice > button { grid-column: 1 / -1; min-width: 0; min-height: 40px; font: inherit; font-size: 12px; }
 .vinf-pokemon-choice > select[hidden], .vinf-pokemon-picker[hidden] { display: none !important; }
-.vinf-pokemon-picker { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 12px; border: 1px solid #555; border-radius: 10px; background: #000; color: #eee; }
+.vinf-pokemon-picker { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 12px; border: 1px solid var(--vinf-settings-border, #4a4844); border-radius: 10px; background: var(--vinf-settings-panel, #312e2b); color: #eee; }
 .vinf-pokemon-picker > input, .vinf-pokemon-picker > p, .vinf-pokemon-results { grid-column: 1 / -1; }
-.vinf-pokemon-picker > input { min-width: 0; width: 100%; min-height: 44px; box-sizing: border-box; background: #111; color: #eee; border: 1px solid #555; border-radius: 6px; padding: 8px; font: inherit; }
+.vinf-pokemon-picker > input { min-width: 0; width: 100%; min-height: 44px; box-sizing: border-box; background: var(--vinf-settings-field, #211f1c); color: #eee; border: 1px solid var(--vinf-settings-border, #4a4844); border-radius: 6px; padding: 8px; font: inherit; }
 .vinf-pokemon-picker > p { margin: 0; font-size: 12px; color: #bbb; }
 .vinf-pokemon-results { max-height: 280px; overflow-y: auto; overscroll-behavior: contain; display: grid; gap: 3px; }
-.vinf-pokemon-picker button { background: #000; color: #eee; border: 1px solid #333; border-radius: 6px; min-height: 40px; cursor: pointer; }
+.vinf-pokemon-picker button { background: var(--vinf-settings-panel, #312e2b); color: #eee; border: 1px solid var(--vinf-settings-divider, #45423e); border-radius: 6px; min-height: 40px; cursor: pointer; }
 .vinf-pokemon-results button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 4px 8px; font: inherit; font-size: 14px; }
 .vinf-pokemon-results img { width: 40px; height: 40px; image-rendering: pixelated; }
 .vinf-pokemon-results button[aria-pressed="true"] { border-color: #81b64c; background: #172012; }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.22.10 — Settings order and visual consistency
+
+- Move OLED settings directly below Enable VINF and Pokémon to the bottom across desktop and Android settings.
+- Unify numeric fields, card dividers, Pokémon typography and theme colors, retaining larger Android touch controls.
+
 ## 2.22.9 — Compact tablet and desktop controls
 
 - Restore native 48px navigation button height on tablet/desktop while preserving the current arrangement, widths, icons and styling. Phone controls remain 60px tall.
