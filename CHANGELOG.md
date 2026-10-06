@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.22.13 — Separate B shortcut descriptions
+
+- List B — Best move (review) under VINF after E, and B — Boxing Glove under Chess.com.
+
 ## 2.22.12 — Pokémon explanation
 
 - Update the shared Pokémon mode explanation to “Turn indicator is a Poké Ball. Turns off Extreme OLED.”
