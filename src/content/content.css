@@ -1584,12 +1584,12 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
 html[data-chesscom-vinf-oled] .chesscom-vinf-go-home:active { background: #070807; }
 html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: visible !important; }
 
-/* Wide navigation shares phone button geometry, retaining native placement. */
+/* Wide navigation keeps the shared arrangement with native 48px button height. */
 @media (min-width: 600px) {
   html [data-chesscom-vinf-four-moves] { gap: 5px; --chesscom-vinf-nav-gap: 5px !important; }
   html [data-chesscom-vinf-four-moves] > button {
     display: flex; align-items: center; justify-content: center;
-    width: 100%; min-width: 0; height: 60px; padding: 0; margin: 0;
+    width: 100%; min-width: 0; height: 48px; padding: 0; margin: 0;
     border: 1px solid var(--color-border-default, #444); border-radius: 12px;
     background: var(--color-bg-tertiary, #393734); box-shadow: none;
   }
@@ -1607,7 +1607,7 @@ html[data-chesscom-vinf-extreme-oled] body .chesscom-vinf-go-home { visibility: 
   }
   .chesscom-vinf-wide-review-dock button {
     grid-row: 1; display: flex; align-items: center; justify-content: center;
-    width: 100%; min-width: 0; height: 60px; padding: 0; margin: 0;
+    width: 100%; min-width: 0; height: 48px; padding: 0; margin: 0;
     border: 1px solid var(--color-border-default, #444); border-radius: 12px;
     background: var(--color-bg-tertiary, #393734); color: var(--color-text-default, #ededed);
     font: inherit; cursor: pointer;

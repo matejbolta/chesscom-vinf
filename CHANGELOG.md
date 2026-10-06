@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.22.9 — Compact tablet and desktop controls
+
+- Restore native 48px navigation button height on tablet/desktop while preserving the current arrangement, widths, icons and styling. Phone controls remain 60px tall.
+
 ## 2.22.8 — Native wide resizing and persistent move times
 
 - Restore native desktop/tablet player-row height and board gaps so enabling VINF no longer changes the board/sidebar width allocation.
