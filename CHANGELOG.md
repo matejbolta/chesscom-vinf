@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.22.3 — One phone Analysis settings gear
+
+- Keep one Settings shortcut in the phone Analysis strip, hiding the duplicate native shortcut only while the replacement is available.
+- Open the native tabbed settings dialog without forcing the Board tab. Restrict button sizing to actual buttons, preserving engine status symbols.
+- Tablet and desktop layouts retain native settings controls.
+
+
 ## 2.22.2 — Pairing OLED route continuity
 
 - Keep OLED active on the intermediate `/play/online` matchmaking route, including direct loads and trailing slashes. Previously only `/play/online/new` was covered, so the page and existing OLED toast rules reverted to native gray during pairing.

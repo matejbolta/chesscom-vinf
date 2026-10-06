@@ -1500,7 +1500,7 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
 @media (max-width: 599px) {
   html[data-chesscom-vinf-phone-analysis] .analysis-options-component { padding: 8px 12px; }
   html[data-chesscom-vinf-phone-analysis] .analysis-options-bar {
-    display: grid; grid-template-columns: minmax(0, 1fr) 44px 44px;
+    display: grid; grid-template-columns: minmax(0, 1fr) 44px;
     grid-template-rows: 44px auto; gap: 2px 4px; align-items: center;
     width: 100%; min-height: 0; padding: 0; margin: 0;
   }
@@ -1511,23 +1511,26 @@ html[data-chesscom-vinf-pokemon] .chesscom-vinf-annotation-toggle[aria-pressed="
     position: static; margin: 0; padding: 0; min-width: 0; max-width: 100%;
     font-size: 12px; line-height: 1.5; white-space: normal; text-align: left;
   }
-  html[data-chesscom-vinf-phone-analysis] button.analysis-options-icon { grid-column: 3; grid-row: 1; }
+  html[data-chesscom-vinf-phone-analysis] button.analysis-options-icon { grid-column: 2; grid-row: 1; }
+  /* The header Settings proxy opens the same tabbed dialog. Hide the duplicate
+     only while that proxy is available, preserving native fallback behavior. */
+  html[data-chesscom-vinf-phone-analysis] .analysis-options-bar:has(.chesscom-vinf-analysis-settings-action:not([hidden])) button.analysis-options-icon { display: none !important; }
   html[data-chesscom-vinf-phone-analysis] .chesscom-vinf-analysis-settings-action {
     position: static; transform: none; grid-column: 2; grid-row: 1;
   }
-  html[data-chesscom-vinf-phone-analysis] .analysis-options-icon,
+  html[data-chesscom-vinf-phone-analysis] button.analysis-options-icon,
   html[data-chesscom-vinf-phone-analysis] .chesscom-vinf-analysis-settings-action {
     display: flex; align-items: center; justify-content: center;
     width: 44px; height: 44px; padding: 0; margin: 0; color: #bbb;
     background: transparent; border: 0; box-shadow: none; font-size: 24px;
   }
-  html[data-chesscom-vinf-phone-analysis] .analysis-options-icon :is(svg,span) { width: 24px; height: 24px; }
+  html[data-chesscom-vinf-phone-analysis] button.analysis-options-icon :is(svg,span) { width: 24px; height: 24px; }
 }
 
 @media (max-width: 599px) {
   html[data-chesscom-vinf-phone-analysis] .engine-lines-with-options-lines { margin-bottom: 12px; }
   html[data-chesscom-vinf-phone-analysis] .analysis-options-right > :not(button):not(.analysis-options-depth) {
-    grid-column: 3; grid-row: 2; justify-self: end; align-self: center;
+    grid-column: 2; grid-row: 2; justify-self: end; align-self: center;
     width: 24px; height: 24px; margin: 0; padding: 0;
   }
 }

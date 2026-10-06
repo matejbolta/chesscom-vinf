@@ -1245,3 +1245,13 @@ optional trailing slashes. No new native selectors or gameplay actions.
 The user also saw a small gray popup; it disappeared before DOM capture.
 Existing sanitized challenge-toast fixture covers the known toast shell, not
 proof that this transient popup has the same markup.
+
+## 2026-10-06 — Single phone Analysis settings shortcut (2.22.3)
+
+User screenshots confirm both native gears reach the same Settings dialog with
+Engine, Interface and Board tabs. Phone layout now keeps the existing header
+Settings proxy and hides `button.analysis-options-icon` only when that proxy
+is visible in `.analysis-options-bar`. No forced tab selection. Button sizing
+no longer targets non-button `.analysis-options-icon` status glyphs. Wide
+layouts retain the native controls. Existing sanitized engine fixture covers
+the two native sources and their phone consolidation.

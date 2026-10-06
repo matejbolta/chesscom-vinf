@@ -17,8 +17,10 @@ it('places native action proxies at the board center and in the engine strip, fo
     dialog.innerHTML='<div role="tablist"><button>Engine</button><button>Board</button></div>';
     dialog.querySelectorAll('button')[1].addEventListener('click',boardTab); document.body.append(dialog);
   });
-  proxies[1].click(); expect(boardTab).toHaveBeenCalledOnce();
-  controller.reconcile(document,true); expect(boardTab).toHaveBeenCalledOnce();
+  expect(proxies[1].getAttribute('aria-label')).toBe('Settings');
+  proxies[1].click(); expect(boardTab).not.toHaveBeenCalled();
+  expect(document.querySelectorAll('[role="dialog"]')).toHaveLength(1);
+  controller.reconcile(document,true); expect(boardTab).not.toHaveBeenCalled();
 
   board.classList.add('flipped'); controller.reconcile(document,true);
   expect(proxies[0].style.left).toBe('192px');
