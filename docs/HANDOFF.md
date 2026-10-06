@@ -2,8 +2,9 @@
 
 This document is the durable project memory for future coding agents.
 
-Last updated: 2026-10-05.
-Current source version: 2.22.1.
+Last updated: 2026-10-06.
+Current source version: 2.22.2.
+2.22.2: live user-started desktop pairing captured /play/online with OLED marker absent and body rgb(43,41,38), followed by /game/<id> with OLED true/black. Bootstrap guard previously only covered /play/online/new; now both exact paths and optional trailing slash. Shared across devices. User also reports a small gray pairing popup; it disappeared before DOM capture, so its exact shell is unverified. Existing toast CSS is disabled when OLED marker disappears; route fix restores it, but do not claim live popup verification. User alone reloads extension/page. Verification: typecheck,235 tests and both builds passed. Existing sanitized challenge-toast fixture rendered black at390,800,1743px in IAB; this checks known toast styling, not the uncaptured live popup.
 2.22.1: user rejected noisy bright yellow/mint checker terrain on actual mobile. Removed repeated jagged path fringes; softened grass/path colors and texture contrast. Black sprite brightness increased .12→.23, saturation .7→.9 to retain more recognizable color while staying dark. Visual taste still needs user confirmation; do not claim this matches their desired aesthetic conclusively.
 2.22.0 expands Pokemon picker/validation/bundled sprites to National Dex1–386 (Gen I–III). Existing Gen I IDs/defaults preserved; Gen II–III PNGs use same pinned PokeAPI sprites revision and species endpoint names. No runtime fetch. Five other franchise teams remain outstanding as documented below.
 2.21.1: refined terrain to user-supplied FireRed screenshots: mint grass, pale paths, finer1px tufts/flecks and stepped fringe. OUTSTANDING user request: Hunter x Hunter, Avatar The Last Airbender, Steins;Gate, Marvel, Jujutsu Kaisen teams. No teams implemented yet. Imagegen atlas request failed with safety-system output rejection; user informed and suitable supplied sprites requested. Do not present generic placeholders as finished teams. Proposed team picker should preserve Pokémon151 catalog and separate saved per-team role choices, share mobile/desktop/editor/runtime route support, and retain Extreme exclusivity. Initial lineups were asked asynchronously, no response yet.

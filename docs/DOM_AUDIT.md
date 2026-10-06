@@ -1234,3 +1234,14 @@ Live desktop OLED draw dialog: `.cc-confirmation-popover-popover.cc-popover-ligh
 
 ### 2.20.6 wide Extreme coach palette
 Live `.bot-speech-content-botMessage` was white with #312e2b text; wide Extreme now shares phone black/#bbb palette. `.move-feedback-box-move`, `.move-feedback-box-description`, `.move-feedback-speech-text-component` need readable text; score badge retains its native contrasting colors. No geometry changes.
+
+## 2026-10-06 — Intermediate pairing route (2.22.2)
+
+Read-only live desktop observation during user-started Quick Play: `/home`
+(OLED true, body black) → `/play/online` (OLED absent, body rgb(43,41,38))
+→ `/game/<id>` (OLED true, body black). Existing guard only recognized
+`/play/online/new`. Shared bootstrap guard now recognizes both exact paths and
+optional trailing slashes. No new native selectors or gameplay actions.
+The user also saw a small gray popup; it disappeared before DOM capture.
+Existing sanitized challenge-toast fixture covers the known toast shell, not
+proof that this transient popup has the same markup.

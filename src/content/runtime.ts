@@ -98,7 +98,8 @@ export function startVinfRuntime(
   function isGameBootstrapRoute(): boolean {
     return window.location.protocol === "https:" &&
       ["chess.com", "www.chess.com"].includes(window.location.hostname) &&
-      window.location.pathname === "/play/online/new";
+      // Matchmaking redirects /new to /play/online before a game ID exists.
+      /^\/play\/online(?:\/new)?\/?$/.test(window.location.pathname);
   }
 
   function findObservationRoot(): HTMLElement | null {

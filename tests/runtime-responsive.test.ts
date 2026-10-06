@@ -20,6 +20,7 @@ afterEach(() => {
   document.documentElement.removeAttribute(MARKERS.gameHistoryPlacement);
   document.documentElement.removeAttribute(MARKERS.nativePlayPanel);
   document.documentElement.removeAttribute(MARKERS.sidebarHidden);
+  vi.restoreAllMocks();
   vi.clearAllTimers();
   vi.useRealTimers();
 });
@@ -120,7 +121,8 @@ describe("responsive runtime lifecycle", () => {
     expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
   });
 
-  it("keeps OLED on through matchmaking and removes it on an unsupported route", async () => {
+  it.each([390, 800, 1440])("keeps OLED through both matchmaking routes at %ipx", async (width) => {
+    vi.spyOn(window, "innerWidth", "get").mockReturnValue(width);
     vi.useFakeTimers();
     window.history.replaceState(
       {},
@@ -138,13 +140,34 @@ describe("responsive runtime lifecycle", () => {
 
     expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(true);
 
-    window.history.replaceState({}, "", "/game/183987646934");
-    await vi.advanceTimersByTimeAsync(ROUTE_CHECK_INTERVAL_MS);
+    for (const path of ["/play/online", "/play/online/", "/play/online/new/", "/game/183987646934"]) {
+      window.history.replaceState({}, "", path);
+      await vi.advanceTimersByTimeAsync(ROUTE_CHECK_INTERVAL_MS);
+      expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
+    }
 
     expect(document.documentElement.getAttribute(MARKERS.oled)).toBe("true");
     window.history.replaceState({}, "", "/puzzles");
     await vi.advanceTimersByTimeAsync(ROUTE_CHECK_INTERVAL_MS);
     expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(false);
+  });
+
+  it.each([
+    [true, false, true, true],
+    [false, true, true, true],
+    [false, false, true, false],
+    [true, false, false, false]
+  ])("themes a direct pairing load only when enabled (OLED %s, Extreme %s, enabled %s)", async (oledMode, extremeOled, enabled, expected) => {
+    vi.useFakeTimers();
+    window.history.replaceState({}, "", "/play/online");
+    document.documentElement.className = "user-logged-in";
+    document.body.replaceChildren();
+    startVinfRuntime({
+      load: async () => ({ ...DEFAULT_SETTINGS, oledMode, extremeOled, enabled }),
+      subscribe: () => undefined
+    });
+    await Promise.resolve();
+    expect(document.documentElement.hasAttribute(MARKERS.oled)).toBe(expected);
   });
 
   it("observes a main element when the desktop base container is absent", async () => {

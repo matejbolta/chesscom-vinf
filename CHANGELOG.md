@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.22.2 — Pairing OLED route continuity
+
+- Keep OLED active on the intermediate `/play/online` matchmaking route, including direct loads and trailing slashes. Previously only `/play/online/new` was covered, so the page and existing OLED toast rules reverted to native gray during pairing.
+- Shared runtime fix applies to phone, tablet and desktop; normal OLED and Extreme OLED retain their settings gates.
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
