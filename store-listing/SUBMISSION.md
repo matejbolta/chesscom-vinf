@@ -1,14 +1,13 @@
-# Chrome Web Store update — ChessComVINF 2.2.0
+# Chrome Web Store update — ChessComVINF 2.24.1
 
-For the short list of dashboard changes from the currently published 1.0.8
-version, use `UPDATE_TLDR.md`.
+For the dashboard checklist, use `UPDATE_TLDR.md`. Verify the currently published version in the dashboard before submission.
 
 ## Package
 
-- Upload: `../release/chesscom-vinf-2.2.0.zip`
-- Version: `2.2.0`
+- Upload: `../release/chesscom-vinf-2.24.1.zip`
+- Version: `2.24.1`
 - SHA-256:
-  `c2155f2b879bea3baa6409644ba9ddd6825226e82c2043fbffcaacb337e268bc`
+  `fe02624707abf8bc0efef8cac10969e20cfa6f520eb5d48ade51f274b0f465f8`
 
 The package contains only the Manifest V3 extension. The Android userscript,
 private fixtures, source maps, Store assets, and release documentation are not
@@ -21,52 +20,33 @@ included.
 Copy only the text inside this block:
 
 ```text
-ChessComVINF creates a calmer, more useful Chess.com experience focused on playing and reviewing chess.
+ChessComVINF makes Chess.com calmer and easier to use, from your homepage to your game review.
 
-It replaces distracting homepage promotions with configurable Quick Play buttons, keeps Game History prominent, lets you arrange native homepage cards, and adds optional OLED presentation to supported homepage, game, and Game Review pages.
+• Arrange, hide and reorder homepage cards in the main or right column.
+• Choose your own one-click Quick Play presets.
+• Keep useful Stats and a shortcut to your open game close by.
+• Use true-black OLED styling or an even darker Extreme OLED board.
+• Enjoy cleaner game controls, configurable turn indicators and a phone-friendly review layout.
+• Customize Pokémon pieces from Generations I–III.
+• Change settings from the toolbar popup or optional side panel. Everything saves automatically.
 
-Features:
+Start with OLED enabled and eight customizable Quick Play presets. You can change these anytime.
 
-• Choose 0, 1, 2, 3, 4, 6, or 8 one-click Bullet, Blitz, and Rapid presets.
-• Reuse the same time control in as many Quick Play buttons as you want.
-• Change the button count while preserving existing choices and filling only new slots.
-• Remove Quick Play completely by choosing zero buttons.
-• Show or hide Chess.com’s large native play panel.
-• Show, hide, and reorder known homepage cards.
-• Put Profile, Daily Games, Recommended Match, Game History, and Open Game in the main or right column, or hide them.
-• Use Open Game to follow Chess.com’s exact active-game link when one is present, with Game History as a deliberate finished-game fallback.
-• Apply one saved card order within both the main and right columns.
-• Choose which Stats rows appear, their fixed order, and whether each enabled rating starts expanded or retracted when Chess.com supports expansion.
-• Hide recurring campaign banners.
-• Keep ChessTV’s native loading and playback behavior unchanged when its card is shown.
-• Save every setting immediately without a separate Save button.
-• Open and close settings from Chromium’s persistent side panel when supported.
-• Use an optional true-black page canvas on supported homepage, game, and Game Review routes.
-• Independently use low-glare OLED button colors for Quick Play and Open Game.
-• On narrow phone Game Review layouts, keep Chess.com’s native evaluation graph directly below the board.
-• Disable all VINF changes instantly from the popup or side panel.
+Also available on Android phones and tablets through Firefox and Violentmonkey. This requires a separate installation from our GitHub page; the Chrome Web Store package is for desktop browsers. Installation instructions and downloads are linked from the project homepage.
 
-Privacy:
+Privacy: No analytics, advertising, telemetry or developer-operated servers. Preferences stay in your browser. The Open Game shortcut sends your signed-in identifier only to Chess.com’s own presence service to find your active game; VINF does not store account details. Small tab-local game/clock references keep visual indicators consistent across refreshes. All executable code is bundled locally.
 
-VINF has no analytics, advertising, telemetry, remote code, or developer-operated servers. It stores only your presentation preferences in Chrome storage and does not collect or transmit account data or page content.
-
-VINF runs only on the signed-in Chess.com homepage and exact supported Chess.com game and Game Review routes. Quick Play and Open Game use Chess.com’s own native links; the extension does not access credentials or private matchmaking APIs.
-
-ChessComVINF is an independent, unofficial extension and is not affiliated with, endorsed by, or sponsored by Chess.com.
+ChessComVINF is an independent, unofficial extension and is not affiliated with or endorsed by Chess.com. Pokémon artwork remains the property of its respective owners.
 ```
 
 ### Graphic assets
 
-- Replace only: `assets/screenshot-03-settings.jpg`
-- Keep unchanged:
-  - `assets/screenshot-01-focused-home.jpg`
-  - `assets/screenshot-02-eight-presets.jpg`
-  - `assets/store-icon-128.png`
-  - `assets/small-promo-440x280.jpg`
-  - `assets/marquee-promo-1400x560.jpg`
+Replace the screenshot gallery with:
 
-The replacement screenshot is synthetic, public-safe, 1280×800, and contains
-no live account data or image metadata.
+- `assets/screenshot-01-focused-home.jpg` — eight default desktop/tablet presets, fictional account data.
+- `assets/screenshot-03-settings.jpg` — actual default settings UI, version badge omitted only in the capture harness.
+
+Both are 1280×800 and contain no personal metadata. Remove the obsolete eight-preset screenshot from the previous gallery. Keep the icon and promotional tiles.
 
 ## Unchanged dashboard fields
 
@@ -100,7 +80,7 @@ Improve the signed-in Chess.com homepage and supported game/review presentation 
 ### Permission justification — storage
 
 ```text
-Stores only the user’s local VINF presentation settings—enabled state, Quick Play controls, card placement and order, Stats display preferences, and OLED appearance choices—so they persist across browser sessions. No account, game, or page data is stored.
+Stores only the user’s local VINF presentation settings—enabled state, Quick Play controls, card placement and order, Stats display preferences, and OLED appearance choices—so they persist across browser sessions. No account details are stored in extension storage. Tab-local sessionStorage keeps the current game identifier, clock references and display expiry for visual continuity.
 ```
 
 ### Permission justification — sidePanel
@@ -112,7 +92,7 @@ Shows the same packaged local VINF settings interface in Chromium’s persistent
 ### Site access justification
 
 ```text
-The content script runs only on Chess.com’s signed-in homepage plus supported game and Game Review URL shapes. It rearranges user-selected homepage modules, renders configured Quick Play controls, applies optional presentation-only OLED styles, and repositions Chess.com’s native evaluation graph on narrow move-by-move review layouts. It makes no network requests and does not run on messages, account settings, or other websites.
+The content script runs only on Chess.com’s signed-in homepage plus supported game and Game Review URL shapes. It rearranges user-selected homepage modules, renders configured Quick Play controls, applies optional presentation-only OLED styles, and repositions Chess.com’s native evaluation graph on narrow move-by-move review layouts. When the Open Game shortcut is enabled, it makes a read-only same-origin Chess.com presence lookup using the signed-in identifier to resolve an active game. The identifier and response stay in page memory and are never logged or stored. It does not run on messages, account settings, or other websites.
 ```
 
 ### Remote-code explanation
@@ -130,8 +110,8 @@ ChessComVINF applies to the signed-in Chess.com homepage and exact supported Che
 2. Confirm that configurable Quick Play buttons appear above the selected native main-column cards.
 3. Open the ChessComVINF toolbar popup. Use its header button to open the same settings in the browser side panel.
 4. Change the Quick Play grid size and selected time controls.
-5. Change the visibility, Main/Right placement, and order of Profile, Daily Games, Recommended Match, and Game History. Change other managed-card and Stats visibility/order settings.
-6. Enable “OLED black” and “OLED button colors”; confirm that the homepage canvas is black and Quick Play uses the low-glare palette.
+5. Change the visibility, Main/Right placement, and order of all managed cards. Change Stats visibility/order settings.
+6. OLED mode starts enabled. Toggle it and confirm that the homepage canvas and button palette update. Extreme OLED is a separate option.
 7. Refresh the homepage and confirm that all settings persist.
 8. Open a supported Chess.com game or Game Review URL and confirm that OLED black changes presentation only. At a phone-width move-by-move review layout, the native evaluation graph appears directly below the board.
 9. Turn off “Enable VINF” and confirm that the native layout and presentation are restored after the page updates.

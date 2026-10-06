@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.24.1 — Public release and device-specific presets
+
+- Default desktop/tablet Quick Play to 10, 15+10, 3, 5+5 above 10+5, 30, 3+2, 1+1. Keep the three approved phone presets. Saved selections remain unchanged.
+- Simplify the README and document separate Firefox/Violentmonkey installation on Android phones and tablets.
+- Refresh Store screenshots using default settings without a version badge; update Store copy and accurate privacy disclosures for presence lookups and tab-local visual references.
+
 ## 2.24.0 — Personal defaults and compact phone Home button
 
 - Match the approved installed profile for new installations: card order/visibility/placement, three Quick Play presets, stats, OLED and turn animation settings. Preserve saved preferences.

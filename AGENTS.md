@@ -4,10 +4,9 @@ ChessComVINF is an independent Chrome/Brave Manifest V3 extension. Keep all code
 dependencies, build output, test fixtures, and release artifacts inside this
 directory.
 
-## Current local-only development policy
+## Publication policy
 
-- This project is intentionally developed and maintained only in this local
-  repository until the user explicitly replaces this policy.
+- The user authorized synchronization of the existing public GitHub repository and a Chrome Web Store update on 2026-10-06. This release includes the desktop ZIP and Android userscript. Future publication still requires explicit authorization.
 - Use Git normally for local history: review the complete visible change set,
   run proportional checks, and organize finished work into a small number of
   coherent local commits automatically after completed project changes, with
@@ -55,7 +54,7 @@ directory.
   graph and actions. Keep the initial report native. Leave homepage appearance
   unchanged, preserve native board input, and never simulate clocks or game state.
 - Expose 0, 1, 2, 3, 4, 6, or 8 user-selected time controls. Zero removes the
-  Quick Play module entirely. Default to three (3+2, 10 min, 15+10), as approved on 2026-10-06; use the per-count defaults in
+  Quick Play module entirely. Default to eight on desktop/tablet (10,15+10,3,5+5 / 10+5,30,3+2,1+1) and three on phones (3+2,10,15+10), as approved on 2026-10-06; use the per-count defaults in
   `src/shared/time-controls.ts`. When the count changes, preserve the leading
   selections and fill only new slots from the documented fallback sequence.
   Repeated selections are valid and must persist.

@@ -1,6 +1,6 @@
 # ChessComVINF Privacy Policy
 
-Effective date: September 19, 2026
+Effective date: October 6, 2026
 
 ChessComVINF runs entirely inside the signed-in Chess.com homepage, live games,
 and supported live-game review pages.
@@ -14,12 +14,12 @@ and supported live-game review pages.
   click or keyboard activation. Concurrent activations share one request; there
   is no background polling. Requests time out after four seconds.
 - It stores no usernames, ratings, game history, credentials, cookies, or tokens.
-- It stores only local presentation preferences: enabled state, native play
-  panel visibility, OLED-black appearance, OLED button palette,
-  managed-card visibility/order, Daily Games, Recommended
-  Match, Game History, and Profile placement and remembered visible locations, the
+- Persistent extension/userscript settings contain only local presentation preferences: enabled state, native play
+  panel visibility, OLED and Extreme OLED appearance, Pokémon mode/team choices, turn-indicator size/pulse/duration,
+  managed-card visibility/order, all managed-card placements and remembered visible locations, the
   selected Quick Play button count and preset IDs, and the visible
   rows/order/initial states selected for the native Stats card.
+- For clock-bar and rating-introduction continuity across refreshes, two tab-local sessionStorage records hold the current game ID, clock reference maxima and rating-display expiry. They are overwritten for the next game and are not transmitted to the developer; closing the tab normally clears session storage. Ratings themselves are not stored.
 - It uses the native Chess.com page action already present in the authenticated
   homepage to start a selected game.
 
@@ -48,7 +48,7 @@ Game History.
 
 The Android userscript has the same privacy boundary. It grants only
 `GM_getValue`, `GM_setValue`, `GM_addValueChangeListener`, and
-`GM_registerMenuCommand` so Violentmonkey can persist those local presentation
+`GM_registerMenuCommand` for local preferences and settings, plus `unsafeWindow` to read Chess.com’s native page context for the same-origin presence lookup. Violentmonkey can persist those local presentation
 settings and open the local settings dialog. Its presence lookup uses the same
 signed-in, same-origin Chess.com endpoint and needs no cross-origin request
 grant. It has no remote code and no update URL. Its metadata matches only

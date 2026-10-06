@@ -1,6 +1,6 @@
 # Android Installation and Architecture
 
-Last verified: 2026-09-10.
+Last updated: 2026-10-06.
 
 ## Recommended platform
 
@@ -52,12 +52,12 @@ dist-android/chesscom-vinf.user.js
 The Android build is separate from `dist/`. The existing Chrome/Brave extension
 and its release ZIP are not replaced or repackaged by `build:android`.
 
-## Install on the Android tablet
+## Install on an Android phone or tablet
 
 1. Install current Firefox for Android from the Play Store.
 2. In Firefox, open **Menu → Extensions** and install **Violentmonkey**. If it is
    not in the short in-browser list, open the Mozilla Android add-on link above.
-3. Build `dist-android/chesscom-vinf.user.js` on the development computer.
+3. Download `chesscom-vinf.user.js` from the [latest release](https://github.com/matejbolta/chesscom-vinf/releases/latest), or build it locally.
 4. Install the script using either method below.
 5. Sign in to Chess.com in Firefox and open `https://www.chess.com/home`.
 

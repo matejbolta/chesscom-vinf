@@ -1,92 +1,42 @@
 # ChessComVINF
 
-ChessComVINF (Version Infinity) turns the signed-in Chess.com homepage into a
-focused dashboard and improves move-by-move Game Review on phones. It provides
-configurable one-click matchmaking, promotes Game History and Stats, and removes
-homepage modules that interrupt the normal play workflow, including Chess.com's
-recurring top campaign banner. The native profile strip is configurable like the
-other homepage cards. The current redesigned homepage and the preceding desktop
-layout are both supported.
+A calmer Chess.com experience for playing and reviewing games.
 
-An optional OLED-black appearance replaces the page canvas with true black on
-the homepage, live games, and Game Review at desktop, tablet, and phone widths.
-An independent `OLED button colors` switch applies a low-glare near-black
-palette to Quick Play and the Open Game shortcut without changing their layout.
-VINF presents a managed `Jump to open game` card. When enabled, it makes a
-read-only, same-origin Chess.com presence lookup at homepage load and refreshes
-it on ordinary click or keyboard activation to find a game open on another
-device. It recognizes current RCN and legacy live games; otherwise it prefers
-an exact eligible game link already on the page and deliberately falls back to the latest Game History link. The UUID and
-result remain in page memory and are never stored or logged.
+- Arrange, hide and reorder homepage cards in either column.
+- Start games with your own Quick Play presets.
+- Keep useful stats and a shortcut back to your open game close by.
+- Use true-black OLED styling, or Extreme OLED for an even darker board.
+- Enjoy cleaner game controls and a phone-friendly review layout.
+- Customize the turn indicator, pulse and animation speed.
 
-Pokémon mode optionally adds a Poké Ball turn indicator and Generation I piece
-artwork on the game and Review boards. Choose any of the original 151 Pokémon
-for each chess role, or switch pieces off to keep only the ball. The ball opens
-to reveal the last move; existing size, pulse and animation-duration settings
-apply. Pokémon and Extreme OLED switch each other off; ordinary OLED can be
-combined with Pokémon. Artwork is bundled locally with [attribution](assets/pokemon/README.md).
+Settings save automatically. New installations start with OLED enabled and eight desktop/tablet shortcuts: **10, 15+10, 3, 5+5** above **10+5, 30, 3+2, 1+1**. Existing settings are preserved when updating.
 
-![Sanitized ChessComVINF homepage](docs/reference-homepage.png)
+## Desktop
 
-ChessComVINF is an independent, unofficial extension and is not affiliated with,
-endorsed by, or sponsored by Chess.com.
+Install [ChessComVINF from the Chrome Web Store](https://chromewebstore.google.com/detail/pfdelnfocedcbpomokhdaampckmhomme) in Chrome or a compatible desktop browser such as Brave. Open the extension icon to change settings.
 
-On live-game review routes narrower than 600 CSS pixels, VINF keeps Chess.com's
-native evaluation graph directly below the board and player clocks while the
-move-by-move view is active. The initial report, tablets, and desktop layouts
-remain native and unchanged.
+## Android phones and tablets
 
-The extension toolbar popup keeps its master `Enable VINF` switch in a standalone
-top card. Its homepage settings can show or hide Chess.com's large native play
-panel, independently show or hide every known managed card, and apply one
-user-selected relative order within both the Main and Right columns. Daily
-Games, Recommended Match, Game History, Profile, and Open Game Shortcut each have a visibility
-checkbox plus a Main/Right placement selector that remembers the selected
-location while hidden. ChessTV remains fully native; VINF does not alter its
-loading, autoplay, or player permissions.
-On supported Chromium browsers, the header button can move the same autosaving
-settings UI into the browser's persistent side panel. A close button beside the
-version badge closes that panel without reaching for the browser toolbar.
-The remaining sections choose 0, 1, 2, 3, 4, 6, or 8
-Bullet/Blitz/Rapid Quick Play presets and control the visibility and fixed order
-of native Stats rows. A time control may be selected more than once. Zero
-removes Quick Play from the homepage completely.
-Changing the button count keeps the leading selections already chosen; larger
-grids add sensible non-repeating fallbacks only in the new slots.
-Every enabled rating row can start expanded or retracted independently. Every
-change saves immediately to local browser storage; there is no separate Save
-step.
+Use **Firefox for Android + Violentmonkey**. This is a separate installation; the Chrome Web Store version does not install on your phone.
 
-The Stats card defaults to one summary (`Games`), then retracted `Rapid` and
-retracted `Blitz`. Games/Puzzles/Lessons and the six native rating categories
-can all be shown, hidden, reordered, and given their own initial
-expanded/retracted state. Chess.com's redesigned homepage no longer includes an
-Insights row in this card; if a legacy homepage variant provides one, VINF
-preserves it at the bottom.
+1. Install [Violentmonkey in Firefox](https://addons.mozilla.org/android/addon/violentmonkey/).
+2. Download `chesscom-vinf.user.js` from the [latest GitHub release](https://github.com/matejbolta/chesscom-vinf/releases/latest).
+3. Open the file with Violentmonkey and confirm installation. If Firefox downloads it instead, import the file from the Violentmonkey dashboard.
+4. Open Chess.com and sign in. Use Violentmonkey’s **VINF settings** menu command to customize it.
 
-The settings UI offers a unified 17-control desktop/mobile catalog. Quick Play
-shows centered, time-only labels with category-colored Bullet, Blitz, and Rapid
-buttons when enabled. Its preset selectors mirror that chosen grid: 1–4 use one
-row, while 6 and 8 use two rows of three or four. Every nonzero homepage layout
-keeps the same gaps and fills the exact Game History column width, while Stats
-and the remaining sidebar modules begin alongside it.
+The phone layout uses compact controls and a review graph below the board. Tablet defaults match desktop; phones start with three shortcuts (**3+2, 10, 15+10**), a smaller turn indicator and ChessTV disabled. See the [Android installation guide](docs/ANDROID.md) for the manual-copy fallback. This setup is for Android, not iPhone or iPad.
 
-Version 0.8 adds a separate Android delivery: a Firefox/Violentmonkey userscript
-that reuses the same validated launch, layout, time-control, and dynamic-page
-core. It supports a semantic single-column Chess.com layout and includes a
-touch-friendly local settings dialog. See `docs/ANDROID.md` for the verified
-platform decision, installation, testing, and limitations.
+## Privacy
 
-## Development
+No analytics, advertising or developer-operated servers. Preferences stay in your browser. The Open Game shortcut makes a read-only request to Chess.com’s own presence service to find your active game; account details are not stored. Small tab-local game/clock references keep visual indicators consistent across refreshes. [Privacy policy](docs/PRIVACY.md).
 
-Current project policy is local-only development. Maintain coherent local Git
-history, version metadata, builds, tests, and handoff documentation, but do not
-push to GitHub or prepare/upload Chrome Web Store submissions. In this project,
-bringing Git "up to date" means a clean, intentionally committed local state;
-it does not mean synchronizing with `origin`. See `AGENTS.md` and
-`docs/HANDOFF.md` for the authoritative operating rules.
+[Report an issue](https://github.com/matejbolta/chesscom-vinf/issues).
 
-Requirements: Node.js 20+ and pnpm.
+ChessComVINF is independent and unofficial, and is not affiliated with or endorsed by Chess.com.
+
+## Build locally
+
+Requires Node.js 20+ and pnpm.
 
 ```sh
 pnpm install
@@ -96,35 +46,4 @@ pnpm build
 pnpm build:android
 ```
 
-Load `dist/` as an unpacked extension in Chrome or Brave. `pnpm package` creates
-a versioned zip under `release/`. The toolbar popup remains the default entry
-point; use its side-panel button when you want settings to stay open while
-browsing.
-
-`pnpm build:android` creates `dist-android/chesscom-vinf.user.js` for local
-installation in Violentmonkey on Firefox for Android. It does not modify the
-desktop package.
-
-## Product documentation
-
-- `docs/HANDOFF.md` is the canonical current-state memory for future agents.
-- `docs/PRODUCT_BRIEF.md` records the original requirements.
-- `docs/FINAL_PRODUCT_SPEC.md` is the detailed product specification.
-- `docs/DOM_AUDIT.md` records the verified selectors and native launch method.
-- `docs/PRIVACY.md` documents the zero-collection privacy model.
-- `docs/ANDROID.md` documents the Android userscript architecture and install flow.
-- `docs/RELEASE_CHECKLIST.md` separates automated validation from live match checks.
-- `docs/reference-homepage.png` is a sanitized public visual reference.
-
-Private complete-page captures remain ignored under `fixtures/raw/`. Automated
-tests use only small sanitized fixtures under `tests/fixtures/`.
-
-## Privacy and support
-
-ChessComVINF collects or sells no data. It stores only local presentation
-preferences. Its sole extension-initiated transmission sends the current
-signed-in UUID back to Chess.com's same-origin presence service when the Open
-Game shortcut is enabled; the UUID and response are not persisted. Read the
-full [privacy policy](docs/PRIVACY.md).
-
-For bugs or support, [open a GitHub issue](https://github.com/matejbolta/chesscom-vinf/issues).
+Load `dist/` as an unpacked desktop extension. The Android script is in `dist-android/`. `pnpm package` creates the desktop upload ZIP in `release/`.

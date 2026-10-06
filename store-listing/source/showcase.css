@@ -1205,3 +1205,15 @@ html[data-view="small"] .promo--small {
       linear-gradient(90deg, transparent 0 11px, #56534f 11px 48%, transparent 48% 55%, #45423f 55% 78%, transparent 78%) no-repeat;
   }
 }
+
+/* Public captures show the current default profile, with fictional account data. */
+:root { --bg:#000; --surface:#000; --surface-2:#000; --line:#292929; }
+.site-nav,.settings-scene,.popup-mock { background:#000; }
+.quick-grid--six { grid-template-columns:repeat(4,1fr); }
+.quick-grid button { background:#000 !important; border:1px solid #333; box-shadow:none; }
+.rating-details,.daily-card,.league-card { display:none !important; }
+.open-game-card { text-align:center; padding:24px; margin-bottom:16px; border:1px solid #333; }
+iframe.popup-mock { width:420px; height:740px; padding:0; border:1px solid #333; }
+
+.history-columns { background:#090909; }
+.game-row:nth-child(odd) { background:#090909; }

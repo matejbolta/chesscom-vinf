@@ -327,7 +327,7 @@ const server = createServer(async (request, response) => {
   }
   if (pathname === "/popup" || pathname === "/popup.html") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    response.end(popupHtml);
+    response.end(new URL(request.url, "http://localhost").searchParams.has("store-capture") ? popupHtml.replace("</head>", "<style>.version{display:none!important}</style></head>") : popupHtml);
     return;
   }
   if (pathname === "/sidepanel.html") {
@@ -338,6 +338,11 @@ const server = createServer(async (request, response) => {
   if (pathname === "/store-showcase") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(showcaseHtml);
+    return;
+  }
+  if (pathname === "/store-home-capture") {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end('<html><body style="margin:0"><iframe title="Default homepage" src="/store-showcase?view=home6" style="border:0;width:1280px;height:800px;display:block"></iframe></body></html>');
     return;
   }
   if (pathname === "/store-settings-capture") {

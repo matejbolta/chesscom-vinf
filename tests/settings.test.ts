@@ -18,9 +18,9 @@ describe("settings", () => {
     expect(desktop).toMatchObject({oledMode:true, extremeOled:false, pokemonMode:false,
       turnDotSize:20,turnPulseDiameter:48,turnAnimationDuration:333,
       pokemonPieces:{p:201,n:12,b:169,r:208,q:38,k:53},
-      quickPlayPresetCount:3,timeControlIds:["3-2","10-0","15-10"],
+      quickPlayPresetCount:8,timeControlIds:["10-0", "15-10", "3-0", "5-5", "10-5", "30-0", "3-2", "1-1"],
       dailyGamesPlacement:"hidden",recommendedMatchPlacement:"hidden",gameHistoryPlacement:"main"});
-    expect(phone).toEqual({...desktop,turnDotSize:12,homepageSidebarVisible:["stats","open-game"]});
+    expect(phone).toEqual({...desktop,quickPlayPresetCount:3,timeControlIds:["3-2","10-0","15-10"],turnDotSize:12,homepageSidebarVisible:["stats","open-game"]});
     expect(normalizeSettings(undefined,true)).toEqual(phone);
     expect(normalizeSettings({...phone,turnDotSize:18,homepageSidebarVisible:["chess-tv"]},true))
       .toMatchObject({turnDotSize:18,homepageSidebarVisible:["open-game","chess-tv"]});

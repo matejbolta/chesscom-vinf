@@ -104,70 +104,18 @@
         </div>
       </header>
 
-      <p class="lede">
-        <strong>ChessComVINF does not collect, transmit, sell, or share personal
-        data.</strong>
-      </p>
-
-      <h2>What the extension does</h2>
-      <p>
-        ChessComVINF runs only on the signed-in Chess.com homepage. It rearranges
-        existing homepage modules, hides modules selected by the user, and adds
-        configurable Quick Play shortcuts that use Chess.com’s own native
-        game-start link.
-      </p>
-
-      <h2>Data collection</h2>
-      <p>
-        ChessComVINF collects no personal information, account information,
-        authentication information, financial information, location data,
-        browsing history, website content, or user activity. It has no
-        telemetry, analytics, advertising, or developer-operated server.
-      </p>
-
-      <h2>Local settings</h2>
-      <p>
-        The extension stores only presentation preferences in Chrome’s local
-        extension storage. These preferences include whether VINF is enabled,
-        selected time controls and grid size, native play-panel visibility,
-        homepage-card placement, visibility and order, and Stats visibility,
-        order, and initial expanded or retracted state.
-      </p>
-      <p>
-        These settings remain in the user’s browser and are not transmitted to
-        the developer. They can be changed from the extension popup or the
-        optional browser side panel, or removed by uninstalling the extension
-        and clearing its extension data.
-      </p>
-
-      <h2>Site access and network activity</h2>
-      <p>
-        The <code>sidePanel</code> permission is used only to show the same
-        packaged local settings interface in Chromium’s persistent side panel.
-        It does not provide website or account access.
-      </p>
-      <p>
-        The content script is limited to
-        <code>https://www.chess.com/home*</code>. ChessComVINF does not make
-        extension-owned network requests and does not download or execute remote
-        code. Normal requests made by Chess.com remain governed by Chess.com’s
-        own terms and privacy policy.
-      </p>
-
+      <p class="lede"><strong>No analytics, advertising or developer-operated servers.</strong></p>
+      <h2>Local operation</h2>
+      <p>VINF adjusts the signed-in Chess.com homepage and supported game and review pages. Presentation preferences are stored locally in extension storage or Violentmonkey. These include card layout, presets, appearance, turn indicators and Pokémon selections.</p>
+      <h2>Network activity</h2>
+      <p>When Open Game is enabled, VINF sends the signed-in identifier only to Chess.com’s same-origin presence service to find an active game. The response is held in memory. There is no background polling, remote code, analytics or transmission to the developer.</p>
+      <h2>Tab-local continuity</h2>
+      <p>Two sessionStorage records hold the current game ID, clock reference maxima and rating-display expiry across refreshes. Ratings, credentials and account details are not stored. These records are overwritten for the next game and normally cleared when the tab closes.</p>
+      <h2>Permissions</h2>
+      <p>The desktop extension uses storage for preferences and sidePanel for optional local settings. The Android userscript uses Violentmonkey’s local settings/menu APIs and unsafeWindow to read native Chess.com context. Both versions run only on supported Chess.com routes.</p>
+      <p>See the <a href="https://github.com/matejbolta/chesscom-vinf/blob/main/docs/PRIVACY.md">complete privacy policy</a> for precise routes and behavior.</p>
       <h2>Third parties</h2>
-      <p>
-        No data is sold or shared with third parties. ChessComVINF is an
-        independent, unofficial extension and is not affiliated with, endorsed
-        by, or sponsored by Chess.com.
-      </p>
-
-      <h2>Changes to this policy</h2>
-      <p>
-        If a future version changes the extension’s data practices, this policy
-        and the Chrome Web Store disclosures will be updated before that version
-        is distributed.
-      </p>
-
+      <p>VINF does not sell data. Chess.com’s own requests remain governed by its policies. VINF is independent and unofficial, and is not endorsed by Chess.com.</p>
       <h2>Contact</h2>
       <p>
         For privacy questions or support,
@@ -176,7 +124,7 @@
       </p>
 
       <footer>
-        Effective date: July 28, 2026
+        Effective date: October 6, 2026
       </footer>
     </main>
   </body>

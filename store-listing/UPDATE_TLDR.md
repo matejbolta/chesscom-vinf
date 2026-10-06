@@ -1,20 +1,7 @@
-# Chrome Web Store update TL;DR — 1.0.8 to 2.2.0
+# Chrome Web Store update — 2.24.1
 
-## Upload package `release/chesscom-vinf-2.2.0.zip`
-
-## Change Store Listing → Description
-
-Copy the replacement description from `SUBMISSION.md`.
-
-## Change Store Listing → Screenshots
-
-`assets/screenshot-03-settings.jpg`
-
-## Change Privacy → Single purpose, storage, and site access
-
-Copy the replacement text from `SUBMISSION.md`.
-
-## You're all set!
-
-Permissions, data-use answers, URLs, category, distribution, homepage
-screenshots, and promo graphics are unchanged.
+- Upload `release/chesscom-vinf-2.24.1.zip`.
+- Replace the description and privacy explanations with `SUBMISSION.md`.
+- Replace screenshots with the default-profile, version-free assets listed there.
+- Mention the separate Firefox + Violentmonkey installation for Android phones and tablets.
+- Submit for review; approval timing is controlled by Google.
